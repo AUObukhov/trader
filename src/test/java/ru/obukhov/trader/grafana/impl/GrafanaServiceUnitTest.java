@@ -314,8 +314,8 @@ class GrafanaServiceUnitTest {
                         .setTime(TimestampUtils.plusMinutes(from, 9))
                         .build()
         );
-        final List<BigDecimal> averages1 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
-        final List<BigDecimal> averages2 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> averages1 = TestData.createBigDecimals(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> averages2 = TestData.createBigDecimals(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         GetCandlesResponse response = new GetCandlesResponse(candles, averages1, averages2);
         Mockito.when(statisticsService.getExtendedCandles(
                 figi, interval, candleInterval, movingAverageType, window1, window2

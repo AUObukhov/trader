@@ -29,7 +29,7 @@ class LinearMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder_throwsIllegalArgumentException")
     void getAverages_withoutOrder_throwsIllegalArgumentException(final List<Double> values, final int window, final String expectedMessage) {
-        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
+        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimals(values);
 
         final Executable executable = () -> averager.getAverages(bigDecimalValues, window);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -46,7 +46,7 @@ class LinearMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder_throwsIllegalArgumentException")
     void getAverages_withOrder_throwsIllegalArgumentException(final List<Double> values, final int order, final String expectedMessage) {
-        List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
+        List<BigDecimal> bigDecimalValues = TestData.createBigDecimals(values);
 
         final Executable executable = () -> averager.getAverages(bigDecimalValues, 1, order);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -122,11 +122,11 @@ class LinearMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
     void getAverages_withoutOrder(final List<Double> values, final int window, final List<Double> expectedValues) {
-        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
+        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimals(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
 
-        final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimals(expectedValues);
         AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
@@ -233,11 +233,11 @@ class LinearMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder")
     void getAverages_withOrder(final List<Double> values, final int window, final int order, final List<Double> expectedValues) {
-        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
+        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimals(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
 
-        final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimals(expectedValues);
         AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {

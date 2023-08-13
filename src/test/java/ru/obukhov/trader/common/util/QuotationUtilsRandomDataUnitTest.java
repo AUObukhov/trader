@@ -85,8 +85,8 @@ class QuotationUtilsRandomDataUnitTest {
             final BinaryOperator<Quotation> quotationOperator,
             final BinaryOperator<BigDecimal> bigDecimalOperator
     ) {
-        final List<Quotation> quotations1 = TestData.randomQuotations(size, origin, bound);
-        final List<Quotation> quotations2 = TestData.randomQuotations(size, origin, bound);
+        final List<Quotation> quotations1 = TestData.createRandomQuotations(size, origin, bound);
+        final List<Quotation> quotations2 = TestData.createRandomQuotations(size, origin, bound);
         final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
         final List<BigDecimal> bigDecimals2 = quotations2.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
 
@@ -104,8 +104,8 @@ class QuotationUtilsRandomDataUnitTest {
             final BiFunction<Quotation, Long, Quotation> quotationLongOperator,
             final BinaryOperator<BigDecimal> bigDecimalOperator
     ) {
-        final List<Quotation> quotations = TestData.randomQuotations(size, origin, bound);
-        final List<Long> longs = TestData.randomLongs(size, origin, bound);
+        final List<Quotation> quotations = TestData.createRandomQuotations(size, origin, bound);
+        final List<Long> longs = TestData.createRandomLongs(size, origin, bound);
         final List<BigDecimal> bigDecimals1 = quotations.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
         final List<BigDecimal> bigDecimals2 = longs.stream().map(DecimalUtils::setDefaultScale).toList();
 

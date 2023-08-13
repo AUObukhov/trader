@@ -66,8 +66,8 @@ class StatisticsServiceUnitTest {
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
-        final List<BigDecimal> shortAverages = TestData.createBigDecimalsList(10.0, 15.0, 20.0);
-        final List<BigDecimal> longAverages = TestData.createBigDecimalsList(10.0, 12.5, 17.5);
+        final List<BigDecimal> shortAverages = TestData.createBigDecimals(10.0, 15.0, 20.0);
+        final List<BigDecimal> longAverages = TestData.createBigDecimals(10.0, 12.5, 17.5);
 
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);
@@ -142,8 +142,8 @@ class StatisticsServiceUnitTest {
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
-        final List<BigDecimal> shortAverages = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
-        final List<BigDecimal> longAverages = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> shortAverages = TestData.createBigDecimals(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> longAverages = TestData.createBigDecimals(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
 
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);

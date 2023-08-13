@@ -33,7 +33,7 @@ class MathUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverage_withCollection")
     void getAverage_withCollection(final List<Double> values, final Double expectedAverage) {
-        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
+        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimals(values);
 
         final BigDecimal average = MathUtils.getAverage(bigDecimalValues);
 

@@ -142,19 +142,19 @@ public class TestData {
 
     // region BigDecimals list creation
 
-    public static List<BigDecimal> createBigDecimalsList(final List<Double> values) {
+    public static List<BigDecimal> createBigDecimals(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createBigDecimalsList(final Double... values) {
+    public static List<BigDecimal> createBigDecimals(final Double... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createBigDecimalsList(final Integer... values) {
+    public static List<BigDecimal> createBigDecimals(final Integer... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createRandomBigDecimalsList(final int size) {
+    public static List<BigDecimal> createRandomBigDecimals(final int size) {
         final List<BigDecimal> values = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             values.add(DecimalUtils.setDefaultScale(RANDOM.nextDouble()));
@@ -162,9 +162,17 @@ public class TestData {
         return values;
     }
 
+    public static List<BigDecimal> createRandomBigDecimals(final int size, final long origin, final long bound) {
+        final List<BigDecimal> values = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            values.add(DecimalUtils.setDefaultScale(RANDOM.nextDouble(origin, bound)));
+        }
+        return values;
+    }
+
     // endregion
 
-    public static List<Long> randomLongs(final int size, final long origin, final long bound) {
+    public static List<Long> createRandomLongs(final int size, final long origin, final long bound) {
         final List<Long> doubles = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
@@ -174,19 +182,19 @@ public class TestData {
         return doubles;
     }
 
-    // region randomQuotations
+    // region createRandomQuotations
 
-    public static List<Quotation> randomQuotations(final int size, final long origin, final long bound) {
+    public static List<Quotation> createRandomQuotations(final int size, final long origin, final long bound) {
         final List<Quotation> quotations = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
-            quotations.add(randomQuotation(origin, bound));
+            quotations.add(createRandomQuotation(origin, bound));
         }
 
         return quotations;
     }
 
-    public static Quotation randomQuotation(final long origin, final long bound) {
+    public static Quotation createRandomQuotation(final long origin, final long bound) {
         long unit = RANDOM.nextLong(origin, bound);
         int nano = RANDOM.nextInt(1, 1000000000);
 
