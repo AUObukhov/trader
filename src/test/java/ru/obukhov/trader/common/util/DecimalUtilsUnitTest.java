@@ -249,7 +249,10 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forAddFraction() {
         return Stream.of(
                 Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(0.003), DecimalUtils.setDefaultScale(767.295)),
-                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(1530))
+                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(1530)),
+                Arguments.of(DecimalUtils.setDefaultScale(0.00000001), DecimalUtils.setDefaultScale(0.5), DecimalUtils.setDefaultScale(0.000000015)),
+                Arguments.of(DecimalUtils.setDefaultScale(0.000000001), DecimalUtils.setDefaultScale(-0.6), DecimalUtils.setDefaultScale(0)),
+                Arguments.of(DecimalUtils.setDefaultScale(0.000000001), DecimalUtils.setDefaultScale(0.4), DecimalUtils.setDefaultScale(0.000000001))
         );
     }
 
@@ -269,7 +272,10 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forSubtractFraction() {
         return Stream.of(
                 Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(0.003), DecimalUtils.setDefaultScale(762.705)),
-                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(0))
+                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(0)),
+                Arguments.of(DecimalUtils.setDefaultScale(0.00000001), DecimalUtils.setDefaultScale(0.5), DecimalUtils.setDefaultScale(0.000000005)),
+                Arguments.of(DecimalUtils.setDefaultScale(0.000000001), DecimalUtils.setDefaultScale(0.6), DecimalUtils.setDefaultScale(0)),
+                Arguments.of(DecimalUtils.setDefaultScale(0.000000001), DecimalUtils.setDefaultScale(0.5), DecimalUtils.setDefaultScale(0.000000001))
         );
     }
 

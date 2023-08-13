@@ -161,14 +161,14 @@ public class DecimalUtils {
      * @return {@code number} * (1 + {@code fraction})
      */
     public static BigDecimal addFraction(final BigDecimal number, final BigDecimal fraction) {
-        return number.multiply(setDefaultScale(1).add(fraction));
+        return setDefaultScale(number.multiply(BigDecimal.valueOf(1).add(fraction)));
     }
 
     /**
      * @return {@code number} * (1 - {@code fraction})
      */
     public static BigDecimal subtractFraction(final BigDecimal number, final BigDecimal fraction) {
-        return number.multiply(setDefaultScale(1).subtract(fraction));
+        return setDefaultScale(number.multiply(BigDecimal.valueOf(1).subtract(fraction)));
     }
 
     /**
