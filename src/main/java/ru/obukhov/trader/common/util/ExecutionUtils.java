@@ -19,7 +19,7 @@ public class ExecutionUtils {
     }
 
     /**
-     * Executes given {@code supplier}. Does not catches execution exceptions.
+     * Executes given {@code supplier}. Doesn't catch execution exceptions.
      *
      * @return result of execution of given {@code supplier} and execution time.
      */
