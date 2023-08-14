@@ -225,6 +225,43 @@ class QuotationUtilsUnitTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+            "0, 0, 0.0, 0",
+            "1000, 0, 1000.00, 0",
+            "0, 2000, 0.000002, 0",
+            "3000, 4000, 3000.000004, 0",
+            "5000, 100000000, 5000.100000000, 0",
+            "6000, 7, 6000.000000007, 0",
+            "-8000, 0, -8000.0, 0",
+            "0, -9000, -0.000009000, 0",
+            "-1100, -1200, -1100.000001200, 0",
+            "-1300, -140000000, -1300.140000000, 0",
+            "-1500, -1, -1500.000000001, 0",
+
+            "10, 0, 9.0, 1",
+            "0, 20, 0.000000005, 1",
+            "30, 4, 30.000000003, 1",
+            "50, 60, 30.00000004, 1",
+
+            "9, 0, -10.00, 1",
+            "0, 5, -0.000000020, 1",
+            "30, 3, -30.000000003, 1",
+            "30, 40, -50.000000060, 1",
+
+            "-10, 0, -9.0, -1",
+            "0, -20, -0.000000005, -1",
+            "-30, -4, -30.000000003, -1",
+            "-50, -60, -30.000000040, -1",
+
+            "51, 0, 50.999999999, 1",
+    })
+    void compare(final long leftUnits, final int leftNano, final double right, int expectedResult) {
+        final Quotation left = QuotationUtils.newNormalizedQuotation(leftUnits, leftNano);
+
+        Assertions.assertEquals(expectedResult, QuotationUtils.compare(left, right));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
             "0, 0, 0, true",
             "1000, 0, 1000, true",
             "0, 2000, 0, false",

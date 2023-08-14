@@ -105,6 +105,15 @@ public class QuotationUtils {
         return Long.signum(diff);
     }
 
+    @SuppressWarnings("java:S2259") // Null pointers should not be dereferenced
+    public static int compare(final Quotation left, final double right) {
+        final Quotation rightQuotation = fromDouble(right);
+        final long diff = left.getUnits() == rightQuotation.getUnits()
+                ? left.getNano() - rightQuotation.getNano()
+                : Math.subtractExact(left.getUnits(), rightQuotation.getUnits());
+        return Long.signum(diff);
+    }
+
     public static boolean equals(final Quotation quotation, final Long number) {
         return quotation.getUnits() == number && quotation.getNano() == 0;
     }
