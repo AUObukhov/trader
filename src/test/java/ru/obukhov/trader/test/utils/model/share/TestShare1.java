@@ -19,12 +19,12 @@ public class TestShare1 {
     public static final String ISIN = "US0378331005";
     public static final int LOT = 1;
     public static final String CURRENCY = Currencies.USD;
-    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2L, 0);
-    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2L, 0);
-    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(1L, 0);
-    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(1L, 0);
-    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(1L, 0);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(1L, 0);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(2L, 0);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L, 0);
+    public static final Quotation DLONG = QuotationUtils.newQuotation(1L, 0);
+    public static final Quotation DSHORT = QuotationUtils.newQuotation(1L, 0);
+    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(1L, 0);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(1L, 0);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Apple";
     public static final String EXCHANGE = "SPB";
@@ -41,7 +41,7 @@ public class TestShare1 {
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final boolean DIV_YIELD_FLAG = true;
     public static final ShareType SHARE_TYPE = ShareType.SHARE_TYPE_COMMON;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0L, 10000000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 10000000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "a9eb4238-eba9-488c-b102-b6140fd08e38";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_RTS;

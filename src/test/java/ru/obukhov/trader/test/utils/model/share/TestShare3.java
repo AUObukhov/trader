@@ -19,12 +19,12 @@ public class TestShare3 {
     public static final String ISIN = "NL0009805522";
     public static final int LOT = 1;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2L, 0);
-    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2L, 0);
-    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0L, 250000000);
-    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0L, 204300000);
-    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0L, 134000000);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0L, 97400000);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(2L, 0);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L, 0);
+    public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 250000000);
+    public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 204300000);
+    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 134000000);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0L, 97400000);
     public static final boolean SHORT_ENABLED_FLAG = true;
     public static final String NAME = "Яндекс";
     public static final String EXCHANGE = "MOEX_PLUS";
@@ -41,7 +41,7 @@ public class TestShare3 {
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final boolean DIV_YIELD_FLAG = false;
     public static final ShareType SHARE_TYPE = ShareType.SHARE_TYPE_COMMON;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0L, 200000000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 200000000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "10e17a87-3bce-4a1f-9dfc-720396f98a3c";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

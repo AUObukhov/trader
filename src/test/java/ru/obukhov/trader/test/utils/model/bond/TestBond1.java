@@ -18,12 +18,12 @@ public class TestBond1 {
     public static final String ISIN = "RU000A0ZYG52";
     public static final int LOT = 1;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2, 0);
-    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2, 0);
-    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0, 300000000);
-    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0, 300000000);
-    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0, 163300000);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0, 140200000);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(2, 0);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(2, 0);
+    public static final Quotation DLONG = QuotationUtils.newQuotation(0, 300000000);
+    public static final Quotation DSHORT = QuotationUtils.newQuotation(0, 300000000);
+    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0, 163300000);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0, 140200000);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Ростелеком выпуск 3";
     public static final String EXCHANGE = "MOEX";
@@ -48,7 +48,7 @@ public class TestBond1 {
     public static final boolean FLOATING_COUPON_FLAG = false;
     public static final boolean PERPETUAL_FLAG = false;
     public static final boolean AMORTIZATION_FLAG = false;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 10000000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 10000000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "00486cd8-5915-4c0b-8017-b81b9d1805d4";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

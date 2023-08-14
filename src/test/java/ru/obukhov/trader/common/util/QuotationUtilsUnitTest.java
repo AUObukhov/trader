@@ -16,6 +16,23 @@ class QuotationUtilsUnitTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+            "0, 0",
+            "1, 0",
+            "0, 2",
+            "3, 4",
+            "-5, 0",
+            "0, -6",
+            "-7, -8",
+    })
+    void newQuotation(final long units, final int nano) {
+        final Quotation actualResult = QuotationUtils.newQuotation(units, nano);
+
+        Assertions.assertEquals(units, actualResult.getUnits());
+        Assertions.assertEquals(nano, actualResult.getNano());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
             "0, 0, 0, 0",
             "1, 0, 1, 0",
             "0, 2, 0, 2",
@@ -45,7 +62,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void toBigDecimal_whenZero() {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(0, 0);
+        final Quotation quotation = QuotationUtils.newQuotation(0, 0);
 
         final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
 
@@ -54,7 +71,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void toBigDecimal() {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(100, 100);
+        final Quotation quotation = QuotationUtils.newQuotation(100, 100);
 
         final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
 
@@ -137,7 +154,7 @@ class QuotationUtilsUnitTest {
             "-1500, -1, [-1500; -1]",
     })
     void toString(final long units, final int nano, final String expectedResult) {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation quotation = QuotationUtils.newQuotation(units, nano);
 
         final String actualResult = QuotationUtils.toString(quotation);
 
@@ -159,7 +176,7 @@ class QuotationUtilsUnitTest {
             "-1500, -1, -1500.000000001",
     })
     void toPrettyString(final long units, final int nano, final String expectedResult) {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation quotation = QuotationUtils.newQuotation(units, nano);
 
         final String actualResult = QuotationUtils.toPrettyString(quotation);
 
@@ -177,7 +194,7 @@ class QuotationUtilsUnitTest {
             "-1000, -1000, -1",
     })
     void getSign(final long units, final int nano, final int expectedResult) {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation quotation = QuotationUtils.newQuotation(units, nano);
 
         final int actualResult = QuotationUtils.getSign(quotation);
 
@@ -216,8 +233,8 @@ class QuotationUtilsUnitTest {
             "51, 0, 50, 999999999, 1",
     })
     void compare(final long leftUnits, final int leftNano, final long rightUnits, final int rightNano, int expectedResult) {
-        final Quotation left = QuotationUtils.newNormalizedQuotation(leftUnits, leftNano);
-        final Quotation right = QuotationUtils.newNormalizedQuotation(rightUnits, rightNano);
+        final Quotation left = QuotationUtils.newQuotation(leftUnits, leftNano);
+        final Quotation right = QuotationUtils.newQuotation(rightUnits, rightNano);
 
         Assertions.assertEquals(expectedResult, QuotationUtils.compare(left, right));
         Assertions.assertEquals(-expectedResult, QuotationUtils.compare(right, left));
@@ -255,7 +272,7 @@ class QuotationUtilsUnitTest {
             "51, 0, 50.999999999, 1",
     })
     void compare(final long leftUnits, final int leftNano, final double right, int expectedResult) {
-        final Quotation left = QuotationUtils.newNormalizedQuotation(leftUnits, leftNano);
+        final Quotation left = QuotationUtils.newQuotation(leftUnits, leftNano);
 
         Assertions.assertEquals(expectedResult, QuotationUtils.compare(left, right));
     }
@@ -271,7 +288,7 @@ class QuotationUtilsUnitTest {
             "-3000, -4000, -3000, false",
     })
     void equals(final long leftUnits, final int leftNano, final long right, boolean expectedResult) {
-        final Quotation left = QuotationUtils.newNormalizedQuotation(leftUnits, leftNano);
+        final Quotation left = QuotationUtils.newQuotation(leftUnits, leftNano);
 
         Assertions.assertEquals(expectedResult, QuotationUtils.equals(left, right));
     }
@@ -308,8 +325,8 @@ class QuotationUtilsUnitTest {
             "-30, -40, -50, -60",
     })
     void max(final long units1, final int nano1, final long units2, final int nano2) {
-        final Quotation quotation1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
-        final Quotation quotation2 = QuotationUtils.newNormalizedQuotation(units2, nano2);
+        final Quotation quotation1 = QuotationUtils.newQuotation(units1, nano1);
+        final Quotation quotation2 = QuotationUtils.newQuotation(units2, nano2);
 
         final Quotation straightResult = QuotationUtils.max(quotation1, quotation2);
         final Quotation reverseResult = QuotationUtils.max(quotation2, quotation1);
@@ -350,8 +367,8 @@ class QuotationUtilsUnitTest {
             "-30, -40, -50, -60",
     })
     void min(final long units1, final int nano1, final long units2, final int nano2) {
-        final Quotation quotation1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
-        final Quotation quotation2 = QuotationUtils.newNormalizedQuotation(units2, nano2);
+        final Quotation quotation1 = QuotationUtils.newQuotation(units1, nano1);
+        final Quotation quotation2 = QuotationUtils.newQuotation(units2, nano2);
 
         final Quotation straightResult = QuotationUtils.min(quotation1, quotation2);
         final Quotation reverseResult = QuotationUtils.min(quotation2, quotation1);
@@ -360,6 +377,25 @@ class QuotationUtilsUnitTest {
         Assertions.assertEquals(nano2, straightResult.getNano());
         Assertions.assertEquals(units2, reverseResult.getUnits());
         Assertions.assertEquals(nano2, reverseResult.getNano());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 0, 0, 0",
+            "0, 1, 0, -1",
+            "2, 0, -2, 0",
+            "3, 4, -3, -4",
+    })
+    void negate(final long units, final int nano, final long expectedUnits, final int expectedNano) {
+        final Quotation quotation = QuotationUtils.newQuotation(units, nano);
+
+        final Quotation actualResult = QuotationUtils.negate(quotation);
+        final Quotation doubleNegationResult = QuotationUtils.negate(actualResult);
+
+        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
+        Assertions.assertEquals(expectedNano, actualResult.getNano());
+        Assertions.assertEquals(units, doubleNegationResult.getUnits());
+        Assertions.assertEquals(nano, doubleNegationResult.getNano());
     }
 
     // region add tests
@@ -378,8 +414,8 @@ class QuotationUtilsUnitTest {
             "-10, -600000000, -11, -750000000, -22, -350000000",
     })
     void addQuotation(final long units1, final int nano1, final long units2, final int nano2, final long expectedUnits, final int expectedNano) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
-        final Quotation term2 = QuotationUtils.newNormalizedQuotation(units2, nano2);
+        final Quotation term1 = QuotationUtils.newQuotation(units1, nano1);
+        final Quotation term2 = QuotationUtils.newQuotation(units2, nano2);
 
         final Quotation actualResult = QuotationUtils.add(term1, term2);
 
@@ -399,7 +435,7 @@ class QuotationUtilsUnitTest {
             "0, 0, 0.75, 0, 750000000",
     })
     void addDouble(final long units, final int nano, final double term2, final long expectedUnits, final int expectedNano) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation term1 = QuotationUtils.newQuotation(units, nano);
 
         final Quotation actualResult = QuotationUtils.add(term1, term2);
 
@@ -414,7 +450,7 @@ class QuotationUtilsUnitTest {
             "0, 0, 0, 0, 0",
     })
     void addLong(final long units, final int nano, final long term2, final long expectedUnits, final int expectedNano) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation term1 = QuotationUtils.newQuotation(units, nano);
 
         final Quotation actualResult = QuotationUtils.add(term1, term2);
 
@@ -439,8 +475,8 @@ class QuotationUtilsUnitTest {
             final long subtrahendUnits, final int subtrahendNano,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation minuend = QuotationUtils.newNormalizedQuotation(minuendUnits, minuendNano);
-        final Quotation subtrahend = QuotationUtils.newNormalizedQuotation(subtrahendUnits, subtrahendNano);
+        final Quotation minuend = QuotationUtils.newQuotation(minuendUnits, minuendNano);
+        final Quotation subtrahend = QuotationUtils.newQuotation(subtrahendUnits, subtrahendNano);
 
         final Quotation actualResult = QuotationUtils.subtract(minuend, subtrahend);
 
@@ -460,7 +496,7 @@ class QuotationUtilsUnitTest {
             final double subtrahend,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation minuend = QuotationUtils.newNormalizedQuotation(minuendUnits, minuendNano);
+        final Quotation minuend = QuotationUtils.newQuotation(minuendUnits, minuendNano);
 
         final Quotation actualResult = QuotationUtils.subtract(minuend, subtrahend);
 
@@ -480,7 +516,7 @@ class QuotationUtilsUnitTest {
             final long subtrahend,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation minuend = QuotationUtils.newNormalizedQuotation(minuendUnits, minuendNano);
+        final Quotation minuend = QuotationUtils.newQuotation(minuendUnits, minuendNano);
 
         final Quotation actualResult = QuotationUtils.subtract(minuend, subtrahend);
 
@@ -506,7 +542,7 @@ class QuotationUtilsUnitTest {
             final long subtrahendUnits, final int subtrahendNano,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation subtrahend = QuotationUtils.newNormalizedQuotation(subtrahendUnits, subtrahendNano);
+        final Quotation subtrahend = QuotationUtils.newQuotation(subtrahendUnits, subtrahendNano);
 
         final Quotation actualResult = QuotationUtils.subtract(minuend, subtrahend);
 
@@ -533,8 +569,8 @@ class QuotationUtilsUnitTest {
             final long units2, final int nano2,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
-        final Quotation term2 = QuotationUtils.newNormalizedQuotation(units2, nano2);
+        final Quotation term1 = QuotationUtils.newQuotation(units1, nano1);
+        final Quotation term2 = QuotationUtils.newQuotation(units2, nano2);
 
         final Quotation actualResult = QuotationUtils.multiply(term1, term2);
 
@@ -557,7 +593,7 @@ class QuotationUtilsUnitTest {
             final long units2, final int nano2,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
+        final Quotation term1 = QuotationUtils.newQuotation(units1, nano1);
         final BigDecimal term2 = DecimalUtils.createBigDecimal(units2, nano2);
 
         final Quotation actualResult = QuotationUtils.multiply(term1, term2);
@@ -581,7 +617,7 @@ class QuotationUtilsUnitTest {
             final long multiplicand2Units, final int multiplicand2Nano,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
+        final Quotation term1 = QuotationUtils.newQuotation(units1, nano1);
 
         final Quotation actualResult = QuotationUtils.multiply(term1, multiplicand2Units, multiplicand2Nano);
 
@@ -596,7 +632,7 @@ class QuotationUtilsUnitTest {
             "0, 0, 10.0, 0, 0",
     })
     void multiplyByDouble(final long units, final int nano, final double term2, final long expectedUnits, final int expectedNano) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation term1 = QuotationUtils.newQuotation(units, nano);
 
         final Quotation actualResult = QuotationUtils.multiply(term1, term2);
 
@@ -611,7 +647,7 @@ class QuotationUtilsUnitTest {
             "0, 0, 10, 0, 0",
     })
     void multiplyByLong(final long units, final int nano, final long term2, final long expectedUnits, final int expectedNano) {
-        final Quotation term1 = QuotationUtils.newNormalizedQuotation(units, nano);
+        final Quotation term1 = QuotationUtils.newQuotation(units, nano);
 
         final Quotation actualResult = QuotationUtils.multiply(term1, term2);
 
@@ -632,8 +668,8 @@ class QuotationUtilsUnitTest {
             final long fractionUnits, final int fractionNano,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(units, nano);
-        final Quotation fraction = QuotationUtils.newNormalizedQuotation(fractionUnits, fractionNano);
+        final Quotation quotation = QuotationUtils.newQuotation(units, nano);
+        final Quotation fraction = QuotationUtils.newQuotation(fractionUnits, fractionNano);
 
         final Quotation actualResult = QuotationUtils.addFraction(quotation, fraction);
 
@@ -651,8 +687,8 @@ class QuotationUtilsUnitTest {
             final long fractionUnits, final int fractionNano,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation quotation = QuotationUtils.newNormalizedQuotation(units, nano);
-        final Quotation fraction = QuotationUtils.newNormalizedQuotation(fractionUnits, fractionNano);
+        final Quotation quotation = QuotationUtils.newQuotation(units, nano);
+        final Quotation fraction = QuotationUtils.newQuotation(fractionUnits, fractionNano);
 
         final Quotation actualResult = QuotationUtils.subtractFraction(quotation, fraction);
 
@@ -673,12 +709,12 @@ class QuotationUtilsUnitTest {
             final long units2, final int nano2,
             final long expectedUnits, final int expectedNano
     ) {
-        final Quotation quotation1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
-        final Quotation quotation2 = QuotationUtils.newNormalizedQuotation(units2, nano2);
+        final Quotation quotation1 = QuotationUtils.newQuotation(units1, nano1);
+        final Quotation quotation2 = QuotationUtils.newQuotation(units2, nano2);
 
         final Quotation actualResult = QuotationUtils.getFractionDifference(quotation1, quotation2);
 
-        final Quotation expectedResult = QuotationUtils.newNormalizedQuotation(expectedUnits, expectedNano);
+        final Quotation expectedResult = QuotationUtils.newQuotation(expectedUnits, expectedNano);
         AssertUtils.assertEquals(expectedResult, actualResult);
     }
 
@@ -689,8 +725,8 @@ class QuotationUtilsUnitTest {
             "0, 0",
     })
     void divideByZeroQuotation_throwsArithmeticException_whenDivisorIsZero(final long dividendUnits, final int dividendNano) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(0L, 0);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
+        final Quotation divisor = QuotationUtils.newQuotation(0L, 0);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -713,8 +749,8 @@ class QuotationUtilsUnitTest {
             final long expectedUnits, final int expectedNano,
             final RoundingMode roundingMode
     ) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
+        final Quotation divisor = QuotationUtils.newQuotation(divisorUnits, divisorNano);
 
         final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
 
@@ -729,8 +765,8 @@ class QuotationUtilsUnitTest {
             "0, 0",
     })
     void divideByZeroQuotation(final long dividendUnits, final int dividendNano) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(0L, 0);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
+        final Quotation divisor = QuotationUtils.newQuotation(0L, 0);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -748,8 +784,8 @@ class QuotationUtilsUnitTest {
             final long divisorUnits, final int divisorNano,
             final RoundingMode roundingMode
     ) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
+        final Quotation divisor = QuotationUtils.newQuotation(divisorUnits, divisorNano);
         final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
     }
@@ -768,7 +804,7 @@ class QuotationUtilsUnitTest {
             final long expectedUnits, final int expectedNano,
             final RoundingMode roundingMode
     ) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
 
         final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
 
@@ -783,7 +819,7 @@ class QuotationUtilsUnitTest {
             "0, 0",
     })
     void divideByZeroDouble(final long dividendUnits, final int dividendNano) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, 0.0, RoundingMode.HALF_UP));
     }
 
@@ -801,7 +837,7 @@ class QuotationUtilsUnitTest {
             final double divisor,
             final RoundingMode roundingMode
     ) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
         final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
     }
@@ -820,7 +856,7 @@ class QuotationUtilsUnitTest {
             final long expectedUnits, final int expectedNano,
             final RoundingMode roundingMode
     ) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
 
         final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
 
@@ -835,7 +871,7 @@ class QuotationUtilsUnitTest {
             "0, 0",
     })
     void divideByZeroLong(final long dividendUnits, final int dividendNano) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, 0L, RoundingMode.HALF_UP));
     }
 
@@ -853,7 +889,7 @@ class QuotationUtilsUnitTest {
             final long divisor,
             final RoundingMode roundingMode
     ) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
         final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
     }
@@ -873,7 +909,7 @@ class QuotationUtilsUnitTest {
             final long expectedUnits, final int expectedNano,
             final RoundingMode roundingMode
     ) {
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+        final Quotation divisor = QuotationUtils.newQuotation(divisorUnits, divisorNano);
 
         final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
 
@@ -884,7 +920,7 @@ class QuotationUtilsUnitTest {
     @ParameterizedTest
     @ValueSource(longs = {10L, -8L, 0L})
     void divideLongByZero(final long dividend) {
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(0L, 0);
+        final Quotation divisor = QuotationUtils.newQuotation(0L, 0);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -902,7 +938,7 @@ class QuotationUtilsUnitTest {
             final long divisorUnits, final int divisorNano,
             final RoundingMode roundingMode
     ) {
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+        final Quotation divisor = QuotationUtils.newQuotation(divisorUnits, divisorNano);
         final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
     }

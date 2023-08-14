@@ -18,12 +18,12 @@ public class TestCurrency2 {
     public static final String ISIN = "";
     public static final int LOT = 1000;
     public static final String CURRENCY_VALUE = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0L, 0);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Российский рубль";
     public static final String EXCHANGE = "FX";
@@ -34,7 +34,7 @@ public class TestCurrency2 {
     public static final boolean BUY_AVAILABLE_FLAG = false;
     public static final boolean SELL_AVAILABLE_FLAG = false;
     public static final String ISO_CURRENCY_NAME = "rub";
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 2500000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 2500000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = false;
     public static final String UID = "a92e2e25-a698-45cc-a781-167cf465257c";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

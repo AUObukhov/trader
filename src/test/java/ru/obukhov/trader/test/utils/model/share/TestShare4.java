@@ -19,12 +19,12 @@ public class TestShare4 {
     public static final String ISIN = "RU000A0JQWC1";
     public static final int LOT = 100;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0L, 0);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 0);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0L, 0);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "ДИОД";
     public static final String EXCHANGE = "MOEX";
@@ -41,7 +41,7 @@ public class TestShare4 {
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final boolean DIV_YIELD_FLAG = true;
     public static final ShareType SHARE_TYPE = ShareType.SHARE_TYPE_COMMON;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0L, 10000000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 10000000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = false;
     public static final String UID = "464c9ca5-2ba5-4b66-90e2-005f30bff134";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

@@ -12,23 +12,21 @@ public class QuotationUtils {
 
     public static final int NANOS_LIMIT = 1_000_000_000;
 
-    public static Quotation newNormalizedQuotation(final long units, final int nano) {
-        // normalization
-        if (units < 0 && nano > 0) {
-            return Quotation.newBuilder()
-                    .setUnits(units + 1)
-                    .setNano(nano - NANOS_LIMIT)
-                    .build();
-        } else if (units > 0 && nano < 0) {
-            return Quotation.newBuilder()
-                    .setUnits(units - 1)
-                    .setNano(nano + NANOS_LIMIT)
-                    .build();
-        }
+    public static Quotation newQuotation(final long units, final int nano) {
         return Quotation.newBuilder()
                 .setUnits(units)
                 .setNano(nano)
                 .build();
+    }
+
+    public static Quotation newNormalizedQuotation(final long units, final int nano) {
+        // normalization
+        if (units < 0 && nano > 0) {
+            return newQuotation(units + 1, nano - NANOS_LIMIT);
+        } else if (units > 0 && nano < 0) {
+            return newQuotation(units - 1, nano + NANOS_LIMIT);
+        }
+        return newQuotation(units, nano);
     }
 
     private static Quotation newQuotationHandlingAddingOverflow(long units, int nano) {
@@ -65,7 +63,7 @@ public class QuotationUtils {
     public static Quotation fromBigDecimal(final BigDecimal bigDecimal) {
         return bigDecimal == null
                 ? null
-                : Quotation.newBuilder().setUnits(bigDecimal.longValue()).setNano(DecimalUtils.getNano(bigDecimal)).build();
+                : newQuotation(bigDecimal.longValue(), DecimalUtils.getNano(bigDecimal));
     }
 
     public static Quotation fromDouble(final Double value) {
@@ -127,6 +125,10 @@ public class QuotationUtils {
     }
 
     /// endregion
+
+    public static Quotation negate(final Quotation quotation) {
+        return newQuotation(-quotation.getUnits(), -quotation.getNano());
+    }
 
     // region add
 
@@ -239,7 +241,7 @@ public class QuotationUtils {
      * @return {@code quotation1} / {@code quotation2} - 1
      */
     public static Quotation getFractionDifference(final Quotation quotation1, final Quotation quotation2) {
-        return subtract(divide(quotation1, quotation2, RoundingMode.HALF_UP), newNormalizedQuotation(1, 0));
+        return subtract(divide(quotation1, quotation2, RoundingMode.HALF_UP), newQuotation(1, 0));
     }
 
     // region divide

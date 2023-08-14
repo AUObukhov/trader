@@ -18,12 +18,12 @@ public class TestInstrument1 {
     public static final String ISIN = "US0378331005";
     public static final int LOT_SIZE = 1;
     public static final String CURRENCY = Currencies.USD;
-    public static final Quotation K_LONG = QuotationUtils.newNormalizedQuotation(2, 0);
-    public static final Quotation K_SHORT = QuotationUtils.newNormalizedQuotation(2, 0);
-    public static final Quotation D_LONG = QuotationUtils.newNormalizedQuotation(1, 0);
-    public static final Quotation D_SHORT = QuotationUtils.newNormalizedQuotation(1, 0);
-    public static final Quotation D_LONG_MIN = QuotationUtils.newNormalizedQuotation(1, 0);
-    public static final Quotation D_SHORT_MIN = QuotationUtils.newNormalizedQuotation(1, 0);
+    public static final Quotation K_LONG = QuotationUtils.newQuotation(2, 0);
+    public static final Quotation K_SHORT = QuotationUtils.newQuotation(2, 0);
+    public static final Quotation D_LONG = QuotationUtils.newQuotation(1, 0);
+    public static final Quotation D_SHORT = QuotationUtils.newQuotation(1, 0);
+    public static final Quotation D_LONG_MIN = QuotationUtils.newQuotation(1, 0);
+    public static final Quotation D_SHORT_MIN = QuotationUtils.newQuotation(1, 0);
     public static final boolean SHORT_ENABLED = false;
     public static final String NAME = "Apple";
     public static final String EXCHANGE = "SPB";
@@ -34,7 +34,7 @@ public class TestInstrument1 {
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 10_000_000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 10_000_000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "a9eb4238-eba9-488c-b102-b6140fd08e38";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_RTS;

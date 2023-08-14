@@ -18,12 +18,12 @@ public class TestBond2 {
     public static final String ISIN = "RU000A1050H0";
     public static final int LOT = 1;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(0, 0);
-    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(0, 0);
-    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0, 0);
-    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0, 0);
-    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0, 0);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0, 0);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(0, 0);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(0, 0);
+    public static final Quotation DLONG = QuotationUtils.newQuotation(0, 0);
+    public static final Quotation DSHORT = QuotationUtils.newQuotation(0, 0);
+    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0, 0);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0, 0);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "ЕАБР";
     public static final String EXCHANGE = "MOEX";
@@ -48,7 +48,7 @@ public class TestBond2 {
     public static final boolean FLOATING_COUPON_FLAG = false;
     public static final boolean PERPETUAL_FLAG = false;
     public static final boolean AMORTIZATION_FLAG = false;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 10000000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 10000000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "cdb57948-f0b0-4420-8dd0-c8747fdc6735";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
