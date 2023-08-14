@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
@@ -19,7 +20,6 @@ import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
-import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
@@ -37,7 +37,6 @@ import java.util.Map;
 class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
-    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     @Test
     void get_returnsOk() throws Exception {
@@ -247,7 +246,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     private BigDecimal getOpen(final HistoricCandle candle) {
-        return QUOTATION_MAPPER.toBigDecimal(candle.getOpen());
+        return QuotationUtils.toBigDecimal(candle.getOpen());
     }
 
 }

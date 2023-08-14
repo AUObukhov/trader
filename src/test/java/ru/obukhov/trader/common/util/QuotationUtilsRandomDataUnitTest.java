@@ -3,9 +3,7 @@ package ru.obukhov.trader.common.util;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.ExecutionResult;
-import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -18,8 +16,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 class QuotationUtilsRandomDataUnitTest {
-
-    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     @Test
     void compare() {
@@ -166,8 +162,8 @@ class QuotationUtilsRandomDataUnitTest {
     ) {
         final List<Quotation> quotations1 = TestData.createRandomQuotations(size, origin, bound);
         final List<Quotation> quotations2 = TestData.createRandomQuotations(size, origin, bound);
-        final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
-        final List<BigDecimal> bigDecimals2 = quotations2.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
+        final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QuotationUtils::toBigDecimal).toList();
+        final List<BigDecimal> bigDecimals2 = quotations2.stream().map(QuotationUtils::toBigDecimal).toList();
 
         final Pair<Duration, Duration> durations =
                 test(quotations1, quotations2, bigDecimals1, bigDecimals2, quotationFunction, bigDecimalFunction);
@@ -185,9 +181,9 @@ class QuotationUtilsRandomDataUnitTest {
     ) {
         final List<Quotation> quotations1 = TestData.createRandomQuotations(size, origin, bound);
         final List<BigDecimal> bigDecimals2 = TestData.createRandomQuotations(size, origin, bound).stream()
-                .map(QUOTATION_MAPPER::toBigDecimal)
+                .map(QuotationUtils::toBigDecimal)
                 .toList();
-        final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
+        final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QuotationUtils::toBigDecimal).toList();
 
         final Pair<Duration, Duration> durations =
                 test(quotations1, bigDecimals2, bigDecimals1, bigDecimals2, quotationFunction, bigDecimalFunction);
@@ -205,7 +201,7 @@ class QuotationUtilsRandomDataUnitTest {
     ) {
         final List<Quotation> quotations = TestData.createRandomQuotations(size, origin, bound);
         final List<Long> longs = TestData.createRandomLongs(size, origin, bound);
-        final List<BigDecimal> bigDecimals1 = quotations.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
+        final List<BigDecimal> bigDecimals1 = quotations.stream().map(QuotationUtils::toBigDecimal).toList();
         final List<BigDecimal> bigDecimals2 = longs.stream().map(DecimalUtils::setDefaultScale).toList();
 
         final Pair<Duration, Duration> durations =

@@ -33,7 +33,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderState;
@@ -60,7 +59,6 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class AssertUtils {
 
-    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
 
     // region assertEquals
@@ -190,7 +188,7 @@ public class AssertUtils {
                             .append(System.lineSeparator());
                 }
             } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof Quotation actualQuotation) {
-                final BigDecimal actualBigDecimal = QUOTATION_MAPPER.toBigDecimal(actualQuotation);
+                final BigDecimal actualBigDecimal = QuotationUtils.toBigDecimal(actualQuotation);
                 if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
                     messageBuilder.append(getErrorMessage(expectedValue, QuotationUtils.toString(actualQuotation), index))
                             .append(System.lineSeparator());

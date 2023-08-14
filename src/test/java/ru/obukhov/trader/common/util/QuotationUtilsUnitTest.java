@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -32,6 +33,94 @@ class QuotationUtilsUnitTest {
 
         Assertions.assertEquals(expectedNano, actualResult.getNano());
     }
+
+    // region toBigDecimal tests
+
+    @Test
+    void toBigDecimal_whenNull() {
+        final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(null);
+
+        Assertions.assertNull(bigDecimal);
+    }
+
+    @Test
+    void toBigDecimal_whenZero() {
+        final Quotation quotation = QuotationUtils.newNormalizedQuotation(0, 0);
+
+        final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
+
+        Assertions.assertEquals(DecimalUtils.setDefaultScale(0), bigDecimal);
+    }
+
+    @Test
+    void toBigDecimal() {
+        final Quotation quotation = QuotationUtils.newNormalizedQuotation(100, 100);
+
+        final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
+
+        AssertUtils.assertEquals(100.000000100, bigDecimal);
+        AssertUtils.assertEquals(DecimalUtils.DEFAULT_SCALE, bigDecimal.scale());
+    }
+
+    // endregion
+
+    // region fromBigDecimal tests
+
+    @Test
+    void fromBigDecimal_whenNull() {
+        final Quotation quotation = QuotationUtils.fromBigDecimal(null);
+
+        Assertions.assertNull(quotation);
+    }
+
+    @Test
+    void fromBigDecimal_whenZero() {
+        final Quotation quotation = QuotationUtils.fromBigDecimal(DecimalUtils.setDefaultScale(0));
+
+        Assertions.assertEquals(0, quotation.getUnits());
+        Assertions.assertEquals(0, quotation.getNano());
+    }
+
+    @Test
+    void fromBigDecimal() {
+        final BigDecimal bigDecimal = DecimalUtils.setDefaultScale(100.000000100);
+
+        final Quotation quotation = QuotationUtils.fromBigDecimal(bigDecimal);
+
+        Assertions.assertEquals(100, quotation.getUnits());
+        Assertions.assertEquals(100, quotation.getNano());
+    }
+
+    // endregion
+
+    // region fromDouble tests
+
+    @Test
+    void fromDouble_whenNull() {
+        final Quotation quotation = QuotationUtils.fromDouble(null);
+
+        Assertions.assertNull(quotation);
+    }
+
+    @Test
+    void fromDouble_whenZero() {
+        final Quotation quotation = QuotationUtils.fromDouble(0.0);
+
+        Assertions.assertEquals(0, quotation.getUnits());
+        Assertions.assertEquals(0, quotation.getNano());
+    }
+
+    @Test
+    void fromDouble() {
+        final double doubleValue = 100.000000100;
+
+        final Quotation quotation = QuotationUtils.fromDouble(doubleValue);
+
+        Assertions.assertEquals(100, quotation.getUnits());
+        Assertions.assertEquals(100, quotation.getNano());
+    }
+
+    // endregion
 
     @ParameterizedTest
     @CsvSource(value = {

@@ -54,6 +54,26 @@ public class QuotationUtils {
         return newNormalizedQuotation(units, (int) nano);
     }
 
+    // region conversion
+
+    public static BigDecimal toBigDecimal(final Quotation quotation) {
+        return quotation == null
+                ? null
+                : DecimalUtils.createBigDecimal(quotation.getUnits(), quotation.getNano());
+    }
+
+    public static Quotation fromBigDecimal(final BigDecimal bigDecimal) {
+        return bigDecimal == null
+                ? null
+                : Quotation.newBuilder().setUnits(bigDecimal.longValue()).setNano(DecimalUtils.getNano(bigDecimal)).build();
+    }
+
+    public static Quotation fromDouble(final Double value) {
+        return value == null
+                ? null
+                : fromBigDecimal(DecimalUtils.setDefaultScale(value));
+    }
+
     public static String toString(final Quotation quotation) {
         return "[" + quotation.getUnits() + "; " + quotation.getNano() + "]";
     }
@@ -70,11 +90,13 @@ public class QuotationUtils {
         }
     }
 
+    // endregion
+
+    // region comparisons
+
     public static int getSign(final Quotation quotation) {
         return Long.signum(quotation.getUnits() | quotation.getNano());
     }
-
-    // region comparisons
 
     public static int compare(final Quotation left, final Quotation right) {
         final long diff = left.getUnits() == right.getUnits()
