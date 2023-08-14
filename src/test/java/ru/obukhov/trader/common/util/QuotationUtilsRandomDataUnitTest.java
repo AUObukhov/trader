@@ -24,56 +24,56 @@ class QuotationUtilsRandomDataUnitTest {
     void compare() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultiple(5000000, origin, bound, QuotationUtils::compare, BigDecimal::compareTo);
+        testOnRandomQuotations(5000000, origin, bound, QuotationUtils::compare, BigDecimal::compareTo);
     }
 
     @Test
     void equalsLong() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultipleLong(5000000, origin, bound, QuotationUtils::equals, BigDecimal::equals);
+        testOnRandomQuotationsAndLongs(5000000, origin, bound, QuotationUtils::equals, BigDecimal::equals);
     }
 
     @Test
     void max() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultiple(5000000, origin, bound, QuotationUtils::max, BigDecimal::max);
+        testOnRandomQuotations(5000000, origin, bound, QuotationUtils::max, BigDecimal::max);
     }
 
     @Test
     void min() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultiple(5000000, origin, bound, QuotationUtils::min, BigDecimal::min);
+        testOnRandomQuotations(5000000, origin, bound, QuotationUtils::min, BigDecimal::min);
     }
 
     @Test
     void add() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultiple(5000000, origin, bound, QuotationUtils::add, BigDecimal::add);
+        testOnRandomQuotations(5000000, origin, bound, QuotationUtils::add, BigDecimal::add);
     }
 
     @Test
     void addLong() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultipleLong(5000000, origin, bound, QuotationUtils::add, BigDecimal::add);
+        testOnRandomQuotationsAndLongs(5000000, origin, bound, QuotationUtils::add, BigDecimal::add);
     }
 
     @Test
     void subtract() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultiple(5000000, origin, bound, QuotationUtils::subtract, BigDecimal::subtract);
+        testOnRandomQuotations(5000000, origin, bound, QuotationUtils::subtract, BigDecimal::subtract);
     }
 
     @Test
     void subtractLong() {
         final long origin = Long.MIN_VALUE / 2;
         final long bound = Long.MAX_VALUE / 2;
-        testRandomQuotationsMultipleLong(5000000, origin, bound, QuotationUtils::subtract, BigDecimal::subtract);
+        testOnRandomQuotationsAndLongs(5000000, origin, bound, QuotationUtils::subtract, BigDecimal::subtract);
     }
 
     @Test
@@ -82,7 +82,7 @@ class QuotationUtilsRandomDataUnitTest {
         final long bound = Long.MAX_VALUE / 2;
         final BiFunction<Quotation, Long, Object> quotationLongOperator = (subtrahend, minuend) -> QuotationUtils.subtract(minuend, subtrahend);
         final BiFunction<BigDecimal, BigDecimal, Object> bigDecimalOperator = (subtrahend, minuend) -> minuend.subtract(subtrahend);
-        testRandomQuotationsMultipleLong(5000000, origin, bound, quotationLongOperator, bigDecimalOperator);
+        testOnRandomQuotationsAndLongs(5000000, origin, bound, quotationLongOperator, bigDecimalOperator);
     }
 
     @Test
@@ -92,7 +92,7 @@ class QuotationUtilsRandomDataUnitTest {
         final BiFunction<Quotation, Quotation, Object> quotationFunction = QuotationUtils::multiply;
         final BiFunction<BigDecimal, BigDecimal, Object> bigDecimalFunction =
                 (multiplicand1, multiplicand2) -> DecimalUtils.setDefaultScale(multiplicand1.multiply(multiplicand2));
-        testRandomQuotationsMultiple(10000000, origin, bound, quotationFunction, bigDecimalFunction);
+        testOnRandomQuotations(10000000, origin, bound, quotationFunction, bigDecimalFunction);
     }
 
     @Test
@@ -101,7 +101,7 @@ class QuotationUtilsRandomDataUnitTest {
         final int bound = Integer.MAX_VALUE;
         final BiFunction<BigDecimal, BigDecimal, Object> bigDecimalOperator =
                 (multiplicand1, multiplicand2) -> DecimalUtils.setDefaultScale(multiplicand1.multiply(multiplicand2));
-        testRandomQuotationsMultipleLong(10000000, origin, bound, QuotationUtils::multiply, bigDecimalOperator);
+        testOnRandomQuotationsAndLongs(10000000, origin, bound, QuotationUtils::multiply, bigDecimalOperator);
     }
 
     @Test
@@ -110,7 +110,7 @@ class QuotationUtilsRandomDataUnitTest {
         final int bound = Integer.MAX_VALUE;
         final BiFunction<BigDecimal, BigDecimal, Object> bigDecimalFunction =
                 (multiplicand1, multiplicand2) -> DecimalUtils.setDefaultScale(multiplicand1.multiply(multiplicand2));
-        testRandomQuotationsMultiple(10000000, origin, bound, QuotationUtils::multiply, bigDecimalFunction);
+        testOnRandomQuotationsAndBigDecimals(10000000, origin, bound, QuotationUtils::multiply, bigDecimalFunction);
     }
 
     @Test
@@ -121,43 +121,43 @@ class QuotationUtilsRandomDataUnitTest {
                 (multiplicand1, multiplicand2) -> QuotationUtils.multiply(multiplicand1, multiplicand2.getUnits(), multiplicand2.getNano());
         final BiFunction<BigDecimal, BigDecimal, Object> bigDecimalFunction =
                 (multiplicand1, multiplicand2) -> DecimalUtils.setDefaultScale(multiplicand1.multiply(multiplicand2));
-        testRandomQuotationsMultiple(10000000, origin, bound, quotationFunction, bigDecimalFunction);
+        testOnRandomQuotations(10000000, origin, bound, quotationFunction, bigDecimalFunction);
     }
 
     @Test
     void divide() {
         final long origin = Long.MIN_VALUE / QuotationUtils.NANOS_LIMIT;
         final long bound = Long.MAX_VALUE / QuotationUtils.NANOS_LIMIT;
-        testRandomQuotationsMultiple(10000000, origin, bound, QuotationUtils::divide, DecimalUtils::divide);
+        testOnRandomQuotations(10000000, origin, bound, QuotationUtils::divide, DecimalUtils::divide);
     }
 
     @Test
     void divideLong() {
         final long origin = Long.MIN_VALUE / QuotationUtils.NANOS_LIMIT / 2;
         final long bound = Long.MAX_VALUE / QuotationUtils.NANOS_LIMIT / 2;
-        testRandomQuotationsMultipleLong(10000000, origin, bound, QuotationUtils::divide, DecimalUtils::divide);
+        testOnRandomQuotationsAndLongs(10000000, origin, bound, QuotationUtils::divide, DecimalUtils::divide);
     }
 
     @Test
     void addFraction() {
         final int origin = Integer.MIN_VALUE;
         final int bound = Integer.MAX_VALUE;
-        testRandomQuotationsMultiple(1000000, origin, bound, QuotationUtils::addFraction, DecimalUtils::addFraction);
+        testOnRandomQuotations(1000000, origin, bound, QuotationUtils::addFraction, DecimalUtils::addFraction);
     }
 
     @Test
     void subtractFraction() {
         final int origin = Integer.MIN_VALUE;
         final int bound = Integer.MAX_VALUE;
-        testRandomQuotationsMultiple(1000000, origin, bound, QuotationUtils::subtractFraction, DecimalUtils::subtractFraction);
+        testOnRandomQuotations(1000000, origin, bound, QuotationUtils::subtractFraction, DecimalUtils::subtractFraction);
     }
 
-    private <T> void testRandomQuotationsMultiple(
+    private <OUT> void testOnRandomQuotations(
             final int size,
             final long origin,
             final long bound,
-            final BiFunction<Quotation, Quotation, T> quotationFunction,
-            final BiFunction<BigDecimal, BigDecimal, T> bigDecimalFunction
+            final BiFunction<Quotation, Quotation, OUT> quotationFunction,
+            final BiFunction<BigDecimal, BigDecimal, OUT> bigDecimalFunction
     ) {
         final List<Quotation> quotations1 = TestData.createRandomQuotations(size, origin, bound);
         final List<Quotation> quotations2 = TestData.createRandomQuotations(size, origin, bound);
@@ -165,18 +165,38 @@ class QuotationUtilsRandomDataUnitTest {
         final List<BigDecimal> bigDecimals2 = quotations2.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
 
         final Pair<Duration, Duration> durations =
-                testRandomQuotations(quotations1, quotations2, bigDecimals1, bigDecimals2, quotationFunction, bigDecimalFunction);
+                test(quotations1, quotations2, bigDecimals1, bigDecimals2, quotationFunction, bigDecimalFunction);
 
         System.out.println("quotationsTime = " + durations.getLeft().toMillis() + " ms");
         System.out.println("decimalsTime = " + durations.getRight().toMillis() + " ms");
     }
 
-    private <T> void testRandomQuotationsMultipleLong(
+    private <OUT> void testOnRandomQuotationsAndBigDecimals(
             final int size,
             final long origin,
             final long bound,
-            final BiFunction<Quotation, Long, T> quotationLongFunction,
-            final BiFunction<BigDecimal, BigDecimal, T> bigDecimalFunction
+            final BiFunction<Quotation, BigDecimal, OUT> quotationFunction,
+            final BiFunction<BigDecimal, BigDecimal, OUT> bigDecimalFunction
+    ) {
+        final List<Quotation> quotations1 = TestData.createRandomQuotations(size, origin, bound);
+        final List<BigDecimal> bigDecimals2 = TestData.createRandomQuotations(size, origin, bound).stream()
+                .map(QUOTATION_MAPPER::toBigDecimal)
+                .toList();
+        final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
+
+        final Pair<Duration, Duration> durations =
+                test(quotations1, bigDecimals2, bigDecimals1, bigDecimals2, quotationFunction, bigDecimalFunction);
+
+        System.out.println("quotationsTime = " + durations.getLeft().toMillis() + " ms");
+        System.out.println("decimalsTime = " + durations.getRight().toMillis() + " ms");
+    }
+
+    private <OUT> void testOnRandomQuotationsAndLongs(
+            final int size,
+            final long origin,
+            final long bound,
+            final BiFunction<Quotation, Long, OUT> quotationLongFunction,
+            final BiFunction<BigDecimal, BigDecimal, OUT> bigDecimalFunction
     ) {
         final List<Quotation> quotations = TestData.createRandomQuotations(size, origin, bound);
         final List<Long> longs = TestData.createRandomLongs(size, origin, bound);
@@ -184,25 +204,25 @@ class QuotationUtilsRandomDataUnitTest {
         final List<BigDecimal> bigDecimals2 = longs.stream().map(DecimalUtils::setDefaultScale).toList();
 
         final Pair<Duration, Duration> durations =
-                testRandomQuotationsLong(quotations, longs, bigDecimals1, bigDecimals2, quotationLongFunction, bigDecimalFunction);
+                test(quotations, longs, bigDecimals1, bigDecimals2, quotationLongFunction, bigDecimalFunction);
 
         System.out.println("quotationsTime = " + durations.getLeft().toMillis() + " ms");
         System.out.println("decimalsTime = " + durations.getRight().toMillis() + " ms");
     }
 
-    private <T> Pair<Duration, Duration> testRandomQuotations(
+    private <IN, OUT> Pair<Duration, Duration> test(
             final List<Quotation> quotations1,
-            final List<Quotation> quotations2,
+            final List<IN> quotations2,
             final List<BigDecimal> bigDecimals1,
             final List<BigDecimal> bigDecimals2,
-            final BiFunction<Quotation, Quotation, T> quotationFunction,
-            final BiFunction<BigDecimal, BigDecimal, T> bigDecimalFunction
+            final BiFunction<Quotation, IN, OUT> quotationFunction,
+            final BiFunction<BigDecimal, BigDecimal, OUT> bigDecimalFunction
     ) {
-        final ExecutionResult<List<T>> quotationResult =
+        final ExecutionResult<List<OUT>> quotationResult =
                 ExecutionUtils.get(() -> processLists(quotations1, quotations2, quotationFunction));
         Assertions.assertNotNull(quotationResult.result());
 
-        final ExecutionResult<List<T>> bigDecimalResult =
+        final ExecutionResult<List<OUT>> bigDecimalResult =
                 ExecutionUtils.get(() -> processLists(bigDecimals1, bigDecimals2, bigDecimalFunction));
         Assertions.assertNotNull(bigDecimalResult.result());
 
@@ -211,29 +231,8 @@ class QuotationUtilsRandomDataUnitTest {
         return Pair.of(quotationResult.duration(), bigDecimalResult.duration());
     }
 
-    private <T> Pair<Duration, Duration> testRandomQuotationsLong(
-            final List<Quotation> quotations,
-            final List<Long> longs,
-            final List<BigDecimal> bigDecimals1,
-            final List<BigDecimal> bigDecimals2,
-            final BiFunction<Quotation, Long, T> quotationFunction,
-            final BiFunction<BigDecimal, BigDecimal, T> bigDecimalFunction
-    ) {
-        final ExecutionResult<List<T>> quotationResult =
-                ExecutionUtils.get(() -> processLists(quotations, longs, quotationFunction));
-        Assertions.assertNotNull(quotationResult.result());
-
-        final ExecutionResult<List<T>> bigDecimalResult =
-                ExecutionUtils.get(() -> processLists(bigDecimals1, bigDecimals2, bigDecimalFunction));
-        Assertions.assertNotNull(bigDecimalResult.result());
-
-        AssertUtils.assertEquals(bigDecimalResult.result(), quotationResult.result());
-
-        return Pair.of(quotationResult.duration(), bigDecimalResult.duration());
-    }
-
-    private <T1, T2, T3> List<T3> processLists(final List<T1> list1, final List<T2> list2, final BiFunction<T1, T2, T3> function) {
-        final List<T3> result = new ArrayList<>(list1.size());
+    private <IN1, IN2, OUT> List<OUT> processLists(final List<IN1> list1, final List<IN2> list2, final BiFunction<IN1, IN2, OUT> function) {
+        final List<OUT> result = new ArrayList<>(list1.size());
         for (int i = 0; i < list1.size(); i++) {
             result.add(function.apply(list1.get(i), list2.get(i)));
         }

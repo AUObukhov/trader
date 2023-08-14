@@ -82,8 +82,8 @@ public class QuotationUtils {
         return Long.signum(diff);
     }
 
-    public static boolean equals(final Quotation quotation1, final Long number) {
-        return quotation1.getUnits() == number && quotation1.getNano() == 0;
+    public static boolean equals(final Quotation quotation, final Long number) {
+        return quotation.getUnits() == number && quotation.getNano() == 0;
     }
 
     public static Quotation max(final Quotation quotation1, final Quotation quotation2) {
