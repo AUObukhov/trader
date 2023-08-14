@@ -204,6 +204,13 @@ public class QuotationUtils {
         return multiply(quotation, subtract(1, fraction));
     }
 
+    /**
+     * @return {@code quotation1} / {@code quotation2} - 1
+     */
+    public static Quotation getFractionDifference(final Quotation quotation1, final Quotation quotation2) {
+        return subtract(divide(quotation1, quotation2, RoundingMode.HALF_UP), newNormalizedQuotation(1, 0));
+    }
+
     // region divide
 
     public static Quotation divide(final Quotation dividend, final Quotation divisor, final RoundingMode roundingMode) {

@@ -534,6 +534,42 @@ class QuotationUtilsUnitTest {
         Assertions.assertEquals(expectedNano, actualResult.getNano());
     }
 
+    // region getFractionDifference tests
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "123, 456, 123, 456, 0, 0",
+            "123, 456, 1, 0, 122, 456",
+            "765, 0, 762, 705000000, 0, 3009027",
+    })
+    void getFractionDifference(
+            final long units1, final int nano1,
+            final long units2, final int nano2,
+            final long expectedUnits, final int expectedNano
+    ) {
+        final Quotation quotation1 = QuotationUtils.newNormalizedQuotation(units1, nano1);
+        final Quotation quotation2 = QuotationUtils.newNormalizedQuotation(units2, nano2);
+
+        final Quotation actualResult = QuotationUtils.getFractionDifference(quotation1, quotation2);
+
+        final Quotation expectedResult = QuotationUtils.newNormalizedQuotation(expectedUnits, expectedNano);
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "10, 500000000",
+            "-8, 0",
+            "0, 0",
+    })
+    void divideByZeroQuotation_throwsArithmeticException_whenDivisorIsZero(final long dividendUnits, final int dividendNano) {
+        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation divisor = QuotationUtils.newNormalizedQuotation(0L, 0);
+        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
+    }
+
+    // endregion
+
     // region divide tests
 
     @ParameterizedTest
