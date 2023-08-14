@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
+
 @UtilityClass
 public class QuotationUtils {
 
@@ -71,11 +73,28 @@ public class QuotationUtils {
         return Long.signum(quotation.getUnits() | quotation.getNano());
     }
 
+    // region comparisons
+
     public static int compare(final Quotation left, final Quotation right) {
-        final long diffUnits = left.getUnits() - right.getUnits();
-        final int diffNano = left.getNano() - right.getNano();
-        return Long.signum(diffUnits | diffNano);
+        final long diff = left.getUnits() == right.getUnits()
+                ? left.getNano() - right.getNano()
+                : Math.subtractExact(left.getUnits(), right.getUnits());
+        return Long.signum(diff);
     }
+
+    public static boolean equals(final Quotation quotation1, final Long number) {
+        return quotation1.getUnits() == number && quotation1.getNano() == 0;
+    }
+
+    public static Quotation max(final Quotation quotation1, final Quotation quotation2) {
+        return compare(quotation1, quotation2) >= 0 ? quotation1 : quotation2;
+    }
+
+    public static Quotation min(final Quotation quotation1, final Quotation quotation2) {
+        return compare(quotation1, quotation2) <= 0 ? quotation1 : quotation2;
+    }
+
+    /// endregion
 
     // region add
 
@@ -123,19 +142,21 @@ public class QuotationUtils {
         return newNormalizedQuotation(units, minuend.getNano());
     }
 
+    public static Quotation subtract(final long minuend, final Quotation subtrahend) {
+        final long units = Math.subtractExact(minuend, subtrahend.getUnits());
+        return newNormalizedQuotation(units, -subtrahend.getNano());
+    }
+
     // endregion
 
     // region multiply
 
     public static Quotation multiply(final Quotation multiplicand1, final Quotation multiplicand2) {
-        long units = Math.multiplyExact(multiplicand1.getUnits(), multiplicand2.getUnits());
-        final long nanosProduct = ((long) multiplicand1.getNano()) * multiplicand2.getNano();
-        final long term1 = Math.multiplyExact(multiplicand1.getUnits(), multiplicand2.getNano());
-        final long term2 = Math.multiplyExact(multiplicand1.getNano(), multiplicand2.getUnits());
-        final long term3 = MathUtils.divideRoundUp(nanosProduct, NANOS_LIMIT);
-        long nano = Math.addExact(Math.addExact(term1, term2), term3);
+        return multiply(multiplicand1, multiplicand2.getUnits(), multiplicand2.getNano());
+    }
 
-        return newQuotationHandlingMultiplyingOverflow(units, nano);
+    public static Quotation multiply(final Quotation multiplicand1, final BigDecimal multiplicand2) {
+        return multiply(multiplicand1, multiplicand2.longValue(), DecimalUtils.getNano(multiplicand2));
     }
 
     public static Quotation multiply(final Quotation multiplicand1, final double multiplicand2) {
@@ -148,6 +169,17 @@ public class QuotationUtils {
         return multiply(multiplicand1, multiplicand2Quotation);
     }
 
+    public static Quotation multiply(final Quotation multiplicand1, final long multiplicand2Units, final int multiplicand2Nano) {
+        long units = Math.multiplyExact(multiplicand1.getUnits(), multiplicand2Units);
+        final long nanosProduct = ((long) multiplicand1.getNano()) * multiplicand2Nano;
+        final long term1 = Math.multiplyExact(multiplicand1.getUnits(), multiplicand2Nano);
+        final long term2 = Math.multiplyExact(multiplicand1.getNano(), multiplicand2Units);
+        final long term3 = MathUtils.divideRoundUp(nanosProduct, NANOS_LIMIT);
+        long nano = Math.addExact(Math.addExact(term1, term2), term3);
+
+        return newQuotationHandlingMultiplyingOverflow(units, nano);
+    }
+
     public static Quotation multiply(final Quotation multiplicand1, final long multiplicand2) {
         long units = Math.multiplyExact(multiplicand1.getUnits(), multiplicand2);
         long nano = Math.multiplyExact(multiplicand1.getNano(), multiplicand2);
@@ -156,6 +188,20 @@ public class QuotationUtils {
     }
 
     // endregion
+
+    /**
+     * @return {@code number} * (1 + {@code fraction})
+     */
+    public static Quotation addFraction(final Quotation number, final Quotation fraction) {
+        return multiply(number, add(fraction, 1));
+    }
+
+    /**
+     * @return {@code number} * (1 - {@code fraction})
+     */
+    public static Quotation subtractFraction(final Quotation number, final Quotation fraction) {
+        return multiply(number, subtract(1, fraction));
+    }
 
     // region divide
 

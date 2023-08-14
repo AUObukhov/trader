@@ -31,10 +31,13 @@ import ru.obukhov.trader.common.model.poi.ColorMapper;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -57,6 +60,7 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class AssertUtils {
 
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
 
     // region assertEquals
@@ -117,6 +121,18 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(@Nullable final Quotation expected, @Nullable final Quotation actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (actual == null) {
+            Assertions.fail(String.format("expected: <%s> but was: null", QuotationUtils.toPrettyString(expected)));
+        } else if (expected.getUnits() != actual.getUnits() || expected.getNano() != actual.getNano()) {
+            final String expectedString = QuotationUtils.toPrettyString(expected);
+            final String actualString = QuotationUtils.toPrettyString(actual);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expectedString, actualString));
+        }
+    }
+
     public static void assertEquals(final Position position1, final Position position2) {
         Assertions.assertEquals(position1.getFigi(), position2.getFigi());
         Assertions.assertEquals(position1.getInstrumentType(), position2.getInstrumentType());
@@ -173,6 +189,12 @@ public class AssertUtils {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
+            } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof Quotation actualQuotation) {
+                final BigDecimal actualBigDecimal = QUOTATION_MAPPER.toBigDecimal(actualQuotation);
+                if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, QuotationUtils.toString(actualQuotation), index))
+                            .append(System.lineSeparator());
+                }
             } else if (expectedValue instanceof ru.tinkoff.piapi.core.models.Money expectedMoney && actualValue instanceof ru.tinkoff.piapi.core.models.Money actualMoney) {
                 if (!equals(expectedMoney, actualMoney)) {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
@@ -193,6 +215,10 @@ public class AssertUtils {
                         .append(System.lineSeparator());
             }
             index++;
+            if (messageBuilder.length() > 1000) {
+                messageBuilder.append("...");
+                break;
+            }
         }
 
         if (!messageBuilder.isEmpty()) {
