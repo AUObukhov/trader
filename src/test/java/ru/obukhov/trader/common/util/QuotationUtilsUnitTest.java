@@ -1,12 +1,15 @@
 package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 class QuotationUtilsUnitTest {
 
@@ -535,67 +538,23 @@ class QuotationUtilsUnitTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "0, 0, 2, 34, 0, 0",
-            "0, 0, -2, -34, 0, 0",
-            "10, 500000000, 2, 0, 5, 250000000",
-            "-8, -10000000, -2, 0, 4, 5000000",
-            "-643462, -717162213, 526692, 440876624, -1, -221704865",
+            "0, 0, 2, 34, 0, 0, HALF_UP",
+            "0, 0, -2, -34, 0, 0, HALF_UP",
+            "10, 500000000, 2, 0, 5, 250000000, HALF_UP",
+            "-8, -10000000, -2, 0, 4, 5000000, HALF_UP",
+            "-643462, -717162213, 526692, 440876624, -1, -221704865, HALF_UP",
+            "-643462, -717162213, 526692, 440876624, -1, -221704864, DOWN",
     })
     void divideByQuotation(
             final long dividendUnits, final int dividendNano,
             final long divisorUnits, final int divisorNano,
-            final long expectedUnits, final int expectedNano
+            final long expectedUnits, final int expectedNano,
+            final RoundingMode roundingMode
     ) {
         final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
         final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
 
-        final Quotation actualResult = QuotationUtils.divide(dividend, divisor);
-
-        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
-        Assertions.assertEquals(expectedNano, actualResult.getNano());
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-            "10, 500000000, 2.5, 4, 200000000",
-            "-8, -10000000, -2.0, 4, 5000000",
-            "0, 0, 5.0, 0, 0",
-    })
-    void divideByDouble(final long dividendUnits, final int dividendNano, final double divisor, final long expectedUnits, final int expectedNano) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-
-        final Quotation actualResult = QuotationUtils.divide(dividend, divisor);
-
-        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
-        Assertions.assertEquals(expectedNano, actualResult.getNano());
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-            "10, 500000000, 2, 5, 250000000",
-            "-8, 0, -2, 4, 0",
-            "0, 0, 5, 0, 0",
-    })
-    void divideByLong(final long dividendUnits, final int dividendNano, final long divisor, final long expectedUnits, final int expectedNano) {
-        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-
-        final Quotation actualResult = QuotationUtils.divide(dividend, divisor);
-
-        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
-        Assertions.assertEquals(expectedNano, actualResult.getNano());
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {
-            "0 , 213 , 456, 0 , 0",
-            "2 , 10 , 500000000, 0 , 190476190",
-            "-2 , -8 , 0, 0 , 250000000",
-            "-20 , 3 , 500000000, -5 , -714285714",
-    })
-    void divideLong(final long dividend, final long divisorUnits, final int divisorNano, final long expectedUnits, final int expectedNano) {
-        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
-
-        final Quotation actualResult = QuotationUtils.divide(dividend, divisor);
+        final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
 
         Assertions.assertEquals(expectedUnits, actualResult.getUnits());
         Assertions.assertEquals(expectedNano, actualResult.getNano());
@@ -610,7 +569,49 @@ class QuotationUtilsUnitTest {
     void divideByZeroQuotation(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
         final Quotation divisor = QuotationUtils.newNormalizedQuotation(0L, 0);
-        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor));
+        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 0, 2, 34, UP",
+            "0, 0, -2, -34, CEILING",
+            "10, 500000000, 2, 0, FLOOR",
+            "-8, -10000000, -2, 0, HALF_DOWN",
+            "-643462, -717162213, 526692, 440876624, HALF_EVEN",
+            "-643462, -717162213, 526692, 440876624, UNNECESSARY",
+    })
+    void divideByQuotationWithUnexpectedRoundingMode(
+            final long dividendUnits, final int dividendNano,
+            final long divisorUnits, final int divisorNano,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+        final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "10, 500000000, 2.5, 4, 200000000, HALF_UP",
+            "-8, -10000000, -2.0, 4, 5000000, HALF_UP",
+            "0, 0, 5.0, 0, 0, HALF_UP",
+            "-643462, -717162213, 526692.440876624, -1, -221704865, HALF_UP",
+            "-643462, -717162213, 526692.440876624, -1, -221704864, DOWN",
+    })
+    void divideByDouble(
+            final long dividendUnits, final int dividendNano,
+            final double divisor,
+            final long expectedUnits, final int expectedNano,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+
+        final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
+
+        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
+        Assertions.assertEquals(expectedNano, actualResult.getNano());
     }
 
     @ParameterizedTest
@@ -621,7 +622,48 @@ class QuotationUtilsUnitTest {
     })
     void divideByZeroDouble(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, 0.0));
+        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, 0.0, RoundingMode.HALF_UP));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 0, 2.34, UP",
+            "0, 0, -2.34, CEILING",
+            "10, 500000000, 2.0, FLOOR",
+            "-8, -10000000, -2.0, HALF_DOWN",
+            "-643462, -717162213, 526692.440876624, HALF_EVEN",
+            "-643462, -717162213, 526692.440876624, UNNECESSARY",
+    })
+    void divideByDoubleWithUnexpectedRoundingMode(
+            final long dividendUnits, final int dividendNano,
+            final double divisor,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "10, 500000000, 2, 5, 250000000, HALF_UP",
+            "-8, 0, -2, 4, 0, HALF_UP",
+            "0, 0, 5, 0, 0, HALF_UP",
+            "100, 123456789, 2, 50, 61728395, HALF_UP",
+            "100, 123456789, 2, 50, 61728394, DOWN",
+    })
+    void divideByLong(
+            final long dividendUnits, final int dividendNano,
+            final long divisor,
+            final long expectedUnits, final int expectedNano,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+
+        final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
+
+        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
+        Assertions.assertEquals(expectedNano, actualResult.getNano());
     }
 
     @ParameterizedTest
@@ -632,14 +674,75 @@ class QuotationUtilsUnitTest {
     })
     void divideByZeroLong(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
-        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, 0L));
+        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, 0L, RoundingMode.HALF_UP));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 0, 2, UP",
+            "0, 0, -2, CEILING",
+            "10, 500000000, 2, FLOOR",
+            "-8, -10000000, -2, HALF_DOWN",
+            "-643462, -717162213, 526692, HALF_EVEN",
+            "-643462, -717162213, 526692, UNNECESSARY",
+    })
+    void divideByLongWithUnexpectedRoundingMode(
+            final long dividendUnits, final int dividendNano,
+            final long divisor,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation dividend = QuotationUtils.newNormalizedQuotation(dividendUnits, dividendNano);
+        final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 213, 456, 0, 0, HALF_UP",
+            "2, 10, 500000000, 0, 190476190, HALF_UP",
+            "-2, -8, 0, 0, 250000000, HALF_UP",
+            "-20, 3, 500000000, -5, -714285714, HALF_UP",
+            "100, 6, 600000000, 15, 151515152, HALF_UP",
+            "100, 6, 600000000, 15, 151515151, DOWN",
+    })
+    void divideLong(
+            final long dividend,
+            final long divisorUnits, final int divisorNano,
+            final long expectedUnits, final int expectedNano,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+
+        final Quotation actualResult = QuotationUtils.divide(dividend, divisor, roundingMode);
+
+        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
+        Assertions.assertEquals(expectedNano, actualResult.getNano());
     }
 
     @ParameterizedTest
     @ValueSource(longs = {10L, -8L, 0L})
     void divideLongByZero(final long dividend) {
         final Quotation divisor = QuotationUtils.newNormalizedQuotation(0L, 0);
-        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor));
+        Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 0, 2, UP",
+            "0, 0, -2, CEILING",
+            "10, 500000000, 2, FLOOR",
+            "-8, -10000000, -2, HALF_DOWN",
+            "-643462, -717162213, 526692, HALF_EVEN",
+            "-643462, -717162213, 526692, UNNECESSARY",
+    })
+    void divideLongWithUnexpectedRoundingMode(
+            final long dividend,
+            final long divisorUnits, final int divisorNano,
+            final RoundingMode roundingMode
+    ) {
+        final Quotation divisor = QuotationUtils.newNormalizedQuotation(divisorUnits, divisorNano);
+        final Executable executable = () -> QuotationUtils.divide(dividend, divisor, roundingMode);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected rounding mode " + roundingMode);
     }
 
     // endregion

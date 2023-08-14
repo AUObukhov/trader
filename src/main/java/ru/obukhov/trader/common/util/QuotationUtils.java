@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @UtilityClass
 public class QuotationUtils {
@@ -205,7 +206,7 @@ public class QuotationUtils {
 
     // region divide
 
-    public static Quotation divide(final Quotation dividend, final Quotation divisor) {
+    public static Quotation divide(final Quotation dividend, final Quotation divisor, final RoundingMode roundingMode) {
         validateDivisorIsNotZero(divisor);
 
         final int sign = getSign(dividend) * getSign(divisor);
@@ -224,22 +225,22 @@ public class QuotationUtils {
         final Int128 quotient = dividendAdjusted.selfDividePositive(divisorAdjusted);
 
         final long units = Math.multiplyExact(sign, quotient.toLongExact());
-        final int nano = Math.multiplyExact(sign, getNanoForDivision(dividendAdjusted, divisorAdjusted));
+        final int nano = Math.multiplyExact(sign, getNanoForDivision(dividendAdjusted, divisorAdjusted, roundingMode));
 
         return newNormalizedQuotation(units, nano);
     }
 
-    public static Quotation divide(final Quotation dividend, final double divisor) {
+    public static Quotation divide(final Quotation dividend, final double divisor, final RoundingMode roundingMode) {
         final long longDivisor = (long) divisor;
         final Quotation divisorQuotation = Quotation.newBuilder()
                 .setUnits(longDivisor)
                 .setNano((int) ((divisor - longDivisor) * NANOS_LIMIT))
                 .build();
 
-        return divide(dividend, divisorQuotation);
+        return divide(dividend, divisorQuotation, roundingMode);
     }
 
-    public static Quotation divide(final Quotation dividend, final long divisor) {
+    public static Quotation divide(final Quotation dividend, final long divisor, final RoundingMode roundingMode) {
         if (divisor == 0) {
             throw new ArithmeticException("Division by zero");
         }
@@ -259,11 +260,11 @@ public class QuotationUtils {
 
         final long units = Math.multiplyExact(sign, quotient);
 
-        final int nano = Math.multiplyExact(sign, getNanoForDivision(remainder, divisorAbsAdjusted));
+        final int nano = Math.multiplyExact(sign, getNanoForDivision(remainder, divisorAbsAdjusted, roundingMode));
         return newNormalizedQuotation(units, nano);
     }
 
-    public static Quotation divide(final long dividend, final Quotation divisor) {
+    public static Quotation divide(final long dividend, final Quotation divisor, final RoundingMode roundingMode) {
         validateDivisorIsNotZero(divisor);
 
         final int sign = Long.signum(dividend) * getSign(divisor);
@@ -281,29 +282,43 @@ public class QuotationUtils {
 
         final long units = Math.multiplyExact(sign, quotient);
 
-        final int nano = Math.multiplyExact(sign, getNanoForDivision(remainder, divisorAbsAdjusted));
+        final int nano = Math.multiplyExact(sign, getNanoForDivision(remainder, divisorAbsAdjusted, roundingMode));
         return newNormalizedQuotation(units, nano);
     }
 
-    private static int getNanoForDivision(final long remainder, final long divisorAdjusted) {
-        final Int128 int128RemainderAdjusted = Int128.multiplyPositive(remainder, NANOS_LIMIT);
-
-        final Int128 quotient = int128RemainderAdjusted.selfDividePositive(divisorAdjusted);
-        final long secondRemainder = int128RemainderAdjusted.toLongExact();
+    private static int getNanoForDivision(final long remainder, final long divisorAdjusted, final RoundingMode roundingMode) {
+        final Int128 remainderAdjusted = Int128.multiplyPositive(remainder, NANOS_LIMIT);
+        final Int128 quotient = remainderAdjusted.selfDividePositive(divisorAdjusted);
+        final long secondRemainder = remainderAdjusted.toLongExact();
         final int intQuotient = quotient.toIntExact();
-        return Math.multiplyExact(2, secondRemainder) >= divisorAdjusted
-                ? Math.incrementExact(intQuotient)
-                : intQuotient;
+        return round(intQuotient, divisorAdjusted, secondRemainder, roundingMode);
     }
 
-    private static int getNanoForDivision(final Int128 remainder, final Int128 divisorAdjusted) {
-        final Int128 int128RemainderAdjusted = remainder.multiplyExact(NANOS_LIMIT);
-
-        final Int128 quotient = int128RemainderAdjusted.selfDividePositive(divisorAdjusted);
+    private static int getNanoForDivision(final Int128 remainder, final Int128 divisorAdjusted, final RoundingMode roundingMode) {
+        final Int128 remainderAdjusted = remainder.multiplyExact(NANOS_LIMIT);
+        final Int128 quotient = remainderAdjusted.selfDividePositive(divisorAdjusted);
         final int intQuotient = quotient.toIntExact();
-        return int128RemainderAdjusted.multiplyExact(2).compare(divisorAdjusted) >= 0
-                ? Math.incrementExact(intQuotient)
-                : intQuotient;
+        return round(intQuotient, divisorAdjusted, remainderAdjusted, roundingMode);
+    }
+
+    private static int round(final int quotient, final long divisor, final long remainder, final RoundingMode roundingMode) {
+        return switch (roundingMode) {
+            case HALF_UP -> Math.multiplyExact(remainder, 2) >= divisor
+                    ? Math.incrementExact(quotient)
+                    : quotient;
+            case DOWN -> quotient;
+            default -> throw new IllegalArgumentException("Unexpected rounding mode " + roundingMode);
+        };
+    }
+
+    private static int round(final int quotient, final Int128 divisor, final Int128 remainder, final RoundingMode roundingMode) {
+        return switch (roundingMode) {
+            case HALF_UP -> remainder.multiplyExact(2).compare(divisor) >= 0
+                    ? Math.incrementExact(quotient)
+                    : quotient;
+            case DOWN -> quotient;
+            default -> throw new IllegalArgumentException("Unexpected rounding mode " + roundingMode);
+        };
     }
 
     private static void validateDivisorIsNotZero(final Quotation divisor) {

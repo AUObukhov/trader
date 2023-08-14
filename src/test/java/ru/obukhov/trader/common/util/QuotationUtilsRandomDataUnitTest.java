@@ -11,6 +11,7 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,14 +129,18 @@ class QuotationUtilsRandomDataUnitTest {
     void divide() {
         final long origin = Long.MIN_VALUE / QuotationUtils.NANOS_LIMIT;
         final long bound = Long.MAX_VALUE / QuotationUtils.NANOS_LIMIT;
-        testOnRandomQuotations(10000000, origin, bound, QuotationUtils::divide, DecimalUtils::divide);
+        BiFunction<Quotation, Quotation, Object> quotationFunction =
+                (dividend, divisor) -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP);
+        testOnRandomQuotations(10000000, origin, bound, quotationFunction, DecimalUtils::divide);
     }
 
     @Test
     void divideLong() {
         final long origin = Long.MIN_VALUE / QuotationUtils.NANOS_LIMIT / 2;
         final long bound = Long.MAX_VALUE / QuotationUtils.NANOS_LIMIT / 2;
-        testOnRandomQuotationsAndLongs(10000000, origin, bound, QuotationUtils::divide, DecimalUtils::divide);
+        BiFunction<Quotation, Long, Object> quotationFunction =
+                (dividend, divisor) -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP);
+        testOnRandomQuotationsAndLongs(10000000, origin, bound, quotationFunction, DecimalUtils::divide);
     }
 
     @Test
