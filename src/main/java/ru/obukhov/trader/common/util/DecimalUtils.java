@@ -44,7 +44,7 @@ public class DecimalUtils {
      */
     public static int getNano(@NotNull final BigDecimal bigDecimal) {
         return bigDecimal.remainder(BigDecimal.ONE)
-                .multiply(BigDecimal.valueOf(Math.pow(10, DEFAULT_SCALE)))
+                .movePointRight(DEFAULT_SCALE)
                 .intValue();
     }
 
