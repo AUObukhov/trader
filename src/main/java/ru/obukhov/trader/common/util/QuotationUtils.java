@@ -191,17 +191,17 @@ public class QuotationUtils {
     // endregion
 
     /**
-     * @return {@code number} * (1 + {@code fraction})
+     * @return {@code quotation} * (1 + {@code fraction})
      */
-    public static Quotation addFraction(final Quotation number, final Quotation fraction) {
-        return multiply(number, add(fraction, 1));
+    public static Quotation addFraction(final Quotation quotation, final Quotation fraction) {
+        return multiply(quotation, add(fraction, 1));
     }
 
     /**
-     * @return {@code number} * (1 - {@code fraction})
+     * @return {@code quotation} * (1 - {@code fraction})
      */
-    public static Quotation subtractFraction(final Quotation number, final Quotation fraction) {
-        return multiply(number, subtract(1, fraction));
+    public static Quotation subtractFraction(final Quotation quotation, final Quotation fraction) {
+        return multiply(quotation, subtract(1, fraction));
     }
 
     // region divide
