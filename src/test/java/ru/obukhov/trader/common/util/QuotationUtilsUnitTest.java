@@ -14,6 +14,8 @@ import java.math.RoundingMode;
 
 class QuotationUtilsUnitTest {
 
+    // region newQuotation tests
+
     @ParameterizedTest
     @ValueSource(longs = {0L, 1L, -1L})
     void newQuotation_withUnitsOnly(final long units) {
@@ -39,6 +41,70 @@ class QuotationUtilsUnitTest {
         Assertions.assertEquals(units, actualResult.getUnits());
         Assertions.assertEquals(nano, actualResult.getNano());
     }
+
+    // region newQuotation from Double tests
+
+    @Test
+    void newQuotation_fromDouble_whenNull() {
+        final Double value = null;
+        Assertions.assertNull(QuotationUtils.newQuotation(value));
+    }
+
+    @Test
+    void newQuotation_fromDouble_whenZero() {
+        final Quotation quotation = QuotationUtils.newQuotation(0.0);
+
+        Assertions.assertEquals(0, quotation.getUnits());
+        Assertions.assertEquals(0, quotation.getNano());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "100.000000100, 100, 100",
+            "123.0000000004, 123, 0",
+            "123.0000000005, 123, 1",
+            "-100.000000100, -100, -100",
+            "-123.0000000004, -123, 0",
+            "-123.0000000005, -123, -1",
+    })
+    void newQuotation_fromDouble(final double value, final long expectedUnits, final int expectedNano) {
+        final Quotation quotation = QuotationUtils.newQuotation(value);
+
+        Assertions.assertEquals(expectedUnits, quotation.getUnits());
+        Assertions.assertEquals(expectedNano, quotation.getNano());
+    }
+
+    // endregion
+
+    // region newQuotation from BigDecimal tests
+
+    @Test
+    void newQuotation_fromBigDecimal_whenNull() {
+        final BigDecimal value = null;
+        Assertions.assertNull(QuotationUtils.newQuotation(value));
+    }
+
+    @Test
+    void newQuotation_fromBigDecimal_whenZero() {
+        final Quotation quotation = QuotationUtils.newQuotation(DecimalUtils.setDefaultScale(0));
+
+        Assertions.assertEquals(0, quotation.getUnits());
+        Assertions.assertEquals(0, quotation.getNano());
+    }
+
+    @Test
+    void newQuotation_fromBigDecimal() {
+        final BigDecimal bigDecimal = DecimalUtils.setDefaultScale(100.000000100);
+
+        final Quotation quotation = QuotationUtils.newQuotation(bigDecimal);
+
+        Assertions.assertEquals(100, quotation.getUnits());
+        Assertions.assertEquals(100, quotation.getNano());
+    }
+
+    // endregion
+
+    // endregion
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -88,56 +154,29 @@ class QuotationUtilsUnitTest {
 
     // endregion
 
-    // region fromBigDecimal tests
+    // region toDouble tests
 
     @Test
-    void fromBigDecimal_whenNull() {
-        Assertions.assertNull(QuotationUtils.fromBigDecimal(null));
+    void toDouble_whenNull() {
+        Assertions.assertNull(QuotationUtils.toDouble(null));
     }
 
     @Test
-    void fromBigDecimal_whenZero() {
-        final Quotation quotation = QuotationUtils.fromBigDecimal(DecimalUtils.setDefaultScale(0));
+    void toDouble_whenZero() {
+        final Quotation quotation = QuotationUtils.ZERO;
 
-        Assertions.assertEquals(0, quotation.getUnits());
-        Assertions.assertEquals(0, quotation.getNano());
+        final Double actualResult = QuotationUtils.toDouble(quotation);
+
+        Assertions.assertEquals(0, actualResult);
     }
 
     @Test
-    void fromBigDecimal() {
-        final BigDecimal bigDecimal = DecimalUtils.setDefaultScale(100.000000100);
+    void toDouble() {
+        final Quotation quotation = QuotationUtils.newQuotation(100L, 100);
 
-        final Quotation quotation = QuotationUtils.fromBigDecimal(bigDecimal);
+        final Double actualResult = QuotationUtils.toDouble(quotation);
 
-        Assertions.assertEquals(100, quotation.getUnits());
-        Assertions.assertEquals(100, quotation.getNano());
-    }
-
-    // endregion
-
-    // region fromDouble tests
-
-    @Test
-    void fromDouble_whenNull() {
-        Assertions.assertNull(QuotationUtils.fromDouble(null));
-    }
-
-    @Test
-    void fromDouble_whenZero() {
-        final Quotation quotation = QuotationUtils.fromDouble(0.0);
-
-        Assertions.assertEquals(0, quotation.getUnits());
-        Assertions.assertEquals(0, quotation.getNano());
-    }
-
-    @Test
-    void fromDouble() {
-        final double doubleValue = 100.000000100;
-
-        final Quotation quotation = QuotationUtils.fromDouble(doubleValue);
-
-        Assertions.assertEquals(100, quotation.getUnits());
-        Assertions.assertEquals(100, quotation.getNano());
+        Assertions.assertEquals(100.000000100, actualResult);
     }
 
     // endregion
@@ -421,6 +460,27 @@ class QuotationUtilsUnitTest {
         final Quotation term2 = QuotationUtils.newQuotation(units2, nano2);
 
         final Quotation actualResult = QuotationUtils.add(term1, term2);
+
+        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
+        Assertions.assertEquals(expectedNano, actualResult.getNano());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "1480266388955167775, 529438291, 0.6174392196280002, 1480266388955167776, 146877511",
+            "2, 500000000, 3.5, 6, 0",
+            "-5, 0, 3.0, -2, 0",
+            "0, 0, 0.0, 0, 0",
+            "-5, 0, 3.75, -1, -250000000",
+            "0, -50000000, 3.0,2, 950000000",
+            "0, 0, -0.75, 0, -750000000",
+            "0, 0, 0.75, 0, 750000000",
+    })
+    void addBigDecimal(final long units, final int nano, final double term2, final long expectedUnits, final int expectedNano) {
+        final Quotation term1 = QuotationUtils.newQuotation(units, nano);
+        final BigDecimal term2BigDecimal = DecimalUtils.setDefaultScale(term2);
+
+        final Quotation actualResult = QuotationUtils.add(term1, term2BigDecimal);
 
         Assertions.assertEquals(expectedUnits, actualResult.getUnits());
         Assertions.assertEquals(expectedNano, actualResult.getNano());

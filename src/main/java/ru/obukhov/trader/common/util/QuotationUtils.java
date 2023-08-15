@@ -27,6 +27,18 @@ public class QuotationUtils {
                 .build();
     }
 
+    public static Quotation newQuotation(final Double value) {
+        return value == null
+                ? null
+                : newQuotation(DecimalUtils.setDefaultScale(value));
+    }
+
+    public static Quotation newQuotation(final BigDecimal bigDecimal) {
+        return bigDecimal == null
+                ? null
+                : newQuotation(bigDecimal.longValue(), DecimalUtils.getNano(bigDecimal));
+    }
+
     public static Quotation newNormalizedQuotation(final long units, final int nano) {
         // normalization
         if (units < 0 && nano > 0) {
@@ -62,22 +74,16 @@ public class QuotationUtils {
 
     // region conversion
 
+    public static Double toDouble(final Quotation quotation) {
+        return quotation == null
+                ? null
+                : quotation.getUnits() + ((double) quotation.getNano()) / NANOS_LIMIT;
+    }
+
     public static BigDecimal toBigDecimal(final Quotation quotation) {
         return quotation == null
                 ? null
                 : DecimalUtils.createBigDecimal(quotation.getUnits(), quotation.getNano());
-    }
-
-    public static Quotation fromBigDecimal(final BigDecimal bigDecimal) {
-        return bigDecimal == null
-                ? null
-                : newQuotation(bigDecimal.longValue(), DecimalUtils.getNano(bigDecimal));
-    }
-
-    public static Quotation fromDouble(final Double value) {
-        return value == null
-                ? null
-                : fromBigDecimal(DecimalUtils.setDefaultScale(value));
     }
 
     public static String toString(final Quotation quotation) {
@@ -113,7 +119,7 @@ public class QuotationUtils {
 
     @SuppressWarnings("java:S2259") // Null pointers should not be dereferenced
     public static int compare(final Quotation left, final double right) {
-        final Quotation rightQuotation = fromDouble(right);
+        final Quotation rightQuotation = newQuotation(right);
         final long diff = left.getUnits() == rightQuotation.getUnits()
                 ? left.getNano() - rightQuotation.getNano()
                 : Math.subtractExact(left.getUnits(), rightQuotation.getUnits());
@@ -147,6 +153,11 @@ public class QuotationUtils {
         return newQuotationHandlingAddingOverflow(units, nano);
     }
 
+    public static Quotation add(final Quotation term1, final BigDecimal term2) {
+        final Quotation term2BigDecimal = newQuotation(term2);
+        return add(term1, term2BigDecimal);
+    }
+
     public static Quotation add(final Quotation term1, final double term2) {
         final long longTerm2 = (long) term2;
         long units = Math.addExact(term1.getUnits(), longTerm2);
@@ -172,7 +183,7 @@ public class QuotationUtils {
     }
 
     public static Quotation subtract(final Quotation minuend, final BigDecimal subtrahend) {
-        final Quotation subtrahendBigDecimal = newQuotation(subtrahend.longValue(), DecimalUtils.getNano(subtrahend));
+        final Quotation subtrahendBigDecimal = newQuotation(subtrahend);
         return subtract(minuend, subtrahendBigDecimal);
     }
 

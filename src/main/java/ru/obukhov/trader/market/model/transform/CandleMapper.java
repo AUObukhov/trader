@@ -25,7 +25,7 @@ public interface CandleMapper {
     }
 
     default Quotation map(final BigDecimal bigDecimal) {
-        return QuotationUtils.fromBigDecimal(bigDecimal);
+        return QuotationUtils.newQuotation(bigDecimal);
     }
 
 }
