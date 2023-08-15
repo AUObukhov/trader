@@ -71,7 +71,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void toBigDecimal_whenZero() {
-        final Quotation quotation = QuotationUtils.newQuotation(0L);
+        final Quotation quotation = QuotationUtils.ZERO;
 
         final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
 
@@ -756,7 +756,7 @@ class QuotationUtilsUnitTest {
     })
     void divideByZeroQuotation_throwsArithmeticException_whenDivisorIsZero(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newQuotation(0L);
+        final Quotation divisor = QuotationUtils.ZERO;
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -796,7 +796,7 @@ class QuotationUtilsUnitTest {
     })
     void divideByZeroQuotation(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newQuotation(0L);
+        final Quotation divisor = QuotationUtils.ZERO;
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -950,7 +950,7 @@ class QuotationUtilsUnitTest {
     @ParameterizedTest
     @ValueSource(longs = {10L, -8L, 0L})
     void divideLongByZero(final long dividend) {
-        final Quotation divisor = QuotationUtils.newQuotation(0L);
+        final Quotation divisor = QuotationUtils.ZERO;
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 

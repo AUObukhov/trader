@@ -12,6 +12,8 @@ public class QuotationUtils {
 
     static final int NANOS_LIMIT = 1_000_000_000;
 
+    public static final Quotation ZERO = newQuotation(0L);
+
     public static Quotation newQuotation(final long units) {
         return Quotation.newBuilder()
                 .setUnits(units)
