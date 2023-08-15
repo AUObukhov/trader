@@ -64,9 +64,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void toBigDecimal_whenNull() {
-        final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(null);
-
-        Assertions.assertNull(bigDecimal);
+        Assertions.assertNull(QuotationUtils.toBigDecimal(null));
     }
 
     @Test
@@ -94,9 +92,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void fromBigDecimal_whenNull() {
-        final Quotation quotation = QuotationUtils.fromBigDecimal(null);
-
-        Assertions.assertNull(quotation);
+        Assertions.assertNull(QuotationUtils.fromBigDecimal(null));
     }
 
     @Test
@@ -123,9 +119,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void fromDouble_whenNull() {
-        final Quotation quotation = QuotationUtils.fromDouble(null);
-
-        Assertions.assertNull(quotation);
+        Assertions.assertNull(QuotationUtils.fromDouble(null));
     }
 
     @Test
