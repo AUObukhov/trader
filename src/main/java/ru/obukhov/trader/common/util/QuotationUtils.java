@@ -10,7 +10,7 @@ import java.math.RoundingMode;
 @UtilityClass
 public class QuotationUtils {
 
-    public static final int NANOS_LIMIT = 1_000_000_000;
+    static final int NANOS_LIMIT = 1_000_000_000;
 
     public static Quotation newQuotation(final long units) {
         return Quotation.newBuilder()
