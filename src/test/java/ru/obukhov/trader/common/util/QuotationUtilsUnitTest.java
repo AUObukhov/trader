@@ -15,6 +15,15 @@ import java.math.RoundingMode;
 class QuotationUtilsUnitTest {
 
     @ParameterizedTest
+    @ValueSource(longs = {0L, 1L, -1L})
+    void newQuotation_withUnitsOnly(final long units) {
+        final Quotation actualResult = QuotationUtils.newQuotation(units);
+
+        Assertions.assertEquals(units, actualResult.getUnits());
+        Assertions.assertEquals(0, actualResult.getNano());
+    }
+
+    @ParameterizedTest
     @CsvSource(value = {
             "0, 0",
             "1, 0",
@@ -24,7 +33,7 @@ class QuotationUtilsUnitTest {
             "0, -6",
             "-7, -8",
     })
-    void newQuotation(final long units, final int nano) {
+    void newQuotation_withUnitsAndNano(final long units, final int nano) {
         final Quotation actualResult = QuotationUtils.newQuotation(units, nano);
 
         Assertions.assertEquals(units, actualResult.getUnits());
@@ -62,7 +71,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void toBigDecimal_whenZero() {
-        final Quotation quotation = QuotationUtils.newQuotation(0, 0);
+        final Quotation quotation = QuotationUtils.newQuotation(0L);
 
         final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
 
@@ -71,7 +80,7 @@ class QuotationUtilsUnitTest {
 
     @Test
     void toBigDecimal() {
-        final Quotation quotation = QuotationUtils.newQuotation(100, 100);
+        final Quotation quotation = QuotationUtils.newQuotation(100L, 100);
 
         final BigDecimal bigDecimal = QuotationUtils.toBigDecimal(quotation);
 
@@ -491,6 +500,27 @@ class QuotationUtilsUnitTest {
             "5, 0, 3.25, 1, 750000000",
             "-8, 0, -3.5, -4, -500000000",
     })
+    void subtractBigDecimal(
+            final long minuendUnits, final int minuendNano,
+            final double subtrahend,
+            final long expectedUnits, final int expectedNano
+    ) {
+        final Quotation minuend = QuotationUtils.newQuotation(minuendUnits, minuendNano);
+        final BigDecimal subtrahendBigDecimal = DecimalUtils.setDefaultScale(subtrahend);
+
+        final Quotation actualResult = QuotationUtils.subtract(minuend, subtrahendBigDecimal);
+
+        Assertions.assertEquals(expectedUnits, actualResult.getUnits());
+        Assertions.assertEquals(expectedNano, actualResult.getNano());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0, 0, 0.0, 0, 0",
+            "4413245233893295410 , 459141691, 0.9843820997815861, 4413245233893295409 , 474759591",
+            "5, 0, 3.25, 1, 750000000",
+            "-8, 0, -3.5, -4, -500000000",
+    })
     void subtractDouble(
             final long minuendUnits, final int minuendNano,
             final double subtrahend,
@@ -726,7 +756,7 @@ class QuotationUtilsUnitTest {
     })
     void divideByZeroQuotation_throwsArithmeticException_whenDivisorIsZero(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newQuotation(0L, 0);
+        final Quotation divisor = QuotationUtils.newQuotation(0L);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -766,7 +796,7 @@ class QuotationUtilsUnitTest {
     })
     void divideByZeroQuotation(final long dividendUnits, final int dividendNano) {
         final Quotation dividend = QuotationUtils.newQuotation(dividendUnits, dividendNano);
-        final Quotation divisor = QuotationUtils.newQuotation(0L, 0);
+        final Quotation divisor = QuotationUtils.newQuotation(0L);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 
@@ -920,7 +950,7 @@ class QuotationUtilsUnitTest {
     @ParameterizedTest
     @ValueSource(longs = {10L, -8L, 0L})
     void divideLongByZero(final long dividend) {
-        final Quotation divisor = QuotationUtils.newQuotation(0L, 0);
+        final Quotation divisor = QuotationUtils.newQuotation(0L);
         Assertions.assertThrows(ArithmeticException.class, () -> QuotationUtils.divide(dividend, divisor, RoundingMode.HALF_UP));
     }
 

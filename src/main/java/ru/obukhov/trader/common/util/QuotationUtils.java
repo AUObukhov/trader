@@ -12,6 +12,12 @@ public class QuotationUtils {
 
     public static final int NANOS_LIMIT = 1_000_000_000;
 
+    public static Quotation newQuotation(final long units) {
+        return Quotation.newBuilder()
+                .setUnits(units)
+                .build();
+    }
+
     public static Quotation newQuotation(final long units, final int nano) {
         return Quotation.newBuilder()
                 .setUnits(units)
@@ -163,6 +169,11 @@ public class QuotationUtils {
         return newQuotationHandlingAddingOverflow(units, nano);
     }
 
+    public static Quotation subtract(final Quotation minuend, final BigDecimal subtrahend) {
+        final Quotation subtrahendBigDecimal = newQuotation(subtrahend.longValue(), DecimalUtils.getNano(subtrahend));
+        return subtract(minuend, subtrahendBigDecimal);
+    }
+
     public static Quotation subtract(final Quotation minuend, final double subtrahend) {
         final long longSubtrahend = (long) subtrahend;
         long units = Math.subtractExact(minuend.getUnits(), longSubtrahend);
@@ -241,7 +252,7 @@ public class QuotationUtils {
      * @return {@code quotation1} / {@code quotation2} - 1
      */
     public static Quotation getFractionDifference(final Quotation quotation1, final Quotation quotation2) {
-        return subtract(divide(quotation1, quotation2, RoundingMode.HALF_UP), newQuotation(1, 0));
+        return subtract(divide(quotation1, quotation2, RoundingMode.HALF_UP), newQuotation(1L));
     }
 
     // region divide

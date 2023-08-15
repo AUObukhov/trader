@@ -18,8 +18,8 @@ public class TestCurrency1 {
     public static final String ISIN = "";
     public static final int LOT = 1000;
     public static final String CURRENCY_VALUE = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newQuotation(2L, 0);
-    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L, 0);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(2L);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L);
     public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 500000000);
     public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 500000000);
     public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 292900000);
@@ -34,7 +34,7 @@ public class TestCurrency1 {
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final String ISO_CURRENCY_NAME = "usd";
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 2500000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 2500000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "a22a1263-8e1b-4546-a1aa-416463f104d3";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

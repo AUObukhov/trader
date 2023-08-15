@@ -19,8 +19,8 @@ public class TestShare3 {
     public static final String ISIN = "NL0009805522";
     public static final int LOT = 1;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newQuotation(2L, 0);
-    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L, 0);
+    public static final Quotation KLONG = QuotationUtils.newQuotation(2L);
+    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L);
     public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 250000000);
     public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 204300000);
     public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 134000000);
