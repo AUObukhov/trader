@@ -24,7 +24,7 @@ public class TestEtf3 {
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "iShares MSCI South Africa ETF";
     public static final String EXCHANGE = "spb_etf";
-    public static final Quotation FIXED_COMMISSION = QuotationUtils.newQuotation(0, 640000000);
+    public static final Quotation FIXED_COMMISSION = QuotationUtils.newQuotation(0L, 640000000);
     public static final String FOCUS_TYPE = "equity";
     public static final Timestamp RELEASED_DATE = Timestamp.newBuilder().setSeconds(1044576000L).setNanos(0).build();
     public static final Quotation NUM_SHARES = QuotationUtils.newQuotation(9600000L);

@@ -34,7 +34,7 @@ public class TestInstrument1 {
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 10_000_000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 10_000_000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "a9eb4238-eba9-488c-b102-b6140fd08e38";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_RTS;
