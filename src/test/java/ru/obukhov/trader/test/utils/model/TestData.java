@@ -103,7 +103,6 @@ public class TestData {
                 .setAveragePositionPrice(createMoneyValue(averagePositionPrice, currency))
                 .setExpectedYield(createQuotation(expectedYield))
                 .setCurrentNkd(createMoneyValue(currency))
-                .setAveragePositionPricePt(createQuotation())
                 .setCurrentPrice(createMoneyValue(currentPrice, currency))
                 .setAveragePositionPriceFifo(createMoneyValue(currency))
                 .setQuantityLots(createQuotation(quantityLots))

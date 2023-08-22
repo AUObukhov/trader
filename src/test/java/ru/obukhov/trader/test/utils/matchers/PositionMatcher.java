@@ -24,7 +24,6 @@ public class PositionMatcher implements ArgumentMatcher<Position> {
                 && AssertUtils.equals(expectedPositions.getAveragePositionPrice(), actualPosition.getAveragePositionPrice())
                 && DecimalUtils.numbersEqual(expectedPositions.getExpectedYield(), actualPosition.getExpectedYield())
                 && AssertUtils.equals(expectedPositions.getCurrentNkd(), actualPosition.getCurrentNkd())
-                && DecimalUtils.numbersEqual(expectedPositions.getAveragePositionPricePt(), actualPosition.getAveragePositionPricePt())
                 && AssertUtils.equals(expectedPositions.getCurrentPrice(), actualPosition.getCurrentPrice())
                 && AssertUtils.equals(expectedPositions.getAveragePositionPriceFifo(), actualPosition.getAveragePositionPriceFifo())
                 && DecimalUtils.numbersEqual(expectedPositions.getQuantityLots(), actualPosition.getQuantityLots());

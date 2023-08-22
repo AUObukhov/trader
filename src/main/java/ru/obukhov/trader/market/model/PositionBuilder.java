@@ -23,7 +23,6 @@ public class PositionBuilder {
     private BigDecimal averagePositionPrice;
     private BigDecimal expectedYield;
     private BigDecimal currentNkd;
-    private BigDecimal averagePositionPricePt;
     private BigDecimal currentPrice;
     private BigDecimal averagePositionPriceFifo;
     private BigDecimal quantityLots;
@@ -79,11 +78,6 @@ public class PositionBuilder {
     }
 
     @Tolerate
-    public PositionBuilder setAveragePositionPricePt(final double averagePositionPricePt) {
-        return setAveragePositionPricePt(DecimalUtils.setDefaultScale(averagePositionPricePt));
-    }
-
-    @Tolerate
     public PositionBuilder setCurrentPrice(final Quotation currentPrice) {
         return setCurrentPrice(QuotationUtils.toBigDecimal(currentPrice));
     }
@@ -121,7 +115,7 @@ public class PositionBuilder {
                 .averagePositionPrice(DataStructsHelper.createMoney(averagePositionPrice, currency))
                 .expectedYield(expectedYield)
                 .currentNkd(DataStructsHelper.createMoney(currentNkd, currency))
-                .averagePositionPricePt(averagePositionPricePt)
+                .averagePositionPricePt(BigDecimal.ZERO)
                 .currentPrice(DataStructsHelper.createMoney(currentPrice, currency))
                 .averagePositionPriceFifo(DataStructsHelper.createMoney(averagePositionPriceFifo, currency))
                 .quantityLots(quantityLots)

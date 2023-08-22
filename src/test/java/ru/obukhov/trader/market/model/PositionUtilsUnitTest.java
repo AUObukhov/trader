@@ -54,7 +54,6 @@ class PositionUtilsUnitTest {
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
                 .setCurrentNkd(123.123)
-                .setAveragePositionPricePt(456.456)
                 .setCurrentPrice(20)
                 .setAveragePositionPriceFifo(789.789)
                 .setQuantityLots(3)
@@ -77,8 +76,6 @@ class PositionUtilsUnitTest {
         AssertUtils.assertEquals(123.123, newPosition.getCurrentNkd().getValue());
         Assertions.assertEquals(currency, newPosition.getCurrentNkd().getCurrency());
 
-        AssertUtils.assertEquals(456.456, newPosition.getAveragePositionPricePt());
-
         AssertUtils.assertEquals(15, newPosition.getCurrentPrice().getValue());
         Assertions.assertEquals(currency, newPosition.getCurrentPrice().getCurrency());
 
@@ -100,7 +97,6 @@ class PositionUtilsUnitTest {
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
                 .setCurrentNkd(123.123)
-                .setAveragePositionPricePt(456.456)
                 .setCurrentPrice(20)
                 .setAveragePositionPriceFifo(789.789)
                 .setQuantityLots(4)
@@ -118,7 +114,6 @@ class PositionUtilsUnitTest {
                 .setAveragePositionPrice(position.getAveragePositionPrice())
                 .setExpectedYield(position.getExpectedYield())
                 .setCurrentNkd(position.getCurrentNkd())
-                .setAveragePositionPricePt(position.getAveragePositionPricePt())
                 .setCurrentPrice(newCurrentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
                 .setQuantityLots(position.getQuantityLots())
@@ -138,7 +133,6 @@ class PositionUtilsUnitTest {
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
                 .setCurrentNkd(123.123)
-                .setAveragePositionPricePt(456.456)
                 .setCurrentPrice(20)
                 .setAveragePositionPriceFifo(789.789)
                 .setQuantityLots(4)
@@ -159,7 +153,6 @@ class PositionUtilsUnitTest {
                 .setAveragePositionPrice(position.getAveragePositionPrice())
                 .setExpectedYield(newExpectedYield)
                 .setCurrentNkd(position.getCurrentNkd())
-                .setAveragePositionPricePt(position.getAveragePositionPricePt())
                 .setCurrentPrice(newCurrentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
                 .setQuantityLots(newQuantityLots)

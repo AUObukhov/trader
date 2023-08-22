@@ -160,7 +160,6 @@ public class AssertUtils {
         assertEquals(position1.getAveragePositionPrice(), position2.getAveragePositionPrice());
         assertEquals(position1.getExpectedYield(), position2.getExpectedYield());
         assertEquals(position1.getCurrentNkd(), position2.getCurrentNkd());
-        assertEquals(position1.getAveragePositionPricePt(), position2.getAveragePositionPricePt());
         assertEquals(position1.getCurrentPrice(), position2.getCurrentPrice());
         assertEquals(position1.getAveragePositionPriceFifo(), position2.getAveragePositionPriceFifo());
         assertEquals(position1.getQuantityLots(), position2.getQuantityLots());
