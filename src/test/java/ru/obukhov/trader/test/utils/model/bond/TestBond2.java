@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils.model.bond;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -29,12 +30,12 @@ public class TestBond2 {
     public static final String EXCHANGE = "MOEX";
     public static final int COUPON_QUANTITY_PER_YEAR = 2;
     public static final Timestamp MATURITY_DATE = Timestamp.newBuilder().setSeconds(1753747200L).setNanos(0).build();
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
-    public static final MoneyValue INITIAL_NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
+    public static final MoneyValue NOMINAL = TestData.createMoneyValue(1000, Currencies.RUB);
+    public static final MoneyValue INITIAL_NOMINAL = TestData.createMoneyValue(1000, Currencies.RUB);
     public static final Timestamp STATE_REG_DATE = Timestamp.newBuilder().setSeconds(1658966400L).setNanos(0).build();
     public static final Timestamp PLACEMENT_DATE = Timestamp.newBuilder().setSeconds(1659398400L).setNanos(0).build();
-    public static final MoneyValue PLACEMENT_PRICE = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
-    public static final MoneyValue ACI_VALUE = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(45).setNano(80000000).build();
+    public static final MoneyValue PLACEMENT_PRICE = TestData.createMoneyValue(1000, Currencies.RUB);
+    public static final MoneyValue ACI_VALUE = TestData.createMoneyValue(45.08, Currencies.RUB);
     public static final String COUNTRY_OF_RISK = "KZ";
     public static final String COUNTRY_OF_RISK_NAME = "Республика Казахстан";
     public static final String SECTOR = "financial";
@@ -115,6 +116,54 @@ public class TestBond2 {
             .setRiskLevel(RISK_LEVEL)
             .build();
 
-    public static final String STRING = "{\"figi\":\"TCS00A1050H0\",\"ticker\":\"RU000A1050H0\",\"classCode\":\"TQCB\",\"isin\":\"RU000A1050H0\",\"lot\":1,\"currency\":\"rub\",\"klong\":0,\"kshort\":0,\"dlong\":0,\"dshort\":0,\"dlongMin\":0,\"dshortMin\":0,\"shortEnabledFlag\":false,\"name\":\"ЕАБР\",\"exchange\":\"MOEX\",\"couponQuantityPerYear\":2,\"maturityDate\":{\"seconds\":1753747200,\"nanos\":0},\"nominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"initialNominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"stateRegDate\":{\"seconds\":1658966400,\"nanos\":0},\"placementDate\":{\"seconds\":1659398400,\"nanos\":0},\"placementPrice\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"aciValue\":{\"currency\":\"rub\",\"units\":45,\"nano\":80000000},\"countryOfRisk\":\"KZ\",\"countryOfRiskName\":\"Республика Казахстан\",\"sector\":\"financial\",\"issueKind\":\"non_documentary\",\"issueSize\":10000000,\"issueSizePlan\":10000000,\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"floatingCouponFlag\":false,\"perpetualFlag\":false,\"amortizationFlag\":false,\"minPriceIncrement\":0.01,\"apiTradeAvailableFlag\":true,\"uid\":\"cdb57948-f0b0-4420-8dd0-c8747fdc6735\",\"realExchange\":\"REAL_EXCHANGE_MOEX\",\"positionUid\":\"4cf921a7-0a5d-4e53-a2e2-b92649376ab4\",\"forIisFlag\":true,\"forQualInvestorFlag\":false,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"subordinatedFlag\":false,\"first1MinCandleDate\":{\"seconds\":1659440700,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":1659423600,\"nanos\":0},\"riskLevel\":\"RISK_LEVEL_UNSPECIFIED\"}";
+    public static final String JSON_STRING = "{\"figi\":\"TCS00A1050H0\"," +
+            "\"ticker\":\"RU000A1050H0\"," +
+            "\"classCode\":\"TQCB\"," +
+            "\"isin\":\"RU000A1050H0\"," +
+            "\"lot\":1," +
+            "\"currency\":\"rub\"," +
+            "\"klong\":0," +
+            "\"kshort\":0," +
+            "\"dlong\":0," +
+            "\"dshort\":0," +
+            "\"dlongMin\":0," +
+            "\"dshortMin\":0," +
+            "\"shortEnabledFlag\":false," +
+            "\"name\":\"ЕАБР\"," +
+            "\"exchange\":\"MOEX\"," +
+            "\"couponQuantityPerYear\":2," +
+            "\"maturityDate\":{\"seconds\":1753747200,\"nanos\":0}," +
+            "\"nominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"initialNominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"stateRegDate\":{\"seconds\":1658966400,\"nanos\":0}," +
+            "\"placementDate\":{\"seconds\":1659398400,\"nanos\":0}," +
+            "\"placementPrice\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"aciValue\":{\"currency\":\"rub\",\"units\":45,\"nano\":80000000}," +
+            "\"countryOfRisk\":\"KZ\"," +
+            "\"countryOfRiskName\":\"Республика Казахстан\"," +
+            "\"sector\":\"financial\"," +
+            "\"issueKind\":\"non_documentary\"," +
+            "\"issueSize\":10000000," +
+            "\"issueSizePlan\":10000000," +
+            "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
+            "\"otcFlag\":false," +
+            "\"buyAvailableFlag\":true," +
+            "\"sellAvailableFlag\":true," +
+            "\"floatingCouponFlag\":false," +
+            "\"perpetualFlag\":false," +
+            "\"amortizationFlag\":false," +
+            "\"minPriceIncrement\":0.01," +
+            "\"apiTradeAvailableFlag\":true," +
+            "\"uid\":\"cdb57948-f0b0-4420-8dd0-c8747fdc6735\"," +
+            "\"realExchange\":\"REAL_EXCHANGE_MOEX\"," +
+            "\"positionUid\":\"4cf921a7-0a5d-4e53-a2e2-b92649376ab4\"," +
+            "\"forIisFlag\":true," +
+            "\"forQualInvestorFlag\":false," +
+            "\"weekendFlag\":false," +
+            "\"blockedTcaFlag\":false," +
+            "\"subordinatedFlag\":false," +
+            "\"first1MinCandleDate\":{\"seconds\":1659440700,\"nanos\":0}," +
+            "\"first1DayCandleDate\":{\"seconds\":1659423600,\"nanos\":0}," +
+            "\"riskLevel\":\"RISK_LEVEL_UNSPECIFIED\"}";
 
 }

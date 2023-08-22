@@ -12,7 +12,7 @@ class OrderStageSerializerUnitTest extends SerializerAbstractUnitTest<OrderStage
 
     @Test
     void test() throws IOException {
-        test(orderStageSerializer, TestOrderStage1.ORDER_STAGE, TestOrderStage1.STRING, new MoneyValueSerializer());
+        test(orderStageSerializer, TestOrderStage1.ORDER_STAGE, TestOrderStage1.JSON_STRING, new MoneyValueSerializer());
     }
 
 }

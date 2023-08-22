@@ -4,6 +4,7 @@ import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
@@ -34,7 +35,7 @@ public class TestShare1 {
     public static final String COUNTRY_OF_RISK_NAME = "Соединенные Штаты Америки";
     public static final String SECTOR = "it";
     public static final long ISSUE_SIZE_PLAN = 50400000000L;
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.USD).setUnits(0L).setNano(10000).build();
+    public static final MoneyValue NOMINAL = TestData.createMoneyValue(0.00001, Currencies.USD);
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
@@ -95,6 +96,44 @@ public class TestShare1 {
             .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
             .build();
 
-    public static final String STRING = "{\"figi\":\"BBG000B9XRY4\",\"ticker\":\"AAPL\",\"classCode\":\"SPBXM\",\"isin\":\"US0378331005\",\"lot\":1,\"currency\":\"usd\",\"klong\":2,\"kshort\":2,\"dlong\":1,\"dshort\":1,\"dlongMin\":1,\"dshortMin\":1,\"shortEnabledFlag\":false,\"name\":\"Apple\",\"exchange\":\"SPB\",\"ipoDate\":{\"seconds\":345427200,\"nanos\":0},\"issueSize\":16530166000,\"countryOfRisk\":\"US\",\"countryOfRiskName\":\"Соединенные Штаты Америки\",\"sector\":\"it\",\"issueSizePlan\":50400000000,\"nominal\":{\"currency\":\"usd\",\"units\":0,\"nano\":10000},\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"divYieldFlag\":true,\"shareType\":\"SHARE_TYPE_COMMON\",\"minPriceIncrement\":0.01,\"apiTradeAvailableFlag\":true,\"uid\":\"a9eb4238-eba9-488c-b102-b6140fd08e38\",\"realExchange\":\"REAL_EXCHANGE_RTS\",\"positionUid\":\"5c5e6656-c4d3-4391-a7ee-e81a76f1804e\",\"forIisFlag\":true,\"forQualInvestorFlag\":true,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"first1MinCandleDate\":{\"seconds\":1516692840,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":590025600,\"nanos\":0}}";
+    public static final String JSON_STRING = "{\"figi\":\"BBG000B9XRY4\"," +
+            "\"ticker\":\"AAPL\"," +
+            "\"classCode\":\"SPBXM\"," +
+            "\"isin\":\"US0378331005\"," +
+            "\"lot\":1," +
+            "\"currency\":\"usd\"," +
+            "\"klong\":2," +
+            "\"kshort\":2," +
+            "\"dlong\":1," +
+            "\"dshort\":1," +
+            "\"dlongMin\":1," +
+            "\"dshortMin\":1," +
+            "\"shortEnabledFlag\":false," +
+            "\"name\":\"Apple\"," +
+            "\"exchange\":\"SPB\"," +
+            "\"ipoDate\":{\"seconds\":345427200,\"nanos\":0}," +
+            "\"issueSize\":16530166000," +
+            "\"countryOfRisk\":\"US\"," +
+            "\"countryOfRiskName\":\"Соединенные Штаты Америки\"," +
+            "\"sector\":\"it\"," +
+            "\"issueSizePlan\":50400000000," +
+            "\"nominal\":{\"currency\":\"usd\",\"units\":0,\"nano\":10000}," +
+            "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
+            "\"otcFlag\":false," +
+            "\"buyAvailableFlag\":true," +
+            "\"sellAvailableFlag\":true," +
+            "\"divYieldFlag\":true," +
+            "\"shareType\":\"SHARE_TYPE_COMMON\"," +
+            "\"minPriceIncrement\":0.01," +
+            "\"apiTradeAvailableFlag\":true," +
+            "\"uid\":\"a9eb4238-eba9-488c-b102-b6140fd08e38\"," +
+            "\"realExchange\":\"REAL_EXCHANGE_RTS\"," +
+            "\"positionUid\":\"5c5e6656-c4d3-4391-a7ee-e81a76f1804e\"," +
+            "\"forIisFlag\":true," +
+            "\"forQualInvestorFlag\":true," +
+            "\"weekendFlag\":false," +
+            "\"blockedTcaFlag\":false," +
+            "\"first1MinCandleDate\":{\"seconds\":1516692840,\"nanos\":0}," +
+            "\"first1DayCandleDate\":{\"seconds\":590025600,\"nanos\":0}}";
 
 }

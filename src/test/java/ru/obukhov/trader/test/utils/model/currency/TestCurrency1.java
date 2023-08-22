@@ -4,6 +4,7 @@ import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -27,7 +28,7 @@ public class TestCurrency1 {
     public static final boolean SHORT_ENABLED_FLAG = true;
     public static final String NAME = "Доллар США";
     public static final String EXCHANGE = "FX";
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.USD).setUnits(1L).build();
+    public static final MoneyValue NOMINAL = TestData.createMoneyValue(1, Currencies.USD);
     public static final String COUNTRY_OF_RISK = "";
     public static final String COUNTRY_OF_RISK_NAME = "";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;

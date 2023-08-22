@@ -14,7 +14,7 @@ class OrderStateSerializerUnitTest extends SerializerAbstractUnitTest<OrderState
     @Test
     void test() throws IOException {
         final JsonSerializer<?>[] jsonSerializers = {new OrderStageSerializer(), new MoneyValueSerializer(), new TimestampSerializer()};
-        test(orderStateSerializer, TestOrderState1.ORDER_STATE, TestOrderState1.STRING, jsonSerializers);
+        test(orderStateSerializer, TestOrderState1.ORDER_STATE, TestOrderState1.JSON_STRING, jsonSerializers);
     }
 
 }

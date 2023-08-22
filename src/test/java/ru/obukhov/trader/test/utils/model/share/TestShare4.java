@@ -4,6 +4,7 @@ import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
@@ -34,7 +35,7 @@ public class TestShare4 {
     public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
     public static final String SECTOR = "health_care";
     public static final long ISSUE_SIZE_PLAN = 91500000L;
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setNano(10000000).build();
+    public static final MoneyValue NOMINAL = TestData.createMoneyValue(0.01, Currencies.RUB);
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = false;

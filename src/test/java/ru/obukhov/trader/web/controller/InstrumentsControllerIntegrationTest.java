@@ -102,7 +102,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestEtf2.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestEtf2.STRING);
+        performAndExpectResponse(requestBuilder, TestEtf2.JSON_STRING);
     }
 
     @Test
@@ -132,7 +132,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestBond2.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestBond2.STRING);
+        performAndExpectResponse(requestBuilder, TestBond2.JSON_STRING);
     }
 
     @Test

@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils.model.bond;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -29,12 +30,12 @@ public class TestBond1 {
     public static final String EXCHANGE = "MOEX";
     public static final int COUPON_QUANTITY_PER_YEAR = 2;
     public static final Timestamp MATURITY_DATE = Timestamp.newBuilder().setSeconds(1825718400L).setNanos(0).build();
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
-    public static final MoneyValue INITIAL_NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
+    public static final MoneyValue NOMINAL = TestData.createMoneyValue(1000, Currencies.RUB);
+    public static final MoneyValue INITIAL_NOMINAL = TestData.createMoneyValue(1000, Currencies.RUB);
     public static final Timestamp STATE_REG_DATE = Timestamp.newBuilder().setSeconds(1510790400L).setNanos(0).build();
     public static final Timestamp PLACEMENT_DATE = Timestamp.newBuilder().setSeconds(1511222400L).setNanos(0).build();
-    public static final MoneyValue PLACEMENT_PRICE = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
-    public static final MoneyValue ACI_VALUE = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(17).setNano(900000000).build();
+    public static final MoneyValue PLACEMENT_PRICE = TestData.createMoneyValue(1000, Currencies.RUB);
+    public static final MoneyValue ACI_VALUE = TestData.createMoneyValue(17.9, Currencies.RUB);
     public static final String COUNTRY_OF_RISK = "RU";
     public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
     public static final String SECTOR = "telecom";
@@ -115,6 +116,53 @@ public class TestBond1 {
             .setRiskLevel(RISK_LEVEL)
             .build();
 
-    public static final String STRING = "{\"figi\":\"BBG00J7HHGH1\",\"ticker\":\"RU000A0ZYG52\",\"classCode\":\"TQCB\",\"isin\":\"RU000A0ZYG52\",\"lot\":1,\"currency\":\"rub\",\"klong\":2,\"kshort\":2,\"dlong\":0.3,\"dshort\":0.3,\"dlongMin\":0.1633,\"dshortMin\":0.1402,\"shortEnabledFlag\":false,\"name\":\"Ростелеком выпуск 3\",\"exchange\":\"MOEX\",\"couponQuantityPerYear\":2,\"maturityDate\":{\"seconds\":1825718400,\"nanos\":0},\"nominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"initialNominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"stateRegDate\":{\"seconds\":1510790400,\"nanos\":0},\"placementDate\":{\"seconds\":1511222400,\"nanos\":0},\"placementPrice\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"aciValue\":{\"currency\":\"rub\",\"units\":17,\"nano\":900000000},\"countryOfRisk\":\"RU\",\"countryOfRiskName\":\"Российская Федерация\",\"sector\":\"telecom\",\"issueKind\":\"documentary\",\"issueSize\":10000000,\"issueSizePlan\":10000000,\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"floatingCouponFlag\":false,\"perpetualFlag\":false,\"amortizationFlag\":false,\"minPriceIncrement\":0.01,\"apiTradeAvailableFlag\":true,\"uid\":\"00486cd8-5915-4c0b-8017-b81b9d1805d4\",\"realExchange\":\"REAL_EXCHANGE_MOEX\",\"positionUid\":\"cf3e5dbf-3338-4ee5-96fd-375925e16daa\",\"forIisFlag\":true,\"forQualInvestorFlag\":false,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"subordinatedFlag\":false,\"first1MinCandleDate\":{\"seconds\":1521007200,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":1511222400,\"nanos\":0},\"riskLevel\":\"RISK_LEVEL_LOW\"}";
+    public static final String JSON_STRING = "{\"figi\":\"BBG00J7HHGH1\"," +
+            "\"ticker\":\"RU000A0ZYG52\"," +
+            "\"classCode\":\"TQCB\"," +
+            "\"isin\":\"RU000A0ZYG52\"," +
+            "\"lot\":1,\"currency\":\"rub\"," +
+            "\"klong\":2," +
+            "\"kshort\":2," +
+            "\"dlong\":0.3," +
+            "\"dshort\":0.3," +
+            "\"dlongMin\":0.1633," +
+            "\"dshortMin\":0.1402," +
+            "\"shortEnabledFlag\":false," +
+            "\"name\":\"Ростелеком выпуск 3\"," +
+            "\"exchange\":\"MOEX\"," +
+            "\"couponQuantityPerYear\":2," +
+            "\"maturityDate\":{\"seconds\":1825718400,\"nanos\":0}," +
+            "\"nominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"initialNominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"stateRegDate\":{\"seconds\":1510790400,\"nanos\":0}," +
+            "\"placementDate\":{\"seconds\":1511222400,\"nanos\":0}," +
+            "\"placementPrice\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"aciValue\":{\"currency\":\"rub\",\"units\":17,\"nano\":900000000}," +
+            "\"countryOfRisk\":\"RU\"," +
+            "\"countryOfRiskName\":\"Российская Федерация\"," +
+            "\"sector\":\"telecom\"," +
+            "\"issueKind\":\"documentary\"," +
+            "\"issueSize\":10000000," +
+            "\"issueSizePlan\":10000000," +
+            "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
+            "\"otcFlag\":false," +
+            "\"buyAvailableFlag\":true," +
+            "\"sellAvailableFlag\":true," +
+            "\"floatingCouponFlag\":false," +
+            "\"perpetualFlag\":false," +
+            "\"amortizationFlag\":false," +
+            "\"minPriceIncrement\":0.01," +
+            "\"apiTradeAvailableFlag\":true," +
+            "\"uid\":\"00486cd8-5915-4c0b-8017-b81b9d1805d4\"," +
+            "\"realExchange\":\"REAL_EXCHANGE_MOEX\"," +
+            "\"positionUid\":\"cf3e5dbf-3338-4ee5-96fd-375925e16daa\"," +
+            "\"forIisFlag\":true," +
+            "\"forQualInvestorFlag\":false," +
+            "\"weekendFlag\":false," +
+            "\"blockedTcaFlag\":false," +
+            "\"subordinatedFlag\":false," +
+            "\"first1MinCandleDate\":{\"seconds\":1521007200,\"nanos\":0}," +
+            "\"first1DayCandleDate\":{\"seconds\":1511222400,\"nanos\":0}," +
+            "\"riskLevel\":\"RISK_LEVEL_LOW\"}";
 
 }

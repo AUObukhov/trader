@@ -13,12 +13,12 @@ class AccountSerializerUnitTest extends SerializerAbstractUnitTest<Account> {
 
     @Test
     void test1() throws IOException {
-        test(accountSerializer, TestAccount1.ACCOUNT, TestAccount1.STRING, new TimestampSerializer());
+        test(accountSerializer, TestAccount1.ACCOUNT, TestAccount1.JSON_STRING, new TimestampSerializer());
     }
 
     @Test
     void test2() throws IOException {
-        test(accountSerializer, TestAccount2.ACCOUNT, TestAccount2.STRING, new TimestampSerializer());
+        test(accountSerializer, TestAccount2.ACCOUNT, TestAccount2.JSON_STRING, new TimestampSerializer());
     }
 
 }

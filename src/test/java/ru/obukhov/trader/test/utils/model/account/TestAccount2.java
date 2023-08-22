@@ -27,7 +27,7 @@ public class TestAccount2 {
             .setAccessLevel(ACCESS_LEVEL)
             .build();
 
-    public static final String STRING = "{\"id\":\"2000124699\"," +
+    public static final String JSON_STRING = "{\"id\":\"2000124699\"," +
             "\"type\":\"ACCOUNT_TYPE_TINKOFF\"," +
             "\"name\":\"Брокерский счёт\"," +
             "\"status\":\"ACCOUNT_STATUS_OPEN\"," +

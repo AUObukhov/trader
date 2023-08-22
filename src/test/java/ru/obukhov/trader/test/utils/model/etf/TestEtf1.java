@@ -89,6 +89,43 @@ public class TestEtf1 {
             .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
             .build();
 
-    public static final String STRING = "{\"figi\":\"BBG005HLTYH9\",\"ticker\":\"FXIT\",\"classCode\":\"TQTF\",\"isin\":\"IE00BD3QJ757\",\"lot\":1,\"currency\":\"rub\",\"klong\":0,\"kshort\":0,\"dlong\":0,\"dshort\":0,\"dlongMin\":0,\"dshortMin\":0,\"shortEnabledFlag\":false,\"name\":\"FinEx Акции компаний IT-сектора США\",\"exchange\":\"moex_close\",\"fixedCommission\":0.9,\"focusType\":\"equity\",\"releasedDate\":{\"seconds\":1383177600,\"nanos\":0},\"numShares\":692000,\"countryOfRisk\":\"US\",\"countryOfRiskName\":\"Соединенные Штаты Америки\",\"sector\":\"it\",\"rebalancingFreq\":\"quarterly\",\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"minPriceIncrement\":1,\"apiTradeAvailableFlag\":true,\"uid\":\"232b3cca-ecef-439c-8e3c-bdd9e669f6e0\",\"realExchange\":\"REAL_EXCHANGE_MOEX\",\"positionUid\":\"ea43b22b-1568-4b16-b180-b70ae1d7f34a\",\"forIisFlag\":true,\"forQualInvestorFlag\":true,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"first1MinCandleDate\":{\"seconds\":1520447700,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":1383177600,\"nanos\":0}}";
+    public static final String JSON_STRING = "{\"figi\":\"BBG005HLTYH9\"," +
+            "\"ticker\":\"FXIT\"," +
+            "\"classCode\":\"TQTF\"," +
+            "\"isin\":\"IE00BD3QJ757\"," +
+            "\"lot\":1," +
+            "\"currency\":\"rub\"," +
+            "\"klong\":0," +
+            "\"kshort\":0," +
+            "\"dlong\":0," +
+            "\"dshort\":0," +
+            "\"dlongMin\":0," +
+            "\"dshortMin\":0," +
+            "\"shortEnabledFlag\":false," +
+            "\"name\":\"FinEx Акции компаний IT-сектора США\"," +
+            "\"exchange\":\"moex_close\"," +
+            "\"fixedCommission\":0.9," +
+            "\"focusType\":\"equity\"," +
+            "\"releasedDate\":{\"seconds\":1383177600,\"nanos\":0}," +
+            "\"numShares\":692000," +
+            "\"countryOfRisk\":\"US\"," +
+            "\"countryOfRiskName\":\"Соединенные Штаты Америки\"," +
+            "\"sector\":\"it\"," +
+            "\"rebalancingFreq\":\"quarterly\"," +
+            "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
+            "\"otcFlag\":false," +
+            "\"buyAvailableFlag\":true," +
+            "\"sellAvailableFlag\":true," +
+            "\"minPriceIncrement\":1," +
+            "\"apiTradeAvailableFlag\":true," +
+            "\"uid\":\"232b3cca-ecef-439c-8e3c-bdd9e669f6e0\"," +
+            "\"realExchange\":\"REAL_EXCHANGE_MOEX\"," +
+            "\"positionUid\":\"ea43b22b-1568-4b16-b180-b70ae1d7f34a\"," +
+            "\"forIisFlag\":true," +
+            "\"forQualInvestorFlag\":true," +
+            "\"weekendFlag\":false," +
+            "\"blockedTcaFlag\":false," +
+            "\"first1MinCandleDate\":{\"seconds\":1520447700,\"nanos\":0}," +
+            "\"first1DayCandleDate\":{\"seconds\":1383177600,\"nanos\":0}}";
 
 }

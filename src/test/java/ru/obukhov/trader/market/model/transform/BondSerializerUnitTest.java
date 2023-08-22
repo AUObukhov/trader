@@ -12,7 +12,7 @@ class BondSerializerUnitTest extends SerializerAbstractUnitTest<Bond> {
 
     @Test
     void test() throws IOException {
-        test(bondSerializer, TestBond1.BOND, TestBond1.STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
+        test(bondSerializer, TestBond1.BOND, TestBond1.JSON_STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
     }
 
 }

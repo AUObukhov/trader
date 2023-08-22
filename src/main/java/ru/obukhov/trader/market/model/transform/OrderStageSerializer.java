@@ -20,9 +20,9 @@ public class OrderStageSerializer extends JsonSerializer<OrderStage> {
 
         jgen.writeStartObject();
 
-        jgen.writeObjectField("orderId", value.getPrice());
-        jgen.writeNumberField("executionReportStatus", value.getQuantity());
-        jgen.writeStringField("lotsRequested", value.getTradeId());
+        jgen.writeObjectField("price", value.getPrice());
+        jgen.writeNumberField("quantity", value.getQuantity());
+        jgen.writeStringField("tradeId", value.getTradeId());
 
         jgen.writeEndObject();
     }

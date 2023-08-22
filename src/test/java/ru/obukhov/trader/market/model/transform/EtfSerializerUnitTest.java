@@ -12,7 +12,7 @@ class EtfSerializerUnitTest extends SerializerAbstractUnitTest<Etf> {
 
     @Test
     void test() throws IOException {
-        test(etfSerializer, TestEtf1.ETF, TestEtf1.STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
+        test(etfSerializer, TestEtf1.ETF, TestEtf1.JSON_STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
     }
 
 }

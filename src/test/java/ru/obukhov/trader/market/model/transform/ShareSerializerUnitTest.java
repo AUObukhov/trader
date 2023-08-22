@@ -12,7 +12,7 @@ class ShareSerializerUnitTest extends SerializerAbstractUnitTest<Share> {
 
     @Test
     void test() throws IOException {
-        test(shareSerializer, TestShare1.SHARE, TestShare1.STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
+        test(shareSerializer, TestShare1.SHARE, TestShare1.JSON_STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
     }
 
 }

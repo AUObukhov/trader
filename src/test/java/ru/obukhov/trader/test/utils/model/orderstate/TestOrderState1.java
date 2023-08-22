@@ -58,6 +58,27 @@ public class TestOrderState1 {
             .setInstrumentUid(INSTRUMENT_UID)
             .build();
 
-    public static final String STRING = "{\"orderId\":\"582899921200\",\"executionReportStatus\":\"EXECUTION_REPORT_STATUS_NEW\",\"lotsRequested\":1,\"lotsExecuted\":0,\"initialOrderPrice\":{\"currency\":\"usd\",\"units\":30,\"nano\":0},\"executedOrderPrice\":{\"currency\":\"usd\",\"units\":0,\"nano\":0},\"totalOrderAmount\":{\"currency\":\"usd\",\"units\":30,\"nano\":0},\"averagePositionPrice\":{\"currency\":\"usd\",\"units\":0,\"nano\":0},\"initialCommission\":{\"currency\":\"usd\",\"units\":0,\"nano\":90000000},\"executedCommission\":{\"currency\":\"usd\",\"units\":0,\"nano\":0},\"figi\":\"BBG00K7T3037\",\"direction\":\"ORDER_DIRECTION_SELL\",\"initialSecurityPrice\":{\"currency\":\"usd\",\"units\":30,\"nano\":0},\"stages\":[{\"orderId\":{\"currency\":\"usd\",\"units\":30,\"nano\":0},\"executionReportStatus\":2,\"lotsRequested\":\"1234567890\"},{\"orderId\":{\"currency\":\"usd\",\"units\":10,\"nano\":0},\"executionReportStatus\":1,\"lotsRequested\":\"abcdef\"}],\"serviceCommission\":{\"currency\":\"rub\",\"units\":0,\"nano\":0},\"currency\":\"usd\",\"orderType\":\"ORDER_TYPE_LIMIT\",\"orderDate\":{\"seconds\":1691644827,\"nanos\":513541000},\"instrumentUid\":\"46fef208-a525-4471-85e5-8fe4cee5f8ec\"}";
+    public static final String JSON_STRING = "{\"orderId\":\"582899921200\"," +
+            "\"executionReportStatus\":\"EXECUTION_REPORT_STATUS_NEW\"," +
+            "\"lotsRequested\":1," +
+            "\"lotsExecuted\":0," +
+            "\"initialOrderPrice\":{\"currency\":\"usd\",\"units\":30,\"nano\":0}," +
+            "\"executedOrderPrice\":{\"currency\":\"usd\",\"units\":0,\"nano\":0}," +
+            "\"totalOrderAmount\":{\"currency\":\"usd\",\"units\":30,\"nano\":0}," +
+            "\"averagePositionPrice\":{\"currency\":\"usd\",\"units\":0,\"nano\":0}," +
+            "\"initialCommission\":{\"currency\":\"usd\",\"units\":0,\"nano\":90000000}," +
+            "\"executedCommission\":{\"currency\":\"usd\",\"units\":0,\"nano\":0}," +
+            "\"figi\":\"BBG00K7T3037\"," +
+            "\"direction\":\"ORDER_DIRECTION_SELL\"," +
+            "\"initialSecurityPrice\":{\"currency\":\"usd\",\"units\":30,\"nano\":0}," +
+            "\"stages\":[" +
+            "{\"price\":{\"currency\":\"usd\",\"units\":30,\"nano\":0},\"quantity\":2,\"tradeId\":\"1234567890\"}," +
+            "{\"price\":{\"currency\":\"usd\",\"units\":10,\"nano\":0},\"quantity\":1,\"tradeId\":\"abcdef\"}" +
+            "]," +
+            "\"serviceCommission\":{\"currency\":\"rub\",\"units\":0,\"nano\":0}," +
+            "\"currency\":\"usd\"," +
+            "\"orderType\":\"ORDER_TYPE_LIMIT\"," +
+            "\"orderDate\":{\"seconds\":1691644827,\"nanos\":513541000}," +
+            "\"instrumentUid\":\"46fef208-a525-4471-85e5-8fe4cee5f8ec\"}";
 
 }
