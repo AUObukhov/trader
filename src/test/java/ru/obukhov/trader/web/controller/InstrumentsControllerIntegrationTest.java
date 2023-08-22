@@ -46,8 +46,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
+    @SuppressWarnings({"java:S2699", "java:S5976"})
     void getInstrument_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/instrument")
@@ -76,8 +75,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
+    @SuppressWarnings({"java:S2699", "java:S5976"})
     void getShare_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")
@@ -106,8 +104,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
+    @SuppressWarnings({"java:S2699", "java:S5976"})
     void getEtf_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
@@ -136,8 +133,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
+    @SuppressWarnings({"java:S2699", "java:S5976"})
     void getBond_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
@@ -166,8 +162,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
+    @SuppressWarnings({"java:S2699", "java:S5976"})
     void getCurrency_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
