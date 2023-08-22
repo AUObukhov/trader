@@ -175,47 +175,6 @@ public class TestData {
         return doubles;
     }
 
-    // region create Quotations
-
-    public static List<Quotation> createQuotations(final List<Double> values) {
-        return values.stream().map(QuotationUtils::newQuotation).collect(Collectors.toList());
-    }
-
-    public static List<Quotation> createQuotations(final Double... values) {
-        return Arrays.stream(values).map(QuotationUtils::newQuotation).collect(Collectors.toList());
-    }
-
-    public static List<Quotation> createQuotations(final Integer... values) {
-        return Arrays.stream(values).map(QuotationUtils::newQuotation).collect(Collectors.toList());
-    }
-
-    public static List<Quotation> createRandomQuotations(final int size, final long origin, final long bound) {
-        final List<Quotation> quotations = new ArrayList<>(size);
-
-        for (int i = 0; i < size; i++) {
-            quotations.add(createRandomQuotation(origin, bound));
-        }
-
-        return quotations;
-    }
-
-    public static Quotation createRandomQuotation(final long origin, final long bound) {
-        long unit = RANDOM.nextLong(origin, bound);
-        int nano = RANDOM.nextInt(1, 1000000000);
-
-        if (RANDOM.nextInt(1000) == 0) {
-            if (RANDOM.nextBoolean()) {
-                unit = 0;
-            } else {
-                nano = 0;
-            }
-        }
-
-        return QuotationUtils.newNormalizedQuotation(unit, nano);
-    }
-
-    // endregion
-
     @SneakyThrows
     public static CronExpression createCronExpression(final String expression) {
         return new CronExpression(expression);
@@ -266,6 +225,47 @@ public class TestData {
 
     public static Quotation createQuotation() {
         return Quotation.newBuilder().build();
+    }
+
+    // endregion
+
+    // region Quotations collection creation
+
+    public static List<Quotation> createQuotations(final List<Double> values) {
+        return values.stream().map(QuotationUtils::newQuotation).collect(Collectors.toList());
+    }
+
+    public static List<Quotation> createQuotations(final Double... values) {
+        return Arrays.stream(values).map(QuotationUtils::newQuotation).collect(Collectors.toList());
+    }
+
+    public static List<Quotation> createQuotations(final Integer... values) {
+        return Arrays.stream(values).map(QuotationUtils::newQuotation).collect(Collectors.toList());
+    }
+
+    public static List<Quotation> createRandomQuotations(final int size, final long origin, final long bound) {
+        final List<Quotation> quotations = new ArrayList<>(size);
+
+        for (int i = 0; i < size; i++) {
+            quotations.add(createRandomQuotation(origin, bound));
+        }
+
+        return quotations;
+    }
+
+    public static Quotation createRandomQuotation(final long origin, final long bound) {
+        long unit = RANDOM.nextLong(origin, bound);
+        int nano = RANDOM.nextInt(1, 1000000000);
+
+        if (RANDOM.nextInt(1000) == 0) {
+            if (RANDOM.nextBoolean()) {
+                unit = 0;
+            } else {
+                nano = 0;
+            }
+        }
+
+        return QuotationUtils.newNormalizedQuotation(unit, nano);
     }
 
     // endregion
