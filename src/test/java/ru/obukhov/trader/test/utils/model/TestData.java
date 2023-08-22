@@ -35,6 +35,7 @@ import ru.tinkoff.piapi.core.models.Position;
 import java.math.BigDecimal;
 import java.time.OffsetTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -67,18 +68,18 @@ public class TestData {
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
-        decisionData.setCommission(DecimalUtils.setDefaultScale(0));
+        decisionData.setCommission(QuotationUtils.ZERO);
 
         return decisionData;
     }
 
     public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
         final DecisionData decisionData = new DecisionData();
-        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
+        decisionData.setBalance(QuotationUtils.newQuotation(balance));
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
-        decisionData.setCommission(DecimalUtils.setDefaultScale(commission));
+        decisionData.setCommission(QuotationUtils.newQuotation(commission));
 
         return decisionData;
     }
@@ -162,14 +163,6 @@ public class TestData {
         return values;
     }
 
-    public static List<BigDecimal> createRandomBigDecimals(final int size, final long origin, final long bound) {
-        final List<BigDecimal> values = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            values.add(DecimalUtils.setDefaultScale(RANDOM.nextDouble(origin, bound)));
-        }
-        return values;
-    }
-
     // endregion
 
     public static List<Long> createRandomLongs(final int size, final long origin, final long bound) {
@@ -182,7 +175,19 @@ public class TestData {
         return doubles;
     }
 
-    // region createRandomQuotations
+    // region create Quotations
+
+    public static List<Quotation> createQuotations(final List<Double> values) {
+        return values.stream().map(QuotationUtils::newQuotation).collect(Collectors.toList());
+    }
+
+    public static List<Quotation> createQuotations(final Double... values) {
+        return Arrays.stream(values).map(QuotationUtils::newQuotation).collect(Collectors.toList());
+    }
+
+    public static List<Quotation> createQuotations(final Integer... values) {
+        return Arrays.stream(values).map(QuotationUtils::newQuotation).collect(Collectors.toList());
+    }
 
     public static List<Quotation> createRandomQuotations(final int size, final long origin, final long bound) {
         final List<Quotation> quotations = new ArrayList<>(size);
@@ -230,11 +235,11 @@ public class TestData {
         final BalanceConfig balanceConfig = new BalanceConfig();
 
         if (initialBalance != null) {
-            balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
+            balanceConfig.setInitialBalance(QuotationUtils.newQuotation(initialBalance));
         }
 
         if (balanceIncrement != null) {
-            balanceConfig.setBalanceIncrement(DecimalUtils.setDefaultScale(balanceIncrement));
+            balanceConfig.setBalanceIncrement(QuotationUtils.newQuotation(balanceIncrement));
         }
 
         if (balanceIncrementCron != null) {

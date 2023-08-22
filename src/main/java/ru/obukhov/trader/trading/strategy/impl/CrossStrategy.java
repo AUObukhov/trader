@@ -11,8 +11,8 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -41,12 +41,12 @@ public class CrossStrategy extends AbstractTradingStrategy {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else {
-            final List<BigDecimal> values = data.getCurrentCandles().stream()
+            final List<Quotation> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpen)
                     .toList();
             final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
-            final List<BigDecimal> shortAverages = averager.getAverages(values, crossStrategyParams.getSmallWindow());
-            final List<BigDecimal> longAverages = averager.getAverages(values, crossStrategyParams.getBigWindow());
+            final List<Quotation> shortAverages = averager.getAverages(values, crossStrategyParams.getSmallWindow());
+            final List<Quotation> longAverages = averager.getAverages(values, crossStrategyParams.getBigWindow());
 
             final int index = (int) (crossStrategyParams.getIndexCoefficient() * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);

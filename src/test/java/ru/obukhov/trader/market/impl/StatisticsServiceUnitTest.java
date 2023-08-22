@@ -21,8 +21,8 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -66,8 +66,8 @@ class StatisticsServiceUnitTest {
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
-        final List<BigDecimal> shortAverages = TestData.createBigDecimals(10.0, 15.0, 20.0);
-        final List<BigDecimal> longAverages = TestData.createBigDecimals(10.0, 12.5, 17.5);
+        final List<Quotation> shortAverages = TestData.createQuotations(10, 15, 20);
+        final List<Quotation> longAverages = TestData.createQuotations(10.0, 12.5, 17.5);
 
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);
@@ -142,8 +142,8 @@ class StatisticsServiceUnitTest {
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
-        final List<BigDecimal> shortAverages = TestData.createBigDecimals(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
-        final List<BigDecimal> longAverages = TestData.createBigDecimals(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<Quotation> shortAverages = TestData.createQuotations(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<Quotation> longAverages = TestData.createQuotations(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
 
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);
@@ -164,7 +164,7 @@ class StatisticsServiceUnitTest {
         }
     }
 
-    private void mockAverages(Integer window, List<BigDecimal> averages) {
+    private void mockAverages(Integer window, List<Quotation> averages) {
         Mockito.when(averager.getAverages(Mockito.anyList(), Mockito.eq(window), Mockito.eq(1))).thenReturn(averages);
     }
 

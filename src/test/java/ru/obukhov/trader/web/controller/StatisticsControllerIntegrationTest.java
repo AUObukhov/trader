@@ -25,8 +25,8 @@ import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -189,8 +189,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .add(historicCandles)
                 .mock();
 
-        final List<BigDecimal> shortAverages = TestData.createBigDecimals(12000, 1200, 120);
-        final List<BigDecimal> longAverages = TestData.createBigDecimals(12000, 6600, 660);
+        final List<Quotation> shortAverages = TestData.createQuotations(12000, 1200, 120);
+        final List<Quotation> longAverages = TestData.createQuotations(12000, 6600, 660);
         final List<Candle> candles = historicCandles.stream().map(CANDLE_MAPPER::map).toList();
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, shortAverages, longAverages);
 

@@ -284,9 +284,11 @@ class Int128UnitTest {
     })
     void selfAddExact(final long low, final long high, final int term, final long expectedLow, final long expectedHigh) {
         final Int128 value = new Int128(low, high);
-        value.selfAddExact(term);
+        final Int128 actualResult = value.selfAddExact(term);
         Assertions.assertEquals(expectedLow, value.getLow());
         Assertions.assertEquals(expectedHigh, value.getHigh());
+        Assertions.assertEquals(expectedLow, actualResult.getLow());
+        Assertions.assertEquals(expectedHigh, actualResult.getHigh());
     }
 
     @ParameterizedTest

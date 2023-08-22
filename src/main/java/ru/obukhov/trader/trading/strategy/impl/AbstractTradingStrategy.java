@@ -2,7 +2,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -10,8 +10,8 @@ import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.OperationState;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
@@ -55,9 +55,9 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     }
 
     private long getAvailableLots(final DecisionData data) {
-        final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, data.getCommission());
-        return data.getBalance().divide(currentLotPriceWithCommission, RoundingMode.DOWN).longValue();
+        final Quotation currentLotPrice = QuotationUtils.multiply(data.getCurrentPrice(), data.getLotSize());
+        final Quotation currentLotPriceWithCommission = QuotationUtils.addFraction(currentLotPrice, data.getCommission());
+        return QuotationUtils.divide(data.getBalance(), currentLotPriceWithCommission, RoundingMode.DOWN).getUnits();
     }
 
     /**
@@ -71,8 +71,8 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Minimum profit {} is negative. Decision is {}", minimumProfit, decision.toPrettyString());
         } else {
-            final double profit = getProfit(data);
-            if (profit < minimumProfit) {
+            final Quotation profit = getProfit(data);
+            if (QuotationUtils.compare(profit, minimumProfit) < 0) {
                 decision = new Decision(DecisionAction.WAIT, null, strategyCache);
                 log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             } else {
@@ -87,20 +87,19 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
-    private double getProfit(final DecisionData data) {
+    private Quotation getProfit(final DecisionData data) {
         if (data.getPosition() == null) {
             log.debug("no position - no profit");
-            return 0.0;
+            return QuotationUtils.newNormalizedQuotation(0, 0);
         }
 
-        final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
-        final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, data.getCommission());
+        final Quotation averagePositionPrice = QuotationUtils.newQuotation(data.getAveragePositionPrice());
+        final Quotation buyPricePlusCommission = QuotationUtils.addFraction(averagePositionPrice, data.getCommission());
 
-        final BigDecimal currentPrice = data.getCurrentPrice();
-        final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, data.getCommission());
+        final Quotation currentPrice = data.getCurrentPrice();
+        final Quotation sellPriceMinusCommission = QuotationUtils.subtractFraction(currentPrice, data.getCommission());
 
-        final double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
-                .doubleValue();
+        final Quotation profit = QuotationUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission);
 
         log.debug(
                 "averagePositionPrice = {}, buyPricePlusCommission = {}, currentPrice = {}, sellPriceMinusCommission = {}, profit = {}, ",
@@ -108,7 +107,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
                 buyPricePlusCommission,
                 currentPrice,
                 sellPriceMinusCommission,
-                profit
+                QuotationUtils.toPrettyString(profit)
         );
 
         return profit;

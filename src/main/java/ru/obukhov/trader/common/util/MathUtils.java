@@ -4,8 +4,10 @@ import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -42,13 +44,13 @@ public class MathUtils {
      * Every amount is actual since its timestamp inclusive until timestamp of next amount exclusive.
      * The last amount is actual until given {@code endTimestamp}
      *
-     * @param timestampsToAmounts begin dateTimes and corresponding amounts
+     * @param timestampsToAmounts begin timestamps and corresponding amounts
      * @param endTimestamp        end timestamp of last amount from given {@code timestampsToAmounts}.
      *                            Can't be before any of timestamp in {@code timestampsToAmounts}
      * @return weighted average or zero if given {@code timestampsToAmounts} is empty
      */
-    public static BigDecimal getWeightedAverage(final Map<Timestamp, BigDecimal> timestampsToAmounts, final Timestamp endTimestamp) {
-        final Map<Long, BigDecimal> weightedAmounts = timestampsToAmounts.entrySet().stream()
+    public static Quotation getWeightedAverage(final Map<Timestamp, Quotation> timestampsToAmounts, final Timestamp endTimestamp) {
+        final Map<Long, Quotation> weightedAmounts = timestampsToAmounts.entrySet().stream()
                 .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endTimestamp), Map.Entry::getValue));
 
         return getWeightedAverage(weightedAmounts);
@@ -60,17 +62,16 @@ public class MathUtils {
         return TimestampUtils.toDuration(timestamp, endTimestamp).toMillis();
     }
 
-    private static BigDecimal getWeightedAverage(final Map<Long, BigDecimal> weightedAmounts) {
-        final BigDecimal weightsSum = DecimalUtils.setDefaultScale(weightedAmounts.keySet().stream().reduce(0L, Long::sum));
+    private static Quotation getWeightedAverage(final Map<Long, Quotation> weightedAmounts) {
+        final Quotation weightsSum = QuotationUtils.newQuotation(weightedAmounts.keySet().stream().reduce(0L, Math::addExact));
 
-        BigDecimal weightedAverage = DecimalUtils.setDefaultScale(0);
-        for (final Map.Entry<Long, BigDecimal> entry : weightedAmounts.entrySet()) {
-            final BigDecimal normalizedWeight = DecimalUtils.divideAccurate(entry.getKey(), weightsSum);
-            final BigDecimal weightedAmount = entry.getValue().multiply(normalizedWeight);
-            weightedAverage = weightedAverage.add(weightedAmount);
+        Quotation weightedAverage = QuotationUtils.ZERO;
+        for (final Map.Entry<Long, Quotation> entry : weightedAmounts.entrySet()) {
+            final Quotation weightedAmount = QuotationUtils.multiply(entry.getValue(), entry.getKey());
+            final Quotation normalizedWeightedAmount = QuotationUtils.divide(weightedAmount, weightsSum, RoundingMode.HALF_UP);
+            weightedAverage = QuotationUtils.add(weightedAverage, normalizedWeightedAmount);
         }
-
-        return DecimalUtils.setDefaultScale(weightedAverage);
+        return weightedAverage;
     }
 
     // endregion

@@ -2,7 +2,9 @@ package ru.obukhov.trader.market.util;
 
 import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.WithdrawLimitsResponse;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -19,6 +21,14 @@ public class DataStructsHelper {
 
     // region createMoneyValue
 
+    public static MoneyValue createMoneyValue(final String currency, final Quotation value) {
+        return MoneyValue.newBuilder()
+                .setCurrency(currency)
+                .setUnits(value.getUnits())
+                .setNano(value.getNano())
+                .build();
+    }
+
     public static MoneyValue createMoneyValue(final String currency, final BigDecimal value) {
         return MoneyValue.newBuilder()
                 .setCurrency(currency)
@@ -29,12 +39,23 @@ public class DataStructsHelper {
 
     // endregion
 
+    // region createWithdrawLimits
+
     public static Money createMoney(final BigDecimal value, final String currency) {
         return Money.builder()
                 .currency(currency)
                 .value(value)
                 .build();
     }
+
+    public static Money createMoney(final Quotation value, final String currency) {
+        return Money.builder()
+                .currency(currency)
+                .value(QuotationUtils.toBigDecimal(value))
+                .build();
+    }
+
+    // endregion
 
     // region createWithdrawLimits
 
@@ -71,11 +92,12 @@ public class DataStructsHelper {
      * @return balance value of first element from given list {@code moneys) where currency equals to given {@code currency}
      * @throws {@link NoSuchElementException} when there is no element with given {@code currency}
      */
-    public static BigDecimal getBalance(final List<Money> moneys, final String currency) {
+    public static Quotation getBalance(final List<Money> moneys, final String currency) {
         return moneys.stream()
                 .filter(money -> money.getCurrency().equals(currency))
                 .findFirst()
                 .map(Money::getValue)
+                .map(QuotationUtils::newQuotation)
                 .orElseThrow();
     }
 

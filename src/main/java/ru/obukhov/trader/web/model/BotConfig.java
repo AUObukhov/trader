@@ -2,10 +2,11 @@ package ru.obukhov.trader.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.constraints.NotNull;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 public record BotConfig(
@@ -23,7 +24,7 @@ public record BotConfig(
 
         @NotNull(message = "commission is mandatory")
         @ApiModelProperty(value = "Operating commission", required = true, position = 4, example = "0.003")
-        BigDecimal commission,
+        Quotation commission,
 
         @NotNull(message = "strategyType is mandatory")
         @ApiModelProperty(value = "Trading strategy type", required = true, position = 5, example = "cross")
@@ -37,4 +38,16 @@ public record BotConfig(
                         "\"smallWindow\": 100, \"bigWindow\": 200}"
         ) Map<String, Object> strategyParams
 ) {
+    @Override
+    public String toString() {
+        return "BotConfig{" +
+                "accountId=" + accountId +
+                ", figi=" + figi +
+                ", candleInterval=" + candleInterval +
+                ", commission=" + QuotationUtils.toPrettyString(commission) +
+                ", strategyType=" + strategyType +
+                ", strategyParams=" + strategyParams +
+                '}';
+    }
+
 }

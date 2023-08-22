@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.service.impl;
 
-import java.math.BigDecimal;
+import ru.tinkoff.piapi.contract.v1.Quotation;
+
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public interface MovingAverager {
      *               Must be positive
      * @return calculated averages
      */
-    default List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
+    default List<Quotation> getAverages(final List<Quotation> values, final int window) {
         return getAverages(values, window, 1);
     }
 
@@ -37,6 +38,6 @@ public interface MovingAverager {
      *               Must be positive
      * @return calculated averages
      */
-    List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order);
+    List<Quotation> getAverages(final List<Quotation> values, final int window, final int order);
 
 }

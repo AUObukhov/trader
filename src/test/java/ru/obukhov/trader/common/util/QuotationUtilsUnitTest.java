@@ -104,8 +104,6 @@ class QuotationUtilsUnitTest {
 
     // endregion
 
-    // endregion
-
     @ParameterizedTest
     @CsvSource(value = {
             "0, 0, 0, 0",

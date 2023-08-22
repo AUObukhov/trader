@@ -110,10 +110,11 @@ public class Int128 {
         return result;
     }
 
-    public void selfAddExact(final int term) {
+    public Int128 selfAddExact(final int term) {
         final long termHigh = term >> 31;
         this.high = addHighExact(term, termHigh);
         this.low = low + term;
+        return this;
     }
 
     // endregion
@@ -240,6 +241,12 @@ public class Int128 {
         return quotient;
     }
 
+    /**
+     * Divides this Int128 by given {@code divisor}. Replaces this Int128 value by remainder.<br/>
+     * This Int128 and {@code divisor} must be positive, otherwise correct result is not guaranteed.
+     *
+     * @return quotient
+     */
     public Int128 selfDividePositive(final Int128 divisor) {
         final int divisorLeadingZeros = divisor.getNumberOfLeadingZeros();
         if (divisorLeadingZeros == 128) {

@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
@@ -36,6 +36,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -68,7 +69,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0.0),
+                QuotationUtils.ZERO,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -90,7 +91,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0.0),
+                QuotationUtils.ZERO,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -140,7 +141,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 null,
-                DecimalUtils.setDefaultScale(0.0),
+                QuotationUtils.ZERO,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -184,7 +185,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0.0),
+                QuotationUtils.ZERO,
                 null,
                 Map.of("minimumProfit", 0.01)
         );
@@ -221,7 +222,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 accountId,
                 figi,
                 candleInterval,
-                DecimalUtils.setDefaultScale(0.001),
+                QuotationUtils.newQuotation(0.001),
                 StrategyType.CONSERVATIVE,
                 strategyParams1
         );
@@ -239,7 +240,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 accountId,
                 figi,
                 candleInterval,
-                DecimalUtils.setDefaultScale(0.002),
+                QuotationUtils.newQuotation(0.002),
                 StrategyType.CROSS,
                 strategyParams2
         );
@@ -272,14 +273,14 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // building expected response
 
-        final BigDecimal initialBalance = DecimalUtils.setDefaultScale(1000);
+        final Quotation initialBalance = QuotationUtils.newQuotation(1000);
 
         final Balances balances1 = new Balances(
                 initialBalance,
-                DecimalUtils.setDefaultScale(1000),
-                DecimalUtils.setDefaultScale(1000),
-                DecimalUtils.setDefaultScale(54.49544),
-                DecimalUtils.setDefaultScale(1061.21544)
+                QuotationUtils.newQuotation(1000),
+                QuotationUtils.newQuotation(1000),
+                QuotationUtils.newQuotation(54.49544),
+                QuotationUtils.newQuotation(1061.21544)
         );
         final Operation operation = Operation.newBuilder()
                 .setFigi(figi)
@@ -299,7 +300,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 botConfig1,
                 interval,
                 balances1,
-                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.06121544, 1.033135028),
+                new Profits(QuotationUtils.newQuotation(61.215440), 0.06121544, 1.033135028),
                 Collections.emptyList(),
                 List.of(operation),
                 List.of(candle),
@@ -308,10 +309,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final Balances balances2 = new Balances(
                 initialBalance,
-                DecimalUtils.setDefaultScale(1000),
-                DecimalUtils.setDefaultScale(1000),
-                DecimalUtils.setDefaultScale(1000),
-                DecimalUtils.setDefaultScale(1000)
+                QuotationUtils.newQuotation(1000),
+                QuotationUtils.newQuotation(1000),
+                QuotationUtils.newQuotation(1000),
+                QuotationUtils.newQuotation(1000)
         );
         final Position backTestPosition2 = Position.builder()
                 .figi(figi)
@@ -322,7 +323,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 botConfig2,
                 interval,
                 balances2,
-                new Profits(DecimalUtils.setDefaultScale(0), 0.0, 0.0),
+                new Profits(QuotationUtils.ZERO, 0.0, 0.0),
                 List.of(backTestPosition2),
                 Collections.emptyList(),
                 Collections.emptyList(),

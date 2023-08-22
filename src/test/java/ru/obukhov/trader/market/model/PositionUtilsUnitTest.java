@@ -3,9 +3,11 @@ package ru.obukhov.trader.market.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -61,8 +63,8 @@ class PositionUtilsUnitTest {
                 position,
                 2,
                 2,
-                DecimalUtils.setDefaultScale(30),
-                DecimalUtils.setDefaultScale(15)
+                QuotationUtils.newQuotation(30L),
+                QuotationUtils.newQuotation(15L)
         );
 
         AssertUtils.assertEquals(5, newPosition.getQuantity());
@@ -104,7 +106,7 @@ class PositionUtilsUnitTest {
                 .setQuantityLots(4)
                 .build();
 
-        final BigDecimal newCurrentPrice = DecimalUtils.setDefaultScale(30);
+        final Quotation newCurrentPrice = QuotationUtils.newQuotation(30L);
 
         final Position newPosition = PositionUtils.cloneWithNewCurrentPrice(position, newCurrentPrice);
 

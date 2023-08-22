@@ -21,9 +21,9 @@ import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -181,7 +181,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getLastPrice(figi, to);
+        final Quotation price = extMarketDataService.getLastPrice(figi, to);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);

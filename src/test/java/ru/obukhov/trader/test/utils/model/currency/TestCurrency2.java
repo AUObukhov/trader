@@ -35,7 +35,7 @@ public class TestCurrency2 {
     public static final boolean BUY_AVAILABLE_FLAG = false;
     public static final boolean SELL_AVAILABLE_FLAG = false;
     public static final String ISO_CURRENCY_NAME = "rub";
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 2500000);
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 2500000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = false;
     public static final String UID = "a92e2e25-a698-45cc-a781-167cf465257c";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

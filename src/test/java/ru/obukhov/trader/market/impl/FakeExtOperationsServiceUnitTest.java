@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -18,10 +18,10 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -252,9 +252,9 @@ class FakeExtOperationsServiceUnitTest {
         final String currency1 = Currencies.USD;
         final String currency2 = Currencies.EUR;
 
-        final Map<String, BigDecimal> balances = Map.of(
-                currency1, DecimalUtils.setDefaultScale(2000),
-                currency2, DecimalUtils.setDefaultScale(4000)
+        final Map<String, Quotation> balances = Map.of(
+                currency1, QuotationUtils.newQuotation(2000L),
+                currency2, QuotationUtils.newQuotation(4000L)
         );
         Mockito.when(fakeContext.getBalances(accountId)).thenReturn(balances);
 

@@ -1,22 +1,32 @@
 package ru.obukhov.trader.config.properties;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.DefaultConversionService;
+import ru.obukhov.trader.common.model.transform.DoubleToQuotationConverter;
+import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 class ScheduledBotsPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class);
+            .withUserConfiguration(TestConfiguration.class);
 
     @Test
     void beanCreated_andValuesInitialized_whenPropertiesFilled() {
@@ -32,8 +42,10 @@ class ScheduledBotsPropertiesContextTest {
                     Assertions.assertEquals(2, botConfigs.size());
 
                     final BotConfig botConfig1 = botConfigs.get(0);
+                    Assertions.assertEquals("2000124699", botConfig1.accountId());
                     Assertions.assertEquals("BBG005HLTYH9", botConfig1.figi());
                     Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig1.candleInterval());
+                    AssertUtils.assertEquals(0.003, botConfig1.commission());
                     Assertions.assertEquals(StrategyType.CROSS, botConfig1.strategyType());
 
                     final Map<String, Object> expectedStrategyParams1 = Map.of(
@@ -48,8 +60,10 @@ class ScheduledBotsPropertiesContextTest {
                     AssertUtils.assertEquals(expectedStrategyParams1, botConfig1.strategyParams());
 
                     final BotConfig botConfig2 = botConfigs.get(1);
+                    Assertions.assertEquals("2000124698", botConfig2.accountId());
                     Assertions.assertEquals("BBG005HLTYH9", botConfig2.figi());
                     Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig2.candleInterval());
+                    AssertUtils.assertEquals(0.003, botConfig2.commission());
                     Assertions.assertEquals(StrategyType.CONSERVATIVE, botConfig2.strategyType());
 
                     final Map<String, Object> expectedStrategyParams2 = Map.of("minimumProfit", 0.1);
@@ -104,7 +118,7 @@ class ScheduledBotsPropertiesContextTest {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
                 .withPropertyValues("scheduled-bot.bot-configs[0].figi:BBG000B9XRY4")
-                .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
+                .withPropertyValues("scheduled-bot.bot-configs[0].commission:0.003")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("candleInterval is mandatory"));
     }
@@ -134,7 +148,24 @@ class ScheduledBotsPropertiesContextTest {
     }
 
     @EnableConfigurationProperties(ScheduledBotsProperties.class)
-    private static class EnableConfigurationPropertiesConfiguration {
+    private static class TestConfiguration {
+        @Bean
+        @SuppressWarnings("unused")
+        public ConversionService conversionService() {
+            DefaultConversionService service = new DefaultConversionService();
+            service.addConverter(new DoubleToQuotationConverter());
+            service.addConverter(new StringToQuotationConverter());
+            return service;
+        }
+
+    }
+
+    public static class StringToQuotationConverter implements Converter<String, Quotation> {
+        @Override
+        public Quotation convert(@NotNull final String source) {
+            final BigDecimal bigDecimal = DecimalUtils.setDefaultScale(new BigDecimal(source));
+            return QuotationUtils.newQuotation(bigDecimal);
+        }
     }
 
 }

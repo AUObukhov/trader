@@ -6,7 +6,7 @@ import org.quartz.CronExpression;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -19,10 +19,10 @@ import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -66,7 +66,7 @@ public class FakeBotFactory {
         if (share == null) {
             throw new IllegalArgumentException("Not found share for FIGI '" + botConfig.figi() + "'");
         }
-        final BigDecimal initialBalance = getInitialBalance(currentTimestamp, ceilingWorkTimestamp, balanceConfig);
+        final Quotation initialBalance = getInitialBalance(currentTimestamp, ceilingWorkTimestamp, balanceConfig);
 
         return (FakeContext) applicationContext.getBean(
                 "fakeContext",
@@ -83,12 +83,12 @@ public class FakeBotFactory {
         return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentTimestamp);
     }
 
-    private BigDecimal getInitialBalance(
+    private Quotation getInitialBalance(
             final Timestamp currentTimestamp,
             final Timestamp ceilingWorkTimestamp,
             final BalanceConfig balanceConfig
     ) {
-        BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? DecimalUtils.setDefaultScale(0) : balanceConfig.getInitialBalance();
+        Quotation initialBalance = balanceConfig.getInitialBalance() == null ? QuotationUtils.ZERO : balanceConfig.getInitialBalance();
 
         // adding balance increments which were skipped by moving to ceiling work time above
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
@@ -96,8 +96,8 @@ public class FakeBotFactory {
             final int incrementsCount = TimestampUtils.getCronHitsBetweenDates(balanceIncrementCron, currentTimestamp, ceilingWorkTimestamp)
                     .size();
             if (incrementsCount > 0) {
-                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
-                initialBalance = initialBalance.add(totalBalanceIncrement);
+                final Quotation totalBalanceIncrement = QuotationUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
+                initialBalance = QuotationUtils.add(initialBalance, totalBalanceIncrement);
             }
         }
         return initialBalance;

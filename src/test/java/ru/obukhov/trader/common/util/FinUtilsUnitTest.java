@@ -6,8 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 class FinUtilsUnitTest {
@@ -16,7 +16,7 @@ class FinUtilsUnitTest {
 
     @Test
     void getRelativeProfit_throwsIllegalArgumentException_whenInvestmentIsNegative() {
-        final Executable executable = () -> FinUtils.getRelativeProfit(DecimalUtils.setDefaultScale(-0.1), DecimalUtils.setDefaultScale(10));
+        final Executable executable = () -> FinUtils.getRelativeProfit(QuotationUtils.newQuotation(0, -100000000), QuotationUtils.newQuotation(10));
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "investment can't be negative");
     }
 
@@ -33,11 +33,11 @@ class FinUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetRelativeProfit")
-    void getRelativeProfit(final double investment, final double profit, final double expectedRelativeProfit) {
-        final BigDecimal investmentDecimal = DecimalUtils.setDefaultScale(investment);
-        final BigDecimal profitDecimal = DecimalUtils.setDefaultScale(profit);
+    void getRelativeProfit(final long investment, final long profit, final double expectedRelativeProfit) {
+        final Quotation investmentQuotation = QuotationUtils.newQuotation(investment);
+        final Quotation profitQuotation = QuotationUtils.newQuotation(profit);
 
-        final double relativeProfit = FinUtils.getRelativeProfit(investmentDecimal, profitDecimal);
+        final double relativeProfit = FinUtils.getRelativeProfit(investmentQuotation, profitQuotation);
 
         AssertUtils.assertEquals(expectedRelativeProfit, relativeProfit);
     }

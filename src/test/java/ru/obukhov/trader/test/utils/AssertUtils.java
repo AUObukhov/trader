@@ -119,6 +119,28 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(@Nullable final Integer expected, @Nullable final Quotation actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (actual == null) {
+            Assertions.fail(String.format("expected: <%s> but was: null", expected));
+        } else if (expected != actual.getUnits() || actual.getNano() != 0) {
+            final String actualString = QuotationUtils.toPrettyString(actual);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actualString));
+        }
+    }
+
+    public static void assertEquals(@Nullable final Double expected, @Nullable final Quotation actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (actual == null) {
+            Assertions.fail(String.format("expected: <%s> but was: null", expected));
+        } else if (!QuotationUtils.newQuotation(expected).equals(actual)) {
+            final String actualString = QuotationUtils.toPrettyString(actual);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actualString));
+        }
+    }
+
     public static void assertEquals(@Nullable final Quotation expected, @Nullable final Quotation actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
@@ -191,6 +213,12 @@ public class AssertUtils {
                 final BigDecimal actualBigDecimal = QuotationUtils.toBigDecimal(actualQuotation);
                 if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
                     messageBuilder.append(getErrorMessage(expectedValue, QuotationUtils.toString(actualQuotation), index))
+                            .append(System.lineSeparator());
+                }
+            } else if (expectedValue instanceof Quotation expectedQuotation && actualValue instanceof BigDecimal actualBigDecimal) {
+                final BigDecimal expectedBigDecimal = QuotationUtils.toBigDecimal(expectedQuotation);
+                if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
+                    messageBuilder.append(getErrorMessage(QuotationUtils.toString(expectedQuotation), actualBigDecimal, index))
                             .append(System.lineSeparator());
                 }
             } else if (expectedValue instanceof ru.tinkoff.piapi.core.models.Money expectedMoney && actualValue instanceof ru.tinkoff.piapi.core.models.Money actualMoney) {
@@ -341,6 +369,8 @@ public class AssertUtils {
                     AssertUtils.assertEquals(NumberUtils.DOUBLE_ZERO, cell.getNumericCellValue());
                 } else if (value instanceof BigDecimal bigDecimalValue) {
                     assertCellValue(cell, bigDecimalValue);
+                } else if (value instanceof Quotation quotationValue) {
+                    assertCellValue(cell, quotationValue);
                 } else if (value instanceof Double doubleValue) {
                     assertCellValue(cell, doubleValue);
                 } else if (value instanceof Integer integerValue) {
@@ -374,6 +404,11 @@ public class AssertUtils {
 
     public static void assertCellValue(final Cell cell, final BigDecimal value) {
         final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
+        AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
+    }
+
+    public static void assertCellValue(final Cell cell, final Quotation value) {
+        final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : QuotationUtils.toDouble(value);
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }
 

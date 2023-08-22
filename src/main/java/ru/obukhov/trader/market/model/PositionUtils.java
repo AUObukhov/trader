@@ -2,9 +2,12 @@ package ru.obukhov.trader.market.model;
 
 import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @UtilityClass
 public class PositionUtils {
@@ -13,8 +16,10 @@ public class PositionUtils {
         return position.getAveragePositionPrice().getCurrency();
     }
 
-    public static BigDecimal getTotalPrice(final Position position) {
-        return position.getAveragePositionPrice().getValue().multiply(position.getQuantity());
+    public static Quotation getTotalPrice(final Position position) {
+        final BigDecimal averagePositionPrice = position.getAveragePositionPrice().getValue();
+        final BigDecimal quantity = position.getQuantity();
+        return QuotationUtils.newQuotation(averagePositionPrice.multiply(quantity));
     }
 
     /**
@@ -28,13 +33,13 @@ public class PositionUtils {
             final Position position,
             final long additionalQuantity,
             final long additionalQuantityLots,
-            final BigDecimal additionalTotalPrice,
-            final BigDecimal newCurrentPrice
+            final Quotation additionalTotalPrice,
+            final Quotation newCurrentPrice
     ) {
-        final BigDecimal newQuantity = DecimalUtils.add(position.getQuantity(), additionalQuantity);
-        final BigDecimal newTotalPrice = getTotalPrice(position).add(additionalTotalPrice);
-        final BigDecimal newAveragePositionPriceValue = DecimalUtils.divide(newTotalPrice, newQuantity);
-        final BigDecimal newExpectedYield = newCurrentPrice.subtract(newAveragePositionPriceValue).multiply(newQuantity);
+        final Quotation newQuantity = QuotationUtils.add(QuotationUtils.newQuotation(position.getQuantity()), additionalQuantity);
+        final Quotation newTotalPrice = QuotationUtils.add(getTotalPrice(position), additionalTotalPrice);
+        final Quotation newAveragePositionPriceValue = QuotationUtils.divide(newTotalPrice, newQuantity, RoundingMode.HALF_UP);
+        final Quotation newExpectedYield = QuotationUtils.multiply(QuotationUtils.subtract(newCurrentPrice, newAveragePositionPriceValue), newQuantity);
         final BigDecimal newQuantityLots = DecimalUtils.add(position.getQuantityLots(), additionalQuantityLots);
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
@@ -77,9 +82,34 @@ public class PositionUtils {
     }
 
     /**
+     * @return equal position, but with updated quantity, currentPrice and quantityLots
+     */
+    public Position cloneWithNewValues(
+            final Position position,
+            final BigDecimal quantity,
+            final Quotation expectedYield,
+            final Quotation currentPrice,
+            final BigDecimal quantityLots
+    ) {
+        return new PositionBuilder()
+                .setCurrency(getCurrency(position))
+                .setFigi(position.getFigi())
+                .setInstrumentType(position.getInstrumentType())
+                .setQuantity(quantity)
+                .setAveragePositionPrice(position.getAveragePositionPrice())
+                .setExpectedYield(expectedYield)
+                .setCurrentNkd(position.getCurrentNkd())
+                .setAveragePositionPricePt(position.getAveragePositionPricePt())
+                .setCurrentPrice(currentPrice)
+                .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
+                .setQuantityLots(quantityLots)
+                .build();
+    }
+
+    /**
      * @return equal position, but with updated currentPrice
      */
-    public Position cloneWithNewCurrentPrice(final Position position, final BigDecimal currentPrice) {
+    public Position cloneWithNewCurrentPrice(final Position position, final Quotation currentPrice) {
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
                 .setFigi(position.getFigi())

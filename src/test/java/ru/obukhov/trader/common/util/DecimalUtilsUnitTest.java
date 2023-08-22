@@ -49,6 +49,11 @@ class DecimalUtilsUnitTest {
         AssertUtils.assertEquals(expectedResult, result);
     }
 
+    @Test
+    void createBigDecimal_fromMoneyValue_whenMoneyValueIsNull() {
+        Assertions.assertNull(DecimalUtils.createBigDecimal(null));
+    }
+
     // endregion
 
     // region getNano tests

@@ -10,11 +10,11 @@ import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -62,19 +62,19 @@ public class FakeBot extends Bot {
         return getFakeContext().nextScheduleMinute(tradingSchedule);
     }
 
-    public void addInvestment(final String accountId, final Timestamp timestamp, final String currency, final BigDecimal increment) {
+    public void addInvestment(final String accountId, final Timestamp timestamp, final String currency, final Quotation increment) {
         getFakeContext().addInvestment(accountId, timestamp, currency, increment);
     }
 
-    public SortedMap<Timestamp, BigDecimal> getInvestments(final String accountId, final String currency) {
+    public SortedMap<Timestamp, Quotation> getInvestments(final String accountId, final String currency) {
         return getFakeContext().getInvestments(accountId, currency);
     }
 
-    public BigDecimal getCurrentBalance(final String accountId, final String currency) {
+    public Quotation getCurrentBalance(final String accountId, final String currency) {
         return getFakeContext().getBalance(accountId, currency);
     }
 
-    public BigDecimal getCurrentPrice(final String figi) {
+    public Quotation getCurrentPrice(final String figi) {
         return extMarketDataService.getLastPrice(figi, context.getCurrentTimestamp());
     }
 

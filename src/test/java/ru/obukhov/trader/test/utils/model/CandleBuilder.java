@@ -1,7 +1,7 @@
 package ru.obukhov.trader.test.utils.model;
 
 import com.google.protobuf.Timestamp;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Candle;
 
 public class CandleBuilder {
@@ -41,19 +41,19 @@ public class CandleBuilder {
         final Candle candle = new Candle();
 
         if (open != null) {
-            candle.setOpen(DecimalUtils.setDefaultScale(open));
+            candle.setOpen(QuotationUtils.newQuotation(open));
         }
 
         if (close != null) {
-            candle.setClose(DecimalUtils.setDefaultScale(close));
+            candle.setClose(QuotationUtils.newQuotation(close));
         }
 
         if (highest != null) {
-            candle.setHigh(DecimalUtils.setDefaultScale(highest));
+            candle.setHigh(QuotationUtils.newQuotation(highest));
         }
 
         if (lowest != null) {
-            candle.setLow(DecimalUtils.setDefaultScale(lowest));
+            candle.setLow(QuotationUtils.newQuotation(lowest));
         }
 
         if (time != null) {

@@ -4,8 +4,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Tolerate;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -32,8 +34,18 @@ public class PositionBuilder {
     }
 
     @Tolerate
+    public PositionBuilder setQuantity(final Quotation quantity) {
+        return setQuantity(QuotationUtils.toBigDecimal(quantity));
+    }
+
+    @Tolerate
     public PositionBuilder setQuantity(final long quantity) {
         return setQuantity(BigDecimal.valueOf(quantity));
+    }
+
+    @Tolerate
+    public PositionBuilder setAveragePositionPrice(final Quotation averagePositionPrice) {
+        return setAveragePositionPrice(QuotationUtils.toBigDecimal(averagePositionPrice));
     }
 
     @Tolerate
@@ -44,6 +56,11 @@ public class PositionBuilder {
     @Tolerate
     public PositionBuilder setAveragePositionPrice(final ru.tinkoff.piapi.core.models.Money averagePositionPrice) {
         return setAveragePositionPrice(averagePositionPrice.getValue());
+    }
+
+    @Tolerate
+    public PositionBuilder setExpectedYield(final Quotation expectedYield) {
+        return setExpectedYield(QuotationUtils.toBigDecimal(expectedYield));
     }
 
     @Tolerate
@@ -64,6 +81,11 @@ public class PositionBuilder {
     @Tolerate
     public PositionBuilder setAveragePositionPricePt(final double averagePositionPricePt) {
         return setAveragePositionPricePt(DecimalUtils.setDefaultScale(averagePositionPricePt));
+    }
+
+    @Tolerate
+    public PositionBuilder setCurrentPrice(final Quotation currentPrice) {
+        return setCurrentPrice(QuotationUtils.toBigDecimal(currentPrice));
     }
 
     @Tolerate

@@ -335,18 +335,18 @@ public class QuotationUtils {
 
         final long dividendAbs = Math.absExact(dividend);
 
-        final long divisorUnitsAbs = Math.absExact(divisor.getUnits());
+        final Int128 divisorUnitsAbs = new Int128(Math.absExact(divisor.getUnits()));
         final int divisorNanoAbs = Math.absExact(divisor.getNano());
 
-        final long dividendAbsAdjusted = Math.multiplyExact(dividendAbs, NANOS_LIMIT);
-        final long divisorAbsAdjusted = Math.addExact(Math.multiplyExact(divisorUnitsAbs, NANOS_LIMIT), divisorNanoAbs);
+        final Int128 dividendAbsAdjusted = new Int128(Math.multiplyExact(dividendAbs, NANOS_LIMIT));
+        final Int128 divisorAbsAdjusted = divisorUnitsAbs.multiplyExact(NANOS_LIMIT);
+        divisorAbsAdjusted.selfAddExact(divisorNanoAbs);
 
-        final long quotient = dividendAbsAdjusted / divisorAbsAdjusted;
-        final long remainder = dividendAbsAdjusted % divisorAbsAdjusted;
+        final Int128 quotient = dividendAbsAdjusted.selfDividePositive(divisorAbsAdjusted);
 
-        final long units = Math.multiplyExact(sign, quotient);
+        final long units = quotient.multiplyExact(sign).toLongExact();
 
-        final int nano = Math.multiplyExact(sign, getNanoForDivision(remainder, divisorAbsAdjusted, roundingMode));
+        final int nano = Math.multiplyExact(sign, getNanoForDivision(dividendAbsAdjusted, divisorAbsAdjusted, roundingMode));
         return newNormalizedQuotation(units, nano);
     }
 

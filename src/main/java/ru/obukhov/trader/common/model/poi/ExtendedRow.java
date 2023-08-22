@@ -11,8 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 
 import java.math.BigDecimal;
@@ -151,6 +153,8 @@ public class ExtendedRow implements Row {
             return createCell(column, moneyValue);
         } else if (value instanceof BigDecimal bigDecimalValue) {
             return createCell(column, bigDecimalValue);
+        } else if (value instanceof Quotation quotationValue) {
+            return createCell(column, quotationValue);
         } else if (value instanceof Double doubleValue) {
             return createCell(column, doubleValue);
         } else if (value instanceof Integer integerValue) {
@@ -195,6 +199,18 @@ public class ExtendedRow implements Row {
      */
     public ExtendedCell createCell(final int column, final BigDecimal value) {
         final Double doubleValue = value == null ? null : value.doubleValue();
+        return createCell(column, doubleValue);
+    }
+
+    /**
+     * Create numeric cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
+     *
+     * @return created cell
+     */
+    public ExtendedCell createCell(final int column, final Quotation value) {
+        final Double doubleValue = QuotationUtils.toDouble(value);
         return createCell(column, doubleValue);
     }
 

@@ -1,13 +1,21 @@
 package ru.obukhov.trader.trading.model;
 
-import java.math.BigDecimal;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 public record Balances(
-        BigDecimal initialInvestment, // Initial investment
-        BigDecimal totalInvestment, // Sum of all investments
-        BigDecimal weightedAverageInvestment,
+        // Initial investment
+        Quotation initialInvestment,
+
+        // Sum of all investments
+        Quotation totalInvestment,
+
         // Weighted average value of all investments where weight is time of corresponding investment being last investment
-        BigDecimal finalBalance, // Currency balance after back test
-        BigDecimal finalTotalSavings // {@code finalBalance} + costs of all positions after back test
+        Quotation weightedAverageInvestment,
+
+        // Currency balance after back test
+        Quotation finalBalance,
+
+        // finalBalance + costs of all positions after back test
+        Quotation finalTotalSavings
 ) {
 }

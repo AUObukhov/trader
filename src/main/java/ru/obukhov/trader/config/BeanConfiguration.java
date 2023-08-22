@@ -12,9 +12,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
+import ru.obukhov.trader.common.model.transform.DoubleToQuotationConverter;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
@@ -40,6 +43,7 @@ import ru.obukhov.trader.market.model.transform.InstrumentSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStageSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStateSerializer;
+import ru.obukhov.trader.market.model.transform.QuotationDeserializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
 import ru.obukhov.trader.market.model.transform.ShareSerializer;
 import ru.obukhov.trader.market.model.transform.TimestampSerializer;
@@ -47,6 +51,7 @@ import ru.obukhov.trader.market.model.transform.TradingDaySerializer;
 import ru.obukhov.trader.market.model.transform.TradingScheduleSerializer;
 import ru.obukhov.trader.trading.bots.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -54,7 +59,6 @@ import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -112,7 +116,7 @@ public class BeanConfiguration {
             final Timestamp currentTimestamp,
             final String accountId,
             final String currency,
-            final BigDecimal initialBalance
+            final Quotation initialBalance
     ) {
         return new FakeContext(currentTimestamp, accountId, currency, initialBalance);
     }
@@ -214,12 +218,20 @@ public class BeanConfiguration {
                 .addSerializer(new TradingDaySerializer())
                 .addSerializer(new QuotationSerializer())
                 .addSerializer(new TimestampSerializer())
-                .addSerializer(new MoneyValueSerializer());
+                .addSerializer(new MoneyValueSerializer())
+                .addDeserializer(Quotation.class, new QuotationDeserializer());
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .setDateFormat(new SimpleDateFormat(DateUtils.OFFSET_DATE_TIME_FORMAT))
                 .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
                 .registerModule(tinkoffModule);
+    }
+
+    @Bean
+    public ConversionService conversionService() {
+        DefaultConversionService service = new DefaultConversionService();
+        service.addConverter(new DoubleToQuotationConverter());
+        return service;
     }
 
 }

@@ -11,6 +11,7 @@ import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.Crossover;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -434,8 +435,8 @@ class TrendUtilsUnitTest {
 
     @Test
     void getCrossoverIfLast_throwsIllegalArgumentException_whenDifferentSizes() {
-        final List<BigDecimal> values1 = TestData.createRandomBigDecimals(10);
-        final List<BigDecimal> values2 = TestData.createRandomBigDecimals(9);
+        final List<Quotation> values1 = TestData.createRandomQuotations(10, 0, 1000);
+        final List<Quotation> values2 = TestData.createRandomQuotations(9, 0, 1000);
         final int index = 2;
 
         final Executable executable = () -> TrendUtils.getCrossoverIfLast(values1, values2, index);
@@ -525,11 +526,16 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetCrossoverIfLast")
-    void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, Crossover expectedCrossover) {
-        final List<BigDecimal> bigDecimalValues1 = TestData.createBigDecimals(values1);
-        final List<BigDecimal> bigDecimalValues2 = TestData.createBigDecimals(values2);
+    void getCrossoverIfLast(
+            final List<Double> values1,
+            final List<Double> values2,
+            final int index,
+            final Crossover expectedCrossover
+    ) {
+        final List<Quotation> quotations1 = values1.stream().map(QuotationUtils::newQuotation).toList();
+        final List<Quotation> quotations2 = values2.stream().map(QuotationUtils::newQuotation).toList();
 
-        final Crossover crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
+        final Crossover crossover = TrendUtils.getCrossoverIfLast(quotations1, quotations2, index);
 
         Assertions.assertEquals(expectedCrossover, crossover);
     }

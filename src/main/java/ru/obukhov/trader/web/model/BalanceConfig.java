@@ -1,16 +1,15 @@
 package ru.obukhov.trader.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
+import ru.obukhov.trader.web.model.validation.constraint.QuotationPositive;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Data
@@ -24,11 +23,11 @@ public class BalanceConfig {
 
     @NotNull(message = "initial balance is mandatory")
     @ApiModelProperty(value = "Initial balance before the back test", required = true, position = 1, example = "100000")
-    private BigDecimal initialBalance;
+    private Quotation initialBalance;
 
-    @Min(value = 1, message = "balanceIncrement must be positive")
+    @QuotationPositive(message = "balanceIncrement must be positive")
     @ApiModelProperty(value = "Sum to add to balance", allowableValues = "range[0, infinity]", position = 2, example = "1000")
-    private BigDecimal balanceIncrement;
+    private Quotation balanceIncrement;
 
     @ApiModelProperty(value = "Cron expression describing schedule of balance increments", position = 3, example = "0 0 0 1 * ?")
     private CronExpression balanceIncrementCron;
@@ -43,8 +42,8 @@ public class BalanceConfig {
         }
 
         final BalanceConfig that = (BalanceConfig) o;
-        return DecimalUtils.numbersEqual(initialBalance, that.initialBalance)
-                && DecimalUtils.numbersEqual(balanceIncrement, that.balanceIncrement)
+        return Objects.equals(initialBalance, that.initialBalance)
+                && Objects.equals(balanceIncrement, that.balanceIncrement)
                 && (String.valueOf(balanceIncrementCron).equals(String.valueOf(that.balanceIncrementCron))
         );
     }

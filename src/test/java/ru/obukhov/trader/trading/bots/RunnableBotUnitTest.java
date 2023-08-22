@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -35,10 +35,10 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -402,7 +402,7 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.accountId()).thenReturn(accountId);
         Mockito.when(botConfig.figi()).thenReturn(figi);
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
-        Mockito.when(botConfig.commission()).thenReturn(DecimalUtils.setDefaultScale(commission));
+        Mockito.when(botConfig.commission()).thenReturn(QuotationUtils.newQuotation(commission));
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -420,7 +420,7 @@ class RunnableBotUnitTest {
 
     @SuppressWarnings("SameParameterValue")
     private void mockData(final String accountId, final String figi, final String currency) {
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
+        final Quotation balance = QuotationUtils.newQuotation(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 

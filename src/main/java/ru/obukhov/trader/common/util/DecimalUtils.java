@@ -36,7 +36,9 @@ public class DecimalUtils {
     }
 
     public static BigDecimal createBigDecimal(final MoneyValue moneyValue) {
-        return createBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
+        return moneyValue == null
+                ? null
+                : createBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
     }
 
     /**

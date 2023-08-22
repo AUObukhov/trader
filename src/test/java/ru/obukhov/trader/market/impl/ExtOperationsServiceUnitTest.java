@@ -20,6 +20,7 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -111,11 +112,11 @@ class ExtOperationsServiceUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String accountId2 = TestData.ACCOUNT_ID2;
 
-        final long rubBalance1 = 1000;
-        final long rubBlocked1 = 100;
+        final int rubBalance1 = 1000;
+        final int rubBlocked1 = 100;
 
-        final long rubBalance2 = 2000;
-        final long rubBlocked2 = 200;
+        final int rubBalance2 = 2000;
+        final int rubBlocked2 = 200;
 
         final List<MoneyValue> moneys1 = List.of(
                 TestData.createMoneyValue(100, Currencies.USD),
@@ -141,8 +142,8 @@ class ExtOperationsServiceUnitTest {
 
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
-        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
+        final Quotation balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
+        final Quotation balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
 
         AssertUtils.assertEquals(rubBalance1 - rubBlocked1, balance1);
         AssertUtils.assertEquals(rubBalance2 - rubBlocked2, balance2);
@@ -153,13 +154,13 @@ class ExtOperationsServiceUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String accountId2 = TestData.ACCOUNT_ID2;
 
-        final long rubBalance1 = 1000;
-        final long rubBlocked1 = 100;
-        final long rubGuaranteeBlocked1 = 10;
+        final int rubBalance1 = 1000;
+        final int rubBlocked1 = 100;
+        final int rubGuaranteeBlocked1 = 10;
 
-        final long rubBalance2 = 2000;
-        final long rubBlocked2 = 200;
-        final long rubGuaranteeBlocked2 = 20;
+        final int rubBalance2 = 2000;
+        final int rubBlocked2 = 200;
+        final int rubGuaranteeBlocked2 = 20;
 
         final List<MoneyValue> moneys1 = List.of(
                 TestData.createMoneyValue(100, Currencies.USD),
@@ -187,8 +188,8 @@ class ExtOperationsServiceUnitTest {
         );
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
-        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
+        final Quotation balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
+        final Quotation balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
 
         AssertUtils.assertEquals(rubBalance1 - rubBlocked1 - rubGuaranteeBlocked1, balance1);
         AssertUtils.assertEquals(rubBalance2 - rubBlocked2 - rubGuaranteeBlocked2, balance2);

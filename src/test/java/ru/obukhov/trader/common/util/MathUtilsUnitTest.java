@@ -9,10 +9,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -77,13 +79,14 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_throwsIllegalArgumentException_whenThereIsDateTimeAfterEndDateTime() {
-        final Map<Timestamp, BigDecimal> timestampsToAmounts = new HashMap<>();
+        final Map<Timestamp, Quotation> timestampsToAmounts = new HashMap<>();
         Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1);
-        BigDecimal amount = DecimalUtils.setDefaultScale(10000);
+        Quotation amount = QuotationUtils.newQuotation(10000L);
         timestampsToAmounts.put(timestamp, amount);
+        final Quotation increment = QuotationUtils.newQuotation(1000L);
         for (int i = 0; i < 24; i++) {
             timestamp = TimestampUtils.plusDays(timestamp, 1);
-            amount = amount.add(DecimalUtils.setDefaultScale(1000));
+            amount = QuotationUtils.add(amount, increment);
             timestampsToAmounts.put(timestamp, amount);
         }
 
@@ -95,31 +98,31 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
-        final Map<Timestamp, BigDecimal> dateTimesToAmounts = new HashMap<>();
+        final Map<Timestamp, Quotation> dateTimesToAmounts = new HashMap<>();
         final Timestamp endTimestamp = TimestampUtils.newTimestamp(2021, 3, 10, 11, 12, 13);
 
-        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTimestamp);
+        final Quotation weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTimestamp);
 
         AssertUtils.assertEquals(0, weightedAverage);
     }
 
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
-        final Map<Timestamp, BigDecimal> dateTimesToAmounts = new HashMap<>();
+        final Map<Timestamp, Quotation> timestampsToAmounts = new LinkedHashMap<>();
         Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1);
-        BigDecimal amount = DecimalUtils.setDefaultScale(10000);
-        dateTimesToAmounts.put(timestamp, amount);
+        Quotation amount = QuotationUtils.newQuotation(10000L);
+        timestampsToAmounts.put(timestamp, amount);
+        final Quotation increment = QuotationUtils.newQuotation(1000L);
         for (int i = 0; i < 24; i++) {
             timestamp = TimestampUtils.plusDays(timestamp, 1);
-            amount = amount.add(DecimalUtils.setDefaultScale(1000));
-            dateTimesToAmounts.put(timestamp, amount);
+            amount = QuotationUtils.add(amount, increment);
+            timestampsToAmounts.put(timestamp, amount);
         }
 
         final Timestamp endTimestamp = TimestampUtils.newTimestamp(2021, 1, 25);
+        final Quotation weightedAverage = MathUtils.getWeightedAverage(timestampsToAmounts, endTimestamp);
 
-        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTimestamp);
-
-        AssertUtils.assertEquals(17666.666666667, weightedAverage);
+        AssertUtils.assertEquals(17666.666666664, weightedAverage);
     }
 
     // endregion
@@ -187,7 +190,7 @@ class MathUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_for_divideRoundUp")
-    public void divideRoundUp(final long dividend, final long divisor, final long expectedResult) {
+    void divideRoundUp(final long dividend, final long divisor, final long expectedResult) {
         final long actualResult = MathUtils.divideRoundUp(dividend, divisor);
         Assertions.assertEquals(expectedResult, actualResult);
     }
