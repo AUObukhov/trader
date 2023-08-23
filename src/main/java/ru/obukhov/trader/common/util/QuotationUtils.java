@@ -138,7 +138,7 @@ public class QuotationUtils {
         return compare(quotation1, quotation2) <= 0 ? quotation1 : quotation2;
     }
 
-    /// endregion
+    // endregion
 
     public static Quotation negate(final Quotation quotation) {
         return newQuotation(-quotation.getUnits(), -quotation.getNano());
