@@ -22,7 +22,7 @@ public class PostOrderResponseBuilder {
     private BigDecimal totalOrderAmount;
     private BigDecimal totalCommissionAmount;
     private BigDecimal initialSecurityPrice;
-    private long quantityLots;
+    private long lots;
     private String figi;
     private OrderDirection direction;
     private OrderType type;
@@ -63,8 +63,8 @@ public class PostOrderResponseBuilder {
         final MoneyValue commission = DataStructsHelper.createMoneyValue(currency, totalCommissionAmount);
         final PostOrderResponse.Builder builder = PostOrderResponse.newBuilder()
                 .setExecutionReportStatus(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL)
-                .setLotsRequested(quantityLots)
-                .setLotsExecuted(quantityLots)
+                .setLotsRequested(lots)
+                .setLotsExecuted(lots)
                 .setInitialOrderPrice(orderPrice)
                 .setExecutedOrderPrice(orderPrice)
                 .setTotalOrderAmount(DataStructsHelper.createMoneyValue(currency, totalOrderAmount))

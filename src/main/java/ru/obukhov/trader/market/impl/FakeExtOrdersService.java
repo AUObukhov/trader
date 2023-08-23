@@ -63,7 +63,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     public PostOrderResponse postOrder(
             final String accountId,
             final String figi,
-            final long quantityLots,
+            final long quantity,
             final BigDecimal price,
             final OrderDirection direction,
             final OrderType type,
@@ -71,12 +71,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
     ) {
         final Share share = extInstrumentsService.getShare(figi);
         final Quotation currentPrice = getCurrentPrice(figi);
-        final long quantity = quantityLots * share.getLot();
         final Quotation totalPrice = QuotationUtils.multiply(currentPrice, quantity);
         final Quotation totalCommissionAmount = QuotationUtils.multiply(totalPrice, commission);
 
         if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
-            buyPosition(accountId, figi, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);
+            buyPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
             addOperation(accountId, figi, share.getCurrency(), currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
         } else {
             sellPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
@@ -88,7 +87,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
-                .setQuantityLots(quantityLots)
+                .setLots(quantity / share.getLot())
                 .setFigi(share.getFigi())
                 .setDirection(direction)
                 .setType(type)
@@ -114,7 +113,6 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final String figi,
             final Quotation currentPrice,
             final Long quantity,
-            final Long quantityLots,
             final Quotation totalPrice,
             final Quotation commissionAmount
     ) {
@@ -133,10 +131,9 @@ public class FakeExtOrdersService implements ExtOrdersService {
                     .setExpectedYield(0)
                     .setCurrentPrice(currentPrice)
                     .setQuantity(quantity)
-                    .setQuantityLots(quantityLots)
                     .build();
         } else {
-            position = PositionUtils.addQuantities(existingPosition, quantity, quantityLots, totalPrice, currentPrice);
+            position = PositionUtils.addQuantities(existingPosition, quantity, totalPrice, currentPrice);
         }
 
         fakeContext.addPosition(accountId, figi, position);
@@ -171,12 +168,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
         if (compareToZero == 0) {
             fakeContext.removePosition(accountId, figi);
         } else {
-            final BigDecimal newQuantityLots = newQuantity.divide(BigDecimal.valueOf(share.getLot()), 0, RoundingMode.UNNECESSARY);
             final Quotation newExpectedYield = QuotationUtils.multiply(
                     QuotationUtils.subtract(currentPrice, existingPosition.getAveragePositionPrice().getValue()),
                     newQuantity
             );
-            final Position newPosition = PositionUtils.cloneWithNewValues(existingPosition, newQuantity, newExpectedYield, currentPrice, newQuantityLots);
+            final Position newPosition = PositionUtils.cloneWithNewValues(existingPosition, newQuantity, newExpectedYield, currentPrice);
             fakeContext.addPosition(accountId, figi, newPosition);
         }
     }

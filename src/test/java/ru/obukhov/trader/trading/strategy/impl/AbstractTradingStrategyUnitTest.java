@@ -74,7 +74,7 @@ class AbstractTradingStrategyUnitTest {
         final Decision decision = strategy.getBuyOrWaitDecision(data, strategyCache);
 
         Assertions.assertEquals(expectedAction, decision.getAction());
-        Assertions.assertEquals(expectedLots, decision.getQuantityLots());
+        Assertions.assertEquals(expectedLots, decision.getQuantity());
         Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
@@ -92,17 +92,17 @@ class AbstractTradingStrategyUnitTest {
         final Decision decision = strategy.getSellOrWaitDecision(decisionData, minimumProfit, strategyCache);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getQuantityLots());
+        Assertions.assertNull(decision.getQuantity());
         Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSellOrWaitDecision() {
         return Stream.of(
-                Arguments.of(0.1f, 1000.0, 10, 1, 1100.0, DecisionAction.WAIT),
-                Arguments.of(0.1f, 1000.0, 10, 3, 900.0, DecisionAction.WAIT),
-                Arguments.of(0.1f, 100.0, 10, 2, 1000.0, DecisionAction.SELL),
-                Arguments.of(-1.0f, 100.0, 10, 2, 1000.0, DecisionAction.WAIT)
+                Arguments.of(0.1f, 1000.0, 10, 1100.0, DecisionAction.WAIT),
+                Arguments.of(0.1f, 1000.0, 30, 900.0, DecisionAction.WAIT),
+                Arguments.of(0.1f, 100.0, 20, 1000.0, DecisionAction.SELL),
+                Arguments.of(-1.0f, 100.0, 20, 1000.0, DecisionAction.WAIT)
         );
     }
 
@@ -111,22 +111,21 @@ class AbstractTradingStrategyUnitTest {
     void getSellOrWaitDecision(
             final float minimumProfit,
             final double averagePositionPrice,
-            final int quantityLots,
-            final int lotSize,
+            final int quantity,
             final double currentPrice,
             final DecisionAction expectedAction
     ) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.createDecisionData(averagePositionPrice, quantityLots, lotSize, currentPrice);
+        final DecisionData data = TestData.createDecisionData(averagePositionPrice, quantity, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getSellOrWaitDecision(data, minimumProfit, strategyCache);
 
         Assertions.assertEquals(expectedAction, decision.getAction());
         if (expectedAction == DecisionAction.WAIT) {
-            Assertions.assertNull(decision.getQuantityLots());
+            Assertions.assertNull(decision.getQuantity());
         } else {
-            AssertUtils.assertEquals(quantityLots, decision.getQuantityLots());
+            AssertUtils.assertEquals(quantity, decision.getQuantity());
         }
         Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }

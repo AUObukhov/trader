@@ -20,7 +20,7 @@ class PostOrderResponseBuilderUnitTest {
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
-        final long quantityLots = 10;
+        final long lots = 10;
         final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
@@ -31,7 +31,7 @@ class PostOrderResponseBuilderUnitTest {
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
-                .setQuantityLots(quantityLots)
+                .setLots(lots)
                 .setFigi(figi)
                 .setDirection(direction)
                 .setType(type)
@@ -39,8 +39,8 @@ class PostOrderResponseBuilderUnitTest {
                 .build();
 
         Assertions.assertEquals(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL, response.getExecutionReportStatus());
-        Assertions.assertEquals(quantityLots, response.getLotsRequested());
-        Assertions.assertEquals(quantityLots, response.getLotsExecuted());
+        Assertions.assertEquals(lots, response.getLotsRequested());
+        Assertions.assertEquals(lots, response.getLotsExecuted());
         AssertUtils.assertEquals(totalPrice + totalCommissionAmount, response.getInitialOrderPrice());
         AssertUtils.assertEquals(totalPrice + totalCommissionAmount, response.getExecutedOrderPrice());
         AssertUtils.assertEquals(totalPrice, response.getTotalOrderAmount());
@@ -59,7 +59,7 @@ class PostOrderResponseBuilderUnitTest {
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
-        final long quantityLots = 10;
+        final long lots = 10;
         final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
@@ -69,7 +69,7 @@ class PostOrderResponseBuilderUnitTest {
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
-                .setQuantityLots(quantityLots)
+                .setLots(lots)
                 .setFigi(figi)
                 .setDirection(direction)
                 .setType(type)
@@ -77,8 +77,8 @@ class PostOrderResponseBuilderUnitTest {
                 .build();
 
         Assertions.assertEquals(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL, response.getExecutionReportStatus());
-        Assertions.assertEquals(quantityLots, response.getLotsRequested());
-        Assertions.assertEquals(quantityLots, response.getLotsExecuted());
+        Assertions.assertEquals(lots, response.getLotsRequested());
+        Assertions.assertEquals(lots, response.getLotsExecuted());
         AssertUtils.assertEquals(totalPrice + totalCommissionAmount, response.getInitialOrderPrice());
         AssertUtils.assertEquals(totalPrice + totalCommissionAmount, response.getExecutedOrderPrice());
         AssertUtils.assertEquals(totalPrice, response.getTotalOrderAmount());
@@ -97,7 +97,7 @@ class PostOrderResponseBuilderUnitTest {
         final BigDecimal totalPrice = DecimalUtils.setDefaultScale(1000);
         final BigDecimal totalCommissionAmount = DecimalUtils.setDefaultScale(5);
         final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
-        final long quantityLots = 10;
+        final long lots = 10;
         final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
@@ -108,7 +108,7 @@ class PostOrderResponseBuilderUnitTest {
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
-                .setQuantityLots(quantityLots)
+                .setLots(lots)
                 .setFigi(figi)
                 .setDirection(direction)
                 .setType(type)
@@ -116,8 +116,8 @@ class PostOrderResponseBuilderUnitTest {
                 .build();
 
         Assertions.assertEquals(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL, response.getExecutionReportStatus());
-        Assertions.assertEquals(quantityLots, response.getLotsRequested());
-        Assertions.assertEquals(quantityLots, response.getLotsExecuted());
+        Assertions.assertEquals(lots, response.getLotsRequested());
+        Assertions.assertEquals(lots, response.getLotsExecuted());
         AssertUtils.assertEquals(totalPrice.add(totalCommissionAmount), response.getInitialOrderPrice());
         AssertUtils.assertEquals(totalPrice.add(totalCommissionAmount), response.getExecutedOrderPrice());
         AssertUtils.assertEquals(totalPrice, response.getTotalOrderAmount());

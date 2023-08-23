@@ -84,7 +84,7 @@ class RealExtOrdersServiceUnitTest {
         final int totalOrderAmount = 2000;
         final int totalCommissionAmount = 10;
         final int initialSecurityPrice = 20;
-        final long quantityLots = 30;
+        final long lots = 30;
         final BigDecimal price = DecimalUtils.setDefaultScale(200);
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
@@ -95,24 +95,24 @@ class RealExtOrdersServiceUnitTest {
                 .setTotalOrderAmount(totalOrderAmount)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(initialSecurityPrice)
-                .setQuantityLots(quantityLots)
+                .setLots(lots)
                 .setFigi(figi)
                 .setDirection(direction)
                 .setType(type)
                 .setOrderId(orderId)
                 .build();
 
-        Mockito.when(ordersService.postOrderSync(figi, quantityLots, DecimalUtils.toQuotation(price), direction, accountId, type, orderId))
+        Mockito.when(ordersService.postOrderSync(figi, lots, DecimalUtils.toQuotation(price), direction, accountId, type, orderId))
                 .thenReturn(response);
 
-        final PostOrderResponse result = realExtOrdersService.postOrder(accountId, figi, quantityLots, price, direction, type, orderId);
+        final PostOrderResponse result = realExtOrdersService.postOrder(accountId, figi, lots, price, direction, type, orderId);
 
         final PostOrderResponse expectedResponse = new PostOrderResponseBuilder()
                 .setCurrency(currency)
                 .setTotalOrderAmount(totalOrderAmount)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(initialSecurityPrice)
-                .setQuantityLots(quantityLots)
+                .setLots(lots)
                 .setFigi(figi)
                 .setDirection(direction)
                 .setType(type)

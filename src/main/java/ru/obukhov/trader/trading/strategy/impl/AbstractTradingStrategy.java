@@ -76,7 +76,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
                 decision = new Decision(DecisionAction.WAIT, null, strategyCache);
                 log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             } else {
-                decision = new Decision(DecisionAction.SELL, data.getQuantityLots(), strategyCache);
+                decision = new Decision(DecisionAction.SELL, data.getQuantity(), strategyCache);
                 log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             }
         }

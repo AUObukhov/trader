@@ -15,15 +15,15 @@ import java.util.List;
 class DecisionDataUnitTest {
 
     @Test
-    void getQuantityLots() {
-        final long quantityLots = 30;
+    void getQuantity() {
+        final long quantity = 30;
 
         final Position portfolioPosition = new PositionBuilder()
-                .setQuantityLots(quantityLots)
+                .setQuantity(quantity)
                 .build();
         final DecisionData decisionData = new DecisionData().setPosition(portfolioPosition);
 
-        AssertUtils.assertEquals(quantityLots, decisionData.getQuantityLots());
+        AssertUtils.assertEquals(quantity, decisionData.getQuantity());
 
     }
 

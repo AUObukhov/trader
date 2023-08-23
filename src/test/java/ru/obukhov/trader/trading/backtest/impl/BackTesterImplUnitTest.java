@@ -186,7 +186,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final Quotation finalBalance1 = QuotationUtils.newQuotation(2000L);
-        final int finalQuantityLots1 = 8;
+        final int finalQuantity1 = 8;
 
         final Map<Timestamp, Double> prices1 = new LinkedHashMap<>();
         prices1.put(TimestampUtils.plusMinutes(from, 10), 1000.0);
@@ -203,14 +203,14 @@ class BackTesterImplUnitTest {
                 balanceConfig,
                 interval,
                 QuotationUtils.newQuotation(2000L),
-                finalQuantityLots1,
+                finalQuantity1,
                 prices1,
                 finalPrice1,
                 null
         );
 
         final Quotation finalBalance2 = QuotationUtils.newQuotation(100L);
-        final int finalQuantityLots2 = 50;
+        final int finalQuantity2 = 500;
 
         final Map<Timestamp, Double> prices2 = new LinkedHashMap<>();
         prices2.put(TimestampUtils.plusMinutes(from, 100), 100.0);
@@ -227,7 +227,7 @@ class BackTesterImplUnitTest {
                 balanceConfig,
                 interval,
                 finalBalance2,
-                finalQuantityLots2,
+                finalQuantity2,
                 prices2,
                 finalPrice2,
                 null
@@ -246,14 +246,14 @@ class BackTesterImplUnitTest {
         assertCommonStatistics(
                 backTestResults.get(0), botConfigs.get(1), // expected sorting of results by profit
                 interval, initialInvestment,
-                finalPrice2, finalQuantityLots2 * TestShare2.LOT, finalBalance2,
+                finalPrice2, finalQuantity2, finalBalance2,
                 4.03, 1.768913277123785E256
         );
 
         assertCommonStatistics(
                 backTestResults.get(1), botConfigs.get(0),
                 interval, initialInvestment,
-                finalPrice1, finalQuantityLots1 * TestShare1.LOT, finalBalance1,
+                finalPrice1, finalQuantity1 * TestShare1.LOT, finalBalance1,
                 0.0032, 2.212128816
         );
     }
@@ -317,7 +317,6 @@ class BackTesterImplUnitTest {
         prices1.put(TimestampUtils.plusMinutes(from, 50), 500.0);
 
         final Quotation currentBalance1 = QuotationUtils.newQuotation(2000L);
-        final int positionLotsCount1 = 2;
 
         final BotConfig botConfig1 = new BotConfig(accountId1, figi1, null, commission1, null, null);
 
@@ -330,7 +329,7 @@ class BackTesterImplUnitTest {
 
         mockInvestments(fakeBot1, accountId1, currency1, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
-        mockPortfolioPosition(fakeBot1, accountId1, figi1, 500, 1, positionLotsCount1);
+        mockPortfolioPosition(fakeBot1, accountId1, figi1, 500, 1);
 
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
@@ -345,7 +344,6 @@ class BackTesterImplUnitTest {
         prices2.put(TimestampUtils.plusMinutes(from, 500), 50.0);
 
         final Quotation currentBalance2 = QuotationUtils.newQuotation(2000L);
-        final int positionLotsCount2 = 2;
 
         final BotConfig botConfig2 = new BotConfig(accountId2, figi2, null, commission2, null, null);
 
@@ -357,7 +355,7 @@ class BackTesterImplUnitTest {
         mockPlusMinuteScheduled(fakeBot2, from);
         mockInvestments(fakeBot2, accountId2, currency2, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot2.getCurrentBalance(accountId2, currency2)).thenReturn(currentBalance2);
-        mockPortfolioPosition(fakeBot2, accountId2, figi2, 50, 1, positionLotsCount2);
+        mockPortfolioPosition(fakeBot2, accountId2, figi2, 50, 20);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
 
@@ -409,7 +407,7 @@ class BackTesterImplUnitTest {
         final double currentPrice1 = 500.0;
         prices1.put(TimestampUtils.plusMinutes(from, 50), currentPrice1);
 
-        final int quantityLots1 = 2;
+        final int quantity1 = 2;
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -418,13 +416,13 @@ class BackTesterImplUnitTest {
                 balanceConfig,
                 interval,
                 QuotationUtils.newQuotation(20000L),
-                quantityLots1,
+                quantity1,
                 prices1,
                 currentPrice1,
                 null
         );
 
-        final int quantityLots2 = 1;
+        final int quantity2 = 10;
         final double currentPrice2 = 5000.0;
 
         final BotConfig botConfig2 = arrangeBackTest(
@@ -434,7 +432,7 @@ class BackTesterImplUnitTest {
                 balanceConfig,
                 interval,
                 QuotationUtils.newQuotation(10000L),
-                quantityLots2,
+                quantity2,
                 Collections.emptyMap(),
                 currentPrice2,
                 null
@@ -449,8 +447,8 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertPosition(backTestResults.get(0), TestShare2.FIGI, currentPrice2, quantityLots2 * TestShare2.LOT);
-        assertPosition(backTestResults.get(1), TestShare1.FIGI, currentPrice1, quantityLots1 * TestShare1.LOT);
+        assertPosition(backTestResults.get(0), TestShare2.FIGI, currentPrice2, quantity2);
+        assertPosition(backTestResults.get(1), TestShare1.FIGI, currentPrice1, quantity1);
     }
 
     private void assertPosition(final BackTestResult backTestResult, final String figi, final double currentPrice, final int quantity) {
@@ -480,7 +478,7 @@ class BackTesterImplUnitTest {
 
         final Quotation currentBalance1 = QuotationUtils.newQuotation(20000L);
 
-        final int quantityLots1 = 1;
+        final int quantity1 = 1;
 
         final Timestamp operationTimestamp1 = TimestampUtils.plusMinutes(from, 2);
         final OperationType operationType1 = OperationType.OPERATION_TYPE_BUY;
@@ -493,7 +491,7 @@ class BackTesterImplUnitTest {
 
         final Quotation currentBalance2 = QuotationUtils.newQuotation(10000L);
 
-        final int quantityLots2 = 1;
+        final int quantity2 = 10;
 
         final Timestamp operationTimestamp2 = TimestampUtils.plusMinutes(from, 3);
         final OperationType operationType2 = OperationType.OPERATION_TYPE_SELL;
@@ -508,7 +506,7 @@ class BackTesterImplUnitTest {
                 balanceConfig,
                 interval,
                 currentBalance1,
-                quantityLots1,
+                quantity1,
                 Map.of(TimestampUtils.plusMinutes(from, 1), 100.0),
                 100,
                 operation1
@@ -521,7 +519,7 @@ class BackTesterImplUnitTest {
                 balanceConfig,
                 interval,
                 currentBalance2,
-                quantityLots2,
+                quantity2,
                 Map.of(TimestampUtils.plusMinutes(from, 3), 1000.0),
                 1000,
                 operation2
@@ -1017,7 +1015,7 @@ class BackTesterImplUnitTest {
             final BalanceConfig balanceConfig,
             final Interval interval,
             final Quotation currentBalance,
-            final Integer quantityLots,
+            final Integer quantity,
             final Map<Timestamp, Double> prices,
             final double currentPrice,
             final Operation operation
@@ -1034,9 +1032,8 @@ class BackTesterImplUnitTest {
         mockPlusMinuteScheduled(fakeBot, interval.getFrom());
         mockInvestments(fakeBot, accountId, currency, interval.getFrom(), balanceConfig.getInitialBalance());
         Mockito.when(fakeBot.getCurrentBalance(accountId, currency)).thenReturn(currentBalance);
-        if (quantityLots != null) {
-            final int quantity = share.getLot() * quantityLots;
-            mockPortfolioPosition(fakeBot, accountId, figi, currentPrice, quantity, quantityLots);
+        if (quantity != null) {
+            mockPortfolioPosition(fakeBot, accountId, figi, currentPrice, quantity);
             mockCurrentPrice(fakeBot, figi, currentPrice);
         }
         if (operation != null) {
@@ -1099,14 +1096,12 @@ class BackTesterImplUnitTest {
             final String accountId,
             final String figi,
             final double currentPrice,
-            final int quantity,
-            final int quantityLots
+            final int quantity
     ) {
         final Position portfolioPosition = new PositionBuilder()
                 .setFigi(figi)
                 .setQuantity(quantity)
                 .setCurrentPrice(currentPrice)
-                .setQuantityLots(quantityLots)
                 .build();
 
         Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));

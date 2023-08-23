@@ -25,7 +25,6 @@ public class PositionBuilder {
     private BigDecimal currentNkd;
     private BigDecimal currentPrice;
     private BigDecimal averagePositionPriceFifo;
-    private BigDecimal quantityLots;
 
     @Tolerate
     public PositionBuilder setInstrumentType(final InstrumentType instrumentType) {
@@ -102,11 +101,6 @@ public class PositionBuilder {
         return setAveragePositionPriceFifo(averagePositionPriceFifo.getValue());
     }
 
-    @Tolerate
-    public PositionBuilder setQuantityLots(final long quantityLots) {
-        return setQuantityLots(BigDecimal.valueOf(quantityLots));
-    }
-
     public Position build() {
         return Position.builder()
                 .figi(figi)
@@ -118,7 +112,7 @@ public class PositionBuilder {
                 .averagePositionPricePt(BigDecimal.ZERO)
                 .currentPrice(DataStructsHelper.createMoney(currentPrice, currency))
                 .averagePositionPriceFifo(DataStructsHelper.createMoney(averagePositionPriceFifo, currency))
-                .quantityLots(quantityLots)
+                .quantityLots(BigDecimal.ZERO)
                 .build();
     }
 }

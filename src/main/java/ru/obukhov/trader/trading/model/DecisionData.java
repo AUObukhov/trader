@@ -23,8 +23,8 @@ public class DecisionData {
     private Share share;
     private Quotation commission;
 
-    public Long getQuantityLots() {
-        return position.getQuantityLots().longValueExact();
+    public Long getQuantity() {
+        return position.getQuantity().longValueExact();
     }
 
     public BigDecimal getAveragePositionPrice() {

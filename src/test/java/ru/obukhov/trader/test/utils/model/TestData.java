@@ -55,19 +55,18 @@ public class TestData {
 
     public static DecisionData createDecisionData(
             final double averagePositionPrice,
-            final int positionLotsCount,
-            final int lotSize,
+            final int quantity,
             final double currentPrice
     ) {
         final DecisionData decisionData = new DecisionData();
         final Position portfolioPosition = new PositionBuilder()
                 .setAveragePositionPrice(averagePositionPrice)
-                .setQuantityLots(positionLotsCount)
+                .setQuantity(quantity)
                 .build();
 
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
-        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
+        decisionData.setShare(Share.newBuilder().build());
         decisionData.setCommission(QuotationUtils.ZERO);
 
         return decisionData;
@@ -93,7 +92,6 @@ public class TestData {
             final long averagePositionPrice,
             final long expectedYield,
             final long currentPrice,
-            final long quantityLots,
             final String currency
     ) {
         return PortfolioPosition.newBuilder()
@@ -105,7 +103,6 @@ public class TestData {
                 .setCurrentNkd(createMoneyValue(currency))
                 .setCurrentPrice(createMoneyValue(currentPrice, currency))
                 .setAveragePositionPriceFifo(createMoneyValue(currency))
-                .setQuantityLots(createQuotation(quantityLots))
                 .build();
     }
 

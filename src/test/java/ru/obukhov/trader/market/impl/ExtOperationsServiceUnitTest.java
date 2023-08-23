@@ -44,10 +44,10 @@ class ExtOperationsServiceUnitTest {
         final String figi1 = TestShare1.FIGI;
         final String figi2 = TestShare2.FIGI;
 
-        final Position portfolioPosition1 = new PositionBuilder().setFigi(figi1).setQuantityLots(1).build();
-        final Position portfolioPosition2 = new PositionBuilder().setFigi(figi2).setQuantityLots(2).build();
-        final Position portfolioPosition3 = new PositionBuilder().setFigi(figi1).setQuantityLots(3).build();
-        final Position portfolioPosition4 = new PositionBuilder().setFigi(figi2).setQuantityLots(4).build();
+        final Position portfolioPosition1 = new PositionBuilder().setFigi(figi1).setQuantity(1).build();
+        final Position portfolioPosition2 = new PositionBuilder().setFigi(figi2).setQuantity(20).build();
+        final Position portfolioPosition3 = new PositionBuilder().setFigi(figi1).setQuantity(3).build();
+        final Position portfolioPosition4 = new PositionBuilder().setFigi(figi2).setQuantity(40).build();
 
         final Map<String, List<Position>> accountsToPositions = Map.of(
                 accountId1, List.of(portfolioPosition1, portfolioPosition2),

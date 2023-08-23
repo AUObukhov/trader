@@ -199,10 +199,7 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
-        final Position portfolioPosition = new PositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(0)
-                .build();
+        final Position portfolioPosition = new PositionBuilder().setFigi(figi).build();
 
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(portfolioPosition);
@@ -237,7 +234,7 @@ class BotUnitTest {
                 .postOrder(
                         accountId,
                         figi,
-                        decision.getQuantityLots(),
+                        decision.getQuantity(),
                         null,
                         OrderDirection.ORDER_DIRECTION_BUY,
                         OrderType.ORDER_TYPE_MARKET,
@@ -256,10 +253,7 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 
-        final Position position = new PositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(0)
-                .build();
+        final Position position = new PositionBuilder().setFigi(figi).build();
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(position);
 
@@ -293,7 +287,7 @@ class BotUnitTest {
                 .postOrder(
                         accountId,
                         figi,
-                        decision.getQuantityLots(),
+                        decision.getQuantity(),
                         null,
                         OrderDirection.ORDER_DIRECTION_SELL,
                         OrderType.ORDER_TYPE_MARKET,

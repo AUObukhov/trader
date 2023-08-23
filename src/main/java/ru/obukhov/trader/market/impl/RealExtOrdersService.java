@@ -45,14 +45,14 @@ public class RealExtOrdersService implements ExtOrdersService {
     public PostOrderResponse postOrder(
             final String accountId,
             final String figi,
-            final long quantityLots,
+            final long quantity,
             final BigDecimal price,
             final OrderDirection direction,
             final OrderType type,
             final String orderId
     ) {
         final Quotation quotationPrice = DecimalUtils.toQuotation(price);
-        return ordersService.postOrderSync(figi, quantityLots, quotationPrice, direction, accountId, type, orderId);
+        return ordersService.postOrderSync(figi, quantity, quotationPrice, direction, accountId, type, orderId);
     }
 
     /**

@@ -54,7 +54,7 @@ class CrossStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getQuantityLots());
+        Assertions.assertNull(decision.getQuantity());
     }
 
     @Test
@@ -78,7 +78,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getQuantityLots());
+            Assertions.assertNull(decision.getQuantity());
         }
     }
 
@@ -101,7 +101,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-            AssertUtils.assertEquals(9, decision.getQuantityLots());
+            AssertUtils.assertEquals(9, decision.getQuantity());
         }
     }
 
@@ -124,7 +124,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getQuantityLots());
+            Assertions.assertNull(decision.getQuantity());
         }
     }
 
@@ -140,11 +140,11 @@ class CrossStrategyUnitTest {
                 5
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
-
+        final int quantity = 10;
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(100)
-                .setQuantityLots(10)
+                .setQuantity(quantity)
                 .build();
         data.setPosition(position);
 
@@ -152,7 +152,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.SELL, decision.getAction());
-            AssertUtils.assertEquals(10, decision.getQuantityLots());
+            AssertUtils.assertEquals(quantity, decision.getQuantity());
         }
     }
 
@@ -172,7 +172,6 @@ class CrossStrategyUnitTest {
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(100)
-                .setQuantityLots(10)
                 .build();
         data.setPosition(position);
 
@@ -180,7 +179,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getQuantityLots());
+            Assertions.assertNull(decision.getQuantity());
         }
     }
 
@@ -200,7 +199,6 @@ class CrossStrategyUnitTest {
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(199)
-                .setQuantityLots(10)
                 .build();
         data.setPosition(position);
 
@@ -208,7 +206,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-            AssertUtils.assertEquals(4, decision.getQuantityLots());
+            AssertUtils.assertEquals(4, decision.getQuantity());
         }
     }
 
@@ -228,7 +226,6 @@ class CrossStrategyUnitTest {
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(199)
-                .setQuantityLots(10)
                 .build();
         data.setPosition(position);
 
@@ -236,7 +233,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getQuantityLots());
+            Assertions.assertNull(decision.getQuantity());
         }
     }
 
@@ -256,7 +253,6 @@ class CrossStrategyUnitTest {
         final DecisionData data = TestData.createDecisionData(200.0, 200.0, 1, 0.003);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(199)
-                .setQuantityLots(10)
                 .build();
         data.setPosition(position);
 
@@ -264,7 +260,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getQuantityLots());
+            Assertions.assertNull(decision.getQuantity());
         }
     }
 

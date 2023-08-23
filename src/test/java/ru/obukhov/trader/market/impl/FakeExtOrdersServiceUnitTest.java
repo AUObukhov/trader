@@ -103,7 +103,6 @@ class FakeExtOrdersServiceUnitTest {
         final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
         final int quantity = 10;
-        final int quantityLots = 1;
         final double currentPrice = 1000;
         final double balance1 = 1000000;
         final double balance2 = balance1 - currentPrice * quantity * COMMISSION_COEF;
@@ -115,7 +114,7 @@ class FakeExtOrdersServiceUnitTest {
 
         // action
 
-        postOrder(accountId, figi, quantityLots, OrderDirection.ORDER_DIRECTION_BUY, timestamp, currentPrice);
+        postOrder(accountId, figi, quantity, OrderDirection.ORDER_DIRECTION_BUY, timestamp, currentPrice);
 
         // assert
 
@@ -128,7 +127,6 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(currentPrice)
                 .setExpectedYield(0)
                 .setCurrentPrice(currentPrice)
-                .setQuantityLots(quantityLots)
                 .build();
         verifyPositionAdded(accountId, figi, expectedPosition);
     }
@@ -144,8 +142,6 @@ class FakeExtOrdersServiceUnitTest {
         final String figi = TestShare2.FIGI;
         final int quantity1 = 20;
         final int quantity2 = 10;
-        final int quantityLots1 = 2;
-        final int quantityLots2 = 1;
         final double price1 = 1000;
         final double price2 = 4000;
         final double balance1 = 1000000;
@@ -164,25 +160,23 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
                 .build();
         final Position expectedPosition2 = new PositionBuilder()
                 .setCurrency(currency)
                 .setFigi(figi)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(quantity1 + quantity2)
-                .setAveragePositionPrice(getAveragePositionPrice(price1, price2, quantityLots1, quantityLots2))
+                .setAveragePositionPrice(getAveragePositionPrice(price1, price2, quantity1, quantity2))
                 .setExpectedYield(quantity1 * (price2 - price1))
                 .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1);
 
         // action
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi, quantity1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantity2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
 
         // assert
 
@@ -220,10 +214,6 @@ class FakeExtOrdersServiceUnitTest {
         final int quantity2 = 3;
         final int quantity3 = 100;
 
-        final int quantityLots1 = 1;
-        final int quantityLots2 = 3;
-        final int quantityLots3 = 1;
-
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
 
@@ -239,7 +229,6 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
                 .build();
 
         final Position expectedPosition2 = new PositionBuilder()
@@ -250,7 +239,6 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price2)
                 .setExpectedYield(0)
                 .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots2)
                 .build();
 
         final Position expectedPosition3 = new PositionBuilder()
@@ -261,7 +249,6 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price3)
                 .setExpectedYield(0)
                 .setCurrentPrice(price3)
-                .setQuantityLots(quantityLots3)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi1)).thenReturn(null, expectedPosition1);
@@ -270,9 +257,9 @@ class FakeExtOrdersServiceUnitTest {
 
         // action
 
-        postOrder(accountId, figi1, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
-        postOrder(accountId, figi2, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
-        postOrder(accountId, figi3, quantityLots3, OrderDirection.ORDER_DIRECTION_BUY, timestamp3, price3);
+        postOrder(accountId, figi1, quantity1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi2, quantity2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi3, quantity3, OrderDirection.ORDER_DIRECTION_BUY, timestamp3, price3);
 
         // assert
 
@@ -302,18 +289,14 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = 939820;
 
         final String figi = TestShare2.FIGI;
-        final int lotSize = TestShare2.LOT;
 
         final double price1 = 1000;
         final double price2 = 4000;
         final double price3 = 3000;
 
-        final int quantityLots1 = 2;
-        final int quantityLots2 = 1;
-        final int quantityLots3 = 4;
-
-        final int quantity1 = quantityLots1 * lotSize;
-        final int quantity2 = quantityLots2 * lotSize;
+        final int quantity1 = 20;
+        final int quantity2 = 10;
+        final int quantity3 = 40;
 
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
@@ -327,26 +310,24 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
                 .build();
         final Position expectedPosition2 = new PositionBuilder()
                 .setCurrency(currency)
                 .setFigi(figi)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(quantity1 + quantity2)
-                .setAveragePositionPrice(getAveragePositionPrice(price1, price2, quantityLots1, quantityLots2))
+                .setAveragePositionPrice(getAveragePositionPrice(price1, price2, quantity1, quantity2))
                 .setExpectedYield(quantity1 * (price2 - price1))
                 .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1, expectedPosition2);
 
         // action & assert
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
-        final Executable sellExecutable = () -> postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
+        postOrder(accountId, figi, quantity1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantity2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        final Executable sellExecutable = () -> postOrder(accountId, figi, quantity3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
         final String expectedMessage = "quantity 40 can't be greater than existing position's quantity 30";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, sellExecutable, expectedMessage);
 
@@ -375,18 +356,14 @@ class FakeExtOrdersServiceUnitTest {
         final double balance3 = 1029550;
 
         final String figi = TestShare2.FIGI;
-        final int lotSize = TestShare2.LOT;
 
         final double price1 = 1000;
         final double price2 = 4000;
         final double price3 = 3000;
 
-        final int quantityLots1 = 2;
-        final int quantityLots2 = 1;
-        final int quantityLots3 = 3;
-
-        final int quantity1 = quantityLots1 * lotSize;
-        final int quantity2 = quantityLots2 * lotSize;
+        final int quantity1 = 20;
+        final int quantity2 = 10;
+        final int quantity3 = 30;
 
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
@@ -400,25 +377,23 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
                 .build();
         final Position expectedPosition2 = new PositionBuilder()
                 .setCurrency(currency)
                 .setFigi(figi)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(quantity1 + quantity2)
-                .setAveragePositionPrice(getAveragePositionPrice(price1, price2, quantityLots1, quantityLots2))
+                .setAveragePositionPrice(getAveragePositionPrice(price1, price2, quantity1, quantity2))
                 .setExpectedYield(quantity1 * (price2 - price1))
                 .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
                 .build();
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1, expectedPosition2);
 
         // action
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
-        postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
+        postOrder(accountId, figi, quantity1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantity2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi, quantity3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
 
         // assert
 
@@ -449,19 +424,14 @@ class FakeExtOrdersServiceUnitTest {
         final double balance3 = 969730;
 
         final String figi = TestShare2.FIGI;
-        final int lotSize = TestShare2.LOT;
 
         final double price1 = 1000;
         final double price2 = 4000;
         final double price3 = 3000;
 
-        final int quantityLots1 = 2;
-        final int quantityLots2 = 1;
-        final int quantityLots3 = 1;
-
-        final int quantity1 = quantityLots1 * lotSize;
-        final int quantity2 = quantityLots2 * lotSize;
-        final int quantity3 = quantityLots3 * lotSize;
+        final int quantity1 = 20;
+        final int quantity2 = 10;
+        final int quantity3 = 10;
 
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
@@ -475,9 +445,8 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
                 .build();
-        final double expectedAveragePositionPrice2 = getAveragePositionPrice(price1, price2, quantityLots1, quantityLots2);
+        final double expectedAveragePositionPrice2 = getAveragePositionPrice(price1, price2, quantity1, quantity2);
         final Position expectedPosition2 = new PositionBuilder()
                 .setCurrency(currency)
                 .setFigi(figi)
@@ -486,27 +455,26 @@ class FakeExtOrdersServiceUnitTest {
                 .setAveragePositionPrice(expectedAveragePositionPrice2)
                 .setExpectedYield(quantity1 * (price2 - price1))
                 .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
                 .build();
-        final double expectedYield3 = (price3 - expectedAveragePositionPrice2) * (quantityLots1 + quantityLots2 - quantityLots3);
+        final int finalQuantity = quantity1 + quantity2 - quantity3;
+        final double expectedYield3 = (price3 - expectedAveragePositionPrice2) * (finalQuantity);
         final Position expectedPosition3 = new PositionBuilder()
                 .setCurrency(currency)
                 .setFigi(figi)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setQuantity(quantity1 + quantity2 - quantity3)
+                .setQuantity(finalQuantity)
                 .setAveragePositionPrice(expectedAveragePositionPrice2)
-                .setExpectedYield(expectedYield3 * lotSize)
+                .setExpectedYield(expectedYield3)
                 .setCurrentPrice(price3)
-                .setQuantityLots(quantityLots1 + quantityLots2 - quantityLots3)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1, expectedPosition2, expectedPosition3);
 
         // action
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
-        postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
+        postOrder(accountId, figi, quantity1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantity2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi, quantity3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
 
         // assert
 
@@ -530,17 +498,17 @@ class FakeExtOrdersServiceUnitTest {
     private static double getAveragePositionPrice(
             final double price1,
             final double price2,
-            final int quantityLots1,
-            final int quantityLots2
+            final int quantity1,
+            final int quantity2
     ) {
-        return (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
+        return (price1 * quantity1 + price2 * quantity2) / (quantity1 + quantity2);
     }
 
     @SuppressWarnings("SameParameterValue")
     private void postOrder(
             final String accountId,
             final String figi,
-            final int quantityLots,
+            final int quantity,
             final OrderDirection direction,
             final Timestamp timestamp,
             final double price
@@ -548,7 +516,7 @@ class FakeExtOrdersServiceUnitTest {
         Mockito.when(extMarketDataService.getLastPrice(figi, timestamp))
                 .thenReturn(QuotationUtils.newQuotation(price));
 
-        fakeExtOrdersService.postOrder(accountId, figi, quantityLots, null, direction, OrderType.ORDER_TYPE_MARKET, null);
+        fakeExtOrdersService.postOrder(accountId, figi, quantity, null, direction, OrderType.ORDER_TYPE_MARKET, null);
     }
 
     @SuppressWarnings("SameParameterValue")

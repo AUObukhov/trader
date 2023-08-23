@@ -128,7 +128,7 @@ public abstract class Bot {
         final PostOrderResponse postOrderResponse = ordersService.postOrder(
                 accountId,
                 figi,
-                decision.getQuantityLots(),
+                decision.getQuantity(),
                 null,
                 direction,
                 OrderType.ORDER_TYPE_MARKET,

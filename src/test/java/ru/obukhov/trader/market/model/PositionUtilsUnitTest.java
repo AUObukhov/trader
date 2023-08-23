@@ -56,11 +56,9 @@ class PositionUtilsUnitTest {
                 .setCurrentNkd(123.123)
                 .setCurrentPrice(20)
                 .setAveragePositionPriceFifo(789.789)
-                .setQuantityLots(3)
                 .build();
         final Position newPosition = PositionUtils.addQuantities(
                 position,
-                2,
                 2,
                 QuotationUtils.newQuotation(30L),
                 QuotationUtils.newQuotation(15L)
@@ -82,7 +80,7 @@ class PositionUtilsUnitTest {
         AssertUtils.assertEquals(789.789, newPosition.getAveragePositionPriceFifo().getValue());
         Assertions.assertEquals(currency, newPosition.getAveragePositionPriceFifo().getCurrency());
 
-        AssertUtils.assertEquals(5, newPosition.getQuantityLots());
+        AssertUtils.assertEquals(5, newPosition.getQuantity());
         AssertUtils.assertEquals(60, PositionUtils.getTotalPrice(newPosition));
     }
 
@@ -99,7 +97,6 @@ class PositionUtilsUnitTest {
                 .setCurrentNkd(123.123)
                 .setCurrentPrice(20)
                 .setAveragePositionPriceFifo(789.789)
-                .setQuantityLots(4)
                 .build();
 
         final Quotation newCurrentPrice = QuotationUtils.newQuotation(30L);
@@ -116,7 +113,6 @@ class PositionUtilsUnitTest {
                 .setCurrentNkd(position.getCurrentNkd())
                 .setCurrentPrice(newCurrentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(position.getQuantityLots())
                 .build();
 
         AssertUtils.assertEquals(expectedPosition, newPosition);
@@ -135,15 +131,13 @@ class PositionUtilsUnitTest {
                 .setCurrentNkd(123.123)
                 .setCurrentPrice(20)
                 .setAveragePositionPriceFifo(789.789)
-                .setQuantityLots(4)
                 .build();
 
         final BigDecimal newQuantity = DecimalUtils.setDefaultScale(20);
         final BigDecimal newExpectedYield = DecimalUtils.setDefaultScale(400);
         final BigDecimal newCurrentPrice = DecimalUtils.setDefaultScale(30);
-        final BigDecimal newQuantityLots = DecimalUtils.setDefaultScale(2);
 
-        final Position newPosition = PositionUtils.cloneWithNewValues(position, newQuantity, newExpectedYield, newCurrentPrice, newQuantityLots);
+        final Position newPosition = PositionUtils.cloneWithNewValues(position, newQuantity, newExpectedYield, newCurrentPrice);
 
         final Position expectedPosition = new PositionBuilder()
                 .setCurrency(currency)
@@ -155,7 +149,6 @@ class PositionUtilsUnitTest {
                 .setCurrentNkd(position.getCurrentNkd())
                 .setCurrentPrice(newCurrentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(newQuantityLots)
                 .build();
 
         AssertUtils.assertEquals(expectedPosition, newPosition);

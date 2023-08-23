@@ -69,7 +69,6 @@ class RealExtOperationsServiceUnitTest {
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
-        final int quantityLots1 = 1;
         final String currency1 = TestShare1.CURRENCY;
 
         final String figi2 = TestShare2.FIGI;
@@ -78,7 +77,6 @@ class RealExtOperationsServiceUnitTest {
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
-        final int quantityLots2 = 2;
         final String currency2 = TestShare2.CURRENCY;
 
         final String figi3 = TestEtf1.FIGI;
@@ -87,7 +85,6 @@ class RealExtOperationsServiceUnitTest {
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;
-        final int quantityLots3 = 5;
         final String currency3 = TestEtf1.CURRENCY;
 
         final PortfolioPosition portfolioPosition1 = TestData.createPortfolioPosition(
@@ -97,7 +94,6 @@ class RealExtOperationsServiceUnitTest {
                 averagePositionPrice1,
                 expectedYield1,
                 currentPrice1,
-                quantityLots1,
                 currency1
         );
         final PortfolioPosition portfolioPosition2 = TestData.createPortfolioPosition(
@@ -107,7 +103,6 @@ class RealExtOperationsServiceUnitTest {
                 averagePositionPrice2,
                 expectedYield2,
                 currentPrice2,
-                quantityLots2,
                 currency2
         );
         final PortfolioPosition portfolioPosition3 = TestData.createPortfolioPosition(
@@ -117,7 +112,6 @@ class RealExtOperationsServiceUnitTest {
                 averagePositionPrice3,
                 expectedYield3,
                 currentPrice3,
-                quantityLots3,
                 currency3
         );
 
@@ -140,7 +134,6 @@ class RealExtOperationsServiceUnitTest {
                 .setCurrentNkd(0)
                 .setCurrentPrice(currentPrice1)
                 .setAveragePositionPriceFifo(0)
-                .setQuantityLots(quantityLots1)
                 .build();
         final Position expectedPosition2 = new PositionBuilder()
                 .setCurrency(currency2)
@@ -152,7 +145,6 @@ class RealExtOperationsServiceUnitTest {
                 .setCurrentNkd(0)
                 .setCurrentPrice(currentPrice2)
                 .setAveragePositionPriceFifo(0)
-                .setQuantityLots(quantityLots2)
                 .build();
         final Position expectedPosition3 = new PositionBuilder()
                 .setCurrency(currency3)
@@ -164,7 +156,6 @@ class RealExtOperationsServiceUnitTest {
                 .setCurrentNkd(0)
                 .setCurrentPrice(currentPrice3)
                 .setAveragePositionPriceFifo(0)
-                .setQuantityLots(quantityLots3)
                 .build();
 
         final List<Position> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);

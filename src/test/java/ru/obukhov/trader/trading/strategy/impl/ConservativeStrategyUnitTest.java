@@ -35,7 +35,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getQuantityLots());
+        Assertions.assertNull(decision.getQuantity());
     }
 
     @Test
@@ -45,7 +45,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getQuantityLots());
+        Assertions.assertNull(decision.getQuantity());
     }
 
     @Test
@@ -55,7 +55,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-        AssertUtils.assertEquals(4, decision.getQuantityLots());
+        AssertUtils.assertEquals(4, decision.getQuantity());
     }
 
     // endregion

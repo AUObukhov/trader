@@ -272,7 +272,7 @@ class RunnableBotUnitTest {
         Mockito.when(ordersService.postOrder(
                 accountId,
                 figi,
-                decision.getQuantityLots(),
+                decision.getQuantity(),
                 null,
                 OrderDirection.ORDER_DIRECTION_BUY,
                 OrderType.ORDER_TYPE_MARKET,
@@ -354,7 +354,7 @@ class RunnableBotUnitTest {
                 .postOrder(
                         accountId,
                         figi,
-                        decision.getQuantityLots(),
+                        decision.getQuantity(),
                         null,
                         OrderDirection.ORDER_DIRECTION_BUY,
                         OrderType.ORDER_TYPE_MARKET,
@@ -385,7 +385,7 @@ class RunnableBotUnitTest {
                 .postOrder(
                         accountId,
                         figi,
-                        decision.getQuantityLots(),
+                        decision.getQuantity(),
                         null,
                         OrderDirection.ORDER_DIRECTION_SELL,
                         OrderType.ORDER_TYPE_MARKET,
@@ -424,10 +424,7 @@ class RunnableBotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
-        final Position position = new PositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(0)
-                .build();
+        final Position position = new PositionBuilder().setFigi(figi).build();
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(position);
 

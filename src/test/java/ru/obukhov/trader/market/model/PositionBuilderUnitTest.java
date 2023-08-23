@@ -24,7 +24,6 @@ class PositionBuilderUnitTest {
         final double currentNkd = 12;
         final double currentPrice = 1500;
         final double averagePositionPriceFifo = 300;
-        final long quantityLots = 2;
 
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
@@ -36,7 +35,6 @@ class PositionBuilderUnitTest {
                 .setCurrentNkd(currentNkd)
                 .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(averagePositionPriceFifo)
-                .setQuantityLots(quantityLots)
                 .build();
 
         Assertions.assertEquals(figi, position.getFigi());
@@ -57,7 +55,7 @@ class PositionBuilderUnitTest {
         AssertUtils.assertEquals(averagePositionPriceFifo, position.getAveragePositionPriceFifo().getValue());
         Assertions.assertEquals(currency, position.getAveragePositionPriceFifo().getCurrency());
 
-        AssertUtils.assertEquals(quantityLots, position.getQuantityLots());
+        AssertUtils.assertEquals(0, position.getQuantityLots());
     }
 
     @Test
@@ -71,7 +69,6 @@ class PositionBuilderUnitTest {
         final BigDecimal currentNkd = BigDecimal.valueOf(12);
         final BigDecimal currentPrice = BigDecimal.valueOf(1500);
         final BigDecimal averagePositionPriceFifo = BigDecimal.valueOf(300);
-        final BigDecimal quantityLots = BigDecimal.valueOf(2);
 
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
@@ -83,7 +80,6 @@ class PositionBuilderUnitTest {
                 .setCurrentNkd(currentNkd)
                 .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(averagePositionPriceFifo)
-                .setQuantityLots(quantityLots)
                 .build();
 
         Assertions.assertEquals(figi, position.getFigi());
@@ -104,7 +100,7 @@ class PositionBuilderUnitTest {
         AssertUtils.assertEquals(averagePositionPriceFifo, position.getAveragePositionPriceFifo().getValue());
         Assertions.assertEquals(currency, position.getAveragePositionPriceFifo().getCurrency());
 
-        AssertUtils.assertEquals(quantityLots, position.getQuantityLots());
+        AssertUtils.assertEquals(0, position.getQuantityLots());
     }
 
     @Test
@@ -118,7 +114,6 @@ class PositionBuilderUnitTest {
         final Money currentNkd = TestData.createMoney(12, currency);
         final Money currentPrice = TestData.createMoney(1500, currency);
         final Money averagePositionPriceFifo = TestData.createMoney(300, currency);
-        final BigDecimal quantityLots = BigDecimal.valueOf(2);
 
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
@@ -130,7 +125,6 @@ class PositionBuilderUnitTest {
                 .setCurrentNkd(currentNkd)
                 .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(averagePositionPriceFifo)
-                .setQuantityLots(quantityLots)
                 .build();
 
         Assertions.assertEquals(figi, position.getFigi());
@@ -151,7 +145,7 @@ class PositionBuilderUnitTest {
         AssertUtils.assertEquals(averagePositionPriceFifo, position.getAveragePositionPriceFifo());
         Assertions.assertEquals(currency, position.getAveragePositionPriceFifo().getCurrency());
 
-        AssertUtils.assertEquals(quantityLots, position.getQuantityLots());
+        AssertUtils.assertEquals(0, position.getQuantityLots());
     }
 
 }

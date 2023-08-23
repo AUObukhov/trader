@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.experimental.UtilityClass;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
@@ -24,7 +23,6 @@ public class PositionUtils {
 
     /**
      * @param additionalQuantity     increase of quantity
-     * @param additionalQuantityLots increase of quantityLots
      * @param additionalTotalPrice   increase of total price. Affects averagePositionPriceValue and expectedYield
      * @param newCurrentPrice        new price of position
      * @return new PortfolioPosition with additional quantity
@@ -32,7 +30,6 @@ public class PositionUtils {
     public Position addQuantities(
             final Position position,
             final long additionalQuantity,
-            final long additionalQuantityLots,
             final Quotation additionalTotalPrice,
             final Quotation newCurrentPrice
     ) {
@@ -40,7 +37,6 @@ public class PositionUtils {
         final Quotation newTotalPrice = QuotationUtils.add(getTotalPrice(position), additionalTotalPrice);
         final Quotation newAveragePositionPriceValue = QuotationUtils.divide(newTotalPrice, newQuantity, RoundingMode.HALF_UP);
         final Quotation newExpectedYield = QuotationUtils.multiply(QuotationUtils.subtract(newCurrentPrice, newAveragePositionPriceValue), newQuantity);
-        final BigDecimal newQuantityLots = DecimalUtils.add(position.getQuantityLots(), additionalQuantityLots);
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
                 .setFigi(position.getFigi())
@@ -51,19 +47,17 @@ public class PositionUtils {
                 .setCurrentNkd(position.getCurrentNkd())
                 .setCurrentPrice(newCurrentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(newQuantityLots)
                 .build();
     }
 
     /**
-     * @return equal position, but with updated quantity, currentPrice and quantityLots
+     * @return equal position, but with updated quantity and currentPrice
      */
     public Position cloneWithNewValues(
             final Position position,
             final BigDecimal quantity,
             final BigDecimal expectedYield,
-            final BigDecimal currentPrice,
-            final BigDecimal quantityLots
+            final BigDecimal currentPrice
     ) {
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
@@ -75,19 +69,17 @@ public class PositionUtils {
                 .setCurrentNkd(position.getCurrentNkd())
                 .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(quantityLots)
                 .build();
     }
 
     /**
-     * @return equal position, but with updated quantity, currentPrice and quantityLots
+     * @return equal position, but with updated quantity and currentPrice
      */
     public Position cloneWithNewValues(
             final Position position,
             final BigDecimal quantity,
             final Quotation expectedYield,
-            final Quotation currentPrice,
-            final BigDecimal quantityLots
+            final Quotation currentPrice
     ) {
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
@@ -99,7 +91,6 @@ public class PositionUtils {
                 .setCurrentNkd(position.getCurrentNkd())
                 .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(quantityLots)
                 .build();
     }
 
@@ -117,7 +108,6 @@ public class PositionUtils {
                 .setCurrentNkd(position.getCurrentNkd())
                 .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(position.getQuantityLots())
                 .build();
     }
 
