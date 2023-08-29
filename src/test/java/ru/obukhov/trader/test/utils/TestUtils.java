@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.market.model.transform.AccountSerializer;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
 import ru.obukhov.trader.market.model.transform.CurrencySerializer;
 import ru.obukhov.trader.market.model.transform.InstrumentSerializer;
@@ -26,7 +25,6 @@ import java.text.SimpleDateFormat;
 public class TestUtils {
 
     private static final SimpleModule TINKOFF_MODULE = new SimpleModule()
-            .addSerializer(new AccountSerializer())
             .addSerializer(new InstrumentSerializer())
             .addSerializer(new ShareSerializer())
             .addSerializer(new BondSerializer())

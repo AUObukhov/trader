@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.ExtUsersService;
-import ru.tinkoff.piapi.contract.v1.Account;
+import ru.obukhov.trader.market.model.Account;
 
 import java.util.List;
 
