@@ -182,6 +182,12 @@ public class AssertUtils {
 
     // endregion
 
+    public static void assertRangeInclusive(long expectedMin, long expectedMax, long actual) {
+        if (actual < expectedMin || actual > expectedMax) {
+            Assertions.fail("Expected value within range [" + expectedMin + ";" + expectedMax + "], but got " + actual);
+        }
+    }
+
     public static void assertMatchesRegex(final String value, final String regex) {
         final Matcher matcher = Pattern.compile(regex).matcher(value);
         if (!matcher.matches()) {

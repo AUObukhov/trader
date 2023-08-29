@@ -37,6 +37,31 @@ class ExecutionUtilsUnitTest {
 
     // endregion
 
+    // region run tests
+
+    @Test
+    void runMultiple_executesRunnable_andReturnsNonNegativeDuration() {
+        final AtomicInteger integer = new AtomicInteger(0);
+
+        final Duration duration = ExecutionUtils.run(integer::incrementAndGet, 10);
+
+        Assertions.assertEquals(10, integer.get());
+        Assertions.assertFalse(duration.isNegative());
+    }
+
+    @Test
+    void runMultiple_throwsRunnableException() {
+        final IllegalArgumentException runnableException = new IllegalArgumentException("exception message");
+        final Runnable runnable = () -> {
+            throw runnableException;
+        };
+
+        final Executable executable = () -> ExecutionUtils.run(runnable, 10);
+        AssertUtils.assertThrowsWithMessage(runnableException.getClass(), executable, runnableException.getMessage());
+    }
+
+    // endregion
+
     // region get tests
 
     @Test

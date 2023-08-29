@@ -19,6 +19,22 @@ public class ExecutionUtils {
     }
 
     /**
+     * Executes given {@code runnable} given {@code quantity} of times
+     *
+     * @return duration total duration of all executions
+     */
+    public static Duration run(final Runnable runnable, final long quantity) {
+        final long start = System.nanoTime();
+
+        for (int i = 0; i < quantity; i++) {
+            runnable.run();
+        }
+
+        final long end = System.nanoTime();
+        return Duration.ofNanos(end - start);
+    }
+
+    /**
      * Executes given {@code supplier}. Doesn't catch execution exceptions.
      *
      * @return result of execution of given {@code supplier} and execution time.
