@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.bots;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,7 +8,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
@@ -20,6 +18,7 @@ import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -39,6 +38,7 @@ import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -107,7 +107,7 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenGetLastCandlesThrowsException() {
         final String figi = TestShare1.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentTimestamp = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
@@ -145,13 +145,13 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenGetInstrumentThrowsException() {
         final String figi = TestShare1.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
         Mockito.when(extInstrumentsService.getShare(figi)).thenThrow(new IllegalArgumentException());
 
@@ -164,13 +164,13 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
@@ -187,13 +187,13 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetPositionThrowsException() {
         final String figi = TestShare2.FIGI;
         final String accountId = TestData.ACCOUNT_ID1;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
@@ -208,13 +208,13 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenGetOperationsThrowsException() {
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
@@ -230,13 +230,13 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenDecideThrowsException() {
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
@@ -254,13 +254,13 @@ class RunnableBotUnitTest {
     void run_catchesException_whenPlaceMarketOrderThrowsException() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
@@ -312,13 +312,13 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenDecisionIsWait() {
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
 
-        final Candle candle1 = new Candle().setTime(currentTimestamp);
+        final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
@@ -335,9 +335,9 @@ class RunnableBotUnitTest {
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(context.getCurrentTimestamp()).thenReturn(currentTimestamp);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
@@ -366,9 +366,9 @@ class RunnableBotUnitTest {
     void run_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare2.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(context.getCurrentTimestamp()).thenReturn(currentTimestamp);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
@@ -432,7 +432,7 @@ class RunnableBotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final Candle candle = new Candle().setTime(TimestampUtils.now());
+        final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockLastCandles(figi, List.of(candle));
     }
 
@@ -441,7 +441,7 @@ class RunnableBotUnitTest {
                 Mockito.eq(figi),
                 Mockito.anyInt(),
                 Mockito.any(CandleInterval.class),
-                Mockito.any(Timestamp.class)
+                Mockito.any(OffsetDateTime.class)
         )).thenReturn(candles);
     }
 

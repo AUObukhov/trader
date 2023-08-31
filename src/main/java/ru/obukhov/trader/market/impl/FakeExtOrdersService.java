@@ -1,8 +1,8 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.protobuf.Timestamp;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.PositionUtils;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -25,6 +26,7 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +35,8 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class FakeExtOrdersService implements ExtOrdersService {
+
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     private final FakeContext fakeContext;
     private final ExtInstrumentsService extInstrumentsService;
@@ -104,7 +108,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
      * @return last known price for instrument with given {@code figi} not after current fake date time
      */
     private Quotation getCurrentPrice(final String figi) {
-        final Timestamp currentTimestamp = fakeContext.getCurrentTimestamp();
+        final OffsetDateTime currentTimestamp = fakeContext.getCurrentDateTime();
         return extMarketDataService.getLastPrice(figi, currentTimestamp);
     }
 
@@ -185,10 +189,10 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final long quantity,
             final OperationType operationType
     ) {
-        final Timestamp currentTimestamp = fakeContext.getCurrentTimestamp();
+        final OffsetDateTime currentTimestamp = fakeContext.getCurrentDateTime();
         final Operation operation = Operation.newBuilder()
                 .setFigi(figi)
-                .setDate(currentTimestamp)
+                .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(currentTimestamp))
                 .setOperationType(operationType)
                 .setPrice(DataStructsHelper.createMoneyValue(currency, price))
                 .setQuantity(quantity)

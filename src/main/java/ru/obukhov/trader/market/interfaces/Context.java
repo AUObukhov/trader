@@ -1,9 +1,9 @@
 package ru.obukhov.trader.market.interfaces;
 
-import com.google.protobuf.Timestamp;
+import java.time.OffsetDateTime;
 
 public interface Context {
 
-    Timestamp getCurrentTimestamp();
+    OffsetDateTime getCurrentDateTime();
 
 }

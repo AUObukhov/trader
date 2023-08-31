@@ -1,6 +1,5 @@
 package ru.obukhov.trader.web.controller;
 
-import com.google.protobuf.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -10,7 +9,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
@@ -23,6 +21,7 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -30,6 +29,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -104,15 +104,15 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 2, 1, 10);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 2, 1, 19);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
                 new HistoricCandleBuilder().setOpen(100).setTime(from).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpen(101).setTime(TimestampUtils.plusMinutes(from, 1)).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpen(102).setTime(TimestampUtils.plusMinutes(from, 2)).setIsComplete(true).build()
+                new HistoricCandleBuilder().setOpen(101).setTime(from.plusMinutes(1)).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpen(102).setTime(from.plusMinutes(2)).setIsComplete(true).build()
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
@@ -154,15 +154,15 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 2, 1, 10);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 2, 1, 19);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
                 new HistoricCandleBuilder().setOpen(100).setTime(from).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpen(101).setTime(TimestampUtils.plusMinutes(from, 1)).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpen(102).setTime(TimestampUtils.plusMinutes(from, 2)).setIsComplete(true).build()
+                new HistoricCandleBuilder().setOpen(101).setTime(from.plusMinutes(1)).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpen(102).setTime(from.plusMinutes(2)).setIsComplete(true).build()
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
@@ -225,7 +225,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     private GetDataRequest createGetDataRequest() {
         final GetDataRequest getDataRequest = new GetDataRequest();
-        getDataRequest.setInterval(TestData.createIntervalOfDay(TimestampUtils.now()));
+        getDataRequest.setInterval(TestData.createIntervalOfDay(OffsetDateTime.now()));
 
         final Target target = new Target();
         target.setMetric(Metric.CANDLES);

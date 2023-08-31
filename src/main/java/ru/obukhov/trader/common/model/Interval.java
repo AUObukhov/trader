@@ -3,7 +3,6 @@ package ru.obukhov.trader.common.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.protobuf.Timestamp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,6 @@ import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -31,20 +29,13 @@ public class Interval {
 
     private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
 
-    private final Timestamp from;
-    private final Timestamp to;
-
-    @JsonProperty("from")
+    @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
     @ApiModelProperty(value = "start of the interval", position = 1, example = "2021-08-01T00:00:00+03:00")
-    public String getOffsetDateTimeStringFrom() {
-        return TimestampUtils.toOffsetDateTimeString(from);
-    }
+    private final OffsetDateTime from;
 
-    @JsonProperty("to")
+    @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
     @ApiModelProperty(value = "end of the interval", position = 2, example = "2021-08-01T12:00:00+03:00")
-    public String getOffsetDateTimeStringTo() {
-        return TimestampUtils.toOffsetDateTimeString(to);
-    }
+    private final OffsetDateTime to;
 
     /**
      * @return new Interval with given {@code from} and {@code to}
@@ -54,38 +45,15 @@ public class Interval {
     public static Interval of(
             @Nullable
             @JsonProperty("from")
-            @JsonFormat final OffsetDateTime from,
+            @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT) final OffsetDateTime from,
 
             @Nullable
             @JsonProperty("to")
-            @JsonFormat final OffsetDateTime to
+            @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT) final OffsetDateTime to
     ) {
-        Timestamp fromTimestamp;
-        Timestamp toTimestamp;
-
-        if (from == null) {
-            fromTimestamp = null;
-            toTimestamp = to == null ? null : TimestampUtils.newTimestamp(to);
-        } else {
-            fromTimestamp = TimestampUtils.newTimestamp(from);
-            if (to == null) {
-                toTimestamp = null;
-            } else {
-                Assert.isTrue(from.getOffset().equals(to.getOffset()), "offsets of from and to must be equal");
-                toTimestamp = TimestampUtils.newTimestamp(to);
-            }
-        }
-
-        return of(fromTimestamp, toTimestamp);
-    }
-
-    /**
-     * @return new Interval with given {@code from} and {@code to}
-     * @throws IllegalArgumentException if {@code from} is after {@code to} or if they have different offsets
-     */
-    public static Interval of(final Timestamp from, final Timestamp to) {
         if (from != null && to != null) {
-            Assert.isTrue(!TimestampUtils.isAfter(from, to), "from can't be after to");
+            Assert.isTrue(!from.isAfter(to), "from can't be after to");
+            Assert.isTrue(from.getOffset().equals(to.getOffset()), "offsets of from and to must be equal");
         }
 
         return new Interval(from, to);
@@ -98,7 +66,7 @@ public class Interval {
      * {@code now} if current {@code to} is null;<br/>
      * equals to current {@code to} otherwise;
      */
-    public Interval limitByNowIfNull(Timestamp now) {
+    public Interval limitByNowIfNull(final OffsetDateTime now) {
         return Interval.of(from, to == null ? now : to);
     }
 
@@ -111,12 +79,12 @@ public class Interval {
     public Interval extendToDay() {
         Assert.isTrue(equalDates(), "'from' and 'to' must be at same day");
 
-        final Timestamp now = TimestampUtils.now();
-        TimestampUtils.assertNotFuture(from, now, "from");
-        TimestampUtils.assertNotFuture(to, now, "to");
+        final OffsetDateTime now = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(from, now, "from");
+        DateUtils.assertDateTimeNotFuture(to, now, "to");
 
-        final Timestamp extendedFrom = TimestampUtils.toStartOfDay(from);
-        final Timestamp extendedTo = TimestampUtils.getEarliest(TimestampUtils.toEndOfDay(to), now);
+        final OffsetDateTime extendedFrom = DateUtils.toStartOfDay(from);
+        final OffsetDateTime extendedTo = DateUtils.getEarliestDateTime(DateUtils.toEndOfDay(to), now);
 
         return new Interval(extendedFrom, extendedTo);
     }
@@ -130,12 +98,12 @@ public class Interval {
     public Interval extendToYear() {
         Assert.isTrue(equalYears(), "'from' and 'to' must be at same year");
 
-        final Timestamp now = TimestampUtils.now();
-        TimestampUtils.assertNotFuture(from, now, "from");
-        TimestampUtils.assertNotFuture(to, now, "to");
+        final OffsetDateTime now = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(from, now, "from");
+        DateUtils.assertDateTimeNotFuture(to, now, "to");
 
-        final Timestamp extendedFrom = TimestampUtils.toStartOfYear(from);
-        Timestamp extendedTo = TimestampUtils.getEarliest(TimestampUtils.toEndOfYear(to), now);
+        final OffsetDateTime extendedFrom = DateUtils.atStartOfYear(from);
+        OffsetDateTime extendedTo = DateUtils.getEarliestDateTime(DateUtils.atEndOfYear(to), now);
 
         return new Interval(extendedFrom, extendedTo);
     }
@@ -145,7 +113,7 @@ public class Interval {
      * @throws NullPointerException if from or to is null
      */
     public Interval minusDays(final int days) {
-        return new Interval(TimestampUtils.plusDays(from, -days), TimestampUtils.plusDays(to, -days));
+        return new Interval(from.minusDays(days), to.minusDays(days));
     }
 
     /**
@@ -153,14 +121,14 @@ public class Interval {
      * @throws NullPointerException if from or to is null
      */
     public Interval minusYears(final int years) {
-        return new Interval(TimestampUtils.plusYears(from, -years), TimestampUtils.plusYears(to, -years));
+        return new Interval(from.minusYears(years), to.minusYears(years));
     }
 
     /**
      * @return true, if dates of instants of {@code from} and {@code to} are equal, or else false
      */
     public boolean equalDates() {
-        return TimestampUtils.equalDates(from, to);
+        return DateUtils.equalDates(from, to);
     }
 
     /**
@@ -171,14 +139,14 @@ public class Interval {
             return to == null;
         }
 
-        return to != null && TimestampUtils.toStartOfYear(from).equals(TimestampUtils.toStartOfYear(to));
+        return to != null && DateUtils.atStartOfYear(from).equals(DateUtils.atStartOfYear(to));
     }
 
     /**
-     * @return true if {@code timestamp} is in current interval including extreme values
+     * @return true if {@code dateTime} is in current interval including extreme values
      */
-    public boolean contains(final Timestamp timestamp) {
-        return from != null && to != null && !TimestampUtils.isBefore(timestamp, from) && !TimestampUtils.isAfter(timestamp, to);
+    public boolean contains(final OffsetDateTime dateTime) {
+        return from != null && to != null && !dateTime.isBefore(from) && !dateTime.isAfter(to);
     }
 
     /**
@@ -196,14 +164,14 @@ public class Interval {
     public List<Interval> splitIntoDailyIntervals() {
         final List<Interval> result = new ArrayList<>();
 
-        Timestamp currentFrom = from;
-        Timestamp endOfDay = TimestampUtils.toEndOfDay(from);
+        OffsetDateTime currentFrom = from;
+        OffsetDateTime endOfDay = DateUtils.toEndOfDay(from);
 
-        while (TimestampUtils.isBefore(endOfDay, to)) {
+        while (endOfDay.isBefore(to)) {
             result.add(Interval.of(currentFrom, endOfDay));
 
-            currentFrom = TimestampUtils.plusNanos(endOfDay, 1);
-            endOfDay = TimestampUtils.plusDays(endOfDay, 1);
+            currentFrom = endOfDay.plusNanos(1);
+            endOfDay = endOfDay.plusDays(1);
         }
         result.add(Interval.of(currentFrom, to));
 
@@ -225,14 +193,14 @@ public class Interval {
     public List<Interval> splitIntoYearlyIntervals() {
         final List<Interval> result = new ArrayList<>();
 
-        Timestamp currentFrom = from;
-        Timestamp endOfYear = TimestampUtils.toEndOfYear(from);
+        OffsetDateTime currentFrom = from;
+        OffsetDateTime endOfYear = DateUtils.atEndOfYear(from);
 
-        while (TimestampUtils.isBefore(endOfYear, to)) {
+        while (endOfYear.isBefore(to)) {
             result.add(Interval.of(currentFrom, endOfYear));
 
-            currentFrom = TimestampUtils.plusNanos(endOfYear, 1);
-            endOfYear = TimestampUtils.plusYears(endOfYear, 1);
+            currentFrom = endOfYear.plusNanos(1);
+            endOfYear = endOfYear.plusYears(1);
         }
         result.add(Interval.of(currentFrom, to));
 
@@ -243,7 +211,7 @@ public class Interval {
      * @return duration of current interval
      */
     public Duration toDuration() {
-        return TimestampUtils.toDuration(from, to);
+        return Duration.between(from, to);
     }
 
     /**
@@ -257,8 +225,8 @@ public class Interval {
      * @return pretty string representation of current interval, where null values are represented as "-∞" or "∞"
      */
     public String toPrettyString() {
-        final String fromString = from == null ? "-∞" : DateUtils.DATE_TIME_FORMATTER.format(TimestampUtils.toOffsetDateTime(from));
-        final String toString = to == null ? "∞" : DateUtils.DATE_TIME_FORMATTER.format(TimestampUtils.toOffsetDateTime(to));
+        final String fromString = from == null ? "-∞" : DateUtils.DATE_TIME_FORMATTER.format(from);
+        final String toString = to == null ? "∞" : DateUtils.DATE_TIME_FORMATTER.format(to);
 
         return fromString + " — " + toString;
     }

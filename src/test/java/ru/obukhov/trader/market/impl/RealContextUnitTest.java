@@ -1,21 +1,22 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.common.util.TimestampUtils;
+
+import java.time.Duration;
+import java.time.OffsetDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class RealContextUnitTest {
 
     @Test
     void getCurrentDateTime_returnsCurrentDateTime() {
-        final Timestamp now = TimestampUtils.now();
-        final Timestamp currentTimestamp = new RealContext().getCurrentTimestamp();
+        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime currentTimestamp = new RealContext().getCurrentDateTime();
 
-        final long delay = TimestampUtils.toDuration(now, currentTimestamp).toMillis();
+        final long delay = Duration.between(now, currentTimestamp).toMillis();
 
         Assertions.assertTrue(delay >= 0);
 

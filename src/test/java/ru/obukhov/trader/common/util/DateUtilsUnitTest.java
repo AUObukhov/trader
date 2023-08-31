@@ -49,8 +49,8 @@ class DateUtilsUnitTest {
 
         final Interval result = DateUtils.getIntervalWithDefaultOffsets(from, to);
 
-        final Timestamp expectedFrom = TimestampUtils.newTimestamp(2021, 1, 1, 13, DateUtils.DEFAULT_OFFSET);
-        final Timestamp expectedTo = TimestampUtils.newTimestamp(2021, 1, 2, 14, DateUtils.DEFAULT_OFFSET);
+        final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2021, 1, 1, 13, DateUtils.DEFAULT_OFFSET);
+        final OffsetDateTime expectedTo = DateTimeTestData.createDateTime(2021, 1, 2, 14, DateUtils.DEFAULT_OFFSET);
         Assertions.assertEquals(expectedFrom, result.getFrom());
         Assertions.assertEquals(expectedTo, result.getTo());
     }
@@ -337,13 +337,13 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region atEndOfDay tests
+    // region toEndOfDay tests
 
     @Test
     void atEndOfDay() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30, 40);
 
-        final OffsetDateTime endOfDay = DateUtils.atEndOfDay(dateTime);
+        final OffsetDateTime endOfDay = DateUtils.toEndOfDay(dateTime);
 
         final OffsetDateTime expected = DateTimeTestData.createEndOfDay(2020, 10, 5);
 

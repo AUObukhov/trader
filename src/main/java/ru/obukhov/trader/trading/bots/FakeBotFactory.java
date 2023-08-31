@@ -1,13 +1,12 @@
 package ru.obukhov.trader.trading.bots;
 
-import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
 import org.quartz.CronExpression;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
@@ -15,14 +14,15 @@ import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -39,8 +39,8 @@ public class FakeBotFactory {
     private final ExtInstrumentsService extInstrumentsService;
     private final ApplicationContext applicationContext;
 
-    public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final Timestamp currentTimestamp) {
-        final FakeContext fakeContext = createFakeContext(botConfig, balanceConfig, currentTimestamp);
+    public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+        final FakeContext fakeContext = createFakeContext(botConfig, balanceConfig, currentDateTime);
         final ExtOperationsService fakeOperationsService = new FakeExtOperationsService(fakeContext);
         final FakeExtOrdersService fakeOrdersService = new FakeExtOrdersService(
                 fakeContext,
@@ -60,32 +60,32 @@ public class FakeBotFactory {
         );
     }
 
-    private FakeContext createFakeContext(final BotConfig botConfig, final BalanceConfig balanceConfig, final Timestamp currentTimestamp) {
-        final Timestamp ceilingWorkTimestamp = getCeilingWorkTimestamp(botConfig.figi(), currentTimestamp);
+    private FakeContext createFakeContext(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+        final OffsetDateTime ceilingWorkDateTime = getCeilingWorkDateTime(botConfig.figi(), currentDateTime);
         final Share share = extInstrumentsService.getShare(botConfig.figi());
         if (share == null) {
             throw new IllegalArgumentException("Not found share for FIGI '" + botConfig.figi() + "'");
         }
-        final Quotation initialBalance = getInitialBalance(currentTimestamp, ceilingWorkTimestamp, balanceConfig);
+        final Quotation initialBalance = getInitialBalance(currentDateTime, ceilingWorkDateTime, balanceConfig);
 
         return (FakeContext) applicationContext.getBean(
                 "fakeContext",
-                ceilingWorkTimestamp,
+                ceilingWorkDateTime,
                 botConfig.accountId(),
                 share.getCurrency(),
                 initialBalance
         );
     }
 
-    private Timestamp getCeilingWorkTimestamp(final String figi, final Timestamp currentTimestamp) {
-        final Interval interval = Interval.of(currentTimestamp, TimestampUtils.plusDays(currentTimestamp, SCHEDULE_INTERVAL_DAYS));
+    private OffsetDateTime getCeilingWorkDateTime(final String figi, final OffsetDateTime currentDateTime) {
+        final Interval interval = Interval.of(currentDateTime, currentDateTime.plusDays(SCHEDULE_INTERVAL_DAYS));
         final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
-        return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentTimestamp);
+        return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentDateTime);
     }
 
     private Quotation getInitialBalance(
-            final Timestamp currentTimestamp,
-            final Timestamp ceilingWorkTimestamp,
+            final OffsetDateTime currentDateTime,
+            final OffsetDateTime ceilingWorkDateTime,
             final BalanceConfig balanceConfig
     ) {
         Quotation initialBalance = balanceConfig.getInitialBalance() == null ? QuotationUtils.ZERO : balanceConfig.getInitialBalance();
@@ -93,7 +93,7 @@ public class FakeBotFactory {
         // adding balance increments which were skipped by moving to ceiling work time above
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
         if (balanceIncrementCron != null) {
-            final int incrementsCount = TimestampUtils.getCronHitsBetweenDates(balanceIncrementCron, currentTimestamp, ceilingWorkTimestamp)
+            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, ceilingWorkDateTime)
                     .size();
             if (incrementsCount > 0) {
                 final Quotation totalBalanceIncrement = QuotationUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);

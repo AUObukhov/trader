@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +11,7 @@ import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -19,9 +19,9 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,12 +46,12 @@ class FakeContextUnitTest {
     void constructor(final int balance) {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
 
-        final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, QuotationUtils.newQuotation(balance));
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, QuotationUtils.newQuotation(balance));
 
-        Assertions.assertEquals(currentTimestamp, fakeContext.getCurrentTimestamp());
+        Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
         Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
         AssertUtils.assertEquals(balance, fakeContext.getBalance(accountId, currency));
     }
@@ -64,142 +64,142 @@ class FakeContextUnitTest {
     static Stream<Arguments> getData_forNextScheduleMinute() {
         return Stream.of(
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 6, 59, 59, 999999999),
-                        TimestampUtils.newTimestamp(2023, 7, 21, 7, 0, 59, 999999999)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 0, 59, 999999999)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 6, 59, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 21, 7, 0, 30)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 6, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 0, 30)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 7),
-                        TimestampUtils.newTimestamp(2023, 7, 21, 7, 1)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 1)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 14, 10),
-                        TimestampUtils.newTimestamp(2023, 7, 21, 14, 11)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 14, 10),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 14, 11)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 18, 58, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 21, 18, 59, 30)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 58, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59, 30)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 18, 58, 59, 999999999),
-                        TimestampUtils.newTimestamp(2023, 7, 21, 18, 59, 59, 999999999)
-                ),
-
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 18, 59),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 19),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 21, 20),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 22, 8, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 23, 13, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 6, 59, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7, 0, 30)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 6, 59, 59, 999999999),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7, 0, 59, 999999999)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 7, 1)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 14, 10),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 14, 11)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 58, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 59, 30)
-                ),
-                Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 58, 59, 999999999),
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 59, 59, 999999999)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 58, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59, 59, 999999999)
                 ),
 
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 59),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 59, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 19),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 18, 59, 59, 99999999),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7)
+                        DateTimeTestData.createDateTime(2023, 7, 21, 20),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 19),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7)
+                        DateTimeTestData.createDateTime(2023, 7, 22, 8, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 24, 20),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7)
+                        DateTimeTestData.createDateTime(2023, 7, 23, 13, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 6, 59, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7, 0, 30)
+                        DateTimeTestData.createDateTime(2023, 7, 24, 6, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 0, 30)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 6, 59, 59, 999999999),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7, 0, 59, 999999999)
+                        DateTimeTestData.createDateTime(2023, 7, 24, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 0, 59, 999999999)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 7, 1)
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 1)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 14, 10),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 14, 11)
+                        DateTimeTestData.createDateTime(2023, 7, 24, 14, 10),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 14, 11)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 58, 30),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 59, 30)
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 58, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 30)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 58, 59, 999999999),
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 59, 59, 999999999)
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 58, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 59, 999999999)
                 ),
 
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 19),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 59, 99999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 19),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 20),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 6, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 0, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 0, 59, 999999999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 14, 10),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 14, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 58, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 58, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 59, 999999999)
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 19),
                         null
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 30),
                         null
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 59, 59, 99999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 59, 99999999),
                         null
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 18, 59),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59),
                         null
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 25, 20),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 20),
                         null
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2023, 7, 26, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 26, 7),
                         null
                 )
         );
@@ -207,16 +207,16 @@ class FakeContextUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forNextScheduleMinute")
-    void nextScheduleMinute(final Timestamp timestamp, final Timestamp expectedResult) {
+    void nextScheduleMinute(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
         final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
-                TimestampUtils.newTimestamp(2023, 7, 21, 7),
+                DateTimeTestData.createDateTime(2023, 7, 21, 7),
                 DateTimeTestData.createTime(19, 0, 0),
                 5
         );
 
-        final FakeContext fakeContext = getFakeContext(timestamp, TestData.ACCOUNT_ID1, Currencies.USD, QuotationUtils.newQuotation(0));
+        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currencies.USD, QuotationUtils.newQuotation(0));
 
-        final Timestamp actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
+        final OffsetDateTime actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
 
         Assertions.assertEquals(expectedResult, actualResult);
     }
@@ -230,21 +230,21 @@ class FakeContextUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String accountId2 = TestData.ACCOUNT_ID2;
 
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final String currency1 = Currencies.RUB;
         final Quotation balance1 = QuotationUtils.newQuotation(100);
         final Quotation investment11 = QuotationUtils.newQuotation(20);
         final Quotation investment12 = QuotationUtils.newQuotation(50);
         final Quotation investment13 = QuotationUtils.newQuotation(30);
-        final Timestamp investment11DateTime = TimestampUtils.plusHours(currentTimestamp, 1);
-        final Timestamp investment12DateTime = TimestampUtils.plusHours(investment11DateTime, 1);
+        final OffsetDateTime investment11DateTime = currentDateTime.plusHours(1);
+        final OffsetDateTime investment12DateTime = investment11DateTime.plusHours(1);
 
-        final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId1, currency1, balance1);
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId1, currency1, balance1);
 
-        fakeContext.setCurrentTimestamp(investment11DateTime);
+        fakeContext.setCurrentDateTime(investment11DateTime);
         fakeContext.addInvestment(accountId1, currency1, investment11);
-        fakeContext.setCurrentTimestamp(investment12DateTime);
+        fakeContext.setCurrentDateTime(investment12DateTime);
         fakeContext.addInvestment(accountId1, currency1, investment12);
         fakeContext.addInvestment(accountId1, currency1, investment13);
 
@@ -253,13 +253,13 @@ class FakeContextUnitTest {
         final Quotation investment21 = QuotationUtils.newQuotation(200);
         final Quotation investment22 = QuotationUtils.newQuotation(500);
         final Quotation investment23 = QuotationUtils.newQuotation(300);
-        final Timestamp investment21DateTime = TimestampUtils.plusHours(currentTimestamp, 2);
-        final Timestamp investment22DateTime = TimestampUtils.plusHours(investment21DateTime, 1);
+        final OffsetDateTime investment21DateTime = currentDateTime.plusHours(2);
+        final OffsetDateTime investment22DateTime = investment21DateTime.plusHours(1);
 
         fakeContext.setBalance(accountId2, currency2, balance2);
-        fakeContext.setCurrentTimestamp(investment21DateTime);
+        fakeContext.setCurrentDateTime(investment21DateTime);
         fakeContext.addInvestment(accountId2, currency2, investment21);
-        fakeContext.setCurrentTimestamp(investment22DateTime);
+        fakeContext.setCurrentDateTime(investment22DateTime);
         fakeContext.addInvestment(accountId2, currency2, investment22);
         fakeContext.addInvestment(accountId2, currency2, investment23);
 
@@ -268,13 +268,13 @@ class FakeContextUnitTest {
         final Quotation investment31 = QuotationUtils.newQuotation(400);
         final Quotation investment32 = QuotationUtils.newQuotation(1000);
         final Quotation investment33 = QuotationUtils.newQuotation(600);
-        final Timestamp investment31DateTime = TimestampUtils.plusHours(currentTimestamp, 2);
-        final Timestamp investment32DateTime = TimestampUtils.plusHours(investment31DateTime, 1);
+        final OffsetDateTime investment31DateTime = currentDateTime.plusHours(2);
+        final OffsetDateTime investment32DateTime = investment31DateTime.plusHours(1);
 
         fakeContext.setBalance(accountId2, currency3, balance3);
-        fakeContext.setCurrentTimestamp(investment31DateTime);
+        fakeContext.setCurrentDateTime(investment31DateTime);
         fakeContext.addInvestment(accountId2, currency3, investment31);
-        fakeContext.setCurrentTimestamp(investment32DateTime);
+        fakeContext.setCurrentDateTime(investment32DateTime);
         fakeContext.addInvestment(accountId2, currency3, investment32);
         fakeContext.addInvestment(accountId2, currency3, investment33);
 
@@ -306,18 +306,18 @@ class FakeContextUnitTest {
         final Quotation investment2 = QuotationUtils.newQuotation(50);
         final Quotation investment3 = QuotationUtils.newQuotation(30);
 
-        final Timestamp initialTimestamp = TimestampUtils.now();
-        final Timestamp investment1Timestamp = TimestampUtils.plusHours(initialTimestamp, 1);
-        final Timestamp investment2Timestamp = TimestampUtils.plusHours(investment1Timestamp, 1);
+        final OffsetDateTime initialTimestamp = OffsetDateTime.now();
+        final OffsetDateTime investment1Timestamp = initialTimestamp.plusHours(1);
+        final OffsetDateTime investment2Timestamp = investment1Timestamp.plusHours(1);
 
         final FakeContext fakeContext = getFakeContext(initialTimestamp, accountId, currency, balance);
 
         // action
 
-        fakeContext.setCurrentTimestamp(investment1Timestamp);
+        fakeContext.setCurrentDateTime(investment1Timestamp);
         fakeContext.addInvestment(accountId, currency, investment1);
 
-        fakeContext.setCurrentTimestamp(investment2Timestamp);
+        fakeContext.setCurrentDateTime(investment2Timestamp);
         fakeContext.addInvestment(accountId, currency, investment2);
         fakeContext.addInvestment(accountId, currency, investment3);
 
@@ -342,13 +342,13 @@ class FakeContextUnitTest {
         final Quotation balance = QuotationUtils.newQuotation(100);
         final Quotation investment = QuotationUtils.newQuotation(-20);
 
-        final Timestamp initialDateTime = TimestampUtils.now();
+        final OffsetDateTime initialDateTime = OffsetDateTime.now();
 
-        final Timestamp investmentDateTime = TimestampUtils.plusHours(initialDateTime, 1);
+        final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
 
         final FakeContext fakeContext = getFakeContext(initialDateTime, accountId, currency, balance);
 
-        fakeContext.setCurrentTimestamp(investmentDateTime);
+        fakeContext.setCurrentDateTime(investmentDateTime);
 
         // action
 
@@ -373,12 +373,12 @@ class FakeContextUnitTest {
         final Quotation balance = QuotationUtils.newQuotation(100);
         final Quotation investment = QuotationUtils.newQuotation(0);
 
-        final Timestamp initialDateTime = TimestampUtils.now();
-        final Timestamp investmentDateTime = TimestampUtils.plusHours(initialDateTime, 1);
+        final OffsetDateTime initialDateTime = OffsetDateTime.now();
+        final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
 
         final FakeContext fakeContext = getFakeContext(initialDateTime, accountId, currency, balance);
 
-        fakeContext.setCurrentTimestamp(investmentDateTime);
+        fakeContext.setCurrentDateTime(investmentDateTime);
 
         // action
 
@@ -409,9 +409,9 @@ class FakeContextUnitTest {
         final Quotation investment2 = QuotationUtils.newQuotation(50);
         final Quotation investment3 = QuotationUtils.newQuotation(30);
 
-        final Timestamp initialTimestamp = TimestampUtils.now();
-        final Timestamp investment1Timestamp = TimestampUtils.plusHours(initialTimestamp, 1);
-        final Timestamp investment2Timestamp = TimestampUtils.plusHours(investment1Timestamp, 1);
+        final OffsetDateTime initialTimestamp = OffsetDateTime.now();
+        final OffsetDateTime investment1Timestamp = initialTimestamp.plusHours(1);
+        final OffsetDateTime investment2Timestamp = investment1Timestamp.plusHours(1);
 
         // action
 
@@ -442,12 +442,12 @@ class FakeContextUnitTest {
         final Quotation balance = QuotationUtils.newQuotation(100L);
         final Quotation investment = QuotationUtils.newQuotation(-20L);
 
-        final Timestamp initialDateTime = TimestampUtils.now();
-        final Timestamp investmentDateTime = TimestampUtils.plusHours(initialDateTime, 1);
+        final OffsetDateTime initialDateTime = OffsetDateTime.now();
+        final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
 
         final FakeContext fakeContext = getFakeContext(initialDateTime, accountId, currency, balance);
 
-        fakeContext.setCurrentTimestamp(investmentDateTime);
+        fakeContext.setCurrentDateTime(investmentDateTime);
 
         // action
 
@@ -472,12 +472,12 @@ class FakeContextUnitTest {
         final Quotation balance = QuotationUtils.newQuotation(100L);
         final Quotation investment = QuotationUtils.ZERO;
 
-        final Timestamp initialDateTime = TimestampUtils.now();
-        final Timestamp investmentDateTime = TimestampUtils.plusHours(initialDateTime, 1);
+        final OffsetDateTime initialDateTime = OffsetDateTime.now();
+        final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
 
         final FakeContext fakeContext = getFakeContext(initialDateTime, accountId, currency, balance);
 
-        fakeContext.setCurrentTimestamp(investmentDateTime);
+        fakeContext.setCurrentDateTime(investmentDateTime);
 
         // action
 
@@ -498,11 +498,11 @@ class FakeContextUnitTest {
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
         final Quotation balance = QuotationUtils.newQuotation(100L);
 
-        final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final Operation operation = Operation.newBuilder()
                 .setDate(TimestampUtils.newTimestamp(2021, 1, 1, 10))
@@ -518,11 +518,11 @@ class FakeContextUnitTest {
     void addPosition_addsPosition_and_getPosition_returnsPosition() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
         final Quotation balance = QuotationUtils.newQuotation(100L);
 
-        final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final String figi = TestShare1.FIGI;
         final Position position = new PositionBuilder().build();
@@ -537,11 +537,11 @@ class FakeContextUnitTest {
     void getPositions_returnsAllPositions() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
         final Quotation balance = QuotationUtils.newQuotation(100L);
 
-        final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final String figi1 = TestShare1.FIGI;
         final String figi2 = TestShare2.FIGI;
@@ -561,11 +561,11 @@ class FakeContextUnitTest {
     void removePosition_removesPosition() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
         final Quotation balance = QuotationUtils.newQuotation(100);
 
-        final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final String figi = TestShare1.FIGI;
         final Position position = new PositionBuilder().build();
@@ -577,12 +577,12 @@ class FakeContextUnitTest {
 
     @SuppressWarnings("SameParameterValue")
     private FakeContext getFakeContext(
-            final Timestamp currentTimestamp,
+            final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
             final Quotation balance
     ) {
-        return new FakeContext(currentTimestamp, accountId, currency, balance);
+        return new FakeContext(currentDateTime, accountId, currency, balance);
     }
 
 }

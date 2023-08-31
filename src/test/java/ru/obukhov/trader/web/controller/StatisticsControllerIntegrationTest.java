@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
@@ -162,7 +161,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(8000)
                 .setHigh(15000)
                 .setLow(6000)
-                .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10))
+                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10))
                 .setIsComplete(true)
                 .build();
 
@@ -171,7 +170,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(800)
                 .setHigh(1500)
                 .setLow(600)
-                .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10, 1))
+                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 1))
                 .setIsComplete(true)
                 .build();
 
@@ -180,7 +179,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(80)
                 .setHigh(150)
                 .setLow(60)
-                .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10, 2))
+                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 2))
                 .setIsComplete(true)
                 .build();
 

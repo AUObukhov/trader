@@ -1,6 +1,5 @@
 package ru.obukhov.trader.grafana.impl;
 
-import com.google.protobuf.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
@@ -216,17 +214,17 @@ class GrafanaServiceUnitTest {
         final Target target = new Target().setMetric(Metric.CANDLES).setData(data);
         request.setTargets(List.of(target));
 
-        final Timestamp from = TimestampUtils.plusDays(TimestampUtils.now(), -1);
-        final Timestamp to = TimestampUtils.now();
+        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime to = OffsetDateTime.now();
         final Interval interval = Interval.of(from, to);
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                new CandleBuilder().setOpen(1000).setTime(TimestampUtils.plusHours(from, 1)).build(),
-                new CandleBuilder().setOpen(2000).setTime(TimestampUtils.plusHours(from, 2)).build(),
-                new CandleBuilder().setOpen(3000).setTime(TimestampUtils.plusHours(from, 3)).build(),
-                new CandleBuilder().setOpen(4000).setTime(TimestampUtils.plusHours(from, 4)).build(),
-                new CandleBuilder().setOpen(5000).setTime(TimestampUtils.plusHours(from, 5)).build()
+                new CandleBuilder().setOpen(1000).setTime(from.plusHours(1)).build(),
+                new CandleBuilder().setOpen(2000).setTime(from.plusHours(2)).build(),
+                new CandleBuilder().setOpen(3000).setTime(from.plusHours(3)).build(),
+                new CandleBuilder().setOpen(4000).setTime(from.plusHours(4)).build(),
+                new CandleBuilder().setOpen(5000).setTime(from.plusHours(5)).build()
         );
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
@@ -248,8 +246,7 @@ class GrafanaServiceUnitTest {
 
             final List<List<Object>> expectedRows = new ArrayList<>(5);
             for (Candle candle : candles) {
-                final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
-                expectedRows.add(List.of(dateTime, candle.getOpen()));
+                expectedRows.add(List.of(candle.getTime(), candle.getOpen()));
             }
             AssertUtils.assertEquals(expectedRows, result.getRows());
         }
@@ -278,8 +275,8 @@ class GrafanaServiceUnitTest {
         final Target target = new Target().setMetric(Metric.EXTENDED_CANDLES).setData(data);
         request.setTargets(List.of(target));
 
-        final Timestamp from = TimestampUtils.plusDays(TimestampUtils.now(), -1);
-        final Timestamp to = TimestampUtils.now();
+        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime to = OffsetDateTime.now();
         final Interval interval = Interval.of(from, to);
         request.setInterval(interval);
 
@@ -288,31 +285,31 @@ class GrafanaServiceUnitTest {
                         .setTime(from)
                         .build(),
                 new CandleBuilder().setOpen(1000).setClose(20).setHighest(25).setLowest(10)
-                        .setTime(TimestampUtils.plusMinutes(from, 1))
+                        .setTime(from.plusMinutes(1))
                         .build(),
                 new CandleBuilder().setOpen(70).setClose(17).setHighest(24).setLowest(15)
-                        .setTime(TimestampUtils.plusMinutes(from, 2))
+                        .setTime(from.plusMinutes(2))
                         .build(),
                 new CandleBuilder().setOpen(40).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 3))
+                        .setTime(from.plusMinutes(3))
                         .build(),
                 new CandleBuilder().setOpen(50).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 4))
+                        .setTime(from.plusMinutes(4))
                         .build(),
                 new CandleBuilder().setOpen(10).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 5))
+                        .setTime(from.plusMinutes(5))
                         .build(),
                 new CandleBuilder().setOpen(90).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 6))
+                        .setTime(from.plusMinutes(6))
                         .build(),
                 new CandleBuilder().setOpen(1000).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 7))
+                        .setTime(from.plusMinutes(7))
                         .build(),
                 new CandleBuilder().setOpen(60).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 8))
+                        .setTime(from.plusMinutes(8))
                         .build(),
                 new CandleBuilder().setOpen(30).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(from, 9))
+                        .setTime(from.plusMinutes(9))
                         .build()
         );
         final List<Quotation> averages1 = TestData.createQuotations(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
@@ -342,8 +339,7 @@ class GrafanaServiceUnitTest {
         final List<List<Object>> expectedRows = new ArrayList<>(5);
         for (int i = 0; i < candles.size(); i++) {
             final Candle candle = candles.get(i);
-            final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
-            expectedRows.add(List.of(dateTime, candle.getOpen(), averages1.get(i), averages2.get(i)));
+            expectedRows.add(List.of(candle.getTime(), candle.getOpen(), averages1.get(i), averages2.get(i)));
         }
         AssertUtils.assertEquals(expectedRows, result.getRows());
     }

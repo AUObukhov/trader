@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.backtest.impl;
 
-import com.google.protobuf.Timestamp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.stereotype.Service;
@@ -8,15 +7,16 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionUtils;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.obukhov.trader.trading.bots.FakeBotFactory;
@@ -27,9 +27,9 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,9 +94,9 @@ public class BackTesterImpl implements BackTester {
     }
 
     private List<BackTestResult> test(final List<BotConfig> botConfigs, final BalanceConfig balanceConfig, final Interval interval) {
-        final Timestamp now = TimestampUtils.now();
-        TimestampUtils.assertNotFuture(interval.getFrom(), now, "from");
-        TimestampUtils.assertNotFuture(interval.getTo(), now, "to");
+        final OffsetDateTime now = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
+        DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
         Assert.isTrue(interval.toDays() >= 1, "interval can't be shorter than 1 day");
 
         final Interval finiteInterval = interval.limitByNowIfNull(now);
@@ -141,7 +141,7 @@ public class BackTesterImpl implements BackTester {
         final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, interval.getFrom());
 
         final List<Candle> historicalCandles = new ArrayList<>();
-        Timestamp previousStartTime = null;
+        OffsetDateTime previousStartTime = null;
 
         do {
             final List<Candle> currentCandles = fakeBot.processBotConfig(botConfig, previousStartTime);
@@ -153,7 +153,7 @@ public class BackTesterImpl implements BackTester {
             }
 
             moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, interval.getTo());
-        } while (TimestampUtils.isBefore(fakeBot.getCurrentTimestamp(), interval.getTo()));
+        } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
     }
@@ -170,22 +170,22 @@ public class BackTesterImpl implements BackTester {
             final String figi,
             final BalanceConfig balanceConfig,
             final FakeBot fakeBot,
-            final Timestamp to
+            final OffsetDateTime to
     ) {
         if (balanceConfig.getBalanceIncrement() == null) {
-            final Interval interval = Interval.of(fakeBot.getCurrentTimestamp(), to);
+            final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
             final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
             fakeBot.nextScheduleMinute(tradingSchedule);
         } else {
-            final Timestamp previousDate = fakeBot.getCurrentTimestamp();
+            final OffsetDateTime previousDate = fakeBot.getCurrentDateTime();
 
-            final Interval interval = Interval.of(fakeBot.getCurrentTimestamp(), to);
+            final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
             final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
-            final Timestamp nextDate = TimestampUtils.getEarliest(fakeBot.nextScheduleMinute(tradingSchedule), to);
+            final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextScheduleMinute(tradingSchedule), to);
 
-            final List<Timestamp> investmentsTimes = TimestampUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
+            final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
             final String currency = fakeBot.getShare(figi).getCurrency();
-            for (final Timestamp investmentTime : investmentsTimes) {
+            for (final OffsetDateTime investmentTime : investmentsTimes) {
                 fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
         }
@@ -262,7 +262,7 @@ public class BackTesterImpl implements BackTester {
             final String figi
     ) {
         final String currency = fakeBot.getShare(figi).getCurrency();
-        final SortedMap<Timestamp, Quotation> investments = fakeBot.getInvestments(accountId, currency);
+        final SortedMap<OffsetDateTime, Quotation> investments = fakeBot.getInvestments(accountId, currency);
 
         final Quotation initialInvestment = investments.get(investments.firstKey());
         final Quotation finalBalance = fakeBot.getCurrentBalance(accountId, currency);
@@ -281,15 +281,15 @@ public class BackTesterImpl implements BackTester {
                 .reduce(currentBalance, QuotationUtils::add);
     }
 
-    private Quotation getWeightedAverage(final SortedMap<Timestamp, Quotation> investments, final Timestamp endTimestamp) {
-        final SortedMap<Timestamp, Quotation> totalInvestments = getTotalInvestments(investments);
-        return MathUtils.getWeightedAverage(totalInvestments, endTimestamp);
+    private Quotation getWeightedAverage(final SortedMap<OffsetDateTime, Quotation> investments, final OffsetDateTime endDateTime) {
+        final SortedMap<OffsetDateTime, Quotation> totalInvestments = getTotalInvestments(investments);
+        return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
     }
 
-    private SortedMap<Timestamp, Quotation> getTotalInvestments(final SortedMap<Timestamp, Quotation> investments) {
-        final SortedMap<Timestamp, Quotation> balances = new TreeMap<>(TimestampUtils::compare);
+    private SortedMap<OffsetDateTime, Quotation> getTotalInvestments(final SortedMap<OffsetDateTime, Quotation> investments) {
+        final SortedMap<OffsetDateTime, Quotation> balances = new TreeMap<>();
         Quotation currentBalance = QuotationUtils.ZERO;
-        for (final Map.Entry<Timestamp, Quotation> entry : investments.entrySet()) {
+        for (final Map.Entry<OffsetDateTime, Quotation> entry : investments.entrySet()) {
             currentBalance = QuotationUtils.add(currentBalance, entry.getValue());
             balances.put(entry.getKey(), currentBalance);
         }

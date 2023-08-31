@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.service.impl;
 
-import com.google.protobuf.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -405,8 +404,8 @@ class ExcelServiceImplUnitTest {
     void saveCandles_createsAndSaveWorkbook() throws IOException {
         final String figi = TestShare1.FIGI;
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesResponse response = createGetCandlesResponse();
@@ -580,23 +579,23 @@ class ExcelServiceImplUnitTest {
     private List<Candle> createCandles() {
         final Candle candle1 = new CandleBuilder()
                 .setOpen(150)
-                .setTime(TimestampUtils.newTimestamp(2020, 10, 1, 10))
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
                 .build();
         final Candle candle2 = new CandleBuilder()
                 .setOpen(160)
-                .setTime(TimestampUtils.newTimestamp(2020, 10, 1, 11))
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11))
                 .build();
         final Candle candle3 = new CandleBuilder()
                 .setOpen(180)
-                .setTime(TimestampUtils.newTimestamp(2020, 10, 5, 10, 11))
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
                 .build();
         final Candle candle4 = new CandleBuilder()
                 .setOpen(160)
-                .setTime(TimestampUtils.newTimestamp(2020, 10, 10, 10, 50))
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
                 .build();
         final Candle candle5 = new CandleBuilder()
                 .setOpen(120)
-                .setTime(TimestampUtils.newTimestamp(2020, 11, 1, 10))
+                .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
                 .build();
 
         return List.of(candle1, candle2, candle3, candle4, candle5);

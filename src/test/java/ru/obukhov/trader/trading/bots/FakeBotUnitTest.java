@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.bots;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,12 +9,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -24,9 +23,9 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -62,26 +61,26 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void getCurrentTimestamp() {
-        final Timestamp expectedCurrentTimestamp = TimestampUtils.now();
-        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(expectedCurrentTimestamp);
+    void getCurrentDateTime() {
+        final OffsetDateTime expectedCurrentDateTime = OffsetDateTime.now();
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(expectedCurrentDateTime);
 
-        final Timestamp currentTimestamp = fakeBot.getCurrentTimestamp();
+        final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
 
-        Assertions.assertEquals(expectedCurrentTimestamp, currentTimestamp);
+        Assertions.assertEquals(expectedCurrentDateTime, currentDateTime);
     }
 
     @Test
     void nextScheduleMinute() {
-        final Timestamp expectedNextMinute = TimestampUtils.now();
+        final OffsetDateTime expectedNextMinute = OffsetDateTime.now();
         final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
-                TimestampUtils.newTimestamp(2023, 7, 21, 7),
+                DateTimeTestData.createDateTime(2023, 7, 21, 7),
                 DateTimeTestData.createTime(19, 0, 0),
                 5
         );
         Mockito.when(fakeContext.nextScheduleMinute(tradingSchedule)).thenReturn(expectedNextMinute);
 
-        final Timestamp nextMinute = fakeBot.nextScheduleMinute(tradingSchedule);
+        final OffsetDateTime nextMinute = fakeBot.nextScheduleMinute(tradingSchedule);
 
         Assertions.assertEquals(expectedNextMinute, nextMinute);
     }
@@ -90,11 +89,11 @@ class FakeBotUnitTest {
     void getInvestments() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
-        final SortedMap<Timestamp, Quotation> expectedInvestments = new TreeMap<>(TimestampUtils::compare);
-        expectedInvestments.put(TimestampUtils.now(), QuotationUtils.newQuotation(10));
+        final SortedMap<OffsetDateTime, Quotation> expectedInvestments = new TreeMap<>();
+        expectedInvestments.put(OffsetDateTime.now(), QuotationUtils.newQuotation(10));
         Mockito.when(fakeContext.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
 
-        final SortedMap<Timestamp, Quotation> investments = fakeBot.getInvestments(accountId, currency);
+        final SortedMap<OffsetDateTime, Quotation> investments = fakeBot.getInvestments(accountId, currency);
 
         AssertUtils.assertMapsAreEqual(expectedInvestments, investments);
     }
@@ -114,7 +113,7 @@ class FakeBotUnitTest {
     @Test
     void getOperations() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final Interval interval = Interval.of(TimestampUtils.now(), TimestampUtils.now());
+        final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String figi = TestShare1.FIGI;
         final List<Operation> expectedOperations = new ArrayList<>();
         Mockito.when(extOperationsService.getOperations(accountId, interval, figi)).thenReturn(expectedOperations);
@@ -138,12 +137,12 @@ class FakeBotUnitTest {
     @Test
     void getCurrentPrice() {
         final String figi = TestShare1.FIGI;
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Quotation expectedCurrentPrice = QuotationUtils.newQuotation(10);
 
-        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(currentTimestamp);
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentTimestamp)).thenReturn(expectedCurrentPrice);
+        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(expectedCurrentPrice);
 
         final Quotation currentPrice = fakeBot.getCurrentPrice(figi);
 

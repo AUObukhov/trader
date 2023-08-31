@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -20,8 +19,8 @@ public class RealExtOperationsService implements ExtOperationsService {
 
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi) {
-        final Instant from = TimestampUtils.toInstant(interval.getFrom());
-        final Instant to = TimestampUtils.toInstant(interval.getTo());
+        final Instant from = interval.getFrom().toInstant();
+        final Instant to = interval.getTo().toInstant();
         return operationsService.getAllOperationsSync(accountId, from, to, figi);
     }
 

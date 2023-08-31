@@ -1,10 +1,8 @@
 package ru.obukhov.trader.trading.bots;
 
-import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
@@ -25,6 +23,7 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,7 +69,7 @@ public abstract class Bot {
      *                          Used to prevent repeated processing when no new candle
      * @return list of last candles
      */
-    public List<Candle> processBotConfig(final BotConfig botConfig, final Timestamp previousStartTime) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 
         final String figi = botConfig.figi();
@@ -80,7 +79,7 @@ public abstract class Bot {
                     figi,
                     LAST_CANDLES_COUNT,
                     botConfig.candleInterval(),
-                    context.getCurrentTimestamp()
+                    context.getCurrentDateTime()
             );
             decisionData.setCurrentCandles(currentCandles);
 
@@ -111,8 +110,8 @@ public abstract class Bot {
     }
 
     private List<Operation> getLastWeekOperations(final String accountId, final String figi) {
-        final Timestamp now = context.getCurrentTimestamp();
-        final Interval interval = Interval.of(TimestampUtils.plusWeeks(now, -1), now);
+        final OffsetDateTime now = context.getCurrentDateTime();
+        final Interval interval = Interval.of(now.minusWeeks(1), now);
         return extOperationsService.getOperations(accountId, interval, figi);
     }
 

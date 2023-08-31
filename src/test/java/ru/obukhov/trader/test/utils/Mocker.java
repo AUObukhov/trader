@@ -1,14 +1,16 @@
 package ru.obukhov.trader.test.utils;
 
-import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
+import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.TradingDay;
+import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
@@ -22,7 +24,6 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.contract.v1.TradingSchedule;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -35,6 +36,8 @@ import java.util.List;
 @UtilityClass
 public class Mocker {
 
+    private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
+
     public static void mockEmptyOrder(final ExtOrdersService ordersService, final String figi) {
         final OrderState order = OrderState.newBuilder().build();
         Mockito.when(ordersService.getOrders(figi)).thenReturn(List.of(order));
@@ -46,9 +49,9 @@ public class Mocker {
         return offsetDateTimeStaticMock;
     }
 
-    public static void mockCurrentTimestamp(final Context context) {
-        final Timestamp currentTimestamp = TimestampUtils.now();
-        Mockito.when(context.getCurrentTimestamp()).thenReturn(currentTimestamp);
+    public static void mockCurrentDateTime(final Context context) {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
     }
 
     public static void mockTinkoffOperations(
@@ -134,6 +137,7 @@ public class Mocker {
         final TradingSchedule.Builder tradingScheduleBuilder = TradingSchedule.newBuilder();
         interval.splitIntoDailyIntervals().stream()
                 .map(dayInterval -> intervalToTradingDay(dayInterval, startTime, endTime))
+                .map(TRADING_DAY_MAPPER::map)
                 .forEach(tradingScheduleBuilder::addDays);
 
         Mockito.when(instrumentsService.getTradingScheduleSync(
@@ -161,10 +165,10 @@ public class Mocker {
     }
 
     private static TradingDay intervalToTradingDay(final Interval interval, final OffsetTime startTime, final OffsetTime endTime) {
-        final Timestamp startTimestamp = TimestampUtils.setTime(interval.getFrom(), startTime);
-        final Timestamp endTimestamp = TimestampUtils.setTime(interval.getTo(), endTime);
-        final boolean isTradingDay = TimestampUtils.isWorkDay(startTimestamp);
-        return TestData.createTradingDay(isTradingDay, startTimestamp, endTimestamp);
+        final OffsetDateTime startDateTime = DateUtils.setTime(interval.getFrom(), startTime);
+        final OffsetDateTime endDateTime = DateUtils.setTime(interval.getTo(), endTime);
+        final boolean isTradingDay = DateUtils.isWorkDay(startDateTime);
+        return TestData.createTradingDay(isTradingDay, startDateTime, endDateTime);
     }
 
 }

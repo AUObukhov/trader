@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.bots;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -30,6 +28,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -54,35 +53,35 @@ class FakeBotFactoryUnitTest {
     static Stream<Arguments> getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime() {
         return Stream.of(
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2020, 10, 5, 12),
-                        TimestampUtils.newTimestamp(2020, 10, 5, 12)
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12)
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2020, 10, 5, 19),
-                        TimestampUtils.newTimestamp(2020, 10, 6, START_TIME.getHour())
+                        DateTimeTestData.createDateTime(2020, 10, 5, 19),
+                        DateTimeTestData.createDateTime(2020, 10, 6, START_TIME.getHour())
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2020, 10, 5, 19, 20),
-                        TimestampUtils.newTimestamp(2020, 10, 6, START_TIME.getHour())
+                        DateTimeTestData.createDateTime(2020, 10, 5, 19, 20),
+                        DateTimeTestData.createDateTime(2020, 10, 6, START_TIME.getHour())
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2020, 10, 9, 19), // friday
-                        TimestampUtils.newTimestamp(2020, 10, 12, START_TIME.getHour()) // monday
+                        DateTimeTestData.createDateTime(2020, 10, 9, 19), // friday
+                        DateTimeTestData.createDateTime(2020, 10, 12, START_TIME.getHour()) // monday
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2020, 10, 10, 12), // saturday
-                        TimestampUtils.newTimestamp(2020, 10, 12, START_TIME.getHour()) // monday
+                        DateTimeTestData.createDateTime(2020, 10, 10, 12), // saturday
+                        DateTimeTestData.createDateTime(2020, 10, 12, START_TIME.getHour()) // monday
                 ),
                 Arguments.of(
-                        TimestampUtils.newTimestamp(2020, 10, 9, 6, 59, 59, 999999999),
-                        TimestampUtils.newTimestamp(2020, 10, 9, START_TIME.getHour())
+                        DateTimeTestData.createDateTime(2020, 10, 9, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2020, 10, 9, START_TIME.getHour())
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime")
-    void createBot_movesCurrentTimestampToCeilingWorkTime(final Timestamp currentTimestamp, final Timestamp expectedCurrentTimestamp) {
+    void createBot_movesCurrentTimestampToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
         final String figi = TestShare1.FIGI;
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -100,9 +99,9 @@ class FakeBotFactoryUnitTest {
         mockFakeContext();
         Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
 
-        final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentTimestamp);
+        final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
-        Assertions.assertEquals(expectedCurrentTimestamp, bot.getCurrentTimestamp());
+        Assertions.assertEquals(expectedCurrentDateTime, bot.getCurrentDateTime());
     }
 
     @SuppressWarnings("unused")
@@ -128,14 +127,14 @@ class FakeBotFactoryUnitTest {
                 Collections.emptyMap()
         );
 
-        final Timestamp currentTimestamp = TimestampUtils.newTimestamp(2020, 10, 1);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 10, 1);
 
         mockCurrency(figi, currency);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
         mockFakeContext();
         Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
 
-        final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentTimestamp);
+        final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
         AssertUtils.assertEquals(expectedBalance, bot.getCurrentBalance(botConfig.accountId(), currency));
     }
@@ -152,9 +151,9 @@ class FakeBotFactoryUnitTest {
                 Collections.emptyMap()
         );
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
-        final Timestamp currentTimestamp = TimestampUtils.now();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
-        final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentTimestamp);
+        final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
         final String expectedMessage = "Not found share for FIGI '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -168,16 +167,16 @@ class FakeBotFactoryUnitTest {
     private void mockFakeContext() {
         Mockito.when(applicationContext.getBean(
                 Mockito.eq("fakeContext"),
-                Mockito.any(Timestamp.class),
+                Mockito.any(OffsetDateTime.class),
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.any(Quotation.class)
         )).thenAnswer(invocation -> {
-            final Timestamp currentTimestamp = invocation.getArgument(1);
+            final OffsetDateTime currentDateTime = invocation.getArgument(1);
             final String accountId = invocation.getArgument(2);
             final String currency = invocation.getArgument(3);
             final Quotation initialBalance = invocation.getArgument(4);
-            return new FakeContext(currentTimestamp, accountId, currency, initialBalance);
+            return new FakeContext(currentDateTime, accountId, currency, initialBalance);
         });
     }
 

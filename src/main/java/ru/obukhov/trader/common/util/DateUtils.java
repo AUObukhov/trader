@@ -37,8 +37,8 @@ public class DateUtils {
      * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
      */
     public static Interval getIntervalWithDefaultOffsets(@Nullable final OffsetDateTime from, @Nullable final OffsetDateTime to) {
-        final Timestamp innerFrom = from == null ? null : TimestampUtils.newTimestamp(DateUtils.setDefaultOffsetSameInstant(from));
-        final Timestamp innerTo = to == null ? null : TimestampUtils.newTimestamp(DateUtils.setDefaultOffsetSameInstant(to));
+        final OffsetDateTime innerFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
+        final OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
 
         return Interval.of(innerFrom, innerTo);
     }
@@ -141,7 +141,7 @@ public class DateUtils {
     /**
      * @return value of given {@code dateTime} with maximum hours, minutes, seconds and nanos of this date
      */
-    public static OffsetDateTime atEndOfDay(final OffsetDateTime dateTime) {
+    public static OffsetDateTime toEndOfDay(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(
                 dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
@@ -152,12 +152,19 @@ public class DateUtils {
     /**
      * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this date
      */
-    public static OffsetDateTime atStartOfYear(final OffsetDateTime dateTime) {
+    public static OffsetDateTime toStartOfDay(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(
-                dateTime.getYear(), OffsetDateTime.MIN.getMonthValue(), OffsetDateTime.MIN.getDayOfMonth(),
-                OffsetTime.MIN.getHour(), OffsetTime.MIN.getMinute(), OffsetTime.MIN.getSecond(),
-                OffsetTime.MIN.getNano(), dateTime.getOffset()
+                dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+                0, 0, 0,
+                0, dateTime.getOffset()
         );
+    }
+
+    /**
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this date
+     */
+    public static OffsetDateTime atStartOfYear(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(dateTime.getYear(), 1, 1, 0, 0, 0, 0, dateTime.getOffset());
     }
 
     /**
@@ -165,9 +172,9 @@ public class DateUtils {
      */
     public static OffsetDateTime atEndOfYear(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(
-                dateTime.getYear(), OffsetDateTime.MAX.getMonthValue(), OffsetDateTime.MAX.getDayOfMonth(),
-                OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
-                OffsetTime.MAX.getNano(), dateTime.getOffset()
+                dateTime.getYear(), 12, 31,
+                23, 59, 59,
+                999999999, dateTime.getOffset()
         );
     }
 

@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,12 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -46,11 +45,11 @@ class StatisticsServiceUnitTest {
 
         final String figi = TestShare1.FIGI;
 
-        final Timestamp from = TimestampUtils.newTimestamp(2020, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final Timestamp time = TimestampUtils.newTimestamp(2020, 1, 1, 10);
+        final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
@@ -60,8 +59,8 @@ class StatisticsServiceUnitTest {
 
         final List<Candle> candles = List.of(
                 new CandleBuilder().setOpen(10).setClose(15).setHighest(20).setLowest(5).setTime(time).build(),
-                new CandleBuilder().setOpen(15).setClose(20).setHighest(25).setLowest(10).setTime(TimestampUtils.plusMinutes(time, 1)).build(),
-                new CandleBuilder().setOpen(20).setClose(17).setHighest(24).setLowest(15).setTime(TimestampUtils.plusMinutes(time, 2)).build()
+                new CandleBuilder().setOpen(15).setClose(20).setHighest(25).setLowest(10).setTime(time.plusMinutes(1)).build(),
+                new CandleBuilder().setOpen(20).setClose(17).setHighest(24).setLowest(15).setTime(time.plusMinutes(2)).build()
         );
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
@@ -95,11 +94,11 @@ class StatisticsServiceUnitTest {
 
         final String figi = TestShare1.FIGI;
 
-        final Timestamp from = TimestampUtils.newTimestamp(2020, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final Timestamp time = TimestampUtils.newTimestamp(2020, 1, 1, 10);
+        final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
@@ -112,31 +111,31 @@ class StatisticsServiceUnitTest {
                         .setTime(time)
                         .build(),
                 new CandleBuilder().setOpen(1000).setClose(20).setHighest(25).setLowest(10)
-                        .setTime(TimestampUtils.plusMinutes(time, 1))
+                        .setTime(time.plusMinutes(1))
                         .build(),
                 new CandleBuilder().setOpen(70).setClose(17).setHighest(24).setLowest(15)
-                        .setTime(TimestampUtils.plusMinutes(time, 2))
+                        .setTime(time.plusMinutes(2))
                         .build(),
                 new CandleBuilder().setOpen(40).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 3))
+                        .setTime(time.plusMinutes(3))
                         .build(),
                 new CandleBuilder().setOpen(50).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 4))
+                        .setTime(time.plusMinutes(4))
                         .build(),
                 new CandleBuilder().setOpen(10).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 5))
+                        .setTime(time.plusMinutes(5))
                         .build(),
                 new CandleBuilder().setOpen(90).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 6))
+                        .setTime(time.plusMinutes(6))
                         .build(),
                 new CandleBuilder().setOpen(1000).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 7))
+                        .setTime(time.plusMinutes(7))
                         .build(),
                 new CandleBuilder().setOpen(60).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 8))
+                        .setTime(time.plusMinutes(8))
                         .build(),
                 new CandleBuilder().setOpen(30).setClose(18).setHighest(22).setLowest(14)
-                        .setTime(TimestampUtils.plusMinutes(time, 9))
+                        .setTime(time.plusMinutes(9))
                         .build()
         );
 

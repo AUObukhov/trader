@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market.model;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.tinkoff.piapi.contract.v1.Quotation;
+
+import java.time.OffsetDateTime;
 
 class FakeBalanceUnitTest {
 
@@ -25,9 +25,9 @@ class FakeBalanceUnitTest {
         final Quotation amount1 = QuotationUtils.newQuotation(20L);
         final Quotation amount2 = QuotationUtils.newQuotation(50L);
         final Quotation amount3 = QuotationUtils.newQuotation(40L);
-        final Timestamp investment1DateTime = TimestampUtils.now();
-        final Timestamp investment2DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
-        final Timestamp investment3DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
+        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
+        final OffsetDateTime investment3DateTime = investment1DateTime.plusHours(1);
 
         final FakeBalance fakeBalance = new FakeBalance();
 
@@ -47,9 +47,9 @@ class FakeBalanceUnitTest {
         final Quotation amount1 = QuotationUtils.newQuotation(20L);
         final Quotation amount2 = QuotationUtils.newQuotation(-50L);
         final Quotation amount3 = QuotationUtils.newQuotation(10L);
-        final Timestamp investment1DateTime = TimestampUtils.now();
-        final Timestamp investment2DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
-        final Timestamp investment3DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
+        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
+        final OffsetDateTime investment3DateTime = investment1DateTime.plusHours(1);
 
         final FakeBalance fakeBalance = new FakeBalance();
 
@@ -69,9 +69,9 @@ class FakeBalanceUnitTest {
         final Quotation amount1 = QuotationUtils.newQuotation(20L);
         final Quotation amount2 = QuotationUtils.ZERO;
         final Quotation amount3 = QuotationUtils.newQuotation(10L);
-        final Timestamp investment1DateTime = TimestampUtils.now();
-        final Timestamp investment2DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
-        final Timestamp investment3DateTime = investment1DateTime;
+        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
+        final OffsetDateTime investment3DateTime = investment1DateTime;
 
         final FakeBalance fakeBalance = new FakeBalance();
 

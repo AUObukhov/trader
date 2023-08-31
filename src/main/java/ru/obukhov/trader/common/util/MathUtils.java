@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
@@ -8,6 +7,8 @@ import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -42,24 +43,23 @@ public class MathUtils {
      * Calculates weighted average of given amounts.<br/>
      * Weight is count of milliseconds every amount was actual.
      * Every amount is actual since its timestamp inclusive until timestamp of next amount exclusive.
-     * The last amount is actual until given {@code endTimestamp}
+     * The last amount is actual until given {@code endDateTime}
      *
-     * @param timestampsToAmounts begin timestamps and corresponding amounts
-     * @param endTimestamp        end timestamp of last amount from given {@code timestampsToAmounts}.
-     *                            Can't be before any of timestamp in {@code timestampsToAmounts}
-     * @return weighted average or zero if given {@code timestampsToAmounts} is empty
+     * @param dateTimesToAmounts begin timestamps and corresponding amounts
+     * @param endDateTime        end timestamp of last amount from given {@code dateTimesToAmounts}.
+     *                           Can't be before any of timestamp in {@code dateTimesToAmounts}
+     * @return weighted average or zero if given {@code dateTimesToAmounts} is empty
      */
-    public static Quotation getWeightedAverage(final Map<Timestamp, Quotation> timestampsToAmounts, final Timestamp endTimestamp) {
-        final Map<Long, Quotation> weightedAmounts = timestampsToAmounts.entrySet().stream()
-                .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endTimestamp), Map.Entry::getValue));
+    public static Quotation getWeightedAverage(final Map<OffsetDateTime, Quotation> dateTimesToAmounts, final OffsetDateTime endDateTime) {
+        final Map<Long, Quotation> weightedAmounts = dateTimesToAmounts.entrySet().stream()
+                .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endDateTime), Map.Entry::getValue));
 
         return getWeightedAverage(weightedAmounts);
     }
 
-    private static long getWeight(final Timestamp timestamp, final Timestamp endTimestamp) {
-        Assert.isTrue(!TimestampUtils.isBefore(endTimestamp, timestamp), "All timestamps must be before endTimestamp");
-
-        return TimestampUtils.toDuration(timestamp, endTimestamp).toMillis();
+    private static long getWeight(final OffsetDateTime dateTime, final OffsetDateTime endDateTime) {
+        Assert.isTrue(!endDateTime.isBefore(dateTime), "All dateTimes must be before endDateTime");
+        return Duration.between(dateTime, endDateTime).toMillis();
     }
 
     private static Quotation getWeightedAverage(final Map<Long, Quotation> weightedAmounts) {

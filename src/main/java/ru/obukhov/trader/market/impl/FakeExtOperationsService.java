@@ -3,9 +3,11 @@ package ru.obukhov.trader.market.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -19,12 +21,14 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class FakeExtOperationsService implements ExtOperationsService {
 
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+
     private final FakeContext fakeContext;
 
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
         Stream<Operation> operationsStream = fakeContext.getOperations(accountId).stream()
-                .filter(operation -> interval.contains(operation.getDate()));
+                .filter(operation -> interval.contains(DATE_TIME_MAPPER.timestampToOffsetDateTime(operation.getDate())));
         if (figi != null) {
             operationsStream = operationsStream.filter(operation -> figi.equals(operation.getFigi()));
         }

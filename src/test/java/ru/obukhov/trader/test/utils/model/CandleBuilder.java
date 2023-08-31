@@ -1,8 +1,9 @@
 package ru.obukhov.trader.test.utils.model;
 
-import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Candle;
+
+import java.time.OffsetDateTime;
 
 public class CandleBuilder {
 
@@ -10,7 +11,7 @@ public class CandleBuilder {
     private Double close;
     private Double highest;
     private Double lowest;
-    private Timestamp time;
+    private OffsetDateTime time;
 
     public CandleBuilder setOpen(final double open) {
         this.open = open;
@@ -32,7 +33,7 @@ public class CandleBuilder {
         return this;
     }
 
-    public CandleBuilder setTime(final Timestamp time) {
+    public CandleBuilder setTime(final OffsetDateTime time) {
         this.time = time;
         return this;
     }

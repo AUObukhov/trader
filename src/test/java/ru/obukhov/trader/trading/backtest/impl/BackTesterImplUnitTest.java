@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.backtest.impl;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -36,6 +36,7 @@ import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -73,8 +74,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
-        final Timestamp from = TimestampUtils.plusDays(TimestampUtils.now(), 1);
-        final Timestamp to = TimestampUtils.plusDays(from, 1);
+        final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
+        final OffsetDateTime to = from.plusDays(1);
         final Interval interval = Interval.of(from, to);
 
         final String expectedMessagePattern = String.format("^'from' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
@@ -92,8 +93,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
-        final Timestamp from = TimestampUtils.plusDays(TimestampUtils.now(), -1);
-        final Timestamp to = TimestampUtils.plusDays(from, 2);
+        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime to = from.plusDays(2);
         final Interval interval = Interval.of(from, to);
 
         final String expectedMessagePattern = String.format("^'to' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
@@ -111,8 +112,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
-        final Timestamp from = TimestampUtils.plusDays(TimestampUtils.now(), -1);
-        final Timestamp to = TimestampUtils.plusNanos(TimestampUtils.plusDays(from, 1), -1);
+        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime to = from.plusDays(1).minusNanos(1);
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = () -> backTester.test(botConfigs, balanceConfig, interval, false);
@@ -123,8 +124,8 @@ class BackTesterImplUnitTest {
     void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() {
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final String accountId = TestData.ACCOUNT_ID1;
@@ -178,8 +179,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -188,13 +189,13 @@ class BackTesterImplUnitTest {
         final Quotation finalBalance1 = QuotationUtils.newQuotation(2000L);
         final int finalQuantity1 = 8;
 
-        final Map<Timestamp, Double> prices1 = new LinkedHashMap<>();
-        prices1.put(TimestampUtils.plusMinutes(from, 10), 1000.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 20), 1001.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 30), 1002.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 40), 1003.0);
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(10), 1000.0);
+        prices1.put(from.plusMinutes(20), 1001.0);
+        prices1.put(from.plusMinutes(30), 1002.0);
+        prices1.put(from.plusMinutes(40), 1003.0);
         final double finalPrice1 = 1004.0;
-        prices1.put(TimestampUtils.plusMinutes(from, 50), finalPrice1);
+        prices1.put(from.plusMinutes(50), finalPrice1);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -212,13 +213,13 @@ class BackTesterImplUnitTest {
         final Quotation finalBalance2 = QuotationUtils.newQuotation(100L);
         final int finalQuantity2 = 500;
 
-        final Map<Timestamp, Double> prices2 = new LinkedHashMap<>();
-        prices2.put(TimestampUtils.plusMinutes(from, 100), 100.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 200), 100.1);
-        prices2.put(TimestampUtils.plusMinutes(from, 300), 100.2);
-        prices2.put(TimestampUtils.plusMinutes(from, 400), 100.3);
+        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        prices2.put(from.plusMinutes(100), 100.0);
+        prices2.put(from.plusMinutes(200), 100.1);
+        prices2.put(from.plusMinutes(300), 100.2);
+        prices2.put(from.plusMinutes(400), 100.3);
         final double finalPrice2 = 100.4;
-        prices2.put(TimestampUtils.plusMinutes(from, 500), finalPrice2);
+        prices2.put(from.plusMinutes(500), finalPrice2);
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -295,8 +296,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -309,12 +310,12 @@ class BackTesterImplUnitTest {
         final String currency1 = TestShare1.CURRENCY;
         final Quotation commission1 = QuotationUtils.newQuotation(0L, 3000000);
 
-        final Map<Timestamp, Double> prices1 = new LinkedHashMap<>();
-        prices1.put(TimestampUtils.plusMinutes(from, 10), 100.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 20), 200.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 30), 300.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 40), 400.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 50), 500.0);
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(10), 100.0);
+        prices1.put(from.plusMinutes(20), 200.0);
+        prices1.put(from.plusMinutes(30), 300.0);
+        prices1.put(from.plusMinutes(40), 400.0);
+        prices1.put(from.plusMinutes(50), 500.0);
 
         final Quotation currentBalance1 = QuotationUtils.newQuotation(2000L);
 
@@ -336,12 +337,12 @@ class BackTesterImplUnitTest {
         final String currency2 = TestShare2.CURRENCY;
         final Quotation commission2 = QuotationUtils.newQuotation(0L, 1000000);
 
-        final Map<Timestamp, Double> prices2 = new LinkedHashMap<>();
-        prices2.put(TimestampUtils.plusMinutes(from, 100), 10.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 200), 20.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 300), 30.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 400), 40.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 500), 50.0);
+        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        prices2.put(from.plusMinutes(100), 10.0);
+        prices2.put(from.plusMinutes(200), 20.0);
+        prices2.put(from.plusMinutes(300), 30.0);
+        prices2.put(from.plusMinutes(400), 40.0);
+        prices2.put(from.plusMinutes(500), 50.0);
 
         final Quotation currentBalance2 = QuotationUtils.newQuotation(2000L);
 
@@ -373,7 +374,7 @@ class BackTesterImplUnitTest {
         Mockito.verify(fakeBot1, Mockito.times(24))
                 .addInvestment(
                         Mockito.eq(accountId1),
-                        Mockito.any(Timestamp.class),
+                        Mockito.any(OffsetDateTime.class),
                         Mockito.eq(currency1),
                         Mockito.eq(QuotationUtils.newQuotation(balanceIncrement))
                 );
@@ -381,7 +382,7 @@ class BackTesterImplUnitTest {
         Mockito.verify(fakeBot2, Mockito.times(24))
                 .addInvestment(
                         Mockito.eq(accountId2),
-                        Mockito.any(Timestamp.class),
+                        Mockito.any(OffsetDateTime.class),
                         Mockito.eq(currency2),
                         Mockito.eq(QuotationUtils.newQuotation(balanceIncrement))
                 );
@@ -392,20 +393,20 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final Map<Timestamp, Double> prices1 = new LinkedHashMap<>();
-        prices1.put(TimestampUtils.plusMinutes(from, 10), 100.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 20), 200.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 30), 300.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 40), 400.0);
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(10), 100.0);
+        prices1.put(from.plusMinutes(20), 200.0);
+        prices1.put(from.plusMinutes(30), 300.0);
+        prices1.put(from.plusMinutes(40), 400.0);
         final double currentPrice1 = 500.0;
-        prices1.put(TimestampUtils.plusMinutes(from, 50), currentPrice1);
+        prices1.put(from.plusMinutes(50), currentPrice1);
 
         final int quantity1 = 2;
 
@@ -466,8 +467,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -480,11 +481,11 @@ class BackTesterImplUnitTest {
 
         final int quantity1 = 1;
 
-        final Timestamp operationTimestamp1 = TimestampUtils.plusMinutes(from, 2);
+        final OffsetDateTime operationDateTime1 = from.plusMinutes(2);
         final OperationType operationType1 = OperationType.OPERATION_TYPE_BUY;
         final double operationPrice1 = 100;
         final int operationQuantity1 = 2;
-        final Operation operation1 = TestData.createOperation(operationTimestamp1, operationType1, operationPrice1, operationQuantity1, figi1);
+        final Operation operation1 = TestData.createOperation(operationDateTime1, operationType1, operationPrice1, operationQuantity1, figi1);
 
         final String figi2 = TestShare2.FIGI;
         final double commission2 = 0.001;
@@ -493,11 +494,11 @@ class BackTesterImplUnitTest {
 
         final int quantity2 = 10;
 
-        final Timestamp operationTimestamp2 = TimestampUtils.plusMinutes(from, 3);
+        final OffsetDateTime operationDateTime2 = from.plusMinutes(3);
         final OperationType operationType2 = OperationType.OPERATION_TYPE_SELL;
         final double operationPrice2 = 1000;
         final int operationQuantity2 = 4;
-        final Operation operation2 = TestData.createOperation(operationTimestamp2, operationType2, operationPrice2, operationQuantity2, figi2);
+        final Operation operation2 = TestData.createOperation(operationDateTime2, operationType2, operationPrice2, operationQuantity2, figi2);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -507,7 +508,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance1,
                 quantity1,
-                Map.of(TimestampUtils.plusMinutes(from, 1), 100.0),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation1
         );
@@ -520,7 +521,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance2,
                 quantity2,
-                Map.of(TimestampUtils.plusMinutes(from, 3), 1000.0),
+                Map.of(from.plusMinutes(3), 1000.0),
                 1000,
                 operation2
         );
@@ -535,15 +536,15 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        assertOperation(backTestResults.get(0), figi1, operationTimestamp1, operationType1, operationPrice1, operationQuantity1);
+        assertOperation(backTestResults.get(0), figi1, operationDateTime1, operationType1, operationPrice1, operationQuantity1);
 
-        assertOperation(backTestResults.get(1), figi2, operationTimestamp2, operationType2, operationPrice2, operationQuantity2);
+        assertOperation(backTestResults.get(1), figi2, operationDateTime2, operationType2, operationPrice2, operationQuantity2);
     }
 
     private void assertOperation(
             final BackTestResult backTestResult,
             final String expectedFigi,
-            final Timestamp expectedTimestamp,
+            final OffsetDateTime expectedDateTime,
             final OperationType expectedOperationType,
             final double expectedOperationPrice,
             final int expectedOperationQuantity
@@ -555,7 +556,7 @@ class BackTesterImplUnitTest {
 
         final Operation backTestOperation = resultOperations.get(0);
         Assertions.assertEquals(expectedFigi, backTestOperation.getFigi());
-        Assertions.assertEquals(expectedTimestamp, backTestOperation.getDate());
+        Assertions.assertEquals(expectedDateTime, TimestampUtils.toOffsetDateTime(backTestOperation.getDate()));
         Assertions.assertEquals(expectedOperationType, backTestOperation.getOperationType());
         AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.getPrice());
         AssertUtils.assertEquals(expectedOperationQuantity, backTestOperation.getQuantity());
@@ -566,19 +567,19 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final Map<Timestamp, Double> prices1 = new LinkedHashMap<>();
-        prices1.put(TimestampUtils.plusMinutes(from, 1), 100.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 2), 200.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 3), 300.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 4), 400.0);
-        prices1.put(TimestampUtils.plusMinutes(from, 5), 500.0);
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(1), 100.0);
+        prices1.put(from.plusMinutes(2), 200.0);
+        prices1.put(from.plusMinutes(3), 300.0);
+        prices1.put(from.plusMinutes(4), 400.0);
+        prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -593,11 +594,11 @@ class BackTesterImplUnitTest {
                 null
         );
 
-        final Map<Timestamp, Double> prices2 = new LinkedHashMap<>();
-        prices2.put(TimestampUtils.plusMinutes(from, 10), 1000.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 20), 2000.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 30), 3000.0);
-        prices2.put(TimestampUtils.plusMinutes(from, 40), 4000.0);
+        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        prices2.put(from.plusMinutes(10), 1000.0);
+        prices2.put(from.plusMinutes(20), 2000.0);
+        prices2.put(from.plusMinutes(30), 3000.0);
+        prices2.put(from.plusMinutes(40), 4000.0);
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -625,14 +626,14 @@ class BackTesterImplUnitTest {
         assertCandles(backTestResults.get(1), prices2);
     }
 
-    private void assertCandles(final BackTestResult backTestResult, final Map<Timestamp, Double> prices) {
+    private void assertCandles(final BackTestResult backTestResult, final Map<OffsetDateTime, Double> prices) {
         Assertions.assertNull(backTestResult.error());
 
         final List<Candle> candles = backTestResult.candles();
         Assertions.assertEquals(prices.size(), candles.size());
 
         final Iterator<Candle> candlesIterator = candles.iterator();
-        for (final Map.Entry<Timestamp, Double> entry : prices.entrySet()) {
+        for (final Map.Entry<OffsetDateTime, Double> entry : prices.entrySet()) {
             final Candle candle = candlesIterator.next();
             Assertions.assertEquals(entry.getKey(), candle.getTime());
             AssertUtils.assertEquals(entry.getValue(), candle.getClose());
@@ -644,8 +645,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -701,8 +702,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -710,8 +711,13 @@ class BackTesterImplUnitTest {
         final Quotation currentBalance = QuotationUtils.ZERO;
 
         final double commission1 = 0.001;
-        final Timestamp operationTimestamp = TimestampUtils.plusMinutes(from, 2);
-        final Operation operation = TestData.createOperation(operationTimestamp, OperationType.OPERATION_TYPE_BUY, 100, 2, TestShare1.FIGI);
+        final Operation operation = TestData.createOperation(
+                from.plusMinutes(2),
+                OperationType.OPERATION_TYPE_BUY,
+                100,
+                2,
+                TestShare1.FIGI
+        );
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -721,7 +727,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 1,
-                Map.of(TimestampUtils.plusMinutes(from, 1), 100.0),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -760,8 +766,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -769,8 +775,13 @@ class BackTesterImplUnitTest {
         final Quotation currentBalance = QuotationUtils.ZERO;
 
         final double commission1 = 0.001;
-        final Timestamp operationTimestamp = TimestampUtils.plusMinutes(from, 2);
-        final Operation operation = TestData.createOperation(operationTimestamp, OperationType.OPERATION_TYPE_BUY, 100, 2, TestShare1.FIGI);
+        final Operation operation = TestData.createOperation(
+                from.plusMinutes(2),
+                OperationType.OPERATION_TYPE_BUY,
+                100,
+                2,
+                TestShare1.FIGI
+        );
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -780,7 +791,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 1,
-                Map.of(TimestampUtils.plusMinutes(from, 1), 100.0),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -819,8 +830,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 0;
@@ -828,8 +839,13 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         final double commission1 = 0.003;
-        final Timestamp operationTimestamp = TimestampUtils.plusMinutes(from, 2);
-        final Operation operation = TestData.createOperation(operationTimestamp, OperationType.OPERATION_TYPE_BUY, 100, 2, TestShare1.FIGI);
+        final Operation operation = TestData.createOperation(
+                from.plusMinutes(2),
+                OperationType.OPERATION_TYPE_BUY,
+                100,
+                2,
+                TestShare1.FIGI
+        );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
                 TestShare1.SHARE,
@@ -838,7 +854,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 10,
-                Map.of(TimestampUtils.plusMinutes(from, 1), 100.0),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -883,8 +899,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
@@ -947,8 +963,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
-        final Timestamp to = TimestampUtils.newTimestamp(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -956,9 +972,8 @@ class BackTesterImplUnitTest {
         final Quotation currentBalance = QuotationUtils.ZERO;
 
         final double commission1 = 0.003;
-        final Timestamp operationTimestamp = TimestampUtils.plusMinutes(from, 2);
         final Operation operation = TestData.createOperation(
-                operationTimestamp,
+                from.plusMinutes(2),
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
@@ -972,7 +987,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 2,
-                Map.of(TimestampUtils.plusMinutes(from, 1), 100.0),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -1016,7 +1031,7 @@ class BackTesterImplUnitTest {
             final Interval interval,
             final Quotation currentBalance,
             final Integer quantity,
-            final Map<Timestamp, Double> prices,
+            final Map<OffsetDateTime, Double> prices,
             final double currentPrice,
             final Operation operation
     ) {
@@ -1048,19 +1063,19 @@ class BackTesterImplUnitTest {
                 .thenReturn(QuotationUtils.newQuotation(currentPrice));
     }
 
-    private FakeBot mockFakeBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final Timestamp currentTimestamp) {
+    private FakeBot mockFakeBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
-        Mockito.when(fakeBotFactory.createBot(botConfig, balanceConfig, currentTimestamp)).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(botConfig, balanceConfig, currentDateTime)).thenReturn(fakeBot);
         return fakeBot;
     }
 
-    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<Timestamp, Double> prices) {
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(Timestamp.class)))
+    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class)))
                 .thenAnswer(invocation -> {
-                    final Timestamp currentTimestamp = fakeBot.getCurrentTimestamp();
-                    if (prices.containsKey(currentTimestamp)) {
-                        final double close = prices.get(currentTimestamp);
-                        final Candle candle = new CandleBuilder().setClose(close).setTime(currentTimestamp).build();
+                    final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
+                    if (prices.containsKey(currentDateTime)) {
+                        final double close = prices.get(currentDateTime);
+                        final Candle candle = new CandleBuilder().setClose(close).setTime(currentDateTime).build();
                         return List.of(candle);
                     } else {
                         return Collections.emptyList();
@@ -1068,13 +1083,13 @@ class BackTesterImplUnitTest {
                 });
     }
 
-    private void mockPlusMinuteScheduled(final FakeBot fakeBot, final Timestamp from) {
-        Mockito.when(fakeBot.getCurrentTimestamp()).thenReturn(from);
+    private void mockPlusMinuteScheduled(final FakeBot fakeBot, final OffsetDateTime from) {
+        Mockito.when(fakeBot.getCurrentDateTime()).thenReturn(from);
 
         Mockito.when(fakeBot.nextScheduleMinute(Mockito.anyList())).thenAnswer(invocationOnMock -> {
-            final Timestamp currentTimestamp = fakeBot.getCurrentTimestamp();
-            final Timestamp nextMinute = TimestampUtils.plusMinutes(currentTimestamp, 1);
-            Mockito.when(fakeBot.getCurrentTimestamp()).thenReturn(nextMinute);
+            final OffsetDateTime currentTimestamp = fakeBot.getCurrentDateTime();
+            final OffsetDateTime nextMinute = currentTimestamp.plusMinutes(1);
+            Mockito.when(fakeBot.getCurrentDateTime()).thenReturn(nextMinute);
             return nextMinute;
         });
     }
@@ -1083,11 +1098,11 @@ class BackTesterImplUnitTest {
             final FakeBot fakeBot,
             final String accountId,
             final String currency,
-            final Timestamp timestamp,
+            final OffsetDateTime dateTime,
             final Quotation initialInvestment
     ) {
-        final SortedMap<Timestamp, Quotation> investments = new TreeMap<>(TimestampUtils::compare);
-        investments.put(timestamp, initialInvestment);
+        final SortedMap<OffsetDateTime, Quotation> investments = new TreeMap<>();
+        investments.put(dateTime, initialInvestment);
         Mockito.when(fakeBot.getInvestments(accountId, currency)).thenReturn(investments);
     }
 

@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.service.impl;
 
-import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,6 +44,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -340,7 +340,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addCandles(final ExtendedChartData chartData, final GetCandlesResponse response) {
-        final List<Timestamp> times = response.getCandles().stream()
+        final List<OffsetDateTime> times = response.getCandles().stream()
                 .map(Candle::getTime)
                 .toList();
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
@@ -361,10 +361,10 @@ public class ExcelServiceImpl implements ExcelService {
         // interpolating candles and computing operationsIndices for future processing
         final List<Integer> operationsIndices = new ArrayList<>();
         for (final Operation operation : operations) {
-            final Timestamp operationTimestamp = operation.getDate();
+            final OffsetDateTime operationDateTime = TimestampUtils.toOffsetDateTime(operation.getDate());
             final Candle keyCandle = new Candle();
-            keyCandle.setTime(operationTimestamp);
-            int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime, TimestampUtils::compare));
+            keyCandle.setTime(operationDateTime);
+            int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime));
             if (index < 0) {
                 index = -index - 1;
                 CollectionsUtils.insertInterpolated(innerCandles, index, Candle::createAverage);
@@ -380,9 +380,8 @@ public class ExcelServiceImpl implements ExcelService {
         chartData.stretchChart();
     }
 
-    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<Timestamp> times) {
+    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<OffsetDateTime> times) {
         final String[] timesArray = times.stream()
-                .map(TimestampUtils::toOffsetDateTime)
                 .map(DateUtils.DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(timesArray);
@@ -391,7 +390,6 @@ public class ExcelServiceImpl implements ExcelService {
     private XDDFCategoryDataSource getTimesCategoryDataSourceFromCandles(final List<Candle> innerCandles) {
         final String[] times = innerCandles.stream()
                 .map(Candle::getTime)
-                .map(TimestampUtils::toOffsetDateTime)
                 .map(DateUtils.DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(times);

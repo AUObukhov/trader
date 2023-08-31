@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.protobuf.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +7,12 @@ import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.FakeBalance;
 import ru.obukhov.trader.market.model.FakePortfolio;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,17 +30,17 @@ public class FakeContext implements Context {
 
     @Getter
     @Setter
-    private Timestamp currentTimestamp;
+    private OffsetDateTime currentDateTime;
 
     private final List<FakePortfolio> portfolios;
 
     public FakeContext(
-            final Timestamp currentTimestamp,
+            final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
             final Quotation initialBalance
     ) {
-        this.currentTimestamp = currentTimestamp;
+        this.currentDateTime = currentDateTime;
         this.portfolios = new ArrayList<>();
 
         addInvestment(accountId, currency, initialBalance);
@@ -57,9 +57,9 @@ public class FakeContext implements Context {
      * @Terms: nextMinute – {@code currentTimestamp} + 1 minute<br/>
      * tradingDay – item of {@code tradingSchedule} with {@code isTradingDay=true}<br/>
      */
-    public Timestamp nextScheduleMinute(final List<TradingDay> tradingSchedule) {
-        currentTimestamp = TradingDayUtils.nextScheduleMinute(tradingSchedule, currentTimestamp);
-        return currentTimestamp;
+    public OffsetDateTime nextScheduleMinute(final List<TradingDay> tradingSchedule) {
+        currentDateTime = TradingDayUtils.nextScheduleMinute(tradingSchedule, currentDateTime);
+        return currentDateTime;
     }
 
     // region balance
@@ -95,25 +95,25 @@ public class FakeContext implements Context {
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current timestamp
      */
     public void addInvestment(final String accountId, final String currency, final Quotation amount) {
-        computeIfAbsentBalance(accountId, currency).addInvestment(currentTimestamp, amount);
+        computeIfAbsentBalance(accountId, currency).addInvestment(currentDateTime, amount);
     }
 
     /**
-     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with given {@code timestamp}
+     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with given {@code dateTime}
      */
     public void addInvestment(
             final String accountId,
-            final Timestamp timestamp,
+            final OffsetDateTime dateTime,
             final String currency,
             final Quotation amount
     ) {
-        computeIfAbsentBalance(accountId, currency).addInvestment(timestamp, amount);
+        computeIfAbsentBalance(accountId, currency).addInvestment(dateTime, amount);
     }
 
     /**
      * @return all investments of given {@code currency} and at given {@code accountId} by timestamp in ascending order
      */
-    public SortedMap<Timestamp, Quotation> getInvestments(final String accountId, final String currency) {
+    public SortedMap<OffsetDateTime, Quotation> getInvestments(final String accountId, final String currency) {
         return computeIfAbsentBalance(accountId, currency).getInvestments();
     }
 

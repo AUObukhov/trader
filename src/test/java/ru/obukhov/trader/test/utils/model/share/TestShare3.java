@@ -1,9 +1,12 @@
 package ru.obukhov.trader.test.utils.model.share;
 
 import com.google.protobuf.Timestamp;
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -12,7 +15,11 @@ import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.ShareType;
 
+import java.time.OffsetDateTime;
+
 public class TestShare3 {
+
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     public static final String FIGI = "BBG006L8G4H1";
     public static final String TICKER = "YNDX";
@@ -51,8 +58,8 @@ public class TestShare3 {
     public static final boolean FOR_QUAL_INVESTOR_FLAG = false;
     public static final boolean WEEKEND_FLAG = true;
     public static final boolean BLOCKED_TCA_FLAG = false;
-    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(1520447880L, 0);
-    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(1401865200L, 0);
+    public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 3, 7, 21, 38);
+    public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(2014, 6, 4, 10);
 
     public static final Share SHARE = Share.newBuilder()
             .setFigi(FIGI)
@@ -92,8 +99,8 @@ public class TestShare3 {
             .setForQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
             .setWeekendFlag(WEEKEND_FLAG)
             .setBlockedTcaFlag(BLOCKED_TCA_FLAG)
-            .setFirst1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
-            .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_MIN_CANDLE_DATE))
+            .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_DAY_CANDLE_DATE))
             .build();
 
 }

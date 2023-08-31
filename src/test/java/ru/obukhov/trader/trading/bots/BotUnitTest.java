@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.bots;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -38,6 +36,7 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -134,10 +133,10 @@ class BotUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
 
-        final Timestamp previousStartTime = TimestampUtils.now();
+        final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(figi, List.of(candle));
-        Mocker.mockCurrentTimestamp(context);
+        Mocker.mockCurrentDateTime(context);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -162,10 +161,10 @@ class BotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        final Candle candle = new Candle().setTime(TimestampUtils.now());
+        final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(figi, List.of(candle));
 
-        Mockito.when(context.getCurrentTimestamp()).thenReturn(TimestampUtils.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -208,10 +207,10 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle().setTime(TimestampUtils.now()));
+        final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(figi, currentCandles);
 
-        Mockito.when(context.getCurrentTimestamp()).thenReturn(TimestampUtils.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -261,10 +260,10 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle().setTime(TimestampUtils.now()));
+        final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(figi, currentCandles);
 
-        Mockito.when(context.getCurrentTimestamp()).thenReturn(TimestampUtils.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -300,7 +299,7 @@ class BotUnitTest {
                 Mockito.eq(processBotConfig),
                 Mockito.anyInt(),
                 Mockito.any(CandleInterval.class),
-                Mockito.any(Timestamp.class))
+                Mockito.any(OffsetDateTime.class))
         ).thenReturn(candles);
     }
 

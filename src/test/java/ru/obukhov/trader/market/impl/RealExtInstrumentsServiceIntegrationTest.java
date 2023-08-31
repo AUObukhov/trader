@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -11,9 +10,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.market.model.TradingDay;
+import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
@@ -27,10 +29,9 @@ import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.contract.v1.TradingDay;
-import ru.tinkoff.piapi.contract.v1.TradingSchedule;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
@@ -148,11 +149,11 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTradingDay_returnsTradingDay() {
         Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
 
-        final Timestamp timestamp = TimestampUtils.newTimestamp(2022, 10, 3, 3);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        mockTradingSchedule(TestInstrument1.EXCHANGE, timestamp, timestamp);
+        mockTradingSchedule(TestInstrument1.EXCHANGE, dateTime, dateTime);
 
-        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestInstrument1.FIGI, timestamp);
+        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestInstrument1.FIGI, dateTime);
 
         Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
     }
@@ -161,7 +162,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTradingDay_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String figi = TestInstrument1.FIGI;
 
-        final Timestamp timestamp = TimestampUtils.newTimestamp(2022, 10, 3, 3);
+        final OffsetDateTime timestamp = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(figi, timestamp);
         final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
@@ -175,8 +176,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getTradingSchedule_withExchange() {
         final String exchange = "MOEX";
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -192,8 +193,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 1, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -209,8 +210,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 22, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -226,8 +227,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 1, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -243,8 +244,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 22, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -264,8 +265,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 1, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
@@ -281,8 +282,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 22, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
@@ -298,8 +299,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 1, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
 
         mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
@@ -315,8 +316,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3, offset);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 22, offset);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
 
         mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
@@ -331,8 +332,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTradingScheduleByFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String figi = TestInstrument1.FIGI;
 
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 7, 3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
         final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
@@ -345,30 +346,29 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedules() {
-        final Timestamp from = TimestampUtils.newTimestamp(2022, 10, 3, 3);
-        final Timestamp to = TimestampUtils.newTimestamp(2022, 10, 8, 3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
 
         final String exchange1 = "MOEX";
         final String exchange2 = "SPB";
 
-        final TradingSchedule tradingSchedule1 = TradingSchedule.newBuilder()
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1)
-                .addDays(TestTradingDay1.TRADING_DAY)
-                .addDays(TestTradingDay2.TRADING_DAY)
+                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
-        final TradingSchedule tradingSchedule2 = TradingSchedule.newBuilder()
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2)
-                .addDays(TestTradingDay3.TRADING_DAY)
+                .addDays(TestTradingDay3.TINKOFF_TRADING_DAY)
                 .build();
-        Mockito.when(instrumentsService.getTradingSchedulesSync(TimestampUtils.toInstant(from), TimestampUtils.toInstant(to)))
+        Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
 
         final List<TradingSchedule> result = realExtInstrumentsService.getTradingSchedules(Interval.of(from, to));
 
-        final List<TradingDay> expectedTradingDays1 = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-        final List<TradingDay> expectedTradingDays2 = List.of(TestTradingDay3.TRADING_DAY);
-        final TradingSchedule expectedTradingSchedule1 = TradingSchedule.newBuilder().setExchange(exchange1).addAllDays(expectedTradingDays1).build();
-        final TradingSchedule expectedTradingSchedule2 = TradingSchedule.newBuilder().setExchange(exchange2).addAllDays(expectedTradingDays2).build();
+        final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+        final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, TestTradingDay3.TRADING_DAY);
+
         final List<TradingSchedule> expectedResult = List.of(expectedTradingSchedule1, expectedTradingSchedule2);
 
         Assertions.assertEquals(expectedResult, result);
@@ -376,13 +376,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    private void mockTradingSchedule(final String exchange, final Timestamp from, final Timestamp to) {
-        final Instant fromInstant = TimestampUtils.toStartOfDayInstant(from);
-        final Instant toInstant = TimestampUtils.toStartOfDayInstant(to);
-        final TradingSchedule tradingSchedule = TradingSchedule.newBuilder()
+    private void mockTradingSchedule(final String exchange, final OffsetDateTime from, final OffsetDateTime to) {
+        final Instant fromInstant = DateUtils.toSameDayInstant(from);
+        final Instant toInstant = DateUtils.toSameDayInstant(to);
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(TestTradingDay1.TRADING_DAY)
-                .addDays(TestTradingDay2.TRADING_DAY)
+                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }

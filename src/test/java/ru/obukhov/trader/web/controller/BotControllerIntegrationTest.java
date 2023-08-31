@@ -294,7 +294,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(20000)
                 .setHighest(30000)
                 .setLowest(5000)
-                .setTime(TimestampUtils.newTimestamp(from))
+                .setTime(from)
                 .build();
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,
