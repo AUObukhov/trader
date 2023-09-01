@@ -8,6 +8,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.PositionUtils;
 import ru.obukhov.trader.market.model.Share;
@@ -18,7 +19,6 @@ import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -50,7 +50,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     @Override
     public List<OrderState> getOrders(final String accountId, final String figi) {
         return getOrders(accountId).stream()
-                .filter(order -> figi.equals(order.getFigi()))
+                .filter(order -> figi.equals(order.figi()))
                 .toList();
     }
 

@@ -32,15 +32,15 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
     void getOrders_returnsOrders() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final List<OrderState> orderStates = List.of(TestOrderState1.ORDER_STATE, TestOrderState2.ORDER_STATE);
-
+        final List<OrderState> orderStates = List.of(TestOrderState1.TINKOFF_ORDER_STATE, TestOrderState2.TINKOFF_ORDER_STATE);
         Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(orderStates);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/orders/get")
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
-        performAndExpectResponse(requestBuilder, orderStates);
+        final String expectedResult = "[" + TestOrderState1.JSON_STRING + "," + TestOrderState2.JSON_STRING + "]";
+        performAndExpectResponse(requestBuilder, expectedResult);
     }
 
 }

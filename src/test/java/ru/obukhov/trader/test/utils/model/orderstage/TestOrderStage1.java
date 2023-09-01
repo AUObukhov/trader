@@ -16,7 +16,9 @@ public class TestOrderStage1 {
             .setTradeId(TRADE_ID)
             .build();
 
-    public static final String JSON_STRING = "{\"price\":{\"currency\":\"usd\",\"units\":30,\"nano\":0}," +
+    public static final String JSON_STRING = "{" +
+            "\"price\":{\"currency\":\"usd\",\"units\":30,\"nano\":0}," +
             "\"quantity\":2," +
-            "\"tradeId\":\"1234567890\"}";
+            "\"tradeId\":\"1234567890\"" +
+            "}";
 }

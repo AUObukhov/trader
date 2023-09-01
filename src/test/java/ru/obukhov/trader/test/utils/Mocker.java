@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
@@ -21,7 +22,6 @@ import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.TradingSchedule;
@@ -39,7 +39,7 @@ public class Mocker {
     private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
 
     public static void mockEmptyOrder(final ExtOrdersService ordersService, final String figi) {
-        final OrderState order = OrderState.newBuilder().build();
+        final OrderState order = OrderState.builder().build();
         Mockito.when(ordersService.getOrders(figi)).thenReturn(List.of(order));
     }
 

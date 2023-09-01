@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -16,7 +17,6 @@ import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState2;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.core.OrdersService;
@@ -40,16 +40,16 @@ class RealExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final List<OrderState> orderStates = List.of(TestOrderState1.ORDER_STATE, TestOrderState2.ORDER_STATE);
-        Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(orderStates);
+        Mockito.when(ordersService.getOrdersSync(accountId))
+                .thenReturn(List.of(TestOrderState1.TINKOFF_ORDER_STATE, TestOrderState2.TINKOFF_ORDER_STATE));
 
         // action
 
         final List<OrderState> result = realExtOrdersService.getOrders(accountId);
 
         // assert
-
-        AssertUtils.assertEquals(orderStates, result);
+        final List<OrderState> expectedOrderStates = List.of(TestOrderState1.ORDER_STATE, TestOrderState2.ORDER_STATE);
+        AssertUtils.assertEquals(expectedOrderStates, result);
     }
 
     @Test
@@ -70,9 +70,9 @@ class RealExtOrdersServiceUnitTest {
         final List<OrderState> orders = realExtOrdersService.getOrders(accountId, figi);
 
         Assertions.assertEquals(3, orders.size());
-        Assertions.assertEquals("order0", orders.get(0).getOrderId());
-        Assertions.assertEquals("order1", orders.get(1).getOrderId());
-        Assertions.assertEquals("order4", orders.get(2).getOrderId());
+        Assertions.assertEquals("order0", orders.get(0).orderId());
+        Assertions.assertEquals("order1", orders.get(1).orderId());
+        Assertions.assertEquals("order4", orders.get(2).orderId());
     }
 
     @Test
@@ -132,7 +132,7 @@ class RealExtOrdersServiceUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockOrders(final String accountId, final OrderState... orderStates) {
+    private void mockOrders(final String accountId, final ru.tinkoff.piapi.contract.v1.OrderState... orderStates) {
         Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(List.of(orderStates));
     }
 

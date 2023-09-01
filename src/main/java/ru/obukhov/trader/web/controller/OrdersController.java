@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
-import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.obukhov.trader.market.model.OrderState;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package ru.obukhov.trader.market.interfaces;
 
 import org.jetbrains.annotations.NotNull;
+import ru.obukhov.trader.market.model.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 

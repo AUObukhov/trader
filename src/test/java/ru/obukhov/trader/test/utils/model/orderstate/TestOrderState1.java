@@ -1,7 +1,8 @@
 package ru.obukhov.trader.test.utils.model.orderstate;
 
-import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.obukhov.trader.market.model.OrderState;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage1;
 import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage2;
@@ -9,9 +10,9 @@ import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
-import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class TestOrderState1 {
@@ -33,10 +34,34 @@ public class TestOrderState1 {
     public static final MoneyValue SERVICE_COMMISSION = TestData.createMoneyValue(0.0, "rub");
     public static final String CURRENCY = "usd";
     public static final OrderType ORDER_TYPE = OrderType.ORDER_TYPE_LIMIT;
-    public static final Timestamp ORDER_DATE = TimestampUtils.newTimestamp(1691644827, 513541000);
+    public static final OffsetDateTime ORDER_DATE = DateTimeTestData.createDateTime(2023, 8, 10, 8, 20, 27, 513541);
     public static final String INSTRUMENT_UID = "46fef208-a525-4471-85e5-8fe4cee5f8ec";
+    public static final String ORDER_REQUEST_ID = "5627319091032181721";
 
-    public static final OrderState ORDER_STATE = OrderState.newBuilder()
+    public static final OrderState ORDER_STATE = OrderState.builder()
+            .orderId(ORDER_ID)
+            .executionReportStatus(EXECUTION_REPORT_STATUS)
+            .lotsRequested(LOTS_REQUESTED)
+            .lotsExecuted(LOTS_EXECUTED)
+            .initialOrderPrice(INITIAL_ORDER_PRICE)
+            .executedOrderPrice(EXECUTED_ORDER_PRICE)
+            .totalOrderAmount(TOTAL_ORDER_AMOUNT)
+            .averagePositionPrice(AVERAGE_POSITION_PRICE)
+            .initialCommission(INITIAL_COMMISSION)
+            .executedCommission(EXECUTED_COMMISSION)
+            .figi(FIGI)
+            .direction(DIRECTION)
+            .initialSecurityPrice(INITIAL_SECURITY_PRICE)
+            .stages(STAGES)
+            .serviceCommission(SERVICE_COMMISSION)
+            .currency(CURRENCY)
+            .orderType(ORDER_TYPE)
+            .orderDate(ORDER_DATE)
+            .instrumentUid(INSTRUMENT_UID)
+            .orderRequestId(ORDER_REQUEST_ID)
+            .build();
+
+    public static final ru.tinkoff.piapi.contract.v1.OrderState TINKOFF_ORDER_STATE = ru.tinkoff.piapi.contract.v1.OrderState.newBuilder()
             .setOrderId(ORDER_ID)
             .setExecutionReportStatus(EXECUTION_REPORT_STATUS)
             .setLotsRequested(LOTS_REQUESTED)
@@ -54,8 +79,9 @@ public class TestOrderState1 {
             .setServiceCommission(SERVICE_COMMISSION)
             .setCurrency(CURRENCY)
             .setOrderType(ORDER_TYPE)
-            .setOrderDate(ORDER_DATE)
+            .setOrderDate(TimestampUtils.newTimestamp(ORDER_DATE))
             .setInstrumentUid(INSTRUMENT_UID)
+            .setOrderRequestId(ORDER_REQUEST_ID)
             .build();
 
     public static final String JSON_STRING = "{\"orderId\":\"582899921200\"," +
@@ -71,14 +97,12 @@ public class TestOrderState1 {
             "\"figi\":\"BBG00K7T3037\"," +
             "\"direction\":\"ORDER_DIRECTION_SELL\"," +
             "\"initialSecurityPrice\":{\"currency\":\"usd\",\"units\":30,\"nano\":0}," +
-            "\"stages\":[" +
-            "{\"price\":{\"currency\":\"usd\",\"units\":30,\"nano\":0},\"quantity\":2,\"tradeId\":\"1234567890\"}," +
-            "{\"price\":{\"currency\":\"usd\",\"units\":10,\"nano\":0},\"quantity\":1,\"tradeId\":\"abcdef\"}" +
-            "]," +
+            "\"stages\":[" + TestOrderStage1.JSON_STRING + "," + TestOrderStage2.JSON_STRING + "]," +
             "\"serviceCommission\":{\"currency\":\"rub\",\"units\":0,\"nano\":0}," +
             "\"currency\":\"usd\"," +
             "\"orderType\":\"ORDER_TYPE_LIMIT\"," +
-            "\"orderDate\":{\"seconds\":1691644827,\"nanos\":513541000}," +
-            "\"instrumentUid\":\"46fef208-a525-4471-85e5-8fe4cee5f8ec\"}";
+            "\"orderDate\":\"2023-08-10T08:20:27.000513541+03:00\"," +
+            "\"instrumentUid\":\"46fef208-a525-4471-85e5-8fe4cee5f8ec\"," +
+            "\"orderRequestId\":\"5627319091032181721\"}";
 
 }
