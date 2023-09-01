@@ -6,14 +6,15 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
+import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
-import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
@@ -25,6 +26,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
 
     private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
+    private static final InstrumentMapper INSTRUMENT_MAPPER = Mappers.getMapper(InstrumentMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -37,7 +39,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
-        final Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
         return instrument.getTicker();
     }
@@ -46,7 +48,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return exchange of instrument for given {@code figi}
      */
     public String getExchange(final String figi) {
-        Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
+        ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
         return instrument.getExchange();
     }
@@ -56,7 +58,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @throws IllegalArgumentException when given {@code figi} has no corresponding share or has more than one corresponding share
      */
     public Instrument getInstrument(final String figi) {
-        return instrumentsService.getInstrumentByFigiSync(figi);
+        return INSTRUMENT_MAPPER.map(instrumentsService.getInstrumentByFigiSync(figi));
     }
 
     /**

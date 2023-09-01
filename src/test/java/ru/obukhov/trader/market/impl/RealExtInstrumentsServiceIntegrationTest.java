@@ -87,7 +87,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_returnsExchange() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final String result = realExtInstrumentsService.getExchange(TestInstrument1.FIGI);
 
@@ -147,7 +147,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingDay_returnsTradingDay() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
@@ -262,7 +262,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_adjustsFromInstant_positiveOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
@@ -279,7 +279,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_adjustsFromInstant_negativeOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
@@ -296,7 +296,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_adjustsToInstant_positiveOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
@@ -313,7 +313,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_adjustsToInstant_negativeOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);

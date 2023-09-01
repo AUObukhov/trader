@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market.interfaces;
 
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
-import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.time.OffsetDateTime;

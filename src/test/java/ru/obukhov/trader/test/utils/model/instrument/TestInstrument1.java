@@ -1,16 +1,21 @@
 package ru.obukhov.trader.test.utils.model.instrument;
 
-import com.google.protobuf.Timestamp;
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.tinkoff.piapi.contract.v1.Instrument;
+import ru.obukhov.trader.market.model.Instrument;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.time.OffsetDateTime;
+
 public class TestInstrument1 {
+
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     public static final String FIGI = "BBG000B9XRY4";
     public static final String TICKER = "AAPL";
@@ -44,10 +49,46 @@ public class TestInstrument1 {
     public static final boolean AVAILABLE_ON_WEEKEND = false;
     public static final boolean BLOCKED_TCA = false;
     public static final InstrumentType INSTRUMENT_KIND = InstrumentType.INSTRUMENT_TYPE_SHARE;
-    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(2018, 1, 23, 10, 34);
-    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(1988, 9, 12, 3);
+    public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 1, 23, 10, 34);
+    public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(1988, 9, 12, 3);
 
-    public static final Instrument INSTRUMENT = Instrument.newBuilder()
+    public static final Instrument INSTRUMENT = Instrument.builder()
+            .figi(FIGI)
+            .ticker(TICKER)
+            .classCode(CLASS_CODE)
+            .isin(ISIN)
+            .lot(LOT_SIZE)
+            .currency(CURRENCY)
+            .klong(K_LONG)
+            .kshort(K_SHORT)
+            .dlong(D_LONG)
+            .dshort(D_SHORT)
+            .dlongMin(D_LONG_MIN)
+            .dshortMin(D_SHORT_MIN)
+            .shortEnabledFlag(SHORT_ENABLED)
+            .name(NAME)
+            .exchange(EXCHANGE)
+            .countryOfRisk(COUNTRY_OF_RISK)
+            .countryOfRiskName(COUNTRY_OF_RISK_NAME)
+            .instrumentType(INSTRUMENT_TYPE)
+            .tradingStatus(TRADING_STATUS)
+            .otcFlag(OTC_FLAG)
+            .buyAvailableFlag(BUY_AVAILABLE_FLAG)
+            .sellAvailableFlag(SELL_AVAILABLE_FLAG)
+            .minPriceIncrement(MIN_PRICE_INCREMENT)
+            .apiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .uid(UID)
+            .realExchange(REAL_EXCHANGE)
+            .positionUid(POSITION_UID)
+            .forIisFlag(AVAILABLE_FOR_IIS)
+            .forQualInvestorFlag(FOR_QUAL_INVESTOR)
+            .weekendFlag(AVAILABLE_ON_WEEKEND)
+            .blockedTcaFlag(BLOCKED_TCA)
+            .instrumentKind(INSTRUMENT_KIND)
+            .first1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
+            .first1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .build();
+    public static final ru.tinkoff.piapi.contract.v1.Instrument TINKOFF_INSTRUMENT = ru.tinkoff.piapi.contract.v1.Instrument.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setClassCode(CLASS_CODE)
@@ -80,10 +121,45 @@ public class TestInstrument1 {
             .setWeekendFlag(AVAILABLE_ON_WEEKEND)
             .setBlockedTcaFlag(BLOCKED_TCA)
             .setInstrumentKind(INSTRUMENT_KIND)
-            .setFirst1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
-            .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_MIN_CANDLE_DATE))
+            .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_DAY_CANDLE_DATE))
             .build();
 
-    public static final String JSON_STRING = "{\"figi\":\"BBG000B9XRY4\",\"ticker\":\"AAPL\",\"classCode\":\"SPBXM\",\"isin\":\"US0378331005\",\"lot\":1,\"currency\":\"usd\",\"klong\":2,\"kshort\":2,\"dlong\":1,\"dshort\":1,\"dlongMin\":1,\"dshortMin\":1,\"shortEnabledFlag\":false,\"name\":\"Apple\",\"exchange\":\"SPB\",\"countryOfRisk\":\"US\",\"countryOfRiskName\":\"Соединенные Штаты Америки\",\"instrumentType\":\"share\",\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"minPriceIncrement\":0.01,\"apiTradeAvailableFlag\":true,\"uid\":\"a9eb4238-eba9-488c-b102-b6140fd08e38\",\"realExchange\":\"REAL_EXCHANGE_RTS\",\"positionUid\":\"5c5e6656-c4d3-4391-a7ee-e81a76f1804e\",\"forIisFlag\":true,\"forQualInvestorFlag\":true,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"instrumentKind\":\"INSTRUMENT_TYPE_SHARE\",\"first1MinCandleDate\":{\"seconds\":1516692840,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":590025600,\"nanos\":0}}";
+    public static final String JSON_STRING = "{" +
+            "\"figi\":\"BBG000B9XRY4\"," +
+            "\"ticker\":\"AAPL\"," +
+            "\"classCode\":\"SPBXM\"," +
+            "\"isin\":\"US0378331005\"," +
+            "\"lot\":1," +
+            "\"currency\":\"usd\"," +
+            "\"klong\":2," +
+            "\"kshort\":2," +
+            "\"dlong\":1," +
+            "\"dshort\":1," +
+            "\"dlongMin\":1," +
+            "\"dshortMin\":1," +
+            "\"shortEnabledFlag\":false," +
+            "\"name\":\"Apple\"," +
+            "\"exchange\":\"SPB\"," +
+            "\"countryOfRisk\":\"US\"," +
+            "\"countryOfRiskName\":\"Соединенные Штаты Америки\"," +
+            "\"instrumentType\":\"share\"," +
+            "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
+            "\"otcFlag\":false," +
+            "\"buyAvailableFlag\":true," +
+            "\"sellAvailableFlag\":true," +
+            "\"minPriceIncrement\":0.01," +
+            "\"apiTradeAvailableFlag\":true," +
+            "\"uid\":\"a9eb4238-eba9-488c-b102-b6140fd08e38\"," +
+            "\"realExchange\":\"REAL_EXCHANGE_RTS\"," +
+            "\"positionUid\":\"5c5e6656-c4d3-4391-a7ee-e81a76f1804e\"," +
+            "\"forIisFlag\":true," +
+            "\"forQualInvestorFlag\":true," +
+            "\"weekendFlag\":false," +
+            "\"blockedTcaFlag\":false," +
+            "\"instrumentKind\":\"INSTRUMENT_TYPE_SHARE\"," +
+            "\"first1MinCandleDate\":\"2018-01-23T10:34:00+03:00\"," +
+            "\"first1DayCandleDate\":\"1988-09-12T03:00:00+03:00\"" +
+            "}";
 
 }

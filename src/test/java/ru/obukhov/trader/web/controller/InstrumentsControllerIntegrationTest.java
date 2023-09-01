@@ -34,14 +34,14 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getInstrument_returnsInstrument() throws Exception {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/instrument")
                 .param("figi", TestInstrument1.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestInstrument1.INSTRUMENT);
+        performAndExpectResponse(requestBuilder, TestInstrument1.JSON_STRING);
     }
 
     @Test

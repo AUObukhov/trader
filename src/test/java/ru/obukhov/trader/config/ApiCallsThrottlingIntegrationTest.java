@@ -52,7 +52,7 @@ public class ApiCallsThrottlingIntegrationTest {
     void instrumentsService() throws InterruptedException {
         final String figi = TestInstrument1.FIGI;
 
-        Mockito.doReturn(TestInstrument1.INSTRUMENT).when(instrumentsService).getInstrumentByFigiSync(figi);
+        Mockito.doReturn(TestInstrument1.TINKOFF_INSTRUMENT).when(instrumentsService).getInstrumentByFigiSync(figi);
 
         resetThrottlingCounters();
 

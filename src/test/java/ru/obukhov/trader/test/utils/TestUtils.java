@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
 import ru.obukhov.trader.market.model.transform.CurrencySerializer;
-import ru.obukhov.trader.market.model.transform.InstrumentSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStageSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStateSerializer;
@@ -23,7 +22,6 @@ import java.text.SimpleDateFormat;
 public class TestUtils {
 
     private static final SimpleModule TINKOFF_MODULE = new SimpleModule()
-            .addSerializer(new InstrumentSerializer())
             .addSerializer(new ShareSerializer())
             .addSerializer(new BondSerializer())
             // todo etfSerializer????
