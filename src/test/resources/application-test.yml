@@ -1,6 +1,7 @@
 ru.tinkoff.invest.openapi:
   host: "http://localhost"
   port: 8081
+  throttling-interval: 100
 
 trading:
   token: i identify myself as token

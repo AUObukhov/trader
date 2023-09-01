@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import ru.obukhov.trader.common.util.ThrottledCounter;
+import ru.obukhov.trader.config.properties.ApiProperties;
 
 /**
  * Aspect to limit rate of API calls according to Tinkoff's limits
@@ -20,27 +21,38 @@ import ru.obukhov.trader.common.util.ThrottledCounter;
 @SuppressWarnings("unused")
 public class ApiCallsThrottling {
 
-    static final int INTERVAL = 60_000;
+    private final ThrottledCounter instrumentServiceCounter;
+    private final ThrottledCounter usersServiceCounter;
+    private final ThrottledCounter operationsServiceCounter;
+    private final ThrottledCounter operationsServiceGetBrokerReportCounter;
+    private final ThrottledCounter marketDataServiceCounter;
+    private final ThrottledCounter ordersServiceCounter;
+    private final ThrottledCounter ordersServiceGetOrdersCounter;
+    private final ThrottledCounter ordersServicePostOrderCounter;
+    private final ThrottledCounter ordersServiceCancelOrderCounter;
 
-    private static final ThrottledCounter INSTRUMENT_SERVICE_COUNTER = new ThrottledCounter(200, INTERVAL);
-    private static final ThrottledCounter USERS_SERVICE_COUNTER = new ThrottledCounter(100, INTERVAL);
-    private static final ThrottledCounter OPERATIONS_SERVICE_COUNTER = new ThrottledCounter(200, INTERVAL);
-    private static final ThrottledCounter OPERATIONS_SERVICE_GET_BROKER_REPORT_COUNTER = new ThrottledCounter(5, INTERVAL);
-    private static final ThrottledCounter MARKET_DATA_SERVICE_COUNTER = new ThrottledCounter(300, INTERVAL);
-    private static final ThrottledCounter ORDERS_SERVICE_COUNTER = new ThrottledCounter(100, INTERVAL);
-    private static final ThrottledCounter ORDERS_SERVICE_GET_ORDERS_COUNTER = new ThrottledCounter(200, INTERVAL);
-    private static final ThrottledCounter ORDERS_SERVICE_POST_ORDER_COUNTER = new ThrottledCounter(300, INTERVAL);
-    private static final ThrottledCounter ORDERS_SERVICE_CANCEL_ORDER_COUNTER = new ThrottledCounter(100, INTERVAL);
+    public ApiCallsThrottling(final ApiProperties apiProperties) {
+        final Integer interval = apiProperties.throttlingInterval();
 
+        this.instrumentServiceCounter = new ThrottledCounter(200, interval);
+        this.usersServiceCounter = new ThrottledCounter(100, interval);
+        this.operationsServiceCounter = new ThrottledCounter(200, interval);
+        this.operationsServiceGetBrokerReportCounter = new ThrottledCounter(5, interval);
+        this.marketDataServiceCounter = new ThrottledCounter(300, interval);
+        this.ordersServiceCounter = new ThrottledCounter(100, interval);
+        this.ordersServiceGetOrdersCounter = new ThrottledCounter(200, interval);
+        this.ordersServicePostOrderCounter = new ThrottledCounter(300, interval);
+        this.ordersServiceCancelOrderCounter = new ThrottledCounter(100, interval);
+    }
 
     @Before("within(ru.tinkoff.piapi.core.InstrumentsService)")
     public void throttleInstrumentService() {
-        increment(INSTRUMENT_SERVICE_COUNTER, "InstrumentService");
+        increment(instrumentServiceCounter, "InstrumentService");
     }
 
     @Before("within(ru.tinkoff.piapi.core.UsersService)")
     public void throttleUsersService() {
-        increment(USERS_SERVICE_COUNTER, "UsersService");
+        increment(usersServiceCounter, "UsersService");
     }
 
     // region OperationsService throttling
@@ -48,19 +60,19 @@ public class ApiCallsThrottling {
     @Before("within(ru.tinkoff.piapi.core.OperationsService)" +
             " && !execution(* ru.tinkoff.piapi.core.OperationsService.getBrokerReport*(..))")
     public void throttleOperationsService() {
-        increment(OPERATIONS_SERVICE_COUNTER, "OperationsService");
+        increment(operationsServiceCounter, "OperationsService");
     }
 
     @Before("execution(* ru.tinkoff.piapi.core.OperationsService.getBrokerReport*(..))")
     public void throttleOperationsServiceGetBrokerReport() {
-        increment(OPERATIONS_SERVICE_GET_BROKER_REPORT_COUNTER, "OperationsService.getBrokerReport*");
+        increment(operationsServiceGetBrokerReportCounter, "OperationsService.getBrokerReport*");
     }
 
     // endregion
 
     @Before("within(ru.tinkoff.piapi.core.MarketDataService)")
     public void throttleMarketDataService() {
-        increment(MARKET_DATA_SERVICE_COUNTER, "MarketDataService");
+        increment(marketDataServiceCounter, "MarketDataService");
     }
 
     // region OrdersService throttling
@@ -71,22 +83,22 @@ public class ApiCallsThrottling {
             + " && !execution(* ru.tinkoff.piapi.core.OrdersService.cancelOrder*(..)))"
     )
     public void throttleOrdersService(JoinPoint joinPoint) {
-        increment(ORDERS_SERVICE_COUNTER, "OrdersService");
+        increment(ordersServiceCounter, "OrdersService");
     }
 
     @Before("execution(* ru.tinkoff.piapi.core.OrdersService.getOrders*(..))")
     public void throttleOrdersServiceGetOrders() {
-        increment(ORDERS_SERVICE_GET_ORDERS_COUNTER, "OrdersService.getOrders*");
+        increment(ordersServiceGetOrdersCounter, "OrdersService.getOrders*");
     }
 
     @Before("execution(* ru.tinkoff.piapi.core.OrdersService.postOrder*(..))")
     public void throttleOrdersServicePostOrder() {
-        increment(ORDERS_SERVICE_POST_ORDER_COUNTER, "OrdersService.postOrder*");
+        increment(ordersServicePostOrderCounter, "OrdersService.postOrder*");
     }
 
     @Before("execution(* ru.tinkoff.piapi.core.OrdersService.cancelOrder*(..))")
     public void throttleOrdersServiceCancelOrder() {
-        increment(ORDERS_SERVICE_CANCEL_ORDER_COUNTER, "OrdersService.cancelOrder*");
+        increment(ordersServiceCancelOrderCounter, "OrdersService.cancelOrder*");
     }
 
     // endregion

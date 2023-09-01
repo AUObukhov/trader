@@ -24,12 +24,26 @@ class ApiPropertiesContextTest {
 
                     Assertions.assertEquals("http://localhost", apiProperties.host());
                     Assertions.assertEquals(8081, apiProperties.port());
+                    Assertions.assertEquals(100, apiProperties.throttlingInterval());
                 });
     }
 
     @Test
     void beanCreationFails_whenHostIsNull() {
         this.contextRunner.run(context -> AssertUtils.assertContextStartupFailed(context, "host is mandatory"));
+    }
+
+    @Test
+    void throttlingIntervalInitializedWithDefaultValue_whenNull() {
+        contextRunner
+                .withPropertyValues("ru.tinkoff.invest.openapi.host: http://localhost")
+                .run(context -> {
+                    Assertions.assertNull(context.getStartupFailure());
+
+                    final ApiProperties apiProperties = context.getBean(ApiProperties.class);
+
+                    Assertions.assertEquals(60000, apiProperties.throttlingInterval());
+                });
     }
 
     @EnableConfigurationProperties(ApiProperties.class)

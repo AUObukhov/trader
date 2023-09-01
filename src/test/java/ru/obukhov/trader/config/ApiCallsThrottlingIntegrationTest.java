@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.account.TestAccount1;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
@@ -32,6 +34,9 @@ import java.util.concurrent.TimeUnit;
 @ActiveProfiles("test")
 @SpringBootTest
 public class ApiCallsThrottlingIntegrationTest {
+
+    @Autowired
+    private ApiProperties apiProperties;
 
     @SpyBean
     public static InstrumentsService instrumentsService;
@@ -178,19 +183,20 @@ public class ApiCallsThrottlingIntegrationTest {
     private void testThrottling(final Runnable runnable, final int limit) throws InterruptedException {
         long duration = ExecutionUtils.run(runnable, limit + 1).toMillis();
 
-        AssertUtils.assertRangeInclusive(ApiCallsThrottling.INTERVAL - 20, ApiCallsThrottling.INTERVAL + 20, duration);
+        final Integer interval = apiProperties.throttlingInterval();
+        AssertUtils.assertRangeInclusive(interval - 20, interval + 20, duration);
 
         resetThrottlingCounters();
 
         duration = ExecutionUtils.run(runnable, limit).toMillis();
 
-        String message = "Execution expected to take less than 1000 ms, but took " + duration + " ms";
-        Assertions.assertTrue(duration < 1000, message);
+        String message = "Execution expected to take less than 100 ms, but took " + duration + " ms";
+        Assertions.assertTrue(duration < 100, message);
     }
 
     // used to finish all throttling counters triggered by mocks and previous tests
-    private static void resetThrottlingCounters() throws InterruptedException {
-        TimeUnit.MILLISECONDS.sleep(ApiCallsThrottling.INTERVAL);
+    private void resetThrottlingCounters() throws InterruptedException {
+        TimeUnit.MILLISECONDS.sleep(apiProperties.throttlingInterval());
     }
 
 }
