@@ -1,0 +1,65 @@
+package ru.obukhov.trader.market.model;
+
+import lombok.Builder;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.RealExchange;
+import ru.tinkoff.piapi.contract.v1.RiskLevel;
+import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
+
+import java.time.OffsetDateTime;
+
+@Builder
+public record Bond(
+        String figi,
+        String ticker,
+        String classCode,
+        String isin,
+        Integer lot,
+        String currency,
+        Quotation klong,
+        Quotation kshort,
+        Quotation dlong,
+        Quotation dshort,
+        Quotation dlongMin,
+        Quotation dshortMin,
+        boolean shortEnabledFlag,
+        String name,
+        String exchange,
+        Integer couponQuantityPerYear,
+        OffsetDateTime maturityDate,
+        MoneyValue nominal,
+        MoneyValue initialNominal,
+        OffsetDateTime stateRegDate,
+        OffsetDateTime placementDate,
+        MoneyValue placementPrice,
+        MoneyValue aciValue,
+        String countryOfRisk,
+        String countryOfRiskName,
+        String sector,
+        String issueKind,
+        Long issueSize,
+        Long issueSizePlan,
+        SecurityTradingStatus tradingStatus,
+        boolean otcFlag,
+        boolean buyAvailableFlag,
+        boolean sellAvailableFlag,
+        boolean floatingCouponFlag,
+        boolean perpetualFlag,
+        boolean amortizationFlag,
+        Quotation minPriceIncrement,
+        boolean apiTradeAvailableFlag,
+        String uid,
+        RealExchange realExchange,
+        String positionUid,
+        boolean forIisFlag,
+        boolean forQualInvestorFlag,
+        boolean weekendFlag,
+        boolean blockedTcaFlag,
+        boolean subordinatedFlag,
+        boolean liquidityFlag,
+        OffsetDateTime first1MinCandleDate,
+        OffsetDateTime first1DayCandleDate,
+        RiskLevel riskLevel
+) {
+}

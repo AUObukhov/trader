@@ -121,7 +121,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getBond_returnsBond() throws Exception {
-        Mocker.mockBond(instrumentsService, TestBond2.BOND);
+        Mocker.mockBond(instrumentsService, TestBond2.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")

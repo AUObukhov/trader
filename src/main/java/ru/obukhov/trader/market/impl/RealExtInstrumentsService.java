@@ -6,15 +6,16 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
+import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
+import ru.obukhov.trader.market.model.transform.BondMapper;
 import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
-import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -29,6 +30,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
     private static final InstrumentMapper INSTRUMENT_MAPPER = Mappers.getMapper(InstrumentMapper.class);
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
+    private static final BondMapper BOND_MAPPER = Mappers.getMapper(BondMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -81,7 +83,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return {@link Bond} corresponding to given {@code figi}
      */
     public Bond getBond(final String figi) {
-        return instrumentsService.getBondByFigiSync(figi);
+        return BOND_MAPPER.map(instrumentsService.getBondByFigiSync(figi));
     }
 
     /**
