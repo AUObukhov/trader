@@ -254,7 +254,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
         Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");

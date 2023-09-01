@@ -102,7 +102,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     void getData_returnsCandles_whenMetricIsCandles() throws Exception {
         final String figi = TestShare1.FIGI;
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -152,7 +152,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     void getData_returnsExtendedCandles_whenMetricIsExtendedCandles() throws Exception {
         final String figi = TestShare1.FIGI;
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);

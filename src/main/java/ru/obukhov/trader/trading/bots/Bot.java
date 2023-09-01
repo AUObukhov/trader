@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -21,7 +22,6 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -102,7 +102,7 @@ public abstract class Bot {
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String figi) {
         final Share share = extInstrumentsService.getShare(figi);
 
-        decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.getCurrency()));
+        decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency()));
         decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), figi));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), figi));
         decisionData.setShare(share);

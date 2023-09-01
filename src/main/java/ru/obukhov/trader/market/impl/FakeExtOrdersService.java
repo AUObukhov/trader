@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.PositionUtils;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
@@ -21,7 +22,6 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -80,19 +80,19 @@ public class FakeExtOrdersService implements ExtOrdersService {
 
         if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
             buyPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
-            addOperation(accountId, figi, share.getCurrency(), currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
+            addOperation(accountId, figi, share.currency(), currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
         } else {
             sellPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
-            addOperation(accountId, figi, share.getCurrency(), currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
+            addOperation(accountId, figi, share.currency(), currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
         }
 
         return new PostOrderResponseBuilder()
-                .setCurrency(share.getCurrency())
+                .setCurrency(share.currency())
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
-                .setLots(quantity / share.getLot())
-                .setFigi(share.getFigi())
+                .setLots(quantity / share.lot())
+                .setFigi(share.figi())
                 .setDirection(direction)
                 .setType(type)
                 .setOrderId(orderId)
@@ -122,13 +122,13 @@ public class FakeExtOrdersService implements ExtOrdersService {
     ) {
         final Share share = extInstrumentsService.getShare(figi);
 
-        updateBalance(accountId, share.getCurrency(), QuotationUtils.subtract(QuotationUtils.negate(totalPrice), commissionAmount));
+        updateBalance(accountId, share.currency(), QuotationUtils.subtract(QuotationUtils.negate(totalPrice), commissionAmount));
 
         final Position existingPosition = fakeContext.getPosition(accountId, figi);
         Position position;
         if (existingPosition == null) {
             position = new PositionBuilder()
-                    .setCurrency(share.getCurrency())
+                    .setCurrency(share.currency())
                     .setFigi(figi)
                     .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                     .setAveragePositionPrice(currentPrice)
@@ -168,7 +168,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
 
         final Share share = extInstrumentsService.getShare(figi);
 
-        updateBalance(accountId, share.getCurrency(), QuotationUtils.subtract(totalPrice, commissionAmount));
+        updateBalance(accountId, share.currency(), QuotationUtils.subtract(totalPrice, commissionAmount));
         if (compareToZero == 0) {
             fakeContext.removePosition(accountId, figi);
         } else {

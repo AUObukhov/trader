@@ -16,6 +16,7 @@ import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
@@ -33,7 +34,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.time.OffsetDateTime;
@@ -1035,8 +1035,8 @@ class BackTesterImplUnitTest {
             final double currentPrice,
             final Operation operation
     ) {
-        final String figi = share.getFigi();
-        final String currency = share.getCurrency();
+        final String figi = share.figi();
+        final String currency = share.currency();
 
         final BotConfig botConfig = new BotConfig(accountId, figi, null, QuotationUtils.newQuotation(commission), null, null);
 

@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -28,7 +29,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -107,7 +107,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getShare_returnsShare() {
-        Mocker.mockShare(instrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare2.TINKOFF_SHARE);
 
         final Share result = realExtInstrumentsService.getShare(TestShare2.FIGI);
 

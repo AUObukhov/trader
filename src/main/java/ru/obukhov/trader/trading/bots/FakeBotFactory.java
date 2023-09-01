@@ -14,13 +14,13 @@ import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -72,7 +72,7 @@ public class FakeBotFactory {
                 "fakeContext",
                 ceilingWorkDateTime,
                 botConfig.accountId(),
-                share.getCurrency(),
+                share.currency(),
                 initialBalance
         );
     }

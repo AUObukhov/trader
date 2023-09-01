@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -23,7 +24,6 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingSchedule;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -91,7 +91,7 @@ public class Mocker {
     }
 
     public static void mockShare(final ExtInstrumentsService extInstrumentsService, final Share share) {
-        Mockito.when(extInstrumentsService.getShare(share.getFigi())).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(share.figi())).thenReturn(share);
     }
 
     public static void mockTradingStatus(final MarketDataService marketDataService, final String figi, final SecurityTradingStatus status) {
@@ -108,7 +108,7 @@ public class Mocker {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument);
     }
 
-    public static void mockShare(final InstrumentsService instrumentsService, final Share share) {
+    public static void mockShare(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Share share) {
         Mockito.when(instrumentsService.getShareByFigiSync(share.getFigi())).thenReturn(share);
     }
 

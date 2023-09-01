@@ -12,7 +12,6 @@ import ru.obukhov.trader.market.model.transform.OrderStageSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStateSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationDeserializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
-import ru.obukhov.trader.market.model.transform.ShareSerializer;
 import ru.obukhov.trader.market.model.transform.TimestampSerializer;
 import ru.obukhov.trader.test.utils.model.transform.CronExpressionSerializer;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -22,7 +21,6 @@ import java.text.SimpleDateFormat;
 public class TestUtils {
 
     private static final SimpleModule TINKOFF_MODULE = new SimpleModule()
-            .addSerializer(new ShareSerializer())
             .addSerializer(new BondSerializer())
             // todo etfSerializer????
             .addSerializer(new OrderStateSerializer())

@@ -154,7 +154,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpen(12000)
@@ -218,7 +218,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -250,7 +250,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -285,7 +285,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -314,7 +314,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
         final String figi = TestShare1.FIGI;
 
-        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final String requestString = String.format("""
                 {

@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -26,7 +27,6 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
@@ -160,7 +160,7 @@ class FakeBotFactoryUnitTest {
 
     @SuppressWarnings("SameParameterValue")
     private void mockCurrency(final String figi, final String currency) {
-        final Share share = Share.newBuilder().setFigi(figi).setCurrency(currency).build();
+        final Share share = Share.builder().figi(figi).currency(currency).build();
         Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(share);
     }
 

@@ -12,6 +12,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -28,7 +29,6 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
@@ -69,7 +69,7 @@ public class TestData {
 
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
-        decisionData.setShare(Share.newBuilder().build());
+        decisionData.setShare(Share.builder().build());
         decisionData.setCommission(QuotationUtils.ZERO);
 
         return decisionData;
@@ -80,7 +80,7 @@ public class TestData {
         decisionData.setBalance(QuotationUtils.newQuotation(balance));
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
+        decisionData.setShare(Share.builder().lot(lotSize).build());
         decisionData.setCommission(QuotationUtils.newQuotation(commission));
 
         return decisionData;

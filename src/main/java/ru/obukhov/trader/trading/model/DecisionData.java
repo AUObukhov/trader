@@ -4,9 +4,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Share;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -38,7 +38,7 @@ public class DecisionData {
     }
 
     public int getLotSize() {
-        return share.getLot();
+        return share.lot();
     }
 
 }

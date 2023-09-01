@@ -7,11 +7,11 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.time.OffsetDateTime;

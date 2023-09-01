@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -22,7 +23,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.time.OffsetDateTime;
@@ -52,7 +52,7 @@ class FakeBotUnitTest {
     @Test
     void getShare() {
         final String figi = TestShare1.FIGI;
-        final Share expectedShare = Share.newBuilder().setFigi(figi).setLot(10).build();
+        final Share expectedShare = Share.builder().figi(figi).lot(10).build();
         Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(expectedShare);
 
         final Share share = fakeBot.getShare(figi);

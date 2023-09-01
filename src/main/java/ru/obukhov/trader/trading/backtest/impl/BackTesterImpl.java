@@ -184,7 +184,7 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextScheduleMinute(tradingSchedule), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final String currency = fakeBot.getShare(figi).getCurrency();
+            final String currency = fakeBot.getShare(figi).currency();
             for (final OffsetDateTime investmentTime : investmentsTimes) {
                 fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
@@ -261,7 +261,7 @@ public class BackTesterImpl implements BackTester {
             final List<Position> positions,
             final String figi
     ) {
-        final String currency = fakeBot.getShare(figi).getCurrency();
+        final String currency = fakeBot.getShare(figi).currency();
         final SortedMap<OffsetDateTime, Quotation> investments = fakeBot.getInvestments(accountId, currency);
 
         final Quotation initialInvestment = investments.get(investments.firstKey());

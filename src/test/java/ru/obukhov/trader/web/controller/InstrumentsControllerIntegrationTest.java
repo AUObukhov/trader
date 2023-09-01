@@ -63,7 +63,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getShare_returnsShare() throws Exception {
-        Mocker.mockShare(instrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(instrumentsService, TestShare2.TINKOFF_SHARE);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")

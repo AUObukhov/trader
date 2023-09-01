@@ -1,10 +1,9 @@
 package ru.obukhov.trader.test.utils.model.share;
 
-import com.google.protobuf.Timestamp;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -12,7 +11,6 @@ import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.ShareType;
 
 import java.time.OffsetDateTime;
@@ -36,7 +34,7 @@ public class TestShare4 {
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "ДИОД";
     public static final String EXCHANGE = "MOEX";
-    public static final Timestamp IPO_DATE = TimestampUtils.newTimestamp(1263945600L, 0);
+    public static final OffsetDateTime IPO_DATE = DateTimeTestData.createDateTime(2010, 1, 20);
     public static final long ISSUE_SIZE = 91500000L;
     public static final String COUNTRY_OF_RISK = "RU";
     public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
@@ -61,7 +59,49 @@ public class TestShare4 {
     public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2019, 4, 4, 16, 30);
     public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(1989, 5, 24, 3);
 
-    public static final Share SHARE = Share.newBuilder()
+    public static final Share SHARE = Share.builder()
+            .figi(FIGI)
+            .ticker(TICKER)
+            .classCode(CLASS_CODE)
+            .isin(ISIN)
+            .lot(LOT)
+            .currency(CURRENCY)
+            .klong(KLONG)
+            .kshort(KSHORT)
+            .dlong(DLONG)
+            .dshort(DSHORT)
+            .dlongMin(DLONG_MIN)
+            .dshortMin(DSHORT_MIN)
+            .shortEnabledFlag(SHORT_ENABLED_FLAG)
+            .name(NAME)
+            .exchange(EXCHANGE)
+            .ipoDate(IPO_DATE)
+            .issueSize(ISSUE_SIZE)
+            .countryOfRisk(COUNTRY_OF_RISK)
+            .countryOfRiskName(COUNTRY_OF_RISK_NAME)
+            .sector(SECTOR)
+            .issueSizePlan(ISSUE_SIZE_PLAN)
+            .nominal(NOMINAL)
+            .tradingStatus(TRADING_STATUS)
+            .otcFlag(OTC_FLAG)
+            .buyAvailableFlag(BUY_AVAILABLE_FLAG)
+            .sellAvailableFlag(SELL_AVAILABLE_FLAG)
+            .divYieldFlag(DIV_YIELD_FLAG)
+            .shareType(SHARE_TYPE)
+            .minPriceIncrement(MIN_PRICE_INCREMENT)
+            .apiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .uid(UID)
+            .realExchange(REAL_EXCHANGE)
+            .positionUid(POSITION_UID)
+            .forIisFlag(FOR_IIS_FLAG)
+            .forQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
+            .weekendFlag(WEEKEND_FLAG)
+            .blockedTcaFlag(BLOCKED_TCA_FLAG)
+            .first1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
+            .first1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .build();
+
+    public static final ru.tinkoff.piapi.contract.v1.Share TINKOFF_SHARE = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setClassCode(CLASS_CODE)
@@ -77,7 +117,7 @@ public class TestShare4 {
             .setShortEnabledFlag(SHORT_ENABLED_FLAG)
             .setName(NAME)
             .setExchange(EXCHANGE)
-            .setIpoDate(IPO_DATE)
+            .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(IPO_DATE))
             .setIssueSize(ISSUE_SIZE)
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
