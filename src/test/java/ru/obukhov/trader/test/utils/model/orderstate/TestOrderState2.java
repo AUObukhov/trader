@@ -1,20 +1,24 @@
 package ru.obukhov.trader.test.utils.model.orderstate;
 
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.obukhov.trader.market.model.OrderStage;
 import ru.obukhov.trader.market.model.OrderState;
+import ru.obukhov.trader.market.model.transform.OrderStageMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage1;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
-import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 public class TestOrderState2 {
+
+    private static final OrderStageMapper ORDER_STAGE_MAPPER = Mappers.getMapper(OrderStageMapper.class);
 
     public static final String ORDER_ID = "582899921201";
     public static final OrderExecutionReportStatus EXECUTION_REPORT_STATUS = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL;
@@ -74,7 +78,7 @@ public class TestOrderState2 {
             .setFigi(FIGI)
             .setDirection(DIRECTION)
             .setInitialSecurityPrice(INITIAL_SECURITY_PRICE)
-            .addAllStages(STAGES)
+            .addAllStages(STAGES.stream().map(ORDER_STAGE_MAPPER::map).toList())
             .setServiceCommission(SERVICE_COMMISSION)
             .setCurrency(CURRENCY)
             .setOrderType(ORDER_TYPE)

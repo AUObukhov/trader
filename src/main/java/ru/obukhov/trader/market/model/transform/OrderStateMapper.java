@@ -7,7 +7,7 @@ import ru.obukhov.trader.market.model.OrderState;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.OrderState} to {@link ru.obukhov.trader.market.model.OrderState} and vice versa
  */
-@Mapper(uses = DateTimeMapper.class)
+@Mapper(uses = {OrderStageMapper.class, DateTimeMapper.class})
 public interface OrderStateMapper {
 
     @Mapping(target = "stages", source = "stagesList")

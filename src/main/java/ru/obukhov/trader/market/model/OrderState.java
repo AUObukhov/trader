@@ -4,7 +4,6 @@ import lombok.Builder;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
-import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
 import java.time.OffsetDateTime;
