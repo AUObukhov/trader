@@ -8,7 +8,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationDeserializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
-import ru.obukhov.trader.market.model.transform.TimestampSerializer;
 import ru.obukhov.trader.test.utils.model.transform.CronExpressionSerializer;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
@@ -18,7 +17,6 @@ public class TestUtils {
 
     private static final SimpleModule TINKOFF_MODULE = new SimpleModule()
             .addSerializer(new QuotationSerializer())
-            .addSerializer(new TimestampSerializer())
             .addSerializer(new MoneyValueSerializer())
             .addDeserializer(Quotation.class, new QuotationDeserializer());
 
