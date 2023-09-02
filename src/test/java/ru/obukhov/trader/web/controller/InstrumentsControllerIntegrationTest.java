@@ -13,7 +13,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
@@ -150,14 +150,14 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCurrency_returnsCurrency() throws Exception {
-        Mocker.mockCurrency(instrumentsService, TestCurrency2.CURRENCY);
+        Mocker.mockCurrency(instrumentsService, TestCurrency1.TINKOFF_CURRENCY);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
-                .param("figi", TestCurrency2.FIGI)
+                .param("figi", TestCurrency1.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestCurrency2.CURRENCY);
+        performAndExpectResponse(requestBuilder, TestCurrency1.JSON_STRING);
     }
 
     @Test

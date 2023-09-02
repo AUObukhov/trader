@@ -12,6 +12,7 @@ import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
@@ -28,7 +29,6 @@ import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.tinkoff.piapi.contract.v1.Currency;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -134,7 +134,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrency_returnsCurrency() {
-        Mocker.mockCurrency(instrumentsService, TestCurrency2.CURRENCY);
+        Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
 
         final Currency result = realExtInstrumentsService.getCurrency(TestCurrency2.FIGI);
 

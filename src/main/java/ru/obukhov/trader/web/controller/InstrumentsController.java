@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
-import ru.tinkoff.piapi.contract.v1.Currency;
 
 import java.util.List;
 
