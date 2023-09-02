@@ -20,7 +20,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -142,8 +141,8 @@ class ExtOperationsServiceUnitTest {
 
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        final Quotation balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
-        final Quotation balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
+        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
+        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
 
         AssertUtils.assertEquals(rubBalance1 - rubBlocked1, balance1);
         AssertUtils.assertEquals(rubBalance2 - rubBlocked2, balance2);
@@ -188,8 +187,8 @@ class ExtOperationsServiceUnitTest {
         );
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        final Quotation balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
-        final Quotation balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
+        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
+        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
 
         AssertUtils.assertEquals(rubBalance1 - rubBlocked1 - rubGuaranteeBlocked1, balance1);
         AssertUtils.assertEquals(rubBalance2 - rubBlocked2 - rubGuaranteeBlocked2, balance2);

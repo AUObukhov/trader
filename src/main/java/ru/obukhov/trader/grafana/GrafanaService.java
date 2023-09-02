@@ -5,7 +5,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.MapUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
@@ -111,7 +110,7 @@ public class GrafanaService {
         final Interval innerInterval = Interval.of(interval.getFrom(), ObjectUtils.defaultIfNull(interval.getTo(), OffsetDateTime.now()));
         final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
         for (Candle candle : candles) {
-            rows.add(List.of(candle.getTime(), QuotationUtils.toBigDecimal(candle.getOpen())));
+            rows.add(List.of(candle.getTime(), candle.getOpen()));
         }
         queryResult.setRows(rows);
 
@@ -141,9 +140,9 @@ public class GrafanaService {
         final List<List<Object>> valuesAndAveragesRows = new ArrayList<>();
         for (int i = 0; i < candlesResponse.getCandles().size(); i++) {
             final Candle candle = candlesResponse.getCandles().get(i);
-            final BigDecimal open = QuotationUtils.toBigDecimal(candle.getOpen());
-            final BigDecimal average1 = QuotationUtils.toBigDecimal(candlesResponse.getAverages1().get(i));
-            final BigDecimal average2 = QuotationUtils.toBigDecimal(candlesResponse.getAverages2().get(i));
+            final BigDecimal open = candle.getOpen();
+            final BigDecimal average1 = candlesResponse.getAverages1().get(i);
+            final BigDecimal average2 = candlesResponse.getAverages2().get(i);
             valuesAndAveragesRows.add(List.of(candle.getTime(), open, average1, average2));
         }
         valuesAndAveragesResult.setRows(valuesAndAveragesRows);

@@ -1,21 +1,23 @@
 package ru.obukhov.trader.test.utils.model.instrument;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public class TestInstrument1 {
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final String FIGI = "BBG000B9XRY4";
     public static final String TICKER = "AAPL";
@@ -23,12 +25,12 @@ public class TestInstrument1 {
     public static final String ISIN = "US0378331005";
     public static final int LOT_SIZE = 1;
     public static final String CURRENCY = Currencies.USD;
-    public static final Quotation K_LONG = QuotationUtils.newQuotation(2L);
-    public static final Quotation K_SHORT = QuotationUtils.newQuotation(2L);
-    public static final Quotation D_LONG = QuotationUtils.newQuotation(1L);
-    public static final Quotation D_SHORT = QuotationUtils.newQuotation(1L);
-    public static final Quotation D_LONG_MIN = QuotationUtils.newQuotation(1L);
-    public static final Quotation D_SHORT_MIN = QuotationUtils.newQuotation(1L);
+    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(2);
+    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(2);
+    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(1);
+    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(1);
+    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(1);
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(1);
     public static final boolean SHORT_ENABLED = false;
     public static final String NAME = "Apple";
     public static final String EXCHANGE = "SPB";
@@ -39,7 +41,7 @@ public class TestInstrument1 {
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 10_000_000);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.01);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "a9eb4238-eba9-488c-b102-b6140fd08e38";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_RTS;
@@ -59,12 +61,12 @@ public class TestInstrument1 {
             .isin(ISIN)
             .lot(LOT_SIZE)
             .currency(CURRENCY)
-            .klong(K_LONG)
-            .kshort(K_SHORT)
-            .dlong(D_LONG)
-            .dshort(D_SHORT)
-            .dlongMin(D_LONG_MIN)
-            .dshortMin(D_SHORT_MIN)
+            .klong(KLONG)
+            .kshort(KSHORT)
+            .dlong(DLONG)
+            .dshort(DSHORT)
+            .dlongMin(DLONG_MIN)
+            .dshortMin(DSHORT_MIN)
             .shortEnabledFlag(SHORT_ENABLED)
             .name(NAME)
             .exchange(EXCHANGE)
@@ -95,12 +97,12 @@ public class TestInstrument1 {
             .setIsin(ISIN)
             .setLot(LOT_SIZE)
             .setCurrency(CURRENCY)
-            .setKlong(K_LONG)
-            .setKshort(K_SHORT)
-            .setDlong(D_LONG)
-            .setDshort(D_SHORT)
-            .setDlongMin(D_LONG_MIN)
-            .setDshortMin(D_SHORT_MIN)
+            .setKlong(QUOTATION_MAPPER.fromBigDecimal(KLONG))
+            .setKshort(QUOTATION_MAPPER.fromBigDecimal(KSHORT))
+            .setDlong(QUOTATION_MAPPER.fromBigDecimal(DLONG))
+            .setDshort(QUOTATION_MAPPER.fromBigDecimal(DSHORT))
+            .setDlongMin(QUOTATION_MAPPER.fromBigDecimal(DLONG_MIN))
+            .setDshortMin(QUOTATION_MAPPER.fromBigDecimal(DSHORT_MIN))
             .setShortEnabledFlag(SHORT_ENABLED)
             .setName(NAME)
             .setExchange(EXCHANGE)
@@ -111,7 +113,7 @@ public class TestInstrument1 {
             .setOtcFlag(OTC_FLAG)
             .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
             .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
-            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(MIN_PRICE_INCREMENT))
             .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
             .setUid(UID)
             .setRealExchange(REAL_EXCHANGE)

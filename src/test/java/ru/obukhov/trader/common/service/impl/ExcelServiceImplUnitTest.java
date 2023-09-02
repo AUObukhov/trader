@@ -21,7 +21,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
@@ -39,10 +38,10 @@ import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Iterator;
@@ -74,7 +73,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_HOUR,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -84,7 +83,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -94,7 +93,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5)
         );
@@ -138,7 +137,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -174,7 +173,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -211,7 +210,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -250,7 +249,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -287,7 +286,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -326,7 +325,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.ZERO,
+                DecimalUtils.setDefaultScale(0),
                 StrategyType.CROSS,
                 Collections.emptyMap()
         );
@@ -464,17 +463,17 @@ class ExcelServiceImplUnitTest {
 
     private BackTestResult createBackTestResult(final BotConfig botConfig, final String error) {
         final Balances balances = new Balances(
-                QuotationUtils.newQuotation(700L),
-                QuotationUtils.newQuotation(800L),
-                QuotationUtils.newQuotation(750L),
-                QuotationUtils.newQuotation(200L),
-                QuotationUtils.newQuotation(1000L)
+                DecimalUtils.setDefaultScale(700L),
+                DecimalUtils.setDefaultScale(800L),
+                DecimalUtils.setDefaultScale(750L),
+                DecimalUtils.setDefaultScale(200L),
+                DecimalUtils.setDefaultScale(1000L)
         );
         return new BackTestResult(
                 botConfig,
                 createInterval(),
                 balances,
-                new Profits(QuotationUtils.newQuotation(300L), 0.25, 6.0),
+                new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0),
                 createPositions(botConfig.figi()),
                 createBackTestOperations(botConfig.figi()),
                 createCandles(),
@@ -484,17 +483,17 @@ class ExcelServiceImplUnitTest {
 
     private BackTestResult createBackTestResult(final BotConfig botConfig, final List<Candle> candles) {
         final Balances balances = new Balances(
-                QuotationUtils.newQuotation(700L),
-                QuotationUtils.newQuotation(800L),
-                QuotationUtils.newQuotation(750L),
-                QuotationUtils.newQuotation(200L),
-                QuotationUtils.newQuotation(1000L)
+                DecimalUtils.setDefaultScale(700L),
+                DecimalUtils.setDefaultScale(800L),
+                DecimalUtils.setDefaultScale(750L),
+                DecimalUtils.setDefaultScale(200L),
+                DecimalUtils.setDefaultScale(1000L)
         );
         return new BackTestResult(
                 botConfig,
                 createInterval(),
                 balances,
-                new Profits(QuotationUtils.newQuotation(300L), 0.25, 6.0),
+                new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0),
                 createPositions(botConfig.figi()),
                 createBackTestOperations(botConfig.figi()),
                 candles,
@@ -504,17 +503,17 @@ class ExcelServiceImplUnitTest {
 
     private BackTestResult createBackTestResult(final BotConfig botConfig) {
         final Balances balances = new Balances(
-                QuotationUtils.newQuotation(700L),
-                QuotationUtils.newQuotation(800L),
-                QuotationUtils.newQuotation(750L),
-                QuotationUtils.newQuotation(200L),
-                QuotationUtils.newQuotation(1000L)
+                DecimalUtils.setDefaultScale(700L),
+                DecimalUtils.setDefaultScale(800L),
+                DecimalUtils.setDefaultScale(750L),
+                DecimalUtils.setDefaultScale(200L),
+                DecimalUtils.setDefaultScale(1000L)
         );
         return new BackTestResult(
                 botConfig,
                 createInterval(),
                 balances,
-                new Profits(QuotationUtils.newQuotation(300L), 0.25, 6.0),
+                new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0),
                 createPositions(botConfig.figi()),
                 createBackTestOperations(botConfig.figi()),
                 createCandles(),
@@ -603,9 +602,9 @@ class ExcelServiceImplUnitTest {
 
     private GetCandlesResponse createGetCandlesResponse() {
         final List<Candle> candles = createCandles();
-        final List<Quotation> opens = candles.stream().map(Candle::getOpen).toList();
-        final List<Quotation> shortAverages = averager.getAverages(opens, 2);
-        final List<Quotation> longAverages = averager.getAverages(opens, 5);
+        final List<BigDecimal> opens = candles.stream().map(Candle::getOpen).toList();
+        final List<BigDecimal> shortAverages = averager.getAverages(opens, 2);
+        final List<BigDecimal> longAverages = averager.getAverages(opens, 5);
 
         return new GetCandlesResponse(candles, shortAverages, longAverages);
     }

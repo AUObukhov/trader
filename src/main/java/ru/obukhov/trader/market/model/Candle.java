@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Data
@@ -17,10 +16,10 @@ import java.time.OffsetDateTime;
 @Accessors(chain = true)
 public class Candle {
 
-    protected Quotation open;
-    protected Quotation close;
-    protected Quotation high;
-    protected Quotation low;
+    protected BigDecimal open;
+    protected BigDecimal close;
+    protected BigDecimal high;
+    protected BigDecimal low;
 
     protected OffsetDateTime time;
 
@@ -30,10 +29,10 @@ public class Candle {
     public static Candle createAverage(final Candle leftCandle, final Candle rightCandle) {
         Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()), "leftCandle can't be after rightCandle");
 
-        final Quotation open = leftCandle.getOpen();
-        final Quotation close = rightCandle.getClose();
-        final Quotation high = QuotationUtils.max(open, close);
-        final Quotation low = QuotationUtils.min(open, close);
+        final BigDecimal open = leftCandle.getOpen();
+        final BigDecimal close = rightCandle.getClose();
+        final BigDecimal high = open.max(close);
+        final BigDecimal low = open.min(close);
         final OffsetDateTime time = DateUtils.getAverage(leftCandle.getTime(), rightCandle.getTime());
 
         return new Candle(open, close, high, low, time);

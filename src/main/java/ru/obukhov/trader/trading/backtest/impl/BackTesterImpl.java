@@ -8,10 +8,10 @@ import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
@@ -26,9 +26,9 @@ import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,7 +105,7 @@ public class BackTesterImpl implements BackTester {
                 .map(botConfig -> startBackTest(botConfig, balanceConfig, finiteInterval))
                 .toList().stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().finalTotalSavings(), QuotationUtils::compare).reversed())
+                .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().finalTotalSavings()).reversed())
                 .toList();
     }
 
@@ -219,7 +219,7 @@ public class BackTesterImpl implements BackTester {
 
     private BackTestResult createFailedBackTestResult(
             final BotConfig botConfig,
-            final Quotation initialInvestment,
+            final BigDecimal initialInvestment,
             final Interval interval,
             final String message
     ) {
@@ -227,8 +227,8 @@ public class BackTesterImpl implements BackTester {
                 initialInvestment,
                 initialInvestment,
                 initialInvestment,
-                QuotationUtils.ZERO,
-                QuotationUtils.ZERO
+                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.setDefaultScale(0)
         );
         return new BackTestResult(
                 botConfig,
@@ -250,7 +250,7 @@ public class BackTesterImpl implements BackTester {
 
     private Position cloneWithActualCurrentPrice(final Position portfolioPosition, final FakeBot fakeBot) {
         final String figi = portfolioPosition.getFigi();
-        final Quotation currentPrice = fakeBot.getCurrentPrice(figi);
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi);
         return PositionUtils.cloneWithNewCurrentPrice(portfolioPosition, currentPrice);
     }
 
@@ -262,42 +262,41 @@ public class BackTesterImpl implements BackTester {
             final String figi
     ) {
         final String currency = fakeBot.getShare(figi).currency();
-        final SortedMap<OffsetDateTime, Quotation> investments = fakeBot.getInvestments(accountId, currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
-        final Quotation initialInvestment = investments.get(investments.firstKey());
-        final Quotation finalBalance = fakeBot.getCurrentBalance(accountId, currency);
-        final Quotation finalTotalSavings = getTotalBalance(finalBalance, positions);
+        final BigDecimal initialInvestment = investments.get(investments.firstKey());
+        final BigDecimal finalBalance = fakeBot.getCurrentBalance(accountId, currency);
+        final BigDecimal finalTotalSavings = getTotalBalance(finalBalance, positions);
 
-        final Quotation totalInvestment = investments.values().stream().reduce(QuotationUtils.ZERO, QuotationUtils::add);
-        final Quotation weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
+        final BigDecimal totalInvestment = investments.values().stream().reduce(DecimalUtils.setDefaultScale(0), BigDecimal::add);
+        final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
         return new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
     }
 
-    private Quotation getTotalBalance(final Quotation currentBalance, final List<Position> positions) {
+    private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<Position> positions) {
         return positions.stream()
                 .map(position -> position.getCurrentPrice().getValue().multiply(position.getQuantity()))
-                .map(QuotationUtils::newQuotation)
-                .reduce(currentBalance, QuotationUtils::add);
+                .reduce(currentBalance, BigDecimal::add);
     }
 
-    private Quotation getWeightedAverage(final SortedMap<OffsetDateTime, Quotation> investments, final OffsetDateTime endDateTime) {
-        final SortedMap<OffsetDateTime, Quotation> totalInvestments = getTotalInvestments(investments);
+    private BigDecimal getWeightedAverage(final SortedMap<OffsetDateTime, BigDecimal> investments, final OffsetDateTime endDateTime) {
+        final SortedMap<OffsetDateTime, BigDecimal> totalInvestments = getTotalInvestments(investments);
         return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
     }
 
-    private SortedMap<OffsetDateTime, Quotation> getTotalInvestments(final SortedMap<OffsetDateTime, Quotation> investments) {
-        final SortedMap<OffsetDateTime, Quotation> balances = new TreeMap<>();
-        Quotation currentBalance = QuotationUtils.ZERO;
-        for (final Map.Entry<OffsetDateTime, Quotation> entry : investments.entrySet()) {
-            currentBalance = QuotationUtils.add(currentBalance, entry.getValue());
+    private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(final SortedMap<OffsetDateTime, BigDecimal> investments) {
+        final SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
+        BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
+        for (final Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
+            currentBalance = currentBalance.add(entry.getValue());
             balances.put(entry.getKey(), currentBalance);
         }
         return balances;
     }
 
     private Profits getProfits(final Balances balances, final Interval interval) {
-        final Quotation absolute = QuotationUtils.subtract(balances.finalTotalSavings(), balances.totalInvestment());
+        final BigDecimal absolute = balances.finalTotalSavings().subtract(balances.totalInvestment());
         final double relative = FinUtils.getRelativeProfit(balances.weightedAverageInvestment(), absolute);
         final double relativeAnnual = FinUtils.getAverageAnnualReturn(interval.toDays(), relative);
         return new Profits(absolute, relative, relativeAnnual);

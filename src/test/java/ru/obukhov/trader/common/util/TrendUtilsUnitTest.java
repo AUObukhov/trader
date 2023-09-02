@@ -11,7 +11,6 @@ import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.Crossover;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -435,8 +434,8 @@ class TrendUtilsUnitTest {
 
     @Test
     void getCrossoverIfLast_throwsIllegalArgumentException_whenDifferentSizes() {
-        final List<Quotation> values1 = TestData.createRandomQuotations(10, 0, 1000);
-        final List<Quotation> values2 = TestData.createRandomQuotations(9, 0, 1000);
+        final List<BigDecimal> values1 = TestData.createRandomBigDecimals(10, 0, 1000);
+        final List<BigDecimal> values2 = TestData.createRandomBigDecimals(9, 0, 1000);
         final int index = 2;
 
         final Executable executable = () -> TrendUtils.getCrossoverIfLast(values1, values2, index);
@@ -532,8 +531,8 @@ class TrendUtilsUnitTest {
             final int index,
             final Crossover expectedCrossover
     ) {
-        final List<Quotation> quotations1 = values1.stream().map(QuotationUtils::newQuotation).toList();
-        final List<Quotation> quotations2 = values2.stream().map(QuotationUtils::newQuotation).toList();
+        final List<BigDecimal> quotations1 = values1.stream().map(DecimalUtils::setDefaultScale).toList();
+        final List<BigDecimal> quotations2 = values2.stream().map(DecimalUtils::setDefaultScale).toList();
 
         final Crossover crossover = TrendUtils.getCrossoverIfLast(quotations1, quotations2, index);
 

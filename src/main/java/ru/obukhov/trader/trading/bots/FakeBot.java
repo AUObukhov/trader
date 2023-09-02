@@ -11,9 +11,9 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.SortedMap;
@@ -62,19 +62,19 @@ public class FakeBot extends Bot {
         return getFakeContext().nextScheduleMinute(tradingSchedule);
     }
 
-    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final String currency, final Quotation increment) {
+    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {
         getFakeContext().addInvestment(accountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, Quotation> getInvestments(final String accountId, final String currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final String currency) {
         return getFakeContext().getInvestments(accountId, currency);
     }
 
-    public Quotation getCurrentBalance(final String accountId, final String currency) {
+    public BigDecimal getCurrentBalance(final String accountId, final String currency) {
         return getFakeContext().getBalance(accountId, currency);
     }
 
-    public Quotation getCurrentPrice(final String figi) {
+    public BigDecimal getCurrentPrice(final String figi) {
         return extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
     }
 

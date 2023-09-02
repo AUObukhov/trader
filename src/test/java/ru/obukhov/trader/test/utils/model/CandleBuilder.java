@@ -1,6 +1,6 @@
 package ru.obukhov.trader.test.utils.model;
 
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 
 import java.time.OffsetDateTime;
@@ -42,19 +42,19 @@ public class CandleBuilder {
         final Candle candle = new Candle();
 
         if (open != null) {
-            candle.setOpen(QuotationUtils.newQuotation(open));
+            candle.setOpen(DecimalUtils.setDefaultScale(open));
         }
 
         if (close != null) {
-            candle.setClose(QuotationUtils.newQuotation(close));
+            candle.setClose(DecimalUtils.setDefaultScale(close));
         }
 
         if (highest != null) {
-            candle.setHigh(QuotationUtils.newQuotation(highest));
+            candle.setHigh(DecimalUtils.setDefaultScale(highest));
         }
 
         if (lowest != null) {
-            candle.setLow(QuotationUtils.newQuotation(lowest));
+            candle.setLow(DecimalUtils.setDefaultScale(lowest));
         }
 
         if (time != null) {

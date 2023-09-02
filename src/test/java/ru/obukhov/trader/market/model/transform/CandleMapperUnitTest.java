@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -16,6 +15,7 @@ import java.time.OffsetDateTime;
 
 class CandleMapperUnitTest {
 
+    private final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     @Test
@@ -63,10 +63,10 @@ class CandleMapperUnitTest {
 
         final HistoricCandle historicCandle = candleMapper.map(candle, isComplete);
 
-        AssertUtils.assertEquals(open, QuotationUtils.toBigDecimal(historicCandle.getOpen()));
-        AssertUtils.assertEquals(close, QuotationUtils.toBigDecimal(historicCandle.getClose()));
-        AssertUtils.assertEquals(high, QuotationUtils.toBigDecimal(historicCandle.getHigh()));
-        AssertUtils.assertEquals(low, QuotationUtils.toBigDecimal(historicCandle.getLow()));
+        AssertUtils.assertEquals(open, quotationMapper.toBigDecimal(historicCandle.getOpen()));
+        AssertUtils.assertEquals(close, quotationMapper.toBigDecimal(historicCandle.getClose()));
+        AssertUtils.assertEquals(high, quotationMapper.toBigDecimal(historicCandle.getHigh()));
+        AssertUtils.assertEquals(low, quotationMapper.toBigDecimal(historicCandle.getLow()));
         Assertions.assertEquals(time, TimestampUtils.toOffsetDateTime(historicCandle.getTime()));
         Assertions.assertEquals(isComplete, historicCandle.getIsComplete());
     }

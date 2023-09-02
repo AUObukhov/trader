@@ -1,25 +1,15 @@
 package ru.obukhov.trader.config.properties;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.core.convert.support.DefaultConversionService;
-import ru.obukhov.trader.common.model.transform.DoubleToQuotationConverter;
-import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -149,23 +139,6 @@ class ScheduledBotsPropertiesContextTest {
 
     @EnableConfigurationProperties(ScheduledBotsProperties.class)
     private static class TestConfiguration {
-        @Bean
-        @SuppressWarnings("unused")
-        public ConversionService conversionService() {
-            DefaultConversionService service = new DefaultConversionService();
-            service.addConverter(new DoubleToQuotationConverter());
-            service.addConverter(new StringToQuotationConverter());
-            return service;
-        }
-
-    }
-
-    public static class StringToQuotationConverter implements Converter<String, Quotation> {
-        @Override
-        public Quotation convert(@NotNull final String source) {
-            final BigDecimal bigDecimal = DecimalUtils.setDefaultScale(new BigDecimal(source));
-            return QuotationUtils.newQuotation(bigDecimal);
-        }
     }
 
 }

@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -66,7 +66,7 @@ class BackTestRequestValidationTest {
                 null,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 null
         );
@@ -82,7 +82,7 @@ class BackTestRequestValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 null,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 null
         );
@@ -114,7 +114,7 @@ class BackTestRequestValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
@@ -129,8 +129,8 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = new BackTestRequest();
 
         BalanceConfig balanceConfig = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(1),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(1),
                 new CronExpression("0 0 0 1 * ?")
         );
         request.setBalanceConfig(balanceConfig);
@@ -141,7 +141,7 @@ class BackTestRequestValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 null
         );

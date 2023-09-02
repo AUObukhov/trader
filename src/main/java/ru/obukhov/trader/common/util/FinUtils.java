@@ -2,8 +2,8 @@ package ru.obukhov.trader.common.util;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.util.Assert;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
@@ -18,13 +18,13 @@ public class FinUtils {
      * @return result of expression [{@code absoluteProfit / investment}].
      * If investment = 0, then returns 0
      */
-    public static double getRelativeProfit(final Quotation investment, final Quotation absoluteProfit) {
-        final int investmentSign = QuotationUtils.getSign(investment);
+    public static double getRelativeProfit(final BigDecimal investment, final BigDecimal absoluteProfit) {
+        final int investmentSign = investment.signum();
         Assert.isTrue(investmentSign >= 0, "investment can't be negative");
 
         return investmentSign == 0
                 ? 0.0
-                : QuotationUtils.toDouble(QuotationUtils.divide(absoluteProfit, investment, RoundingMode.HALF_UP));
+                : absoluteProfit.divide(investment, RoundingMode.HALF_UP).doubleValue();
     }
 
     /**

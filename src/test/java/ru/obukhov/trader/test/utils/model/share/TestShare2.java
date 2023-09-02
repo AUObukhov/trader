@@ -2,13 +2,12 @@ package ru.obukhov.trader.test.utils.model.share;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.ShareType;
@@ -20,6 +19,7 @@ public class TestShare2 {
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final String FIGI = "BBG004730N88";
     public static final String TICKER = "SBER";
@@ -27,12 +27,12 @@ public class TestShare2 {
     public static final String ISIN = "RU0009029540";
     public static final int LOT = 10;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newQuotation(2L);
-    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L);
-    public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 200000000);
-    public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 199900000);
-    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 105600000);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0L, 95400000);
+    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(2);
+    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(2);
+    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(0.2);
+    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(0.1999);
+    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(0.1056);
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(0.0954);
     public static final boolean SHORT_ENABLED_FLAG = true;
     public static final String NAME = "Сбер Банк";
     public static final String EXCHANGE = "MOEX_EVENING_WEEKEND";
@@ -49,7 +49,7 @@ public class TestShare2 {
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final boolean DIV_YIELD_FLAG = true;
     public static final ShareType SHARE_TYPE = ShareType.SHARE_TYPE_COMMON;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 10000000);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.01);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "e6123145-9665-43e0-8413-cd61b8aa9b13";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
@@ -110,12 +110,12 @@ public class TestShare2 {
             .setIsin(ISIN)
             .setLot(LOT)
             .setCurrency(CURRENCY)
-            .setKlong(KLONG)
-            .setKshort(KSHORT)
-            .setDlong(DLONG)
-            .setDshort(DSHORT)
-            .setDlongMin(DLONG_MIN)
-            .setDshortMin(DSHORT_MIN)
+            .setKlong(QUOTATION_MAPPER.fromBigDecimal(KLONG))
+            .setKshort(QUOTATION_MAPPER.fromBigDecimal(KSHORT))
+            .setDlong(QUOTATION_MAPPER.fromBigDecimal(DLONG))
+            .setDshort(QUOTATION_MAPPER.fromBigDecimal(DSHORT))
+            .setDlongMin(QUOTATION_MAPPER.fromBigDecimal(DLONG_MIN))
+            .setDshortMin(QUOTATION_MAPPER.fromBigDecimal(DSHORT_MIN))
             .setShortEnabledFlag(SHORT_ENABLED_FLAG)
             .setName(NAME)
             .setExchange(EXCHANGE)
@@ -132,7 +132,7 @@ public class TestShare2 {
             .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
             .setDivYieldFlag(DIV_YIELD_FLAG)
             .setShareType(SHARE_TYPE)
-            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(MIN_PRICE_INCREMENT))
             .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
             .setUid(UID)
             .setRealExchange(REAL_EXCHANGE)

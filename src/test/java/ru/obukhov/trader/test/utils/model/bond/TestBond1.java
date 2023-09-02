@@ -2,13 +2,12 @@ package ru.obukhov.trader.test.utils.model.bond;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.RiskLevel;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
@@ -19,6 +18,7 @@ import java.time.OffsetDateTime;
 public class TestBond1 {
 
     private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final String FIGI = "BBG00J7HHGH1";
     public static final String TICKER = "RU000A0ZYG52";
@@ -26,12 +26,12 @@ public class TestBond1 {
     public static final String ISIN = "RU000A0ZYG52";
     public static final int LOT = 1;
     public static final String CURRENCY = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newQuotation(2L);
-    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L);
-    public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 300000000);
-    public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 300000000);
-    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 163300000);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0L, 140200000);
+    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(2);
+    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(2);
+    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(0.3);
+    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(0.3);
+    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(0.1633);
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(0.1402);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Ростелеком выпуск 3";
     public static final String EXCHANGE = "MOEX";
@@ -56,7 +56,7 @@ public class TestBond1 {
     public static final boolean FLOATING_COUPON_FLAG = false;
     public static final boolean PERPETUAL_FLAG = false;
     public static final boolean AMORTIZATION_FLAG = false;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0, 10000000);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.01);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "00486cd8-5915-4c0b-8017-b81b9d1805d4";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
@@ -130,12 +130,12 @@ public class TestBond1 {
             .setIsin(ISIN)
             .setLot(LOT)
             .setCurrency(CURRENCY)
-            .setKlong(KLONG)
-            .setKshort(KSHORT)
-            .setDlong(DLONG)
-            .setDshort(DSHORT)
-            .setDlongMin(DLONG_MIN)
-            .setDshortMin(DSHORT_MIN)
+            .setKlong(QUOTATION_MAPPER.fromBigDecimal(KLONG))
+            .setKshort(QUOTATION_MAPPER.fromBigDecimal(KSHORT))
+            .setDlong(QUOTATION_MAPPER.fromBigDecimal(DLONG))
+            .setDshort(QUOTATION_MAPPER.fromBigDecimal(DSHORT))
+            .setDlongMin(QUOTATION_MAPPER.fromBigDecimal(DLONG_MIN))
+            .setDshortMin(QUOTATION_MAPPER.fromBigDecimal(DSHORT_MIN))
             .setShortEnabledFlag(SHORT_ENABLED_FLAG)
             .setName(NAME)
             .setExchange(EXCHANGE)
@@ -160,7 +160,7 @@ public class TestBond1 {
             .setFloatingCouponFlag(FLOATING_COUPON_FLAG)
             .setPerpetualFlag(PERPETUAL_FLAG)
             .setAmortizationFlag(AMORTIZATION_FLAG)
-            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(MIN_PRICE_INCREMENT))
             .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
             .setUid(UID)
             .setRealExchange(REAL_EXCHANGE)

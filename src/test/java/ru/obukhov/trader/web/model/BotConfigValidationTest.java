@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -23,7 +23,7 @@ class BotConfigValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -96,7 +96,7 @@ class BotConfigValidationTest {
                 accountId,
                 figi,
                 candleInterval,
-                QuotationUtils.newQuotation(commission),
+                DecimalUtils.setDefaultScale(commission),
                 strategyType,
                 strategyParams
         );

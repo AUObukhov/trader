@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -22,9 +22,9 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,11 +89,11 @@ class FakeBotUnitTest {
     void getInvestments() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
-        final SortedMap<OffsetDateTime, Quotation> expectedInvestments = new TreeMap<>();
-        expectedInvestments.put(OffsetDateTime.now(), QuotationUtils.newQuotation(10));
+        final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
+        expectedInvestments.put(OffsetDateTime.now(), DecimalUtils.setDefaultScale(10));
         Mockito.when(fakeContext.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
 
-        final SortedMap<OffsetDateTime, Quotation> investments = fakeBot.getInvestments(accountId, currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         AssertUtils.assertMapsAreEqual(expectedInvestments, investments);
     }
@@ -102,10 +102,10 @@ class FakeBotUnitTest {
     void getBalance() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
-        final Quotation expectedBalance = QuotationUtils.newQuotation(10);
+        final BigDecimal expectedBalance = DecimalUtils.setDefaultScale(10);
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
 
-        final Quotation balance = fakeBot.getCurrentBalance(accountId, currency);
+        final BigDecimal balance = fakeBot.getCurrentBalance(accountId, currency);
 
         AssertUtils.assertEquals(expectedBalance, balance);
     }
@@ -138,13 +138,13 @@ class FakeBotUnitTest {
     void getCurrentPrice() {
         final String figi = TestShare1.FIGI;
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Quotation expectedCurrentPrice = QuotationUtils.newQuotation(10);
+        final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(currentDateTime);
 
         Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(expectedCurrentPrice);
 
-        final Quotation currentPrice = fakeBot.getCurrentPrice(figi);
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi);
 
         AssertUtils.assertEquals(expectedCurrentPrice, currentPrice);
     }

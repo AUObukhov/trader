@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.text.ParseException;
@@ -12,8 +12,8 @@ class BalanceConfigValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(1),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(1),
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -24,7 +24,7 @@ class BalanceConfigValidationTest {
     void validationFails_whenInitialBalanceIsNull() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 null,
-                QuotationUtils.newQuotation(1),
+                DecimalUtils.setDefaultScale(1),
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -34,8 +34,8 @@ class BalanceConfigValidationTest {
     @Test
     void validationFails_whenBalanceIncrementIsNegative() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(-1),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(-1),
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -45,8 +45,8 @@ class BalanceConfigValidationTest {
     @Test
     void validationFails_whenBalanceIncrementIsZero() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(0),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(0),
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -56,7 +56,7 @@ class BalanceConfigValidationTest {
     @Test
     void validationFails_whenBalanceIncrementIsNullAndBalanceIncrementCronIsNotNull() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
+                DecimalUtils.setDefaultScale(10),
                 null, new CronExpression("0 0 0 1 * ?")
         );
 
@@ -66,8 +66,8 @@ class BalanceConfigValidationTest {
     @Test
     void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() {
         final BalanceConfig balanceConfig = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(1),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(1),
                 null
         );
 

@@ -6,7 +6,7 @@ import ru.obukhov.trader.market.model.Etf;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.Etf} to {@link Etf}
  */
-@Mapper(uses = DateTimeMapper.class)
+@Mapper(uses = {QuotationMapper.class, DateTimeMapper.class})
 public interface EtfMapper {
 
     Etf map(final ru.tinkoff.piapi.contract.v1.Etf source);

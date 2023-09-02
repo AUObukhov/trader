@@ -9,9 +9,9 @@ import ru.obukhov.trader.market.model.FakeBalance;
 import ru.obukhov.trader.market.model.FakePortfolio;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ public class FakeContext implements Context {
             final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
-            final Quotation initialBalance
+            final BigDecimal initialBalance
     ) {
         this.currentDateTime = currentDateTime;
         this.portfolios = new ArrayList<>();
@@ -67,21 +67,21 @@ public class FakeContext implements Context {
     /**
      * sets given {@code amount} as balance of given {@code currency} and at given {@code accountId}
      */
-    public void setBalance(final String accountId, final String currency, final Quotation amount) {
+    public void setBalance(final String accountId, final String currency, final BigDecimal amount) {
         computeIfAbsentBalance(accountId, currency).setCurrentAmount(amount);
     }
 
     /**
      * @return balance of given {@code currency} and at given {@code accountId}
      */
-    public Quotation getBalance(final String accountId, final String currency) {
+    public BigDecimal getBalance(final String accountId, final String currency) {
         return computeIfAbsentBalance(accountId, currency).getCurrentAmount();
     }
 
     /**
      * @return balances of all currencies at given {@code accountId}
      */
-    public Map<String, Quotation> getBalances(final String accountId) {
+    public Map<String, BigDecimal> getBalances(final String accountId) {
         return computeIfAbsentPortfolio(accountId).getBalances()
                 .entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getCurrentAmount()));
@@ -94,7 +94,7 @@ public class FakeContext implements Context {
     /**
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current timestamp
      */
-    public void addInvestment(final String accountId, final String currency, final Quotation amount) {
+    public void addInvestment(final String accountId, final String currency, final BigDecimal amount) {
         computeIfAbsentBalance(accountId, currency).addInvestment(currentDateTime, amount);
     }
 
@@ -105,7 +105,7 @@ public class FakeContext implements Context {
             final String accountId,
             final OffsetDateTime dateTime,
             final String currency,
-            final Quotation amount
+            final BigDecimal amount
     ) {
         computeIfAbsentBalance(accountId, currency).addInvestment(dateTime, amount);
     }
@@ -113,7 +113,7 @@ public class FakeContext implements Context {
     /**
      * @return all investments of given {@code currency} and at given {@code accountId} by timestamp in ascending order
      */
-    public SortedMap<OffsetDateTime, Quotation> getInvestments(final String accountId, final String currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final String currency) {
         return computeIfAbsentBalance(accountId, currency).getInvestments();
     }
 

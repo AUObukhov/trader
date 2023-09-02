@@ -3,10 +3,8 @@ package ru.obukhov.trader.common.util;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -42,16 +40,16 @@ public class MathUtils {
     /**
      * Calculates weighted average of given amounts.<br/>
      * Weight is count of milliseconds every amount was actual.
-     * Every amount is actual since its timestamp inclusive until timestamp of next amount exclusive.
+     * Every amount is actual since its dateTime inclusive until dateTime of next amount exclusive.
      * The last amount is actual until given {@code endDateTime}
      *
-     * @param dateTimesToAmounts begin timestamps and corresponding amounts
-     * @param endDateTime        end timestamp of last amount from given {@code dateTimesToAmounts}.
-     *                           Can't be before any of timestamp in {@code dateTimesToAmounts}
+     * @param dateTimesToAmounts begin dateTimes and corresponding amounts
+     * @param endDateTime        end dateTime of last amount from given {@code dateTimesToAmounts}.
+     *                           Can't be before any of dateTime in {@code dateTimesToAmounts}
      * @return weighted average or zero if given {@code dateTimesToAmounts} is empty
      */
-    public static Quotation getWeightedAverage(final Map<OffsetDateTime, Quotation> dateTimesToAmounts, final OffsetDateTime endDateTime) {
-        final Map<Long, Quotation> weightedAmounts = dateTimesToAmounts.entrySet().stream()
+    public static BigDecimal getWeightedAverage(final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts, final OffsetDateTime endDateTime) {
+        final Map<Long, BigDecimal> weightedAmounts = dateTimesToAmounts.entrySet().stream()
                 .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endDateTime), Map.Entry::getValue));
 
         return getWeightedAverage(weightedAmounts);
@@ -62,16 +60,17 @@ public class MathUtils {
         return Duration.between(dateTime, endDateTime).toMillis();
     }
 
-    private static Quotation getWeightedAverage(final Map<Long, Quotation> weightedAmounts) {
-        final Quotation weightsSum = QuotationUtils.newQuotation(weightedAmounts.keySet().stream().reduce(0L, Math::addExact));
+    private static BigDecimal getWeightedAverage(final Map<Long, BigDecimal> weightedAmounts) {
+        final BigDecimal weightsSum = DecimalUtils.setDefaultScale(weightedAmounts.keySet().stream().reduce(0L, Long::sum));
 
-        Quotation weightedAverage = QuotationUtils.ZERO;
-        for (final Map.Entry<Long, Quotation> entry : weightedAmounts.entrySet()) {
-            final Quotation weightedAmount = QuotationUtils.multiply(entry.getValue(), entry.getKey());
-            final Quotation normalizedWeightedAmount = QuotationUtils.divide(weightedAmount, weightsSum, RoundingMode.HALF_UP);
-            weightedAverage = QuotationUtils.add(weightedAverage, normalizedWeightedAmount);
+        BigDecimal weightedAverage = DecimalUtils.setDefaultScale(0);
+        for (final Map.Entry<Long, BigDecimal> entry : weightedAmounts.entrySet()) {
+            final BigDecimal normalizedWeight = DecimalUtils.divideAccurate(entry.getKey(), weightsSum);
+            final BigDecimal weightedAmount = entry.getValue().multiply(normalizedWeight);
+            weightedAverage = weightedAverage.add(weightedAmount);
         }
-        return weightedAverage;
+
+        return DecimalUtils.setDefaultScale(weightedAverage);
     }
 
     // endregion

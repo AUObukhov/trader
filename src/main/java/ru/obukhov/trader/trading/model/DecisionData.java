@@ -6,7 +6,6 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Share;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -16,12 +15,12 @@ import java.util.List;
 @Accessors(chain = true)
 public class DecisionData {
 
-    private Quotation balance;
+    private BigDecimal balance;
     private Position position;
     private List<Candle> currentCandles;
     private List<Operation> lastOperations;
     private Share share;
-    private Quotation commission;
+    private BigDecimal commission;
 
     public Long getQuantity() {
         return position.getQuantity().longValueExact();
@@ -31,7 +30,7 @@ public class DecisionData {
         return position.getAveragePositionPrice().getValue();
     }
 
-    public Quotation getCurrentPrice() {
+    public BigDecimal getCurrentPrice() {
         return CollectionUtils.isEmpty(currentCandles)
                 ? null
                 : currentCandles.get(currentCandles.size() - 1).getOpen();

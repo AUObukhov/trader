@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Line;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.trading.model.Crossover;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -238,7 +237,7 @@ public class TrendUtils {
      * there are no crossovers or touches after {@code index}<br/>
      * @throws IllegalArgumentException if {@code values1} and {@code values2} have different sizes
      */
-    public static Crossover getCrossoverIfLast(final List<Quotation> values1, final List<Quotation> values2, final int index) {
+    public static Crossover getCrossoverIfLast(final List<BigDecimal> values1, final List<BigDecimal> values2, final int index) {
         final int size = values1.size();
 
         Assert.isTrue(size == values2.size(), "Collections must has same size");
@@ -249,14 +248,14 @@ public class TrendUtils {
 
         final int previousIndex1 = index - 1;
 
-        final Quotation previousValue1 = values1.get(previousIndex1);
-        final Quotation previousValue2 = values2.get(previousIndex1);
+        final BigDecimal previousValue1 = values1.get(previousIndex1);
+        final BigDecimal previousValue2 = values2.get(previousIndex1);
 
-        final Quotation currentValue1 = values1.get(index);
-        final Quotation currentValue2 = values2.get(index);
+        final BigDecimal currentValue1 = values1.get(index);
+        final BigDecimal currentValue2 = values2.get(index);
 
-        final int previousComparisonResult = QuotationUtils.compare(previousValue1, previousValue2);
-        final int currentComparisonResult = QuotationUtils.compare(currentValue1, currentValue2);
+        final int previousComparisonResult = previousValue1.compareTo(previousValue2);
+        final int currentComparisonResult = currentValue1.compareTo(currentValue2);
 
         if (previousComparisonResult > 0 && currentComparisonResult < 0) {
             if (relationIsKept(values1, values2, index + 1, currentComparisonResult)) {
@@ -273,13 +272,13 @@ public class TrendUtils {
     }
 
     private static boolean relationIsKept(
-            final List<Quotation> values1,
-            final List<Quotation> values2,
+            final List<BigDecimal> values1,
+            final List<BigDecimal> values2,
             final int index,
             final int relation
     ) {
         for (int i = index; i < values1.size(); i++) {
-            if (QuotationUtils.compare(values1.get(i), values2.get(i)) != relation) {
+            if (values1.get(i).compareTo(values2.get(i)) != relation) {
                 return false;
             }
         }

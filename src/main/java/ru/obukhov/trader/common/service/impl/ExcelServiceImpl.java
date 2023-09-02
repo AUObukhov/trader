@@ -26,7 +26,6 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -37,7 +36,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.awt.Color;
@@ -209,32 +207,32 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Интервал", interval.toPrettyString());
     }
 
-    private void putInitialInvestment(final ExtendedSheet sheet, final Quotation initialInvestment) {
+    private void putInitialInvestment(final ExtendedSheet sheet, final BigDecimal initialInvestment) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Начальный баланс", initialInvestment);
     }
 
-    private void putTotalInvestment(final ExtendedSheet sheet, final Quotation totalInvestment) {
+    private void putTotalInvestment(final ExtendedSheet sheet, final BigDecimal totalInvestment) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Вложения", totalInvestment);
     }
 
-    private void putFinalTotalSavings(final ExtendedSheet sheet, final Quotation totalBalance) {
+    private void putFinalTotalSavings(final ExtendedSheet sheet, final BigDecimal totalBalance) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Итоговый общий баланс", totalBalance);
     }
 
-    private void putWeightedAverageInvestment(final ExtendedSheet sheet, final Quotation weightedAverageInvestment) {
+    private void putWeightedAverageInvestment(final ExtendedSheet sheet, final BigDecimal weightedAverageInvestment) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Средневзвешенные вложения", weightedAverageInvestment);
     }
 
-    private void putFinalBalance(final ExtendedSheet sheet, final Quotation currencyBalance) {
+    private void putFinalBalance(final ExtendedSheet sheet, final BigDecimal currencyBalance) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Итоговый валютный баланс", currencyBalance);
     }
 
-    private void putAbsoluteProfit(final ExtendedSheet sheet, final Quotation absoluteProfit) {
+    private void putAbsoluteProfit(final ExtendedSheet sheet, final BigDecimal absoluteProfit) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Абсолютный доход", absoluteProfit);
     }
@@ -396,9 +394,9 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addOpens(final ExtendedChartData chartData, final XDDFCategoryDataSource timesDataSource, final List<Candle> candles) {
-        final Quotation[] prices = candles.stream()
+        final BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpen)
-                .toArray(Quotation[]::new);
+                .toArray(BigDecimal[]::new);
         addSeries(chartData, timesDataSource, prices, MarkerProperties.NO_MARKER);
     }
 
@@ -406,14 +404,12 @@ public class ExcelServiceImpl implements ExcelService {
     private void addLine(
             final ExtendedChartData chartData,
             final XDDFCategoryDataSource timesDataSource,
-            final List<Quotation> quotations,
+            final List<BigDecimal> decimals,
             final MarkerProperties markerProperties,
             final Color seriesColor
     ) {
-        if (quotations.stream().anyMatch(Objects::nonNull)) {
-            final BigDecimal[] bigDecimals = quotations.stream()
-                    .map(QuotationUtils::toBigDecimal)
-                    .toArray(BigDecimal[]::new);
+        if (decimals.stream().anyMatch(Objects::nonNull)) {
+            final BigDecimal[] bigDecimals = decimals.toArray(BigDecimal[]::new);
             addSeries(chartData, timesDataSource, bigDecimals, markerProperties, seriesColor);
         }
     }
@@ -463,13 +459,10 @@ public class ExcelServiceImpl implements ExcelService {
     private void addSeries(
             final ExtendedChartData chartData,
             final XDDFCategoryDataSource timesDataSource,
-            final Quotation[] quotations,
+            final BigDecimal[] decimals,
             final MarkerProperties markerProperties
     ) {
-        final BigDecimal[] bigDecimals = Arrays.stream(quotations)
-                .map(QuotationUtils::toBigDecimal)
-                .toArray(BigDecimal[]::new);
-        addSeries(chartData, timesDataSource, bigDecimals, markerProperties, null);
+        addSeries(chartData, timesDataSource, decimals, markerProperties, null);
     }
 
     private void addSeries(

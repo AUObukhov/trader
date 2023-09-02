@@ -7,7 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
@@ -18,9 +18,9 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ class FakeContextUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
 
-        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, QuotationUtils.newQuotation(balance));
+        final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, DecimalUtils.setDefaultScale(balance));
 
         Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
         Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
@@ -214,7 +214,7 @@ class FakeContextUnitTest {
                 5
         );
 
-        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currencies.USD, QuotationUtils.newQuotation(0));
+        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currencies.USD, DecimalUtils.setDefaultScale(0));
 
         final OffsetDateTime actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
 
@@ -233,10 +233,10 @@ class FakeContextUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final String currency1 = Currencies.RUB;
-        final Quotation balance1 = QuotationUtils.newQuotation(100);
-        final Quotation investment11 = QuotationUtils.newQuotation(20);
-        final Quotation investment12 = QuotationUtils.newQuotation(50);
-        final Quotation investment13 = QuotationUtils.newQuotation(30);
+        final BigDecimal balance1 = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment11 = DecimalUtils.setDefaultScale(20);
+        final BigDecimal investment12 = DecimalUtils.setDefaultScale(50);
+        final BigDecimal investment13 = DecimalUtils.setDefaultScale(30);
         final OffsetDateTime investment11DateTime = currentDateTime.plusHours(1);
         final OffsetDateTime investment12DateTime = investment11DateTime.plusHours(1);
 
@@ -249,10 +249,10 @@ class FakeContextUnitTest {
         fakeContext.addInvestment(accountId1, currency1, investment13);
 
         final String currency2 = Currencies.USD;
-        final Quotation balance2 = QuotationUtils.newQuotation(1000);
-        final Quotation investment21 = QuotationUtils.newQuotation(200);
-        final Quotation investment22 = QuotationUtils.newQuotation(500);
-        final Quotation investment23 = QuotationUtils.newQuotation(300);
+        final BigDecimal balance2 = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal investment21 = DecimalUtils.setDefaultScale(200);
+        final BigDecimal investment22 = DecimalUtils.setDefaultScale(500);
+        final BigDecimal investment23 = DecimalUtils.setDefaultScale(300);
         final OffsetDateTime investment21DateTime = currentDateTime.plusHours(2);
         final OffsetDateTime investment22DateTime = investment21DateTime.plusHours(1);
 
@@ -264,10 +264,10 @@ class FakeContextUnitTest {
         fakeContext.addInvestment(accountId2, currency2, investment23);
 
         final String currency3 = Currencies.EUR;
-        final Quotation balance3 = QuotationUtils.newQuotation(2000);
-        final Quotation investment31 = QuotationUtils.newQuotation(400);
-        final Quotation investment32 = QuotationUtils.newQuotation(1000);
-        final Quotation investment33 = QuotationUtils.newQuotation(600);
+        final BigDecimal balance3 = DecimalUtils.setDefaultScale(2000);
+        final BigDecimal investment31 = DecimalUtils.setDefaultScale(400);
+        final BigDecimal investment32 = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal investment33 = DecimalUtils.setDefaultScale(600);
         final OffsetDateTime investment31DateTime = currentDateTime.plusHours(2);
         final OffsetDateTime investment32DateTime = investment31DateTime.plusHours(1);
 
@@ -280,7 +280,7 @@ class FakeContextUnitTest {
 
         // action
 
-        final Map<String, Quotation> balances = fakeContext.getBalances(accountId2);
+        final Map<String, BigDecimal> balances = fakeContext.getBalances(accountId2);
 
         // assert
 
@@ -301,10 +301,10 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
 
-        final Quotation balance = QuotationUtils.newQuotation(100);
-        final Quotation investment1 = QuotationUtils.newQuotation(20);
-        final Quotation investment2 = QuotationUtils.newQuotation(50);
-        final Quotation investment3 = QuotationUtils.newQuotation(30);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment1 = DecimalUtils.setDefaultScale(20);
+        final BigDecimal investment2 = DecimalUtils.setDefaultScale(50);
+        final BigDecimal investment3 = DecimalUtils.setDefaultScale(30);
 
         final OffsetDateTime initialTimestamp = OffsetDateTime.now();
         final OffsetDateTime investment1Timestamp = initialTimestamp.plusHours(1);
@@ -326,9 +326,9 @@ class FakeContextUnitTest {
         Assertions.assertEquals(3, fakeContext.getInvestments(accountId, currency).size());
         AssertUtils.assertEquals(balance, fakeContext.getInvestments(accountId, currency).get(initialTimestamp));
         AssertUtils.assertEquals(investment1, fakeContext.getInvestments(accountId, currency).get(investment1Timestamp));
-        AssertUtils.assertEquals(QuotationUtils.add(investment2, investment3), fakeContext.getInvestments(accountId, currency).get(investment2Timestamp));
+        AssertUtils.assertEquals(investment2.add(investment3), fakeContext.getInvestments(accountId, currency).get(investment2Timestamp));
 
-        final Quotation expectedBalance = QuotationUtils.add(QuotationUtils.add(QuotationUtils.add(balance, investment1), investment2), investment3);
+        final BigDecimal expectedBalance = balance.add(investment1).add(investment2).add(investment3);
         AssertUtils.assertEquals(expectedBalance, fakeContext.getBalance(accountId, currency));
     }
 
@@ -339,8 +339,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
 
-        final Quotation balance = QuotationUtils.newQuotation(100);
-        final Quotation investment = QuotationUtils.newQuotation(-20);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(-20);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
 
@@ -360,7 +360,7 @@ class FakeContextUnitTest {
         Assertions.assertEquals(balance, fakeContext.getInvestments(accountId, currency).get(initialDateTime));
         Assertions.assertEquals(investment, fakeContext.getInvestments(accountId, currency).get(investmentDateTime));
 
-        AssertUtils.assertEquals(QuotationUtils.add(balance, investment), fakeContext.getBalance(accountId, currency));
+        AssertUtils.assertEquals(balance.add(investment), fakeContext.getBalance(accountId, currency));
     }
 
     @Test
@@ -370,8 +370,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
 
-        final Quotation balance = QuotationUtils.newQuotation(100);
-        final Quotation investment = QuotationUtils.newQuotation(0);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(0);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -404,10 +404,10 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
 
-        final Quotation balance = QuotationUtils.newQuotation(100);
-        final Quotation investment1 = QuotationUtils.newQuotation(20);
-        final Quotation investment2 = QuotationUtils.newQuotation(50);
-        final Quotation investment3 = QuotationUtils.newQuotation(30);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment1 = DecimalUtils.setDefaultScale(20);
+        final BigDecimal investment2 = DecimalUtils.setDefaultScale(50);
+        final BigDecimal investment3 = DecimalUtils.setDefaultScale(30);
 
         final OffsetDateTime initialTimestamp = OffsetDateTime.now();
         final OffsetDateTime investment1Timestamp = initialTimestamp.plusHours(1);
@@ -426,9 +426,9 @@ class FakeContextUnitTest {
         Assertions.assertEquals(3, fakeContext.getInvestments(accountId, currency).size());
         AssertUtils.assertEquals(balance, fakeContext.getInvestments(accountId, currency).get(initialTimestamp));
         AssertUtils.assertEquals(investment1, fakeContext.getInvestments(accountId, currency).get(investment1Timestamp));
-        AssertUtils.assertEquals(QuotationUtils.add(investment2, investment3), fakeContext.getInvestments(accountId, currency).get(investment2Timestamp));
+        AssertUtils.assertEquals(investment2.add(investment3), fakeContext.getInvestments(accountId, currency).get(investment2Timestamp));
 
-        final Quotation expectedBalance = QuotationUtils.add(QuotationUtils.add(QuotationUtils.add(balance, investment1), investment2), investment3);
+        final BigDecimal expectedBalance = balance.add(investment1).add(investment2).add(investment3);
         AssertUtils.assertEquals(expectedBalance, fakeContext.getBalance(accountId, currency));
     }
 
@@ -439,8 +439,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
 
-        final Quotation balance = QuotationUtils.newQuotation(100L);
-        final Quotation investment = QuotationUtils.newQuotation(-20L);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(-20L);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -459,7 +459,7 @@ class FakeContextUnitTest {
         Assertions.assertEquals(balance, fakeContext.getInvestments(accountId, currency).get(initialDateTime));
         Assertions.assertEquals(investment, fakeContext.getInvestments(accountId, currency).get(investmentDateTime));
 
-        AssertUtils.assertEquals(QuotationUtils.add(balance, investment), fakeContext.getBalance(accountId, currency));
+        AssertUtils.assertEquals(balance.add(investment), fakeContext.getBalance(accountId, currency));
     }
 
     @Test
@@ -469,8 +469,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String currency = Currencies.RUB;
 
-        final Quotation balance = QuotationUtils.newQuotation(100L);
-        final Quotation investment = QuotationUtils.ZERO;
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(0);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -500,7 +500,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
-        final Quotation balance = QuotationUtils.newQuotation(100L);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -520,7 +520,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
-        final Quotation balance = QuotationUtils.newQuotation(100L);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -539,7 +539,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
-        final Quotation balance = QuotationUtils.newQuotation(100L);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -563,7 +563,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
-        final Quotation balance = QuotationUtils.newQuotation(100);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -580,7 +580,7 @@ class FakeContextUnitTest {
             final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
-            final Quotation balance
+            final BigDecimal balance
     ) {
         return new FakeContext(currentDateTime, accountId, currency, balance);
     }

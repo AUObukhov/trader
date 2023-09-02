@@ -10,8 +10,8 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -47,9 +47,9 @@ public class StatisticsService {
         final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
-        final List<Quotation> opens = candles.stream().map(Candle::getOpen).toList();
-        final List<Quotation> shortAverages = averager.getAverages(opens, smallWindow, ORDER);
-        final List<Quotation> longAverages = averager.getAverages(opens, bigWindow, ORDER);
+        final List<BigDecimal> opens = candles.stream().map(Candle::getOpen).toList();
+        final List<BigDecimal> shortAverages = averager.getAverages(opens, smallWindow, ORDER);
+        final List<BigDecimal> longAverages = averager.getAverages(opens, bigWindow, ORDER);
 
         return new GetCandlesResponse(candles, shortAverages, longAverages);
     }

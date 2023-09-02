@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -33,9 +33,9 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -173,7 +173,7 @@ class BotUnitTest {
                 accountId,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
@@ -194,7 +194,7 @@ class BotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
 
-        final Quotation balance = QuotationUtils.newQuotation(10000L);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
@@ -220,7 +220,7 @@ class BotUnitTest {
                 accountId,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
@@ -248,7 +248,7 @@ class BotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        final Quotation balance = QuotationUtils.newQuotation(10000L);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 
@@ -273,7 +273,7 @@ class BotUnitTest {
                 accountId,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );

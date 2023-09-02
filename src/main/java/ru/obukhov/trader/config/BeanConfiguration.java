@@ -2,7 +2,6 @@ package ru.obukhov.trader.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -11,12 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
-import ru.obukhov.trader.common.model.transform.DoubleToQuotationConverter;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
@@ -34,11 +30,8 @@ import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.transform.QuotationDeserializer;
-import ru.obukhov.trader.market.model.transform.QuotationSerializer;
 import ru.obukhov.trader.trading.bots.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -46,6 +39,7 @@ import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -104,7 +98,7 @@ public class BeanConfiguration {
             final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
-            final Quotation initialBalance
+            final BigDecimal initialBalance
     ) {
         return new FakeContext(currentDateTime, accountId, currency, initialBalance);
     }
@@ -193,21 +187,10 @@ public class BeanConfiguration {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
-        final SimpleModule tinkoffModule = new SimpleModule()
-                .addSerializer(new QuotationSerializer())
-                .addDeserializer(Quotation.class, new QuotationDeserializer());
         return new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .setDateFormat(new SimpleDateFormat(DateUtils.OFFSET_DATE_TIME_FORMAT))
-                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
-                .registerModule(tinkoffModule);
-    }
-
-    @Bean
-    public ConversionService conversionService() {
-        DefaultConversionService service = new DefaultConversionService();
-        service.addConverter(new DoubleToQuotationConverter());
-        return service;
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
     }
 
 }

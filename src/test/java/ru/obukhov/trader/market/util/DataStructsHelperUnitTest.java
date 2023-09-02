@@ -3,11 +3,9 @@ package ru.obukhov.trader.market.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
@@ -183,17 +181,17 @@ class DataStructsHelperUnitTest {
     @Test
     void getBalance() {
         final String currency1 = Currencies.EUR;
-        final Quotation value1 = QuotationUtils.newQuotation(123, 456000000);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(value1, currency1);
 
         final String currency2 = Currencies.USD;
-        final Quotation value2 = QuotationUtils.newQuotation(78, 900000000);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(value2, currency2);
 
         final List<Money> moneys = List.of(money1, money2);
 
-        final Quotation balance1 = DataStructsHelper.getBalance(moneys, currency1);
-        final Quotation balance2 = DataStructsHelper.getBalance(moneys, currency2);
+        final BigDecimal balance1 = DataStructsHelper.getBalance(moneys, currency1);
+        final BigDecimal balance2 = DataStructsHelper.getBalance(moneys, currency2);
 
         AssertUtils.assertEquals(value1, balance1);
         AssertUtils.assertEquals(value2, balance2);

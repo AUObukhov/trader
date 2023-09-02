@@ -15,10 +15,10 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.MarketDataService;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -138,7 +138,7 @@ public class ExtMarketDataService {
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    public Quotation getLastPrice(final String figi, final OffsetDateTime to) {
+    public BigDecimal getLastPrice(final String figi, final OffsetDateTime to) {
         final Share share = extInstrumentsService.getShare(figi);
 
         final List<Interval> intervals = Interval.of(share.first1MinCandleDate(), to).splitIntoDailyIntervals();

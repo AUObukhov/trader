@@ -3,10 +3,8 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -45,12 +43,12 @@ public interface ExtOperationsService {
      * If {@code accountId} null, works with default broker account
      * @throws NoSuchElementException if given {@code currency} not found.
      */
-    default Quotation getAvailableBalance(final String accountId, final String currency) {
+    default BigDecimal getAvailableBalance(final String accountId, final String currency) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
-        final Quotation totalBalance = DataStructsHelper.getBalance(withdrawLimits.getMoney(), currency);
-        final Quotation blockedBalance = DataStructsHelper.getBalance(withdrawLimits.getBlocked(), currency);
-        final Quotation blockedGuaranteeBalance = DataStructsHelper.getBalance(withdrawLimits.getBlockedGuarantee(), currency);
-        return QuotationUtils.subtract(QuotationUtils.subtract(totalBalance, blockedBalance), blockedGuaranteeBalance);
+        final BigDecimal totalBalance = DataStructsHelper.getBalance(withdrawLimits.getMoney(), currency);
+        final BigDecimal blockedBalance = DataStructsHelper.getBalance(withdrawLimits.getBlocked(), currency);
+        final BigDecimal blockedGuaranteeBalance = DataStructsHelper.getBalance(withdrawLimits.getBlockedGuarantee(), currency);
+        return totalBalance.subtract(blockedBalance).subtract(blockedGuaranteeBalance);
     }
 
     /**

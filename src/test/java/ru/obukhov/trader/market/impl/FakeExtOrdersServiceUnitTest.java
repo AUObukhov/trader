@@ -9,12 +9,13 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -25,9 +26,9 @@ import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -49,8 +50,8 @@ class FakeExtOrdersServiceUnitTest {
 
     @BeforeEach
     void setUp() {
-        final Quotation quotationCommission = QuotationUtils.newQuotation(COMMISSION);
-        fakeExtOrdersService = new FakeExtOrdersService(fakeContext, extInstrumentsService, extMarketDataService, quotationCommission);
+        final BigDecimal decimalCommission = DecimalUtils.setDefaultScale(COMMISSION);
+        fakeExtOrdersService = new FakeExtOrdersService(fakeContext, extInstrumentsService, extMarketDataService, decimalCommission);
     }
 
     // region getOrders tests
@@ -489,10 +490,10 @@ class FakeExtOrdersServiceUnitTest {
 
     @SuppressWarnings("SameParameterValue")
     private void mockBalances(final String accountId, final String currency, double balance1, double... balances) {
-        final Quotation[] quotationBalances = Arrays.stream(balances)
-                .mapToObj(QuotationUtils::newQuotation)
-                .toArray(Quotation[]::new);
-        Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(QuotationUtils.newQuotation(balance1), quotationBalances);
+        final BigDecimal[] decimalBalances = Arrays.stream(balances)
+                .mapToObj(DecimalUtils::setDefaultScale)
+                .toArray(BigDecimal[]::new);
+        Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(DecimalUtils.setDefaultScale(balance1), decimalBalances);
     }
 
     private static double getAveragePositionPrice(
@@ -514,7 +515,7 @@ class FakeExtOrdersServiceUnitTest {
             final double price
     ) {
         Mockito.when(extMarketDataService.getLastPrice(figi, dateTime))
-                .thenReturn(QuotationUtils.newQuotation(price));
+                .thenReturn(DecimalUtils.setDefaultScale(price));
 
         fakeExtOrdersService.postOrder(accountId, figi, quantity, null, direction, OrderType.ORDER_TYPE_MARKET, null);
     }
@@ -522,7 +523,7 @@ class FakeExtOrdersServiceUnitTest {
     @SuppressWarnings("SameParameterValue")
     private void verifyBalanceSet(final String accountId, final String currency, final double balance) {
         Mockito.verify(fakeContext, Mockito.times(1))
-                .setBalance(accountId, currency, QuotationUtils.newQuotation(balance));
+                .setBalance(Mockito.eq(accountId), Mockito.eq(currency), ArgumentMatchers.argThat(BigDecimalMatcher.of(balance)));
     }
 
     @SuppressWarnings("SameParameterValue")

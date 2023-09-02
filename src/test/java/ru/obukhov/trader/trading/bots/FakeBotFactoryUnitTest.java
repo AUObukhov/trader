@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Share;
@@ -26,8 +26,8 @@ import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Collections;
@@ -87,7 +87,7 @@ class FakeBotFactoryUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -122,7 +122,7 @@ class FakeBotFactoryUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -146,7 +146,7 @@ class FakeBotFactoryUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                QuotationUtils.newQuotation(0L, 3000000),
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -170,12 +170,12 @@ class FakeBotFactoryUnitTest {
                 Mockito.any(OffsetDateTime.class),
                 Mockito.anyString(),
                 Mockito.anyString(),
-                Mockito.any(Quotation.class)
+                Mockito.any(BigDecimal.class)
         )).thenAnswer(invocation -> {
             final OffsetDateTime currentDateTime = invocation.getArgument(1);
             final String accountId = invocation.getArgument(2);
             final String currency = invocation.getArgument(3);
-            final Quotation initialBalance = invocation.getArgument(4);
+            final BigDecimal initialBalance = invocation.getArgument(4);
             return new FakeContext(currentDateTime, accountId, currency, initialBalance);
         });
     }

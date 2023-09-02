@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 
 import java.text.ParseException;
 import java.util.stream.Stream;
@@ -20,25 +20,25 @@ class BalanceConfigUnitTest {
         return Stream.of(
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         true
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
+                                DecimalUtils.setDefaultScale(10),
                                 null,
                                 null
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
+                                DecimalUtils.setDefaultScale(10),
                                 null,
                                 null
                         ),
@@ -47,8 +47,8 @@ class BalanceConfigUnitTest {
 
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         null,
@@ -56,13 +56,13 @@ class BalanceConfigUnitTest {
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ).toString(),
                         false
@@ -70,13 +70,13 @@ class BalanceConfigUnitTest {
 
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(1),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -84,25 +84,25 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 null,
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 null,
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -110,38 +110,38 @@ class BalanceConfigUnitTest {
 
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(10),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(10),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
+                                DecimalUtils.setDefaultScale(10),
                                 null,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
+                                DecimalUtils.setDefaultScale(10),
                                 null,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
@@ -150,39 +150,39 @@ class BalanceConfigUnitTest {
 
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(0),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(0),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 2 * ?")
                         ),
                         false
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 null
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
                 ),
                 Arguments.of(
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                QuotationUtils.newQuotation(10),
-                                QuotationUtils.newQuotation(1),
+                                DecimalUtils.setDefaultScale(10),
+                                DecimalUtils.setDefaultScale(1),
                                 null
                         ),
                         false
@@ -201,13 +201,13 @@ class BalanceConfigUnitTest {
     @Test
     void hashCode_returnsEqualsCodes_whenObjectsAreEqual() throws ParseException {
         final BalanceConfig balanceConfig1 = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(1),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(1),
                 new CronExpression("0 0 0 1 * ?")
         );
         final BalanceConfig balanceConfig2 = new BalanceConfig(
-                QuotationUtils.newQuotation(10),
-                QuotationUtils.newQuotation(1),
+                DecimalUtils.setDefaultScale(10),
+                DecimalUtils.setDefaultScale(1),
                 new CronExpression("0 0 0 1 * ?")
         );
 

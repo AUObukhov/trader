@@ -1,19 +1,21 @@
 package ru.obukhov.trader.test.utils.model.etf;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public class TestEtf1 {
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final String FIGI = "BBG005HLTYH9";
     public static final String TICKER = "FXIT";
@@ -21,19 +23,19 @@ public class TestEtf1 {
     public static final String ISIN = "IE00BD3QJ757";
     public static final int LOT = 1;
     public static final String CURRENCY = "rub";
-    public static final Quotation KLONG = QuotationUtils.ZERO;
-    public static final Quotation KSHORT = QuotationUtils.ZERO;
-    public static final Quotation DLONG = QuotationUtils.ZERO;
-    public static final Quotation DSHORT = QuotationUtils.ZERO;
-    public static final Quotation DLONG_MIN = QuotationUtils.ZERO;
-    public static final Quotation DSHORT_MIN = QuotationUtils.ZERO;
+    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(0);
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "FinEx Акции компаний IT-сектора США";
     public static final String EXCHANGE = "moex_close";
-    public static final Quotation FIXED_COMMISSION = QuotationUtils.newQuotation(0L, 900000000);
+    public static final BigDecimal FIXED_COMMISSION = DecimalUtils.setDefaultScale(0.9);
     public static final String FOCUS_TYPE = "equity";
     public static final OffsetDateTime RELEASED_DATE = DateTimeTestData.createDateTime(2013, 10, 31, 3);
-    public static final Quotation NUM_SHARES = QuotationUtils.newQuotation(692000L);
+    public static final BigDecimal NUM_SHARES = DecimalUtils.setDefaultScale(692000);
     public static final String COUNTRY_OF_RISK = "US";
     public static final String COUNTRY_OF_RISK_NAME = "Соединенные Штаты Америки";
     public static final String SECTOR = "it";
@@ -42,7 +44,7 @@ public class TestEtf1 {
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(1L);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(1);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "232b3cca-ecef-439c-8e3c-bdd9e669f6e0";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
@@ -102,19 +104,19 @@ public class TestEtf1 {
             .setIsin(ISIN)
             .setLot(LOT)
             .setCurrency(CURRENCY)
-            .setKlong(KLONG)
-            .setKshort(KSHORT)
-            .setDlong(DLONG)
-            .setDshort(DSHORT)
-            .setDlongMin(DLONG_MIN)
-            .setDshortMin(DSHORT_MIN)
+            .setKlong(QUOTATION_MAPPER.fromBigDecimal(KLONG))
+            .setKshort(QUOTATION_MAPPER.fromBigDecimal(KSHORT))
+            .setDlong(QUOTATION_MAPPER.fromBigDecimal(DLONG))
+            .setDshort(QUOTATION_MAPPER.fromBigDecimal(DSHORT))
+            .setDlongMin(QUOTATION_MAPPER.fromBigDecimal(DLONG_MIN))
+            .setDshortMin(QUOTATION_MAPPER.fromBigDecimal(DSHORT_MIN))
             .setShortEnabledFlag(SHORT_ENABLED_FLAG)
             .setName(NAME)
             .setExchange(EXCHANGE)
-            .setFixedCommission(FIXED_COMMISSION)
+            .setFixedCommission(QUOTATION_MAPPER.fromBigDecimal(FIXED_COMMISSION))
             .setFocusType(FOCUS_TYPE)
             .setReleasedDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(RELEASED_DATE))
-            .setNumShares(NUM_SHARES)
+            .setNumShares(QUOTATION_MAPPER.fromBigDecimal(NUM_SHARES))
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
             .setSector(SECTOR)
@@ -123,7 +125,7 @@ public class TestEtf1 {
             .setOtcFlag(OTC_FLAG)
             .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
             .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
-            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(MIN_PRICE_INCREMENT))
             .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
             .setUid(UID)
             .setRealExchange(REAL_EXCHANGE)

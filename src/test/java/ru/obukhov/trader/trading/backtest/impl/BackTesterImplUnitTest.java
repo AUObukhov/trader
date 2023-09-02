@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -33,9 +33,9 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Iterator;
@@ -131,7 +131,7 @@ class BackTesterImplUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Quotation commission = QuotationUtils.newQuotation(0.003);
+        final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final BotConfig botConfig = new BotConfig(accountId, figi, candleInterval, commission, strategyType, Collections.emptyMap());
 
@@ -169,7 +169,7 @@ class BackTesterImplUnitTest {
                 Locale.US,
                 "^Back test for 'BotConfig\\{accountId=%s, figi=%s, candleInterval=%s, commission=%s, strategyType=%s, " +
                         "strategyParams=\\{\\}\\}' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                accountId, figi, candleInterval, QuotationUtils.toPrettyString(commission), strategyType, exceptionMessage
+                accountId, figi, candleInterval, commission, strategyType, exceptionMessage
         );
         AssertUtils.assertMatchesRegex(backTestResult.error(), expectedErrorPattern);
     }
@@ -186,7 +186,7 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final Quotation finalBalance1 = QuotationUtils.newQuotation(2000L);
+        final BigDecimal finalBalance1 = DecimalUtils.setDefaultScale(2000);
         final int finalQuantity1 = 8;
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
@@ -203,14 +203,14 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(2000L),
+                DecimalUtils.setDefaultScale(2000),
                 finalQuantity1,
                 prices1,
                 finalPrice1,
                 null
         );
 
-        final Quotation finalBalance2 = QuotationUtils.newQuotation(100L);
+        final BigDecimal finalBalance2 = DecimalUtils.setDefaultScale(100);
         final int finalQuantity2 = 500;
 
         final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
@@ -267,7 +267,7 @@ class BackTesterImplUnitTest {
             final double initialInvestment,
             final Double currentPrice,
             final int positionQuantity,
-            final Quotation currentBalance,
+            final BigDecimal currentBalance,
             final double expectedRelativeProfit,
             final double expectedAnnualProfit
     ) {
@@ -278,14 +278,14 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(initialInvestment, backTestResult.balances().initialInvestment());
         AssertUtils.assertEquals(initialInvestment, backTestResult.balances().totalInvestment());
 
-        final Quotation positionsPrice = QuotationUtils.newQuotation(currentPrice * positionQuantity);
-        final Quotation expectedFinalTotalSavings = QuotationUtils.add(positionsPrice, currentBalance);
+        final BigDecimal positionsPrice = DecimalUtils.setDefaultScale(currentPrice * positionQuantity);
+        final BigDecimal expectedFinalTotalSavings = positionsPrice.add(currentBalance);
         AssertUtils.assertEquals(expectedFinalTotalSavings, backTestResult.balances().finalTotalSavings());
 
         AssertUtils.assertEquals(currentBalance, backTestResult.balances().finalBalance());
         AssertUtils.assertEquals(initialInvestment, backTestResult.balances().weightedAverageInvestment());
 
-        final Quotation expectedAbsoluteProfit = QuotationUtils.add(QuotationUtils.subtract(currentBalance, initialInvestment), positionsPrice);
+        final BigDecimal expectedAbsoluteProfit = DecimalUtils.subtract(currentBalance, initialInvestment).add(positionsPrice);
         AssertUtils.assertEquals(expectedAbsoluteProfit, backTestResult.profits().absolute());
         AssertUtils.assertEquals(expectedRelativeProfit, backTestResult.profits().relative());
         AssertUtils.assertEquals(expectedAnnualProfit, backTestResult.profits().relativeAnnual());
@@ -308,7 +308,7 @@ class BackTesterImplUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
         final String currency1 = TestShare1.CURRENCY;
-        final Quotation commission1 = QuotationUtils.newQuotation(0L, 3000000);
+        final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(10), 100.0);
@@ -317,7 +317,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(40), 400.0);
         prices1.put(from.plusMinutes(50), 500.0);
 
-        final Quotation currentBalance1 = QuotationUtils.newQuotation(2000L);
+        final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(2000);
 
         final BotConfig botConfig1 = new BotConfig(accountId1, figi1, null, commission1, null, null);
 
@@ -335,7 +335,7 @@ class BackTesterImplUnitTest {
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
         final String currency2 = TestShare2.CURRENCY;
-        final Quotation commission2 = QuotationUtils.newQuotation(0L, 1000000);
+        final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
 
         final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
         prices2.put(from.plusMinutes(100), 10.0);
@@ -344,7 +344,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(400), 40.0);
         prices2.put(from.plusMinutes(500), 50.0);
 
-        final Quotation currentBalance2 = QuotationUtils.newQuotation(2000L);
+        final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(2000);
 
         final BotConfig botConfig2 = new BotConfig(accountId2, figi2, null, commission2, null, null);
 
@@ -376,7 +376,7 @@ class BackTesterImplUnitTest {
                         Mockito.eq(accountId1),
                         Mockito.any(OffsetDateTime.class),
                         Mockito.eq(currency1),
-                        Mockito.eq(QuotationUtils.newQuotation(balanceIncrement))
+                        Mockito.eq(DecimalUtils.setDefaultScale(balanceIncrement))
                 );
 
         Mockito.verify(fakeBot2, Mockito.times(24))
@@ -384,7 +384,7 @@ class BackTesterImplUnitTest {
                         Mockito.eq(accountId2),
                         Mockito.any(OffsetDateTime.class),
                         Mockito.eq(currency2),
-                        Mockito.eq(QuotationUtils.newQuotation(balanceIncrement))
+                        Mockito.eq(DecimalUtils.setDefaultScale(balanceIncrement))
                 );
     }
 
@@ -416,7 +416,7 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(20000L),
+                DecimalUtils.setDefaultScale(20000L),
                 quantity1,
                 prices1,
                 currentPrice1,
@@ -432,7 +432,7 @@ class BackTesterImplUnitTest {
                 0.001,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(10000L),
+                DecimalUtils.setDefaultScale(10000L),
                 quantity2,
                 Collections.emptyMap(),
                 currentPrice2,
@@ -477,7 +477,7 @@ class BackTesterImplUnitTest {
         final String figi1 = TestShare1.FIGI;
         final double commission1 = 0.003;
 
-        final Quotation currentBalance1 = QuotationUtils.newQuotation(20000L);
+        final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(20000);
 
         final int quantity1 = 1;
 
@@ -490,7 +490,7 @@ class BackTesterImplUnitTest {
         final String figi2 = TestShare2.FIGI;
         final double commission2 = 0.001;
 
-        final Quotation currentBalance2 = QuotationUtils.newQuotation(10000L);
+        final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(10000);
 
         final int quantity2 = 10;
 
@@ -587,7 +587,7 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(20000L),
+                DecimalUtils.setDefaultScale(20000L),
                 1,
                 prices1,
                 500,
@@ -606,7 +606,7 @@ class BackTesterImplUnitTest {
                 0.001,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(10000L),
+                DecimalUtils.setDefaultScale(10000L),
                 2,
                 prices2,
                 4000,
@@ -658,7 +658,7 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(20000L),
+                DecimalUtils.setDefaultScale(20000L),
                 null,
                 Collections.emptyMap(),
                 300,
@@ -671,7 +671,7 @@ class BackTesterImplUnitTest {
                 0.001,
                 balanceConfig,
                 interval,
-                QuotationUtils.newQuotation(10000L),
+                DecimalUtils.setDefaultScale(10000L),
                 null,
                 Collections.emptyMap(),
                 200,
@@ -708,7 +708,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final Quotation currentBalance = QuotationUtils.ZERO;
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.001;
         final Operation operation = TestData.createOperation(
@@ -772,7 +772,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final Quotation currentBalance = QuotationUtils.ZERO;
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.001;
         final Operation operation = TestData.createOperation(
@@ -835,7 +835,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 0;
-        final Quotation currentBalance = QuotationUtils.newQuotation(20000L);
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(20000);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         final double commission1 = 0.003;
@@ -908,7 +908,7 @@ class BackTesterImplUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Quotation commission1 = QuotationUtils.newQuotation(0L, 3000000);
+        final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
         final BotConfig botConfig1 = new BotConfig(accountId1, figi1, candleInterval1, commission1, strategyType1, Collections.emptyMap());
@@ -922,7 +922,7 @@ class BackTesterImplUnitTest {
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Quotation commission2 = QuotationUtils.newQuotation(0L, 1000000);
+        final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
         final StrategyType strategyType2 = StrategyType.CROSS;
 
         final BotConfig botConfig2 = new BotConfig(accountId2, figi2, candleInterval2, commission2, strategyType2, Collections.emptyMap());
@@ -946,14 +946,14 @@ class BackTesterImplUnitTest {
         final String expectedErrorPattern1 = String.format(
                 "^Back test for 'BotConfig\\{accountId=%s, figi=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\}' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                accountId1, figi1, candleInterval1, QuotationUtils.toPrettyString(commission1), strategyType1, mockedExceptionMessage1
+                accountId1, figi1, candleInterval1, commission1, strategyType1, mockedExceptionMessage1
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(0).error(), expectedErrorPattern1);
 
         final String expectedErrorPattern2 = String.format(
                 "^Back test for 'BotConfig\\{accountId=%s, figi=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\}' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                accountId2, figi2, candleInterval2, QuotationUtils.toPrettyString(commission2), strategyType2, mockedExceptionMessage2
+                accountId2, figi2, candleInterval2, commission2, strategyType2, mockedExceptionMessage2
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(1).error(), expectedErrorPattern2);
     }
@@ -969,7 +969,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final Quotation currentBalance = QuotationUtils.ZERO;
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.003;
         final Operation operation = TestData.createOperation(
@@ -1029,7 +1029,7 @@ class BackTesterImplUnitTest {
             final double commission,
             final BalanceConfig balanceConfig,
             final Interval interval,
-            final Quotation currentBalance,
+            final BigDecimal currentBalance,
             final Integer quantity,
             final Map<OffsetDateTime, Double> prices,
             final double currentPrice,
@@ -1038,7 +1038,7 @@ class BackTesterImplUnitTest {
         final String figi = share.figi();
         final String currency = share.currency();
 
-        final BotConfig botConfig = new BotConfig(accountId, figi, null, QuotationUtils.newQuotation(commission), null, null);
+        final BotConfig botConfig = new BotConfig(accountId, figi, null, DecimalUtils.setDefaultScale(commission), null, null);
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
@@ -1060,7 +1060,7 @@ class BackTesterImplUnitTest {
 
     private void mockCurrentPrice(final FakeBot fakeBot, final String figi, final double currentPrice) {
         Mockito.when(fakeBot.getCurrentPrice(figi))
-                .thenReturn(QuotationUtils.newQuotation(currentPrice));
+                .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 
     private FakeBot mockFakeBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
@@ -1099,9 +1099,9 @@ class BackTesterImplUnitTest {
             final String accountId,
             final String currency,
             final OffsetDateTime dateTime,
-            final Quotation initialInvestment
+            final BigDecimal initialInvestment
     ) {
-        final SortedMap<OffsetDateTime, Quotation> investments = new TreeMap<>();
+        final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
         investments.put(dateTime, initialInvestment);
         Mockito.when(fakeBot.getInvestments(accountId, currency)).thenReturn(investments);
     }

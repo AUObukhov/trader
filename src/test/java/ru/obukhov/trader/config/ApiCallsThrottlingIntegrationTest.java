@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.common.util.ExecutionUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.account.TestAccount1;
@@ -150,7 +149,7 @@ public class ApiCallsThrottlingIntegrationTest {
         final String orderId = TestOrderState1.ORDER_ID;
         final String figi = TestInstrument1.FIGI;
         final int quantity = 1;
-        final Quotation price = QuotationUtils.ZERO;
+        final Quotation price = Quotation.newBuilder().build();
         final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType orderType = OrderType.ORDER_TYPE_MARKET;
 

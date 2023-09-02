@@ -9,13 +9,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -80,50 +78,49 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_throwsIllegalArgumentException_whenThereIsDateTimeAfterEndDateTime() {
-        final Map<OffsetDateTime, Quotation> timestampsToAmounts = new HashMap<>();
+        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
-        Quotation amount = QuotationUtils.newQuotation(10000L);
-        timestampsToAmounts.put(dateTime, amount);
-        final Quotation increment = QuotationUtils.newQuotation(1000L);
+        BigDecimal amount = DecimalUtils.setDefaultScale(10000);
+        dateTimesToAmounts.put(dateTime, amount);
         for (int i = 0; i < 24; i++) {
             dateTime = dateTime.plusDays(1);
-            amount = QuotationUtils.add(amount, increment);
-            timestampsToAmounts.put(dateTime, amount);
+            amount = amount.add(DecimalUtils.setDefaultScale(1000));
+            dateTimesToAmounts.put(dateTime, amount);
         }
 
         final OffsetDateTime endDateTime = DateTimeTestData.createDateTime(2021, 1, 24);
 
-        final Executable executable = () -> MathUtils.getWeightedAverage(timestampsToAmounts, endDateTime);
+        final Executable executable = () -> MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "All dateTimes must be before endDateTime");
     }
 
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
-        final Map<OffsetDateTime, Quotation> dateTimesToAmounts = new HashMap<>();
+        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         final OffsetDateTime endDateTime = DateTimeTestData.createDateTime(2021, 3, 10, 11, 12, 13);
 
-        final Quotation weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
+        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
 
         AssertUtils.assertEquals(0, weightedAverage);
     }
 
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
-        final Map<OffsetDateTime, Quotation> dateTimesToAmounts = new LinkedHashMap<>();
+        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
-        Quotation amount = QuotationUtils.newQuotation(10000L);
+        BigDecimal amount = DecimalUtils.setDefaultScale(10000);
         dateTimesToAmounts.put(dateTime, amount);
-        final Quotation increment = QuotationUtils.newQuotation(1000L);
         for (int i = 0; i < 24; i++) {
             dateTime = dateTime.plusDays(1);
-            amount = QuotationUtils.add(amount, increment);
+            amount = amount.add(DecimalUtils.setDefaultScale(1000));
             dateTimesToAmounts.put(dateTime, amount);
         }
 
         final OffsetDateTime endDateTime = DateTimeTestData.createDateTime(2021, 1, 25);
-        final Quotation weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
 
-        AssertUtils.assertEquals(17666.666666664, weightedAverage);
+        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
+
+        AssertUtils.assertEquals(17666.666666667, weightedAverage);
     }
 
     // endregion

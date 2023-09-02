@@ -1,10 +1,10 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Builder
@@ -15,19 +15,19 @@ public record Etf(
         String isin,
         Integer lot,
         String currency,
-        Quotation klong,
-        Quotation kshort,
-        Quotation dlong,
-        Quotation dshort,
-        Quotation dlongMin,
-        Quotation dshortMin,
+        BigDecimal klong,
+        BigDecimal kshort,
+        BigDecimal dlong,
+        BigDecimal dshort,
+        BigDecimal dlongMin,
+        BigDecimal dshortMin,
         boolean shortEnabledFlag,
         String name,
         String exchange,
-        Quotation fixedCommission,
+        BigDecimal fixedCommission,
         String focusType,
         OffsetDateTime releasedDate,
-        Quotation numShares,
+        BigDecimal numShares,
         String countryOfRisk,
         String countryOfRiskName,
         String sector,
@@ -36,7 +36,7 @@ public record Etf(
         boolean otcFlag,
         boolean buyAvailableFlag,
         boolean sellAvailableFlag,
-        Quotation minPriceIncrement,
+        BigDecimal minPriceIncrement,
         boolean apiTradeAvailableFlag,
         String uid,
         RealExchange realExchange,

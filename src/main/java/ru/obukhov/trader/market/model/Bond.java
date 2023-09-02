@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.RiskLevel;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
@@ -17,12 +16,12 @@ public record Bond(
         String isin,
         Integer lot,
         String currency,
-        Quotation klong,
-        Quotation kshort,
-        Quotation dlong,
-        Quotation dshort,
-        Quotation dlongMin,
-        Quotation dshortMin,
+        BigDecimal klong,
+        BigDecimal kshort,
+        BigDecimal dlong,
+        BigDecimal dshort,
+        BigDecimal dlongMin,
+        BigDecimal dshortMin,
         boolean shortEnabledFlag,
         String name,
         String exchange,
@@ -47,7 +46,7 @@ public record Bond(
         boolean floatingCouponFlag,
         boolean perpetualFlag,
         boolean amortizationFlag,
-        Quotation minPriceIncrement,
+        BigDecimal minPriceIncrement,
         boolean apiTradeAvailableFlag,
         String uid,
         RealExchange realExchange,

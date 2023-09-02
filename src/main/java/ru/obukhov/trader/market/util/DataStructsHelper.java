@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.util;
 
 import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.WithdrawLimitsResponse;
@@ -48,13 +47,6 @@ public class DataStructsHelper {
                 .build();
     }
 
-    public static Money createMoney(final Quotation value, final String currency) {
-        return Money.builder()
-                .currency(currency)
-                .value(QuotationUtils.toBigDecimal(value))
-                .build();
-    }
-
     // endregion
 
     // region createWithdrawLimits
@@ -92,12 +84,11 @@ public class DataStructsHelper {
      * @return balance value of first element from given list {@code moneys) where currency equals to given {@code currency}
      * @throws {@link NoSuchElementException} when there is no element with given {@code currency}
      */
-    public static Quotation getBalance(final List<Money> moneys, final String currency) {
+    public static BigDecimal getBalance(final List<Money> moneys, final String currency) {
         return moneys.stream()
                 .filter(money -> money.getCurrency().equals(currency))
                 .findFirst()
                 .map(Money::getValue)
-                .map(QuotationUtils::newQuotation)
                 .orElseThrow();
     }
 

@@ -2,13 +2,12 @@ package ru.obukhov.trader.test.utils.model.currency;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
@@ -18,8 +17,8 @@ import java.time.OffsetDateTime;
 public class TestCurrency1 {
 
     private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
-
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final String FIGI = "BBG0013HGFT4";
     public static final String TICKER = "USD000UTSTOM";
@@ -27,12 +26,12 @@ public class TestCurrency1 {
     public static final String ISIN = "";
     public static final int LOT = 1000;
     public static final String CURRENCY_VALUE = Currencies.RUB;
-    public static final Quotation KLONG = QuotationUtils.newQuotation(2L);
-    public static final Quotation KSHORT = QuotationUtils.newQuotation(2L);
-    public static final Quotation DLONG = QuotationUtils.newQuotation(0L, 500000000);
-    public static final Quotation DSHORT = QuotationUtils.newQuotation(0L, 500000000);
-    public static final Quotation DLONG_MIN = QuotationUtils.newQuotation(0L, 292900000);
-    public static final Quotation DSHORT_MIN = QuotationUtils.newQuotation(0L, 224700000);
+    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(2L);
+    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(2L);
+    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(0.5);
+    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(0.5);
+    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(0.2929);
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(0.2247);
     public static final boolean SHORT_ENABLED_FLAG = true;
     public static final String NAME = "Доллар США";
     public static final String EXCHANGE = "FX";
@@ -43,7 +42,7 @@ public class TestCurrency1 {
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final String ISO_CURRENCY_NAME = "usd";
-    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newQuotation(0L, 2500000);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.0025);
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "a22a1263-8e1b-4546-a1aa-416463f104d3";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
@@ -98,12 +97,12 @@ public class TestCurrency1 {
             .setIsin(ISIN)
             .setLot(LOT)
             .setCurrency(CURRENCY_VALUE)
-            .setKlong(KLONG)
-            .setKshort(KSHORT)
-            .setDlong(DLONG)
-            .setDshort(DSHORT)
-            .setDlongMin(DLONG_MIN)
-            .setDshortMin(DSHORT_MIN)
+            .setKlong(QUOTATION_MAPPER.fromBigDecimal(KLONG))
+            .setKshort(QUOTATION_MAPPER.fromBigDecimal(KSHORT))
+            .setDlong(QUOTATION_MAPPER.fromBigDecimal(DLONG))
+            .setDshort(QUOTATION_MAPPER.fromBigDecimal(DSHORT))
+            .setDlongMin(QUOTATION_MAPPER.fromBigDecimal(DLONG_MIN))
+            .setDshortMin(QUOTATION_MAPPER.fromBigDecimal(DSHORT_MIN))
             .setShortEnabledFlag(SHORT_ENABLED_FLAG)
             .setName(NAME)
             .setExchange(EXCHANGE)
@@ -114,7 +113,7 @@ public class TestCurrency1 {
             .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
             .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
             .setIsoCurrencyName(ISO_CURRENCY_NAME)
-            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(MIN_PRICE_INCREMENT))
             .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
             .setUid(UID)
             .setRealExchange(REAL_EXCHANGE)

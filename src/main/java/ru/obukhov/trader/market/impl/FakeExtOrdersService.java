@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.OrderState;
@@ -21,7 +20,6 @@ import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -41,7 +39,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private final FakeContext fakeContext;
     private final ExtInstrumentsService extInstrumentsService;
     private final ExtMarketDataService extMarketDataService;
-    private final Quotation commission;
+    private final BigDecimal commission;
 
     /**
      * @return returns list of active orders with given {@code figi} at given {@code accountId}.
@@ -74,9 +72,9 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final String orderId
     ) {
         final Share share = extInstrumentsService.getShare(figi);
-        final Quotation currentPrice = getCurrentPrice(figi);
-        final Quotation totalPrice = QuotationUtils.multiply(currentPrice, quantity);
-        final Quotation totalCommissionAmount = QuotationUtils.multiply(totalPrice, commission);
+        final BigDecimal currentPrice = getCurrentPrice(figi);
+        final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
+        final BigDecimal totalCommissionAmount = DecimalUtils.setDefaultScale(totalPrice.multiply(commission));
 
         if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
             buyPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
@@ -107,7 +105,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     /**
      * @return last known price for instrument with given {@code figi} not after current fake date time
      */
-    private Quotation getCurrentPrice(final String figi) {
+    private BigDecimal getCurrentPrice(final String figi) {
         final OffsetDateTime currentTimestamp = fakeContext.getCurrentDateTime();
         return extMarketDataService.getLastPrice(figi, currentTimestamp);
     }
@@ -115,14 +113,14 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private void buyPosition(
             final String accountId,
             final String figi,
-            final Quotation currentPrice,
+            final BigDecimal currentPrice,
             final Long quantity,
-            final Quotation totalPrice,
-            final Quotation commissionAmount
+            final BigDecimal totalPrice,
+            final BigDecimal commissionAmount
     ) {
         final Share share = extInstrumentsService.getShare(figi);
 
-        updateBalance(accountId, share.currency(), QuotationUtils.subtract(QuotationUtils.negate(totalPrice), commissionAmount));
+        updateBalance(accountId, share.currency(), totalPrice.negate().subtract(commissionAmount));
 
         final Position existingPosition = fakeContext.getPosition(accountId, figi);
         Position position;
@@ -143,9 +141,9 @@ public class FakeExtOrdersService implements ExtOrdersService {
         fakeContext.addPosition(accountId, figi, position);
     }
 
-    private void updateBalance(final String accountId, final String currency, final Quotation increment) {
-        final Quotation newBalance = QuotationUtils.add(fakeContext.getBalance(accountId, currency), increment);
-        Assert.isTrue(QuotationUtils.getSign(newBalance) >= 0, "balance can't be negative");
+    private void updateBalance(final String accountId, final String currency, final BigDecimal increment) {
+        final BigDecimal newBalance = fakeContext.getBalance(accountId, currency).add(increment);
+        Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
         fakeContext.setBalance(accountId, currency, newBalance);
     }
@@ -153,10 +151,10 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private void sellPosition(
             final String accountId,
             final String figi,
-            final Quotation currentPrice,
+            final BigDecimal currentPrice,
             final Long quantity,
-            final Quotation totalPrice,
-            final Quotation commissionAmount
+            final BigDecimal totalPrice,
+            final BigDecimal commissionAmount
     ) {
         final Position existingPosition = fakeContext.getPosition(accountId, figi);
         final BigDecimal newQuantity = DecimalUtils.subtract(existingPosition.getQuantity(), quantity).setScale(0, RoundingMode.UNNECESSARY);
@@ -168,14 +166,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
 
         final Share share = extInstrumentsService.getShare(figi);
 
-        updateBalance(accountId, share.currency(), QuotationUtils.subtract(totalPrice, commissionAmount));
+        updateBalance(accountId, share.currency(), totalPrice.subtract(commissionAmount));
         if (compareToZero == 0) {
             fakeContext.removePosition(accountId, figi);
         } else {
-            final Quotation newExpectedYield = QuotationUtils.multiply(
-                    QuotationUtils.subtract(currentPrice, existingPosition.getAveragePositionPrice().getValue()),
-                    newQuantity
-            );
+            final BigDecimal newExpectedYield = currentPrice.subtract(existingPosition.getAveragePositionPrice().getValue()).multiply(newQuantity);
             final Position newPosition = PositionUtils.cloneWithNewValues(existingPosition, newQuantity, newExpectedYield, currentPrice);
             fakeContext.addPosition(accountId, figi, newPosition);
         }
@@ -185,7 +180,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final String accountId,
             final String figi,
             final String currency,
-            final Quotation price,
+            final BigDecimal price,
             final long quantity,
             final OperationType operationType
     ) {
