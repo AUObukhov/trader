@@ -1,13 +1,19 @@
 package ru.obukhov.trader.test.utils.model.etf;
 
-import com.google.protobuf.Timestamp;
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.tinkoff.piapi.contract.v1.Etf;
+import ru.obukhov.trader.market.model.Etf;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.time.OffsetDateTime;
+
 public class TestEtf1 {
+
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     public static final String FIGI = "BBG005HLTYH9";
     public static final String TICKER = "FXIT";
@@ -26,7 +32,7 @@ public class TestEtf1 {
     public static final String EXCHANGE = "moex_close";
     public static final Quotation FIXED_COMMISSION = QuotationUtils.newQuotation(0L, 900000000);
     public static final String FOCUS_TYPE = "equity";
-    public static final Timestamp RELEASED_DATE = Timestamp.newBuilder().setSeconds(1383177600L).setNanos(0).build();
+    public static final OffsetDateTime RELEASED_DATE = DateTimeTestData.createDateTime(2013, 10, 31, 3);
     public static final Quotation NUM_SHARES = QuotationUtils.newQuotation(692000L);
     public static final String COUNTRY_OF_RISK = "US";
     public static final String COUNTRY_OF_RISK_NAME = "Соединенные Штаты Америки";
@@ -45,10 +51,51 @@ public class TestEtf1 {
     public static final boolean FOR_QUAL_INVESTOR_FLAG = true;
     public static final boolean WEEKEND_FLAG = false;
     public static final boolean BLOCKED_TCA_FLAG = false;
-    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1520447700L).setNanos(0).build();
-    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1383177600L).setNanos(0).build();
+    public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 3, 7, 21, 35);
+    public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(2013, 10, 31, 3);
 
-    public static final Etf ETF = Etf.newBuilder()
+    public static final Etf ETF = Etf.builder()
+            .figi(FIGI)
+            .ticker(TICKER)
+            .classCode(CLASS_CODE)
+            .isin(ISIN)
+            .lot(LOT)
+            .currency(CURRENCY)
+            .klong(KLONG)
+            .kshort(KSHORT)
+            .dlong(DLONG)
+            .dshort(DSHORT)
+            .dlongMin(DLONG_MIN)
+            .dshortMin(DSHORT_MIN)
+            .shortEnabledFlag(SHORT_ENABLED_FLAG)
+            .name(NAME)
+            .exchange(EXCHANGE)
+            .fixedCommission(FIXED_COMMISSION)
+            .focusType(FOCUS_TYPE)
+            .releasedDate(RELEASED_DATE)
+            .numShares(NUM_SHARES)
+            .countryOfRisk(COUNTRY_OF_RISK)
+            .countryOfRiskName(COUNTRY_OF_RISK_NAME)
+            .sector(SECTOR)
+            .rebalancingFreq(REBALANCING_FREQUENCY)
+            .tradingStatus(TRADING_STATUS)
+            .otcFlag(OTC_FLAG)
+            .buyAvailableFlag(BUY_AVAILABLE_FLAG)
+            .sellAvailableFlag(SELL_AVAILABLE_FLAG)
+            .minPriceIncrement(MIN_PRICE_INCREMENT)
+            .apiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .uid(UID)
+            .realExchange(REAL_EXCHANGE)
+            .positionUid(POSITION_UID)
+            .forIisFlag(FOR_IIS_FLAG)
+            .forQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
+            .weekendFlag(WEEKEND_FLAG)
+            .blockedTcaFlag(BLOCKED_TCA_FLAG)
+            .first1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
+            .first1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .build();
+
+    public static final ru.tinkoff.piapi.contract.v1.Etf TINKOFF_ETF = ru.tinkoff.piapi.contract.v1.Etf.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setClassCode(CLASS_CODE)
@@ -66,7 +113,7 @@ public class TestEtf1 {
             .setExchange(EXCHANGE)
             .setFixedCommission(FIXED_COMMISSION)
             .setFocusType(FOCUS_TYPE)
-            .setReleasedDate(RELEASED_DATE)
+            .setReleasedDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(RELEASED_DATE))
             .setNumShares(NUM_SHARES)
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
@@ -85,47 +132,8 @@ public class TestEtf1 {
             .setForQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
             .setWeekendFlag(WEEKEND_FLAG)
             .setBlockedTcaFlag(BLOCKED_TCA_FLAG)
-            .setFirst1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
-            .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_MIN_CANDLE_DATE))
+            .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_DAY_CANDLE_DATE))
             .build();
-
-    public static final String JSON_STRING = "{\"figi\":\"BBG005HLTYH9\"," +
-            "\"ticker\":\"FXIT\"," +
-            "\"classCode\":\"TQTF\"," +
-            "\"isin\":\"IE00BD3QJ757\"," +
-            "\"lot\":1," +
-            "\"currency\":\"rub\"," +
-            "\"klong\":0," +
-            "\"kshort\":0," +
-            "\"dlong\":0," +
-            "\"dshort\":0," +
-            "\"dlongMin\":0," +
-            "\"dshortMin\":0," +
-            "\"shortEnabledFlag\":false," +
-            "\"name\":\"FinEx Акции компаний IT-сектора США\"," +
-            "\"exchange\":\"moex_close\"," +
-            "\"fixedCommission\":0.9," +
-            "\"focusType\":\"equity\"," +
-            "\"releasedDate\":{\"seconds\":1383177600,\"nanos\":0}," +
-            "\"numShares\":692000," +
-            "\"countryOfRisk\":\"US\"," +
-            "\"countryOfRiskName\":\"Соединенные Штаты Америки\"," +
-            "\"sector\":\"it\"," +
-            "\"rebalancingFreq\":\"quarterly\"," +
-            "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
-            "\"otcFlag\":false," +
-            "\"buyAvailableFlag\":true," +
-            "\"sellAvailableFlag\":true," +
-            "\"minPriceIncrement\":1," +
-            "\"apiTradeAvailableFlag\":true," +
-            "\"uid\":\"232b3cca-ecef-439c-8e3c-bdd9e669f6e0\"," +
-            "\"realExchange\":\"REAL_EXCHANGE_MOEX\"," +
-            "\"positionUid\":\"ea43b22b-1568-4b16-b180-b70ae1d7f34a\"," +
-            "\"forIisFlag\":true," +
-            "\"forQualInvestorFlag\":true," +
-            "\"weekendFlag\":false," +
-            "\"blockedTcaFlag\":false," +
-            "\"first1MinCandleDate\":{\"seconds\":1520447700,\"nanos\":0}," +
-            "\"first1DayCandleDate\":{\"seconds\":1383177600,\"nanos\":0}}";
 
 }

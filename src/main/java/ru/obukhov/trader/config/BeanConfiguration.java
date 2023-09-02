@@ -35,7 +35,6 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.transform.CurrencySerializer;
-import ru.obukhov.trader.market.model.transform.EtfSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStageSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationDeserializer;
@@ -199,7 +198,6 @@ public class BeanConfiguration {
     @Primary
     public ObjectMapper objectMapper() {
         final SimpleModule tinkoffModule = new SimpleModule()
-                .addSerializer(new EtfSerializer())
                 .addSerializer(new OrderStageSerializer())
                 .addSerializer(new CurrencySerializer())
                 .addSerializer(new QuotationSerializer())

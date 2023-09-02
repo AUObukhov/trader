@@ -92,7 +92,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getEtf_returnsEtf() throws Exception {
-        Mocker.mockEtf(instrumentsService, TestEtf2.ETF);
+        Mocker.mockEtf(instrumentsService, TestEtf2.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")

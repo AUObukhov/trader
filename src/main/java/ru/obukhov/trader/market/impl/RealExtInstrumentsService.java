@@ -7,17 +7,18 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
+import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.market.model.transform.BondMapper;
+import ru.obukhov.trader.market.model.transform.EtfMapper;
 import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
 import ru.tinkoff.piapi.contract.v1.Currency;
-import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
@@ -31,6 +32,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     private static final InstrumentMapper INSTRUMENT_MAPPER = Mappers.getMapper(InstrumentMapper.class);
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final BondMapper BOND_MAPPER = Mappers.getMapper(BondMapper.class);
+    private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -76,7 +78,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return {@link Etf} corresponding to given {@code figi}
      */
     public Etf getEtf(final String figi) {
-        return instrumentsService.getEtfByFigiSync(figi);
+        return ETF_MAPPER.map(instrumentsService.getEtfByFigiSync(figi));
     }
 
     /**
