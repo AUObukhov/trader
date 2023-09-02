@@ -1,20 +1,24 @@
 package ru.obukhov.trader.test.utils.model.bond;
 
+import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.RiskLevel;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public class TestBond2 {
+
+    private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
 
     public static final String FIGI = "TCS00A1050H0";
     public static final String TICKER = "RU000A1050H0";
@@ -33,12 +37,12 @@ public class TestBond2 {
     public static final String EXCHANGE = "MOEX";
     public static final int COUPON_QUANTITY_PER_YEAR = 2;
     public static final OffsetDateTime MATURITY_DATE = DateTimeTestData.createDateTime(2025, 7, 29, 3);
-    public static final MoneyValue NOMINAL = TestData.createMoneyValue(1000, Currencies.RUB);
-    public static final MoneyValue INITIAL_NOMINAL = TestData.createMoneyValue(1000, Currencies.RUB);
+    public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1000);
+    public static final BigDecimal INITIAL_NOMINAL = DecimalUtils.setDefaultScale(1000);
     public static final OffsetDateTime STATE_REG_DATE = DateTimeTestData.createDateTime(2022, 7, 28, 3);
     public static final OffsetDateTime PLACEMENT_DATE = DateTimeTestData.createDateTime(2022, 8, 2, 3);
-    public static final MoneyValue PLACEMENT_PRICE = TestData.createMoneyValue(1000, Currencies.RUB);
-    public static final MoneyValue ACI_VALUE = TestData.createMoneyValue(45.08, Currencies.RUB);
+    public static final BigDecimal PLACEMENT_PRICE = DecimalUtils.setDefaultScale(1000);
+    public static final BigDecimal ACI_VALUE = DecimalUtils.setDefaultScale(45.08);
     public static final String COUNTRY_OF_RISK = "KZ";
     public static final String COUNTRY_OF_RISK_NAME = "Республика Казахстан";
     public static final String SECTOR = "financial";
@@ -137,12 +141,12 @@ public class TestBond2 {
             .setExchange(EXCHANGE)
             .setCouponQuantityPerYear(COUPON_QUANTITY_PER_YEAR)
             .setMaturityDate(TimestampUtils.newTimestamp(MATURITY_DATE))
-            .setNominal(NOMINAL)
-            .setInitialNominal(INITIAL_NOMINAL)
+            .setNominal(MONEY_VALUE_MAPPER.map(NOMINAL, CURRENCY))
+            .setInitialNominal(MONEY_VALUE_MAPPER.map(INITIAL_NOMINAL, CURRENCY))
             .setStateRegDate(TimestampUtils.newTimestamp(STATE_REG_DATE))
             .setPlacementDate(TimestampUtils.newTimestamp(PLACEMENT_DATE))
-            .setPlacementPrice(PLACEMENT_PRICE)
-            .setAciValue(ACI_VALUE)
+            .setPlacementPrice(MONEY_VALUE_MAPPER.map(PLACEMENT_PRICE, CURRENCY))
+            .setAciValue(MONEY_VALUE_MAPPER.map(ACI_VALUE, CURRENCY))
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
             .setSector(SECTOR)
@@ -188,12 +192,12 @@ public class TestBond2 {
             "\"exchange\":\"MOEX\"," +
             "\"couponQuantityPerYear\":2," +
             "\"maturityDate\":\"2025-07-29T03:00:00+03:00\"," +
-            "\"nominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
-            "\"initialNominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
+            "\"nominal\":1000.000000000," +
+            "\"initialNominal\":1000.000000000," +
             "\"stateRegDate\":\"2022-07-28T03:00:00+03:00\"," +
             "\"placementDate\":\"2022-08-02T03:00:00+03:00\"," +
-            "\"placementPrice\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0}," +
-            "\"aciValue\":{\"currency\":\"rub\",\"units\":45,\"nano\":80000000}," +
+            "\"placementPrice\":1000.000000000," +
+            "\"aciValue\":45.080000000," +
             "\"countryOfRisk\":\"KZ\"," +
             "\"countryOfRiskName\":\"Республика Казахстан\"," +
             "\"sector\":\"financial\"," +

@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.RiskLevel;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Builder
@@ -28,12 +28,12 @@ public record Bond(
         String exchange,
         Integer couponQuantityPerYear,
         OffsetDateTime maturityDate,
-        MoneyValue nominal,
-        MoneyValue initialNominal,
+        BigDecimal nominal,
+        BigDecimal initialNominal,
         OffsetDateTime stateRegDate,
         OffsetDateTime placementDate,
-        MoneyValue placementPrice,
-        MoneyValue aciValue,
+        BigDecimal placementPrice,
+        BigDecimal aciValue,
         String countryOfRisk,
         String countryOfRiskName,
         String sector,

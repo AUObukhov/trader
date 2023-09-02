@@ -1,11 +1,11 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Builder
@@ -25,7 +25,7 @@ public record Currency(
         boolean shortEnabledFlag,
         String name,
         String exchange,
-        MoneyValue nominal,
+        BigDecimal nominal,
         String countryOfRisk,
         String countryOfRiskName,
         SecurityTradingStatus tradingStatus,

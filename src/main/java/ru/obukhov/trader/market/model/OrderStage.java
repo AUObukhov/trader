@@ -1,11 +1,12 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
+
+import java.math.BigDecimal;
 
 @Builder
 public record OrderStage(
-        MoneyValue price,
+        BigDecimal price,
         long quantity,
         String tradeId
 ) {

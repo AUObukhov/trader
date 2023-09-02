@@ -6,7 +6,7 @@ import ru.obukhov.trader.market.model.OrderStage;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.OrderStage} to {@link OrderStage} and vice versa
  */
-@Mapper
+@Mapper(uses = MoneyValueMapper.class)
 public interface OrderStageMapper {
 
     OrderStage map(final ru.tinkoff.piapi.contract.v1.OrderStage source);

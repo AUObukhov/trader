@@ -1,11 +1,11 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -15,17 +15,17 @@ public record OrderState(
         OrderExecutionReportStatus executionReportStatus,
         long lotsRequested,
         long lotsExecuted,
-        MoneyValue initialOrderPrice,
-        MoneyValue executedOrderPrice,
-        MoneyValue totalOrderAmount,
-        MoneyValue averagePositionPrice,
-        MoneyValue initialCommission,
-        MoneyValue executedCommission,
+        BigDecimal initialOrderPrice,
+        BigDecimal executedOrderPrice,
+        BigDecimal totalOrderAmount,
+        BigDecimal averagePositionPrice,
+        BigDecimal initialCommission,
+        BigDecimal executedCommission,
         String figi,
         OrderDirection direction,
-        MoneyValue initialSecurityPrice,
+        BigDecimal initialSecurityPrice,
         List<OrderStage> stages,
-        MoneyValue serviceCommission,
+        BigDecimal serviceCommission,
         String currency,
         OrderType orderType,
         OffsetDateTime orderDate,

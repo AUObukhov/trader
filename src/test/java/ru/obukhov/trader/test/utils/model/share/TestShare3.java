@@ -1,23 +1,25 @@
 package ru.obukhov.trader.test.utils.model.share;
 
 import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.ShareType;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public class TestShare3 {
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
 
     public static final String FIGI = "BBG006L8G4H1";
     public static final String TICKER = "YNDX";
@@ -40,7 +42,7 @@ public class TestShare3 {
     public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
     public static final String SECTOR = "telecom";
     public static final long ISSUE_SIZE_PLAN = 0L;
-    public static final MoneyValue NOMINAL = TestData.createMoneyValue(0.01, Currencies.EUR);
+    public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(0.01);
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
@@ -123,7 +125,7 @@ public class TestShare3 {
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
             .setSector(SECTOR)
             .setIssueSizePlan(ISSUE_SIZE_PLAN)
-            .setNominal(NOMINAL)
+            .setNominal(MONEY_VALUE_MAPPER.map(NOMINAL, CURRENCY))
             .setTradingStatus(TRADING_STATUS)
             .setOtcFlag(OTC_FLAG)
             .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)

@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.ShareType;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Builder
@@ -32,7 +32,7 @@ public record Share(
         String countryOfRiskName,
         String sector,
         Long issueSizePlan,
-        MoneyValue nominal,
+        BigDecimal nominal,
         SecurityTradingStatus tradingStatus,
         boolean otcFlag,
         boolean buyAvailableFlag,

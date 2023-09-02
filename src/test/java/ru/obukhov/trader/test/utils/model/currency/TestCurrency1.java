@@ -1,20 +1,23 @@
 package ru.obukhov.trader.test.utils.model.currency;
 
 import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public class TestCurrency1 {
+
+    private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
@@ -33,7 +36,7 @@ public class TestCurrency1 {
     public static final boolean SHORT_ENABLED_FLAG = true;
     public static final String NAME = "Доллар США";
     public static final String EXCHANGE = "FX";
-    public static final MoneyValue NOMINAL = TestData.createMoneyValue(1, Currencies.USD);
+    public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1);
     public static final String COUNTRY_OF_RISK = "";
     public static final String COUNTRY_OF_RISK_NAME = "";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
@@ -104,7 +107,7 @@ public class TestCurrency1 {
             .setShortEnabledFlag(SHORT_ENABLED_FLAG)
             .setName(NAME)
             .setExchange(EXCHANGE)
-            .setNominal(NOMINAL)
+            .setNominal(MONEY_VALUE_MAPPER.map(NOMINAL, ISO_CURRENCY_NAME))
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
             .setTradingStatus(TRADING_STATUS)
@@ -140,7 +143,7 @@ public class TestCurrency1 {
             "\"shortEnabledFlag\":true," +
             "\"name\":\"Доллар США\"," +
             "\"exchange\":\"FX\"," +
-            "\"nominal\":{\"currency\":\"usd\",\"units\":1,\"nano\":0}," +
+            "\"nominal\":1," +
             "\"countryOfRisk\":\"\"," +
             "\"countryOfRiskName\":\"\"," +
             "\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\"," +
