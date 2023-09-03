@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,7 +17,7 @@ public enum StrategyType {
     CROSS("cross");
 
     private static final Map<String, StrategyType> LOOKUP = Stream.of(StrategyType.values())
-            .collect(Collectors.toMap(StrategyType::getValue, strategyType -> strategyType));
+            .collect(Collectors.toMap(StrategyType::getValue, Function.identity()));
 
     @JsonValue
     private final String value;

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,7 +16,7 @@ public enum TargetType {
     TABLE("table");
 
     private static final Map<String, TargetType> LOOKUP = Stream.of(TargetType.values())
-            .collect(Collectors.toMap(TargetType::getValue, targetType -> targetType));
+            .collect(Collectors.toMap(TargetType::getValue, Function.identity()));
 
     @Getter
     @JsonValue

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ public enum ColumnType {
     NUMBER("number");
 
     private static final Map<String, ColumnType> LOOKUP = Stream.of(ColumnType.values())
-            .collect(Collectors.toMap(ColumnType::getValue, columnType -> columnType));
+            .collect(Collectors.toMap(ColumnType::getValue, Function.identity()));
 
     @Getter
     @JsonValue
