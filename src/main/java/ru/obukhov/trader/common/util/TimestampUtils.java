@@ -16,12 +16,6 @@ public class TimestampUtils {
 
     public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.of("+03:00");
 
-    public static final int HOURS_PER_DAY = 24;
-    public static final int MINUTES_PER_DAY = HOURS_PER_DAY * 60;
-
-    public static final int NANOS_PER_SECOND = 1000_000_000;
-    public static final long NANOS_PER_MINUTE = 60L * NANOS_PER_SECOND;
-
     private static final long SECONDS_MIN_VALUE = -62135596800L;
     private static final long SECONDS_MAX_VALUE = 253402300799L;
     private static final int NANOS_MIN_VALUE = 0;
