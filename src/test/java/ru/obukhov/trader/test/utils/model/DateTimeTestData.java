@@ -87,10 +87,17 @@ public class DateTimeTestData {
     // endregion
 
     /**
-     * @return OffsetTime with by params, 0 year, 1 month, 1 day of month, 0 nanoseconds and default offset
+     * @return OffsetTime with given {@code hour}, {@code minute}, {@code second}, 0 nanoseconds and default offset
      */
     public static OffsetTime createTime(final int hour, final int minute, final int second) {
         return OffsetTime.of(hour, minute, second, 0, DateUtils.DEFAULT_OFFSET);
+    }
+
+    /**
+     * @return OffsetTime with given {@code hour}, 0 minutes, 0 seconds, 0 nanoseconds and default offset
+     */
+    public static OffsetTime createTime(final int hour) {
+        return OffsetTime.of(hour, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
     }
 
 }

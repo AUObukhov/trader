@@ -5,6 +5,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.model.WorkSchedule;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currency;
@@ -36,9 +38,11 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
     private static final CurrencyMapper CURRENCY_MAPPER = Mappers.getMapper(CurrencyMapper.class);
 
+    private final WorkSchedule workSchedule;
     private final InstrumentsService instrumentsService;
 
-    public RealExtInstrumentsService(final InstrumentsService instrumentsService) {
+    public RealExtInstrumentsService(final MarketProperties marketProperties, final InstrumentsService instrumentsService) {
+        this.workSchedule = marketProperties.getWorkSchedule();
         this.instrumentsService = instrumentsService;
     }
 
@@ -111,11 +115,15 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     public List<TradingDay> getTradingSchedule(final String exchange, final Interval interval) {
         final Instant fromInstant = DateUtils.toSameDayInstant(interval.getFrom());
         final Instant toInstant = DateUtils.toSameDayInstant(interval.getTo());
-        return instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)
-                .getDaysList()
-                .stream()
-                .map(TRADING_DAY_MAPPER::map)
-                .toList();
+        if (fromInstant.isBefore(Instant.now())) {
+            return interval.toTradingDays(workSchedule);
+        } else {
+            return instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)
+                    .getDaysList()
+                    .stream()
+                    .map(TRADING_DAY_MAPPER::map)
+                    .toList();
+        }
     }
 
     /**

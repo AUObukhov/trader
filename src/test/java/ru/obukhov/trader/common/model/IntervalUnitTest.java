@@ -9,10 +9,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
+import ru.obukhov.trader.config.model.WorkSchedule;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -1170,6 +1173,100 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         AssertUtils.assertEquals(expected, interval.toDays());
+    }
+
+    // endregion
+
+    // region toTradingDays tests
+
+    @Test
+    void toTradingDays_tradingIntervalWithinOneDay_fromBeforeTradingSchedule() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 7;
+        final int durationHours = 12;
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+        final Interval interval = Interval.of(from, to);
+        final WorkSchedule workSchedule = TestData.createWorkSchedule(hour, durationHours);
+
+        final List<TradingDay> actualResult = interval.toTradingDays(workSchedule);
+
+        final List<TradingDay> expectedResult = List.of(
+                TestData.createTradingDay(true, year, month, 18, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 19, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 20, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 21, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 22, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 23, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 24, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 25, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 26, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+        );
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void toTradingDays_tradingIntervalWithinOneDay_fromAfterTradingSchedule() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 7;
+        final int durationHours = 12;
+
+        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+        final Interval interval = Interval.of(from, to);
+        final WorkSchedule workSchedule = TestData.createWorkSchedule(hour, durationHours);
+
+        final List<TradingDay> actualResult = interval.toTradingDays(workSchedule);
+
+        final List<TradingDay> expectedResult = List.of(
+                TestData.createTradingDay(true, year, month, 18, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 19, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 20, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 21, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 22, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 23, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 24, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 25, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 26, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+        );
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void toTradingDays_tradingIntervalWithinTwoDays() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 7;
+        final int durationHours = 19;
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+        final Interval interval = Interval.of(from, to);
+        final WorkSchedule workSchedule = TestData.createWorkSchedule(hour, durationHours);
+
+        final List<TradingDay> actualResult = interval.toTradingDays(workSchedule);
+
+        final List<TradingDay> expectedResult = List.of(
+                TestData.createTradingDay(true, year, month, 18, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 19, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 20, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 21, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 22, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 23, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 24, hour, durationHours),
+                TestData.createTradingDay(true, year, month, 25, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 26, hour, durationHours),
+                TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+        );
+
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion

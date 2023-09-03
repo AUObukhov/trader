@@ -1,6 +1,7 @@
 package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -12,6 +13,7 @@ import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
@@ -176,7 +178,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @SuppressWarnings("squid:S2699")
         // Tests should include assertions
-    void getTradingSchedule() throws Exception {
+    void getTradingSchedule_forFuture() throws Exception {
         final String exchange = "MOEX";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
@@ -191,13 +193,17 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
-        performAndExpectResponse(requestBuilder, expectedResult);
+        final Instant mockedNow = DateUtils.toSameDayInstant(from);
+
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            performAndExpectResponse(requestBuilder, expectedResult);
+        }
     }
 
     @Test
     @SuppressWarnings("squid:S2699")
         // Tests should include assertions
-    void getTradingSchedule_adjustsFromInstant() throws Exception {
+    void getTradingSchedule_forFuture_adjustsFromInstant() throws Exception {
         final String exchange = "SPB";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
@@ -214,13 +220,16 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
-        performAndExpectResponse(requestBuilder, expectedResult);
+        final Instant mockedNow = DateUtils.toSameDayInstant(from);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            performAndExpectResponse(requestBuilder, expectedResult);
+        }
     }
 
     @Test
     @SuppressWarnings("squid:S2699")
         // Tests should include assertions
-    void getTradingSchedule_adjustsToInstant() throws Exception {
+    void getTradingSchedule_forFuture_adjustsToInstant() throws Exception {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
@@ -237,7 +246,50 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
-        performAndExpectResponse(requestBuilder, expectedResult);
+        final Instant mockedNow = DateUtils.toSameDayInstant(from);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            performAndExpectResponse(requestBuilder, expectedResult);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("squid:S2699")
+        // Tests should include assertions
+    void getTradingSchedule_forPast() throws Exception {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 12;
+        final int durationHours = 8;
+
+        final String exchange = "MOEX";
+        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+
+        mockTradingSchedule(exchange, from, to);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/trading-schedule")
+                .param("exchange", exchange)
+                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final Instant mockedNow = DateUtils.toSameDayInstant(from).plusNanos(1);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.createTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.createTradingDay(false, year, month, 19, hour, durationHours),
+                    TestData.createTradingDay(false, year, month, 20, hour, durationHours),
+                    TestData.createTradingDay(true, year, month, 21, hour, durationHours),
+                    TestData.createTradingDay(true, year, month, 22, hour, durationHours),
+                    TestData.createTradingDay(true, year, month, 23, hour, durationHours),
+                    TestData.createTradingDay(true, year, month, 24, hour, durationHours),
+                    TestData.createTradingDay(true, year, month, 25, hour, durationHours),
+                    TestData.createTradingDay(false, year, month, 26, hour, durationHours),
+                    TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+            );
+
+            performAndExpectResponse(requestBuilder, expectedResult);
+        }
     }
 
     // endregion

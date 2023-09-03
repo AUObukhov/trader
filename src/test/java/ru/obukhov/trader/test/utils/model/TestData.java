@@ -9,6 +9,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
@@ -33,6 +34,7 @@ import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
@@ -286,6 +288,19 @@ public class TestData {
         );
     }
 
+    public static TradingDay createTradingDay(
+            final boolean isTradingDay,
+            final int year,
+            final int month,
+            final int dayOfMonth,
+            final int hour,
+            final int durationHours
+    ) {
+        final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(year, month, dayOfMonth, hour);
+        final OffsetDateTime endDateTime = startDateTime.plusHours(durationHours);
+        return createTradingDay(isTradingDay, startDateTime, endDateTime);
+    }
+
     public static TradingDay createTradingDay(final OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
         return createTradingDay(true, startDateTime, endDateTime);
     }
@@ -303,7 +318,14 @@ public class TestData {
     }
 
     /**
-     * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
+     * @return WorkSchedule with start equal to given @{code hour} of day and given duration of given {@code durationHours}
+     */
+    public static WorkSchedule createWorkSchedule(final int hour, final int durationHours) {
+        return new WorkSchedule(DateTimeTestData.createTime(hour), Duration.ofHours(durationHours));
+    }
+
+    /**
+     * @return new Interval where {@code from} is start of given {@code dateTime} and {@code to} is end of given {@code dateTime}
      */
     public static Interval createIntervalOfDay(@NotNull final OffsetDateTime dateTime) {
         final OffsetDateTime from = DateUtils.toStartOfDay(dateTime);

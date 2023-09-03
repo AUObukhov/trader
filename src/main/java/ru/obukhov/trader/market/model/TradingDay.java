@@ -1,7 +1,10 @@
 package ru.obukhov.trader.market.model;
 
+import lombok.Builder;
+
 import java.time.OffsetDateTime;
 
+@Builder
 public record TradingDay(
         OffsetDateTime date,
         boolean isTradingDay,

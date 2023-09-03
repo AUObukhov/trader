@@ -40,7 +40,6 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -265,10 +264,6 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
                 .mock();
-
-        final OffsetTime startTime = DateTimeTestData.createTime(12, 0, 0);
-        final OffsetTime endTime = DateTimeTestData.createTime(20, 0, 0);
-        Mocker.mockTradingSchedule(instrumentsService, TestShare1.EXCHANGE, interval, startTime, endTime);
 
         // building expected response
 

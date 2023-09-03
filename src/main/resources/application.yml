@@ -1,6 +1,11 @@
 ru.tinkoff.invest.openapi:
   host: "https://api-invest.tinkoff.ru"
 
+market:
+  work-schedule:
+    start-time: 07:00:00+03:00
+    duration: 720
+
 scheduling:
   delay: 60000
   enabled: false

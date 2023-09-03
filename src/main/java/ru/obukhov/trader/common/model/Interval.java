@@ -12,6 +12,8 @@ import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.model.WorkSchedule;
+import ru.obukhov.trader.market.model.TradingDay;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -155,11 +157,11 @@ public class Interval {
      * <br/>
      * {@code from} of first interval equals {@code from} of current interval.
      * <br/>
-     * {@code from} of other intervals are at start of day.
+     * {@code from} of other intervals are on start of day.
      * <br/>
      * {@code to} of last interval equals {@code to} of current interval.
      * <br/>
-     * {@code to} of other intervals are at end of day.
+     * {@code to} of other intervals are on end of day.
      */
     public List<Interval> splitIntoDailyIntervals() {
         final List<Interval> result = new ArrayList<>();
@@ -219,6 +221,26 @@ public class Interval {
      */
     public double toDays() {
         return toDuration().toNanos() / NANOSECONDS_IN_DAY;
+    }
+
+    public List<TradingDay> toTradingDays(final WorkSchedule workSchedule) {
+        return splitIntoDailyIntervals()
+                .stream()
+                .map(interval -> interval.toTradingDay(workSchedule))
+                .toList();
+    }
+
+    private TradingDay toTradingDay(final WorkSchedule workSchedule) {
+        final OffsetDateTime date = DateUtils.toStartOfDay(from);
+        final OffsetDateTime startTime = DateUtils.setTime(date, workSchedule.getStartTime());
+        final OffsetDateTime endTime = startTime.plus(workSchedule.getDuration());
+
+        return TradingDay.builder()
+                .date(date)
+                .startTime(startTime)
+                .endTime(endTime)
+                .isTradingDay(DateUtils.isWorkDay(date))
+                .build();
     }
 
     /**

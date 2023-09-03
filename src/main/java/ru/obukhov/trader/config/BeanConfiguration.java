@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
@@ -113,8 +114,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealExtInstrumentsService realExtInstrumentsService(final InstrumentsService instrumentsService) {
-        return new RealExtInstrumentsService(instrumentsService);
+    public RealExtInstrumentsService realExtInstrumentsService(final MarketProperties marketProperties, final InstrumentsService instrumentsService) {
+        return new RealExtInstrumentsService(marketProperties, instrumentsService);
     }
 
     @Bean

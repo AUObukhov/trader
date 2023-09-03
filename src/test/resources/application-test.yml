@@ -6,6 +6,11 @@ ru.tinkoff.invest.openapi:
 trading:
   token: i identify myself as token
 
+market:
+  work-schedule:
+    start-time: 12:00:00+03:00
+    duration: 480
+
 scheduling:
   delay: 120000
   enabled: true

@@ -1,7 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
 import lombok.experimental.UtilityClass;
-import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
@@ -12,7 +11,6 @@ import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
-import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
@@ -24,7 +22,6 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
-import ru.tinkoff.piapi.contract.v1.TradingSchedule;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 
@@ -36,8 +33,6 @@ import java.util.List;
 @UtilityClass
 public class Mocker {
 
-    private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
-
     public static void mockEmptyOrder(final ExtOrdersService ordersService, final String figi) {
         final OrderState order = OrderState.builder().build();
         Mockito.when(ordersService.getOrders(figi)).thenReturn(List.of(order));
@@ -47,6 +42,12 @@ public class Mocker {
         final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
         offsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
         return offsetDateTimeStaticMock;
+    }
+
+    public static MockedStatic<Instant> mockNow(final Instant mockedNow) {
+        final MockedStatic<Instant> instantStaticMock = Mockito.mockStatic(Instant.class, Mockito.CALLS_REAL_METHODS);
+        instantStaticMock.when(Instant::now).thenReturn(mockedNow);
+        return instantStaticMock;
     }
 
     public static void mockCurrentDateTime(final Context context) {
@@ -125,26 +126,6 @@ public class Mocker {
 
     public static void mockBond(final InstrumentsService instrumentsService, final Bond bond) {
         Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond);
-    }
-
-    public static void mockTradingSchedule(
-            final InstrumentsService instrumentsService,
-            final String exchange,
-            final Interval interval,
-            final OffsetTime startTime,
-            final OffsetTime endTime
-    ) {
-        final TradingSchedule.Builder tradingScheduleBuilder = TradingSchedule.newBuilder();
-        interval.splitIntoDailyIntervals().stream()
-                .map(dayInterval -> intervalToTradingDay(dayInterval, startTime, endTime))
-                .map(TRADING_DAY_MAPPER::map)
-                .forEach(tradingScheduleBuilder::addDays);
-
-        Mockito.when(instrumentsService.getTradingScheduleSync(
-                Mockito.eq(exchange),
-                Mockito.any(Instant.class),
-                Mockito.any(Instant.class)
-        )).thenReturn(tradingScheduleBuilder.build());
     }
 
     public static void mockTradingSchedule(
