@@ -149,8 +149,7 @@ public class TimestampUtils {
     }
 
     public static OffsetDateTime toOffsetDateTime(final Timestamp timestamp) {
-        final Instant instant = toInstant(timestamp);
-        return OffsetDateTime.ofInstant(instant, DEFAULT_OFFSET);
+        return toInstant(timestamp).atOffset(DEFAULT_OFFSET);
     }
 
     public static Date toDate(final Timestamp timestamp) {
