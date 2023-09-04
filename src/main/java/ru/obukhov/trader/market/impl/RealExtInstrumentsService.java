@@ -50,6 +50,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return ticker corresponding to given {@code figi}
      */
+    @Override
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
@@ -60,6 +61,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return exchange of instrument for given {@code figi}
      */
+    @Override
     public String getExchange(final String figi) {
         ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
@@ -70,6 +72,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return {@link Instrument} corresponding to given {@code figi}
      * @throws IllegalArgumentException when given {@code figi} has no corresponding share or has more than one corresponding share
      */
+    @Override
     public Instrument getInstrument(final String figi) {
         return INSTRUMENT_MAPPER.map(instrumentsService.getInstrumentByFigiSync(figi));
     }
@@ -77,6 +80,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return {@link Share} corresponding to given {@code figi}
      */
+    @Override
     public Share getShare(final String figi) {
         return SHARE_MAPPER.map(instrumentsService.getShareByFigiSync(figi));
     }
@@ -84,6 +88,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return {@link Etf} corresponding to given {@code figi}
      */
+    @Override
     public Etf getEtf(final String figi) {
         return ETF_MAPPER.map(instrumentsService.getEtfByFigiSync(figi));
     }
@@ -91,6 +96,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return {@link Bond} corresponding to given {@code figi}
      */
+    @Override
     public Bond getBond(final String figi) {
         return BOND_MAPPER.map(instrumentsService.getBondByFigiSync(figi));
     }
@@ -98,6 +104,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return {@link Currency} corresponding to given {@code figi}
      */
+    @Override
     public Currency getCurrencyByFigi(final String figi) {
         return CURRENCY_MAPPER.map(instrumentsService.getCurrencyByFigiSync(figi));
     }
@@ -106,6 +113,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return {@link Currency} corresponding to given {@code isoName}
      * @throws IllegalArgumentException if currency not found
      */
+    @Override
     public Currency getCurrencyByIsoName(final String isoName) {
         return instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)
                 .stream()
@@ -120,6 +128,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return {@link TradingDay} with given {@code dateTime} corresponding to given {@code figi}
      */
+    @Override
     public TradingDay getTradingDay(final String figi, final OffsetDateTime dateTime) {
         final Interval interval = Interval.of(dateTime, dateTime);
         return getTradingScheduleByFigi(figi, interval).get(0);
@@ -128,6 +137,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code exchange}
      */
+    @Override
     public List<TradingDay> getTradingSchedule(final String exchange, final Interval interval) {
         final Instant fromInstant = DateUtils.toSameDayInstant(interval.getFrom());
         final Instant toInstant = DateUtils.toSameDayInstant(interval.getTo());
@@ -145,6 +155,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code figi}
      */
+    @Override
     public List<TradingDay> getTradingScheduleByFigi(final String figi, final Interval interval) {
         final String exchange = getExchange(figi);
         return getTradingSchedule(exchange, interval);
@@ -153,6 +164,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return list of {@link TradingSchedule} with given {@code interval}. Each schedule corresponds to some exchange
      */
+    @Override
     public List<TradingSchedule> getTradingSchedules(final Interval interval) {
         final Instant from = interval.getFrom().toInstant();
         final Instant to = interval.getTo().toInstant();
