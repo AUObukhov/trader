@@ -28,7 +28,7 @@ public interface ExtInstrumentsService {
 
     Currency getCurrencyByFigi(final String figi);
 
-    Currency getCurrencyByIsoName(final String isoName);
+    List<Currency> getCurrenciesByIsoNames(final String... isoNames);
 
     TradingDay getTradingDay(final String figi, final OffsetDateTime dateTime);
 

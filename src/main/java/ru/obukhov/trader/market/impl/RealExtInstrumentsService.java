@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
@@ -114,15 +115,12 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @throws IllegalArgumentException if currency not found
      */
     @Override
-    public Currency getCurrencyByIsoName(final String isoName) {
+    public List<Currency> getCurrenciesByIsoNames(final String... isoNames) {
         return instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)
                 .stream()
-                .filter(currency -> currency.getIsoCurrencyName().equals(isoName))
+                .filter(currency -> ArrayUtils.contains(isoNames, currency.getIsoCurrencyName()))
                 .map(CURRENCY_MAPPER::map)
-                .reduce((currency1, currency2) -> {
-                    throw new IllegalStateException("Expected single currency isoName '" + isoName + "'. Found multiple");
-                })
-                .orElseThrow(() -> new IllegalArgumentException("Not found currency for isoName '" + isoName + "'"));
+                .toList();
     }
 
     /**

@@ -147,42 +147,18 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getCurrencyByIsoName tests
+    // region getCurrenciesByIsoNames tests
 
     @Test
-    void getCurrencyByIsoName_returnsCurrency() {
+    void getCurrenciesByIsoNames_returnsCurrency() {
         final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
         Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
 
-        final Currency result = realExtInstrumentsService.getCurrencyByIsoName(TestCurrency2.ISO_CURRENCY_NAME);
+        final List<Currency> actualResult =
+                realExtInstrumentsService.getCurrenciesByIsoNames(TestCurrency1.ISO_CURRENCY_NAME, TestCurrency2.ISO_CURRENCY_NAME);
 
-        Assertions.assertEquals(TestCurrency2.CURRENCY, result);
-    }
-
-    @Test
-    void getCurrencyByIsoName_throwIllegalStateException_whenMultipleCurrencies() {
-        final String isoName = TestCurrency2.ISO_CURRENCY_NAME;
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY
-        );
-        Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
-
-        final Executable executable = () -> realExtInstrumentsService.getCurrencyByIsoName(isoName);
-        final String expectedMessage = "Expected single currency isoName '" + isoName + "'. Found multiple";
-        AssertUtils.assertThrowsWithMessage(IllegalStateException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getCurrencyByIsoName_throwIllegalArgumentException_whenNoCurrency() {
-        final String isoName = TestCurrency1.ISO_CURRENCY_NAME;
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(TestCurrency2.TINKOFF_CURRENCY);
-        Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
-
-        final Executable executable = () -> realExtInstrumentsService.getCurrencyByIsoName(isoName);
-        final String expectedMessage = "Not found currency for isoName '" + isoName + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final List<Currency> expectedResult = List.of(TestCurrency1.CURRENCY, TestCurrency2.CURRENCY);
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion
