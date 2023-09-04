@@ -15,12 +15,14 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
@@ -48,6 +50,7 @@ public class TestData {
 
     private static final Random RANDOM = new Random();
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
@@ -331,6 +334,13 @@ public class TestData {
         final OffsetDateTime from = DateUtils.toStartOfDay(dateTime);
         final OffsetDateTime to = DateUtils.toEndOfDay(from);
         return Interval.of(from, to);
+    }
+
+    public static LastPrice createLastPrice(final String figi, final BigDecimal price) {
+        return LastPrice.newBuilder()
+                .setFigi(figi)
+                .setPrice(QUOTATION_MAPPER.fromBigDecimal(price))
+                .build();
     }
 
 }

@@ -13,8 +13,10 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.MarketDataService;
 
@@ -26,7 +28,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service to get information about market prices and instruments
@@ -35,6 +39,7 @@ import java.util.List;
 public class ExtMarketDataService {
 
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     private final ExtInstrumentsService extInstrumentsService;
     private final MarketDataService marketDataService;
@@ -152,6 +157,28 @@ public class ExtMarketDataService {
         }
 
         throw new IllegalArgumentException("Not found last candle for FIGI '" + figi + "'");
+    }
+
+    /**
+     * @return map of FIGIes to corresponding last prices. Keeps the same order for the keys as for the given {@code figies}.
+     * @throws IllegalArgumentException if there is no last price for any of the given {@code figies}.
+     */
+    public Map<String, BigDecimal> getLastPrices(final List<String> figies) {
+        final List<LastPrice> lastPrices = marketDataService.getLastPricesSync(figies);
+        final Map<String, BigDecimal> result = new LinkedHashMap<>(figies.size(), 1);
+
+        for (final String figi : figies) {
+            final BigDecimal currentLastPrice = lastPrices.stream()
+                    .filter(lastPrice -> lastPrice.getFigi().equals(figi))
+                    .reduce((price1, price2) -> {
+                        throw new IllegalStateException("Expected single last price for FIGI '" + figi + "'. Found multiple");
+                    })
+                    .map(lastPrice -> QUOTATION_MAPPER.toBigDecimal(lastPrice.getPrice()))
+                    .orElseThrow(() -> new IllegalArgumentException("Not found last price for FIGI '" + figi + "'"));
+            result.put(figi, currentLastPrice);
+        }
+
+        return result;
     }
 
     /**

@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
@@ -18,20 +20,26 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShare3;
+import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
@@ -40,6 +48,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     // region getCandles tests
 
     @Test
+    @DirtiesContext
     void getCandles_skipsCandlesByDays_whenFromIsReached() {
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -71,6 +80,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getCandles_filterCandlesByYears() {
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -103,6 +113,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getCandles_skipsCandlesByYears_whenFromIsReached() {
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -136,6 +147,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -166,10 +178,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getLastPrice tests
-
     @Test
-    void getLastPrice_returnsCandle_whenCandleExists() {
+    @DirtiesContext
+    void getLastPrice_returnsPrice_whenCandleExists() {
         final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateTimeTestData.createEndOfDay(2020, 1, 10);
         final OffsetDateTime candlesTo = TestShare1.FIRST_1_MIN_CANDLE_DATE.plusDays(1);
@@ -188,11 +199,89 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         AssertUtils.assertEquals(close, price);
     }
 
+    // region getLastPrices tests
+
+    @Test
+    void getLastPrices_returnsPricesInProperOrder() {
+        final String figi1 = TestShare2.FIGI;
+        final String figi2 = TestShare1.FIGI;
+        final String figi3 = TestShare3.FIGI;
+
+        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
+        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
+        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
+
+        final List<String> figies = List.of(figi1, figi2, figi3);
+
+        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
+        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
+        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
+
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
+
+        final Map<String, BigDecimal> actualResult = extMarketDataService.getLastPrices(figies);
+
+        final Map<String, BigDecimal> expectedResult = new LinkedHashMap<>(3, 1);
+        expectedResult.put(figi1, price1);
+        expectedResult.put(figi2, price2);
+        expectedResult.put(figi3, price3);
+        AssertUtils.assertEquals(expectedResult.entrySet(), actualResult.entrySet());
+    }
+
+    @Test
+    void getLastPrices_throwsIllegalStateException_whenMultiplePricesForSingleFigi() {
+        final String figi1 = TestShare2.FIGI;
+        final String figi2 = TestShare1.FIGI;
+        final String figi3 = TestShare3.FIGI;
+
+        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
+        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
+        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
+
+        final List<String> figies = List.of(figi1, figi2, figi3);
+
+        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
+        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
+        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
+        final LastPrice lastPrice4 = TestData.createLastPrice(figi1, price3);
+
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3, lastPrice4));
+
+        final Executable executable = () -> extMarketDataService.getLastPrices(figies);
+        final String expectedMessage = "Expected single last price for FIGI '" + figi1 + "'. Found multiple";
+        AssertUtils.assertThrowsWithMessage(IllegalStateException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getLastPrices_throwsIllegalArgumentException_whenPRiceNotFound() {
+        final String figi1 = TestShare2.FIGI;
+        final String figi2 = TestShare1.FIGI;
+        final String figi3 = TestShare3.FIGI;
+        final String figi4 = TestShare4.FIGI;
+
+        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
+        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
+        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
+
+        final List<String> figies = List.of(figi1, figi2, figi3, figi4);
+
+        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
+        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
+        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
+
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
+
+        final Executable executable = () -> extMarketDataService.getLastPrices(figies);
+        final String expectedMessage = "Not found last price for FIGI '" + figi4 + "'";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
     // endregion
 
     // region getLastCandles daily tests
 
     @Test
+    @DirtiesContext
     void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -206,6 +295,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -235,6 +325,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
         final String figi = TestShare1.FIGI;
         final int limit = 10;
@@ -265,6 +356,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -295,6 +387,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     // region getLastCandles yearly tests
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -308,6 +401,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -337,6 +431,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
         final String figi = TestShare1.FIGI;
         final int limit = 10;
@@ -367,6 +462,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() {
         final String figi = TestShare1.FIGI;
         final int limit = 10;
@@ -397,6 +493,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -421,6 +518,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -448,6 +546,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
         final String figi = TestShare1.FIGI;
         final int limit = 5;
@@ -477,6 +576,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     // region getMarketCandles tests
 
     @Test
+    @DirtiesContext
     void getMarketCandles_returnsMappedCandles() {
         final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -553,6 +653,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
         final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -570,8 +671,6 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getTradingStatus tests
-
     @Test
     void getTradingStatus_returnsTradingStatus_whenInstrumentExists() {
         final String figi = TestShare1.FIGI;
@@ -583,7 +682,5 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Assertions.assertEquals(status, result);
     }
-
-    // endregion
 
 }
