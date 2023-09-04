@@ -22,6 +22,7 @@ import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
+import ru.tinkoff.piapi.contract.v1.InstrumentStatus;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
@@ -97,8 +98,23 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return {@link Currency} corresponding to given {@code figi}
      */
-    public Currency getCurrency(final String figi) {
+    public Currency getCurrencyByFigi(final String figi) {
         return CURRENCY_MAPPER.map(instrumentsService.getCurrencyByFigiSync(figi));
+    }
+
+    /**
+     * @return {@link Currency} corresponding to given {@code isoName}
+     * @throws IllegalArgumentException if currency not found
+     */
+    public Currency getCurrencyByIsoName(final String isoName) {
+        return instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)
+                .stream()
+                .filter(currency -> currency.getIsoCurrencyName().equals(isoName))
+                .map(CURRENCY_MAPPER::map)
+                .reduce((currency1, currency2) -> {
+                    throw new IllegalStateException("Expected single currency isoName '" + isoName + "'. Found multiple");
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Not found currency for isoName '" + isoName + "'"));
     }
 
     /**

@@ -146,7 +146,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     // endregion
 
-    // region getCurrency tests
+    // region getCurrencyByFigi tests
 
     @Test
     @SuppressWarnings("java:S2699")

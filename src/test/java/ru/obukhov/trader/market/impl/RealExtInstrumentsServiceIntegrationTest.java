@@ -23,6 +23,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
@@ -31,6 +32,7 @@ import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.tinkoff.piapi.contract.v1.InstrumentStatus;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -138,9 +140,49 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getCurrency_returnsCurrency() {
         Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
 
-        final Currency result = realExtInstrumentsService.getCurrency(TestCurrency2.FIGI);
+        final Currency result = realExtInstrumentsService.getCurrencyByFigi(TestCurrency2.FIGI);
 
         Assertions.assertEquals(TestCurrency2.CURRENCY, result);
+    }
+
+    // endregion
+
+    // region getCurrencyByIsoName tests
+
+    @Test
+    void getCurrencyByIsoName_returnsCurrency() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
+        Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
+
+        final Currency result = realExtInstrumentsService.getCurrencyByIsoName(TestCurrency2.ISO_CURRENCY_NAME);
+
+        Assertions.assertEquals(TestCurrency2.CURRENCY, result);
+    }
+
+    @Test
+    void getCurrencyByIsoName_throwIllegalStateException_whenMultipleCurrencies() {
+        final String isoName = TestCurrency2.ISO_CURRENCY_NAME;
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
+
+        final Executable executable = () -> realExtInstrumentsService.getCurrencyByIsoName(isoName);
+        final String expectedMessage = "Expected single currency isoName '" + isoName + "'. Found multiple";
+        AssertUtils.assertThrowsWithMessage(IllegalStateException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getCurrencyByIsoName_throwIllegalArgumentException_whenNoCurrency() {
+        final String isoName = TestCurrency1.ISO_CURRENCY_NAME;
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(TestCurrency2.TINKOFF_CURRENCY);
+        Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
+
+        final Executable executable = () -> realExtInstrumentsService.getCurrencyByIsoName(isoName);
+        final String expectedMessage = "Not found currency for isoName '" + isoName + "'";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion

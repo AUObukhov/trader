@@ -85,7 +85,7 @@ public class InstrumentsController {
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public Currency getCurrency(@RequestParam @ApiParam(example = "BBG0013HGFT4") final String figi) {
-        return extInstrumentsService.getCurrency(figi);
+        return extInstrumentsService.getCurrencyByFigi(figi);
     }
 
     @GetMapping("/trading-schedule")
