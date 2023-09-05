@@ -39,13 +39,6 @@ scheduled-bot:
         minimumProfit: 0.1
 
 spring.cache:
-  cache-names: allShares,
-    marketStocks,
-    marketEtfs,
-    marketCurrencies,
-    marketCandles,
-    marketInstrument,
-    tickerByFigi
   scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
 
 report:
