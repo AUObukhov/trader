@@ -225,7 +225,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getLastPrices_throwsIllegalStateException_whenMultiplePricesForSingleFigi() {
+    void getLastPrices_throwsIllegalArgumentException_whenMultiplePricesForSingleFigi() {
         final String figi1 = TestShare2.FIGI;
         final String figi2 = TestShare1.FIGI;
         final String figi3 = TestShare3.FIGI;
@@ -244,12 +244,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3, lastPrice4));
 
         final Executable executable = () -> extMarketDataService.getLastPrices(figies);
-        final String expectedMessage = "Expected single last price for FIGI '" + figi1 + "'. Found multiple";
-        AssertUtils.assertThrowsWithMessage(IllegalStateException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single item. Multiple items found.";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void getLastPrices_throwsIllegalArgumentException_whenPRiceNotFound() {
+    void getLastPrices_throwsIllegalArgumentException_whenPriceNotFound() {
         final String figi1 = TestShare2.FIGI;
         final String figi2 = TestShare1.FIGI;
         final String figi3 = TestShare3.FIGI;
@@ -268,7 +268,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
 
         final Executable executable = () -> extMarketDataService.getLastPrices(figies);
-        final String expectedMessage = "Not found last price for FIGI '" + figi4 + "'";
+        final String expectedMessage = "Expected single item. No items found.";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 

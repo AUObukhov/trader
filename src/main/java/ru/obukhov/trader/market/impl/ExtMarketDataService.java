@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.SingleItemCollector;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Share;
@@ -170,11 +171,8 @@ public class ExtMarketDataService {
         for (final String figi : figies) {
             final BigDecimal currentLastPrice = lastPrices.stream()
                     .filter(lastPrice -> lastPrice.getFigi().equals(figi))
-                    .reduce((price1, price2) -> {
-                        throw new IllegalStateException("Expected single last price for FIGI '" + figi + "'. Found multiple");
-                    })
                     .map(lastPrice -> QUOTATION_MAPPER.toBigDecimal(lastPrice.getPrice()))
-                    .orElseThrow(() -> new IllegalArgumentException("Not found last price for FIGI '" + figi + "'"));
+                    .collect(new SingleItemCollector<>());
             result.put(figi, currentLastPrice);
         }
 
