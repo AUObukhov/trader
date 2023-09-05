@@ -17,6 +17,7 @@ import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -24,10 +25,12 @@ import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.List;
+import java.util.Map;
 
 @UtilityClass
 public class Mocker {
@@ -158,6 +161,15 @@ public class Mocker {
         final OffsetDateTime endDateTime = DateUtils.setTime(interval.getTo(), endTime);
         final boolean isTradingDay = DateUtils.isWorkDay(startDateTime);
         return TestData.createTradingDay(isTradingDay, startDateTime, endDateTime);
+    }
+
+    public static void mockLastPrices(final MarketDataService marketDataService, final Map<String, BigDecimal> figiesToPrices) {
+        final List<String> figies = figiesToPrices.keySet().stream().toList();
+        final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
+                .map(entry -> TestData.createLastPrice(entry.getKey(), entry.getValue()))
+                .toList();
+
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
     }
 
 }

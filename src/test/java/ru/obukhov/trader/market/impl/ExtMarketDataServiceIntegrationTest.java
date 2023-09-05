@@ -213,19 +213,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final List<String> figies = List.of(figi1, figi2, figi3);
 
-        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
-        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
-        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
-
-        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
+        final Map<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
+        figiesToPrices.put(figi1, price1);
+        figiesToPrices.put(figi2, price2);
+        figiesToPrices.put(figi3, price3);
+        Mocker.mockLastPrices(marketDataService, figiesToPrices);
 
         final Map<String, BigDecimal> actualResult = extMarketDataService.getLastPrices(figies);
 
-        final Map<String, BigDecimal> expectedResult = new LinkedHashMap<>(3, 1);
-        expectedResult.put(figi1, price1);
-        expectedResult.put(figi2, price2);
-        expectedResult.put(figi3, price3);
-        AssertUtils.assertEquals(expectedResult.entrySet(), actualResult.entrySet());
+        AssertUtils.assertEquals(figiesToPrices.entrySet(), actualResult.entrySet());
     }
 
     @Test
