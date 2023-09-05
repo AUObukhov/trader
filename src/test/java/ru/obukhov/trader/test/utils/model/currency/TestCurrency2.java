@@ -38,6 +38,7 @@ public class TestCurrency2 {
     public static final String COUNTRY_OF_RISK = "";
     public static final String COUNTRY_OF_RISK_NAME = "";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NOT_AVAILABLE_FOR_TRADING;
+    public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = false;
     public static final boolean SELL_AVAILABLE_FLAG = false;
     public static final String ISO_CURRENCY_NAME = "rub";
@@ -73,6 +74,7 @@ public class TestCurrency2 {
             .countryOfRisk(COUNTRY_OF_RISK)
             .countryOfRiskName(COUNTRY_OF_RISK_NAME)
             .tradingStatus(TRADING_STATUS)
+            .otcFlag(OTC_FLAG)
             .buyAvailableFlag(BUY_AVAILABLE_FLAG)
             .sellAvailableFlag(SELL_AVAILABLE_FLAG)
             .isoCurrencyName(ISO_CURRENCY_NAME)
@@ -109,6 +111,7 @@ public class TestCurrency2 {
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
             .setTradingStatus(TRADING_STATUS)
+            .setOtcFlag(OTC_FLAG)
             .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
             .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
             .setIsoCurrencyName(ISO_CURRENCY_NAME)

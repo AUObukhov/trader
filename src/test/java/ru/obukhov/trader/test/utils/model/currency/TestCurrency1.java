@@ -3,7 +3,6 @@ package ru.obukhov.trader.test.utils.model.currency;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
@@ -39,6 +38,7 @@ public class TestCurrency1 {
     public static final String COUNTRY_OF_RISK = "";
     public static final String COUNTRY_OF_RISK_NAME = "";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
+    public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
     public static final String ISO_CURRENCY_NAME = "usd";
@@ -54,7 +54,7 @@ public class TestCurrency1 {
     public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 3, 7, 19, 16);
     public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(2000, 5, 16, 3);
 
-    public static final Currency CURRENCY = Currency.builder()
+    public static final ru.obukhov.trader.market.model.Currency CURRENCY = ru.obukhov.trader.market.model.Currency.builder()
             .figi(FIGI)
             .ticker(TICKER)
             .classCode(CLASS_CODE)
@@ -74,6 +74,7 @@ public class TestCurrency1 {
             .countryOfRisk(COUNTRY_OF_RISK)
             .countryOfRiskName(COUNTRY_OF_RISK_NAME)
             .tradingStatus(TRADING_STATUS)
+            .otcFlag(OTC_FLAG)
             .buyAvailableFlag(BUY_AVAILABLE_FLAG)
             .sellAvailableFlag(SELL_AVAILABLE_FLAG)
             .isoCurrencyName(ISO_CURRENCY_NAME)
@@ -110,6 +111,7 @@ public class TestCurrency1 {
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
             .setTradingStatus(TRADING_STATUS)
+            .setOtcFlag(OTC_FLAG)
             .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
             .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
             .setIsoCurrencyName(ISO_CURRENCY_NAME)
