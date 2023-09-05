@@ -114,8 +114,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealExtInstrumentsService realExtInstrumentsService(final MarketProperties marketProperties, final InstrumentsService instrumentsService) {
-        return new RealExtInstrumentsService(marketProperties, instrumentsService);
+    public RealExtInstrumentsService realExtInstrumentsService(
+            final MarketProperties marketProperties,
+            final InstrumentsService instrumentsService,
+            @Lazy final RealExtInstrumentsService realExtInstrumentsService
+    ) {
+        return new RealExtInstrumentsService(marketProperties, instrumentsService, realExtInstrumentsService);
     }
 
     @Bean

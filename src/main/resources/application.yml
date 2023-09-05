@@ -32,7 +32,9 @@ back-test:
 spring:
   mvc.pathmatch.matching-strategy: ant_path_matcher
   cache:
-    cache-names: allShares,
+    cache-names:
+      allShares,
+      allCurrencies,
       marketStocks,
       marketEtfs,
       marketCurrencies,

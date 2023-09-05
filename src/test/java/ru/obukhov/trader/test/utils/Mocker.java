@@ -14,7 +14,6 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
-import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
@@ -119,9 +118,18 @@ public class Mocker {
 
     public static void mockCurrency(
             final InstrumentsService instrumentsService,
-            final Currency currency
+            final ru.tinkoff.piapi.contract.v1.Currency currency
     ) {
-        Mockito.when(instrumentsService.getCurrencyByFigiSync(currency.getFigi())).thenReturn(currency);
+        Mockito.when(instrumentsService.getCurrencyByFigiSync(currency.getFigi()))
+                .thenReturn(currency);
+    }
+
+    public static void mockAllCurrencies(
+            final InstrumentsService instrumentsService,
+            final ru.tinkoff.piapi.contract.v1.Currency... currencies
+    ) {
+        Mockito.when(instrumentsService.getAllCurrenciesSync())
+                .thenReturn(List.of(currencies));
     }
 
     public static void mockBond(final InstrumentsService instrumentsService, final Bond bond) {

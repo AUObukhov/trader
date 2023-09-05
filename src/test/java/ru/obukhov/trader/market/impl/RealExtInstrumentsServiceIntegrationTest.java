@@ -32,7 +32,6 @@ import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.tinkoff.piapi.contract.v1.InstrumentStatus;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -137,7 +136,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getCurrency_returnsCurrency() {
+    void getCurrencyByFigi_returnsCurrency() {
         Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
 
         final Currency result = realExtInstrumentsService.getCurrencyByFigi(TestCurrency2.FIGI);
@@ -145,20 +144,40 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Assertions.assertEquals(TestCurrency2.CURRENCY, result);
     }
 
-    // endregion
+    @Test
+    @DirtiesContext
+    void getAllCurrencies_returnsCachedValue() {
+        Mocker.mockAllCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
+
+        final List<Currency> actualResult1 = realExtInstrumentsService.getAllCurrencies();
+
+        final List<Currency> expectedResult = List.of(TestCurrency1.CURRENCY, TestCurrency2.CURRENCY);
+        Assertions.assertEquals(expectedResult, actualResult1);
+
+        Mocker.mockAllCurrencies(instrumentsService);
+
+        final List<Currency> actualResult2 = realExtInstrumentsService.getAllCurrencies();
+        Assertions.assertEquals(expectedResult, actualResult2);
+    }
 
     // region getCurrenciesByIsoNames tests
 
     @Test
-    void getCurrenciesByIsoNames_returnsCurrency() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
-        Mockito.when(instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)).thenReturn(currencies);
+    @DirtiesContext
+    void getCurrenciesByIsoNames_returnsCachedValue() {
+        Mocker.mockAllCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
 
-        final List<Currency> actualResult =
+        final List<Currency> actualResult1 =
                 realExtInstrumentsService.getCurrenciesByIsoNames(TestCurrency1.ISO_CURRENCY_NAME, TestCurrency2.ISO_CURRENCY_NAME);
 
         final List<Currency> expectedResult = List.of(TestCurrency1.CURRENCY, TestCurrency2.CURRENCY);
-        Assertions.assertEquals(expectedResult, actualResult);
+        Assertions.assertEquals(expectedResult, actualResult1);
+
+        Mocker.mockAllCurrencies(instrumentsService);
+
+        final List<Currency> actualResult2 =
+                realExtInstrumentsService.getCurrenciesByIsoNames(TestCurrency1.ISO_CURRENCY_NAME, TestCurrency2.ISO_CURRENCY_NAME);
+        Assertions.assertEquals(expectedResult, actualResult2);
     }
 
     // endregion

@@ -23,7 +23,6 @@ import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
-import ru.tinkoff.piapi.contract.v1.InstrumentStatus;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
@@ -42,10 +41,16 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
 
     private final WorkSchedule workSchedule;
     private final InstrumentsService instrumentsService;
+    private final RealExtInstrumentsService self;
 
-    public RealExtInstrumentsService(final MarketProperties marketProperties, final InstrumentsService instrumentsService) {
+    public RealExtInstrumentsService(
+            final MarketProperties marketProperties,
+            final InstrumentsService instrumentsService,
+            final RealExtInstrumentsService realExtInstrumentsService
+    ) {
         this.workSchedule = marketProperties.getWorkSchedule();
         this.instrumentsService = instrumentsService;
+        this.self = realExtInstrumentsService;
     }
 
     /**
@@ -110,16 +115,24 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
         return CURRENCY_MAPPER.map(instrumentsService.getCurrencyByFigiSync(figi));
     }
 
+    @Override
+    @Cacheable(value = "allCurrencies", sync = true)
+    public List<Currency> getAllCurrencies() {
+        return instrumentsService.getAllCurrenciesSync()
+                .stream()
+                .map(CURRENCY_MAPPER::map)
+                .toList();
+    }
+
     /**
      * @return {@link Currency} corresponding to given {@code isoName}
      * @throws IllegalArgumentException if currency not found
      */
     @Override
     public List<Currency> getCurrenciesByIsoNames(final String... isoNames) {
-        return instrumentsService.getCurrenciesSync(InstrumentStatus.INSTRUMENT_STATUS_ALL)
+        return self.getAllCurrencies()
                 .stream()
-                .filter(currency -> ArrayUtils.contains(isoNames, currency.getIsoCurrencyName()))
-                .map(CURRENCY_MAPPER::map)
+                .filter(currency -> ArrayUtils.contains(isoNames, currency.isoCurrencyName()))
                 .toList();
     }
 
