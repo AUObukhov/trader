@@ -164,19 +164,29 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getCurrenciesByIsoNames_returnsCachedValue() {
+    void getCurrenciesByIsoNames() {
         Mocker.mockAllCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
 
-        final List<Currency> actualResult1 =
-                realExtInstrumentsService.getCurrenciesByIsoNames(TestCurrency1.ISO_CURRENCY_NAME, TestCurrency2.ISO_CURRENCY_NAME);
+        final List<Currency> actualResult1 = realExtInstrumentsService.getCurrenciesByIsoNames(
+                TestCurrency1.ISO_CURRENCY_NAME,
+                TestCurrency2.ISO_CURRENCY_NAME,
+                TestCurrency1.ISO_CURRENCY_NAME,
+                TestCurrency2.ISO_CURRENCY_NAME,
+                TestCurrency2.ISO_CURRENCY_NAME
+        );
 
         final List<Currency> expectedResult = List.of(TestCurrency1.CURRENCY, TestCurrency2.CURRENCY);
         Assertions.assertEquals(expectedResult, actualResult1);
 
         Mocker.mockAllCurrencies(instrumentsService);
 
-        final List<Currency> actualResult2 =
-                realExtInstrumentsService.getCurrenciesByIsoNames(TestCurrency1.ISO_CURRENCY_NAME, TestCurrency2.ISO_CURRENCY_NAME);
+        final List<Currency> actualResult2 = realExtInstrumentsService.getCurrenciesByIsoNames(
+                TestCurrency1.ISO_CURRENCY_NAME,
+                TestCurrency2.ISO_CURRENCY_NAME,
+                TestCurrency1.ISO_CURRENCY_NAME,
+                TestCurrency2.ISO_CURRENCY_NAME,
+                TestCurrency2.ISO_CURRENCY_NAME
+        );
         Assertions.assertEquals(expectedResult, actualResult2);
     }
 

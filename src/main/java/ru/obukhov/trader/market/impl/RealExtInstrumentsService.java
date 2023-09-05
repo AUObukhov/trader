@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
@@ -27,6 +26,7 @@ import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 public class RealExtInstrumentsService implements ExtInstrumentsService {
@@ -125,14 +125,15 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     }
 
     /**
-     * @return {@link Currency} corresponding to given {@code isoName}
+     * @return {@link Currency} corresponding to given {@code currenciesIsoNames}
      * @throws IllegalArgumentException if currency not found
      */
     @Override
-    public List<Currency> getCurrenciesByIsoNames(final String... isoNames) {
+    public List<Currency> getCurrenciesByIsoNames(final String... currenciesIsoNames) {
+        List<String> isoNamesList = Arrays.stream(currenciesIsoNames).distinct().toList();
         return self.getAllCurrencies()
                 .stream()
-                .filter(currency -> ArrayUtils.contains(isoNames, currency.isoCurrencyName()))
+                .filter(currency -> isoNamesList.contains(currency.isoCurrencyName()))
                 .toList();
     }
 
