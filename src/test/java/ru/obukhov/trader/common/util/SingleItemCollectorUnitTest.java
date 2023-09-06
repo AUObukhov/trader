@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.exception.TestException;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -99,12 +100,6 @@ class SingleItemCollectorUnitTest {
 
         final Executable executable = () -> System.out.println(stream.collect(singleItemCollector));
         AssertUtils.assertThrowsWithMessage(TestException.class, executable, exceptionMessage);
-    }
-
-    private static class TestException extends RuntimeException {
-        public TestException(String message) {
-            super(message);
-        }
     }
 
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.exception.TestException;
 
 import java.util.function.Supplier;
 
@@ -24,12 +25,6 @@ class AsserterUnitTest {
         final Supplier<RuntimeException> exceptionSupplier = () -> new TestException(exceptionMessage);
         final Object object = "test object";
         Assertions.assertDoesNotThrow(() -> Asserter.notNull(object, exceptionSupplier));
-    }
-
-    private static class TestException extends RuntimeException {
-        public TestException(String message) {
-            super(message);
-        }
     }
 
 }
