@@ -50,53 +50,43 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     // region getData tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenRangeIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setInterval(null);
 
-        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "interval is mandatory");
+        assertPostBadRequestError("/trader/grafana/query", getDataRequest, "interval is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetsIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(null);
 
-        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
+        assertPostBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetsIsEmpty() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(List.of());
 
-        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
+        assertPostBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetMetricIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setMetric(null);
 
-        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.metric is mandatory");
+        assertPostBadRequestError("/trader/grafana/query", getDataRequest, "target.metric is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetTypeIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setType(null);
 
-        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.type is mandatory");
+        assertPostBadRequestError("/trader/grafana/query", getDataRequest, "target.type is mandatory");
     }
 
     @Test

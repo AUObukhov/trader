@@ -55,8 +55,6 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     // region backTest tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenFromIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(null);
@@ -73,12 +71,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "from is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "from is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
@@ -95,12 +91,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "balanceConfig is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "balanceConfig is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenBotConfigsIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
@@ -109,12 +103,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         request.setBotConfigs(null);
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
@@ -123,12 +115,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         request.setBotConfigs(Collections.emptyList());
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenCandleIntervalIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
@@ -145,12 +135,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "candleInterval is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "candleInterval is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenCommissionIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
@@ -167,12 +155,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "commission is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "commission is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
@@ -189,7 +175,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        postAndExpectBadRequestError("/trader/bot/back-test", request, "strategyType is mandatory");
+        assertPostBadRequestError("/trader/bot/back-test", request, "strategyType is mandatory");
     }
 
     @Test

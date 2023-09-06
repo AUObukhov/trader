@@ -49,7 +49,7 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
                 .andExpect(JSON_CONTENT_MATCHER);
     }
 
-    protected void postAndExpectBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
+    protected void assertPostBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(urlTemplate);
         performAndExpectBadRequestError(requestBuilder, request, expectedError);
     }
