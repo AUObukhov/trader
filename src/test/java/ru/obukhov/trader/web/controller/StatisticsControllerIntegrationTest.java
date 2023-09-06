@@ -40,8 +40,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getCandles tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenFigiIsMissing() throws Exception {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
@@ -54,12 +52,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBigWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "figi is mandatory");
+        assertGetBadRequestError("/trader/statistics/candles", request, "figi is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenIntervalIsMissing() throws Exception {
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(TestShare1.FIGI);
@@ -69,12 +65,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBigWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "interval is mandatory");
+        assertGetBadRequestError("/trader/statistics/candles", request, "interval is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenCandleIntervalIsMissing() throws Exception {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
@@ -87,12 +81,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBigWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "candleInterval is mandatory");
+        assertGetBadRequestError("/trader/statistics/candles", request, "candleInterval is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
@@ -105,12 +97,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBigWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "movingAverageType is mandatory");
+        assertGetBadRequestError("/trader/statistics/candles", request, "movingAverageType is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
@@ -123,12 +113,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBigWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "smallWindow is mandatory");
+        assertGetBadRequestError("/trader/statistics/candles", request, "smallWindow is mandatory");
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
@@ -141,7 +129,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSmallWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "bigWindow is mandatory");
+        assertGetBadRequestError("/trader/statistics/candles", request, "bigWindow is mandatory");
     }
 
     @Test
