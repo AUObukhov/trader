@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
+import ru.obukhov.trader.common.util.Asserter;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -47,9 +48,7 @@ public class TradingStrategyFactory {
         Assert.notNull(movingAverageTypeString, "movingAverageType is mandatory");
 
         final MovingAverageType movingAverageType = MovingAverageType.from(movingAverageTypeString);
-        if (movingAverageType == null) {
-            throw new IllegalArgumentException("MovingAverageType '" + movingAverageTypeString + "' not found");
-        }
+        Asserter.notNull(movingAverageType, () -> new IllegalArgumentException("MovingAverageType '" + movingAverageTypeString + "' not found"));
 
         return movingAverageType;
     }

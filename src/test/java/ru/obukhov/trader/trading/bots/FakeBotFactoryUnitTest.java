@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -154,8 +155,8 @@ class FakeBotFactoryUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
-        final String expectedMessage = "Not found share for FIGI '" + figi + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Instrument " + figi + " not found";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
     @SuppressWarnings("SameParameterValue")

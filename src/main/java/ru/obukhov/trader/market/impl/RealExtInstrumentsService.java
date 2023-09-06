@@ -2,8 +2,9 @@ package ru.obukhov.trader.market.impl;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.util.Assert;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.Asserter;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
@@ -60,7 +61,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
-        Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
+        Asserter.notNull(instrument, () -> new InstrumentNotFoundException(figi));
         return instrument.getTicker();
     }
 
@@ -70,7 +71,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     @Override
     public String getExchange(final String figi) {
         ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
-        Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
+        Asserter.notNull(instrument, () -> new InstrumentNotFoundException(figi));
         return instrument.getExchange();
     }
 

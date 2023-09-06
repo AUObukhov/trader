@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
@@ -76,12 +77,12 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getTickerByFigi_throwsIllegalArgumentException_whenNoInstrument() {
+    void getTickerByFigi_throwsInstrumentNotFoundException_whenNoInstrument() {
         final String figi = TestShare1.FIGI;
 
         final Executable executable = () -> realExtInstrumentsService.getTickerByFigi(figi);
-        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Instrument " + figi + " not found";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -98,12 +99,12 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getExchange_throwIllegalArgumentException_whenNoInstrument() {
+    void getExchange_throwInstrumentNotFoundException_whenNoInstrument() {
         final String figi = TestInstrument1.FIGI;
 
         final Executable executable = () -> realExtInstrumentsService.getExchange(figi);
-        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Instrument " + figi + " not found";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -217,8 +218,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime timestamp = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(figi, timestamp);
-        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Instrument " + figi + " not found";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -483,8 +484,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
-        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Instrument " + figi + " not found";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
     // endregion

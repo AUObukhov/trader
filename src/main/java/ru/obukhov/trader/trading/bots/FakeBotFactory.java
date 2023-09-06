@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.quartz.CronExpression;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.Asserter;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TradingDayUtils;
@@ -61,11 +63,10 @@ public class FakeBotFactory {
     }
 
     private FakeContext createFakeContext(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
-        final OffsetDateTime ceilingWorkDateTime = getCeilingWorkDateTime(botConfig.figi(), currentDateTime);
-        final Share share = extInstrumentsService.getShare(botConfig.figi());
-        if (share == null) {
-            throw new IllegalArgumentException("Not found share for FIGI '" + botConfig.figi() + "'");
-        }
+        final String figi = botConfig.figi();
+        final OffsetDateTime ceilingWorkDateTime = getCeilingWorkDateTime(figi, currentDateTime);
+        final Share share = extInstrumentsService.getShare(figi);
+        Asserter.notNull(share, () -> new InstrumentNotFoundException(figi));
         final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkDateTime, balanceConfig);
 
         return (FakeContext) applicationContext.getBean(
