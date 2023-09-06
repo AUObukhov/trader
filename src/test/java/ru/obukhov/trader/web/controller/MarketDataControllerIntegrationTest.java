@@ -25,8 +25,6 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getTradingStatus_returnsStatus() throws Exception {
         final String figi = TestShare1.FIGI;
 
@@ -38,7 +36,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", figi)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, status);
+        assertResponse(requestBuilder, status);
     }
 
     // endregion

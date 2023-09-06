@@ -25,8 +25,6 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getOrders_returnsOrders() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
@@ -38,7 +36,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
         final String expectedResult = "[" + TestOrderState1.JSON_STRING + "," + TestOrderState2.JSON_STRING + "]";
-        performAndExpectResponse(requestBuilder, expectedResult);
+        assertResponse(requestBuilder, expectedResult);
     }
 
 }

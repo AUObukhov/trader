@@ -33,8 +33,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getInstrument tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getInstrument_returnsInstrument() throws Exception {
         Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
@@ -43,7 +41,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestInstrument1.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestInstrument1.JSON_STRING);
+        assertResponse(requestBuilder, TestInstrument1.JSON_STRING);
     }
 
     @Test
@@ -63,8 +61,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getShare tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getShare_returnsShare() throws Exception {
         Mocker.mockShare(instrumentsService, TestShare2.TINKOFF_SHARE);
 
@@ -73,7 +69,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestShare2.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestShare2.SHARE);
+        assertResponse(requestBuilder, TestShare2.SHARE);
     }
 
     @Test
@@ -93,8 +89,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getEtf tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getEtf_returnsEtf() throws Exception {
         Mocker.mockEtf(instrumentsService, TestEtf2.TINKOFF_ETF);
 
@@ -103,7 +97,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestEtf2.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestEtf2.JSON_STRING);
+        assertResponse(requestBuilder, TestEtf2.JSON_STRING);
     }
 
     @Test
@@ -123,8 +117,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getBond tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getBond_returnsBond() throws Exception {
         Mocker.mockBond(instrumentsService, TestBond2.TINKOFF_BOND);
 
@@ -133,7 +125,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestBond2.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestBond2.JSON_STRING);
+        assertResponse(requestBuilder, TestBond2.JSON_STRING);
     }
 
     @Test
@@ -153,8 +145,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getCurrencyByFigi tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCurrency_returnsCurrency() throws Exception {
         Mocker.mockCurrency(instrumentsService, TestCurrency1.TINKOFF_CURRENCY);
 
@@ -163,7 +153,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestCurrency1.FIGI)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestCurrency1.JSON_STRING);
+        assertResponse(requestBuilder, TestCurrency1.JSON_STRING);
     }
 
     @Test
@@ -181,8 +171,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // endregion
 
     @Test
-    @SuppressWarnings("squid:S2699")
-        // Tests should include assertions
     void getTradingSchedule_forFuture() throws Exception {
         final String exchange = "MOEX";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
@@ -201,13 +189,11 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
 
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            performAndExpectResponse(requestBuilder, expectedResult);
+            assertResponse(requestBuilder, expectedResult);
         }
     }
 
     @Test
-    @SuppressWarnings("squid:S2699")
-        // Tests should include assertions
     void getTradingSchedule_forFuture_adjustsFromInstant() throws Exception {
         final String exchange = "SPB";
 
@@ -227,13 +213,11 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            performAndExpectResponse(requestBuilder, expectedResult);
+            assertResponse(requestBuilder, expectedResult);
         }
     }
 
     @Test
-    @SuppressWarnings("squid:S2699")
-        // Tests should include assertions
     void getTradingSchedule_forFuture_adjustsToInstant() throws Exception {
         final String exchange = "MOEX";
 
@@ -253,13 +237,11 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            performAndExpectResponse(requestBuilder, expectedResult);
+            assertResponse(requestBuilder, expectedResult);
         }
     }
 
     @Test
-    @SuppressWarnings("squid:S2699")
-        // Tests should include assertions
     void getTradingSchedule_forPast() throws Exception {
         final int year = 2023;
         final int month = 8;
@@ -293,7 +275,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                     TestData.createTradingDay(false, year, month, 27, hour, durationHours)
             );
 
-            performAndExpectResponse(requestBuilder, expectedResult);
+            assertResponse(requestBuilder, expectedResult);
         }
     }
 
@@ -302,8 +284,6 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getTradingSchedules tests
 
     @Test
-    @SuppressWarnings("squid:S2699")
-        // Tests should include assertions
     void getTradingSchedules() throws Exception {
         final String exchange1 = "MOEX";
         final String exchange2 = "SPB";
@@ -332,7 +312,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, TestTradingDay3.TRADING_DAY);
         final List<TradingSchedule> expectedResult = List.of(expectedTradingSchedule1, expectedTradingSchedule2);
 
-        performAndExpectResponse(requestBuilder, expectedResult);
+        assertResponse(requestBuilder, expectedResult);
     }
 
     private void mockTradingSchedule(final String exchange, final OffsetDateTime from, final OffsetDateTime to) {

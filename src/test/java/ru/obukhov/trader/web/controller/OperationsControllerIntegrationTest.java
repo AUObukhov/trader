@@ -39,8 +39,6 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getPositions() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
@@ -147,7 +145,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<Position> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
 
-        performAndExpectResponse(requestBuilder, expectedPositions);
+        assertResponse(requestBuilder, expectedPositions);
     }
 
     // region getAvailableBalances tests
@@ -163,8 +161,6 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getAvailableBalances_withBlockedValues() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
@@ -204,12 +200,10 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final Money money2 = DataStructsHelper.createMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
-        performAndExpectResponse(requestBuilder, expectedBalances);
+        assertResponse(requestBuilder, expectedBalances);
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getAvailableBalances_withoutBlockedValues() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
@@ -238,7 +232,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final Money money2 = DataStructsHelper.createMoney(value2, currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
-        performAndExpectResponse(requestBuilder, expectedBalances);
+        assertResponse(requestBuilder, expectedBalances);
     }
 
     // endregion

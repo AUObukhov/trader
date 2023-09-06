@@ -180,8 +180,6 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
@@ -314,7 +312,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // action & assertion
 
-        performAndExpectResponse(requestBuilder, backTestResults);
+        assertResponse(requestBuilder, backTestResults);
     }
 
     // endregion

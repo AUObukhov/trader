@@ -26,14 +26,14 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    protected void performAndExpectResponse(final MockHttpServletRequestBuilder builder, final String expectedResponseString) throws Exception {
+    protected void assertResponse(final MockHttpServletRequestBuilder builder, final String expectedResponseString) throws Exception {
         mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(JSON_CONTENT_MATCHER)
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponseString));
     }
 
-    protected void performAndExpectResponse(final MockHttpServletRequestBuilder builder, final Object expectedResponse) throws Exception {
+    protected void assertResponse(final MockHttpServletRequestBuilder builder, final Object expectedResponse) throws Exception {
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
         mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())

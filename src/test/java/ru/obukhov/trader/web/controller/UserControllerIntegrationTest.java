@@ -20,8 +20,6 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getAccounts() throws Exception {
         final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(TestAccount1.TINKOFF_ACCOUNT, TestAccount2.TINKOFF_ACCOUNT);
         Mockito.when(usersService.getAccountsSync())
@@ -30,7 +28,7 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/user/accounts")
                 .contentType(MediaType.APPLICATION_JSON);
         final List<Account> expectedAccounts = List.of(TestAccount1.ACCOUNT, TestAccount2.ACCOUNT);
-        performAndExpectResponse(requestBuilder, expectedAccounts);
+        assertResponse(requestBuilder, expectedAccounts);
     }
 
 }

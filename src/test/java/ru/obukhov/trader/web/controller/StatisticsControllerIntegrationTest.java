@@ -134,8 +134,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -195,7 +193,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, expectedResponse);
+        assertResponse(requestBuilder, expectedResponse);
     }
 
     @Test
@@ -224,7 +222,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
-        performAndExpectResponse(requestBuilder, expectedResponse);
+        assertResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.times(1))
                 .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -259,7 +257,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .when(excelService)
                 .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
 
-        performAndExpectResponse(requestBuilder, expectedResponse);
+        assertResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.times(1))
                 .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -291,7 +289,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
-        performAndExpectResponse(requestBuilder, expectedResponse);
+        assertResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.never())
                 .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -324,7 +322,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
-        performAndExpectResponse(requestBuilder, expectedResponse);
+        assertResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.never())
                 .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
