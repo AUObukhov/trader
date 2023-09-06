@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
+import ru.obukhov.trader.common.exception.MultipleInstrumentsFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -225,31 +227,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getLastPrices_throwsIllegalArgumentException_whenMultiplePricesForSingleFigi() {
-        final String figi1 = TestShare2.FIGI;
-        final String figi2 = TestShare1.FIGI;
-        final String figi3 = TestShare3.FIGI;
-
-        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
-        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
-        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
-
-        final List<String> figies = List.of(figi1, figi2, figi3);
-
-        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
-        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
-        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
-        final LastPrice lastPrice4 = TestData.createLastPrice(figi1, price3);
-
-        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3, lastPrice4));
-
-        final Executable executable = () -> extMarketDataService.getLastPrices(figies);
-        final String expectedMessage = "Expected single item. Multiple items found.";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getLastPrices_throwsIllegalArgumentException_whenPriceNotFound() {
+    void getLastPrices_throwsInstrumentNotFoundException_whenPriceNotFound() {
         final String figi1 = TestShare2.FIGI;
         final String figi2 = TestShare1.FIGI;
         final String figi3 = TestShare3.FIGI;
@@ -268,8 +246,32 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
 
         final Executable executable = () -> extMarketDataService.getLastPrices(figies);
-        final String expectedMessage = "Expected single item. No items found.";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Instrument " + figi4 + " not found";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getLastPrices_throwsMultipleInstrumentsFoundException_whenMultiplePricesForSingleFigi() {
+        final String figi1 = TestShare2.FIGI;
+        final String figi2 = TestShare1.FIGI;
+        final String figi3 = TestShare3.FIGI;
+
+        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
+        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
+        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
+
+        final List<String> figies = List.of(figi1, figi2, figi3);
+
+        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
+        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
+        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
+        final LastPrice lastPrice4 = TestData.createLastPrice(figi1, price3);
+
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3, lastPrice4));
+
+        final Executable executable = () -> extMarketDataService.getLastPrices(figies);
+        final String expectedMessage = "Multiple instruments found for id " + figi1;
+        AssertUtils.assertThrowsWithMessage(MultipleInstrumentsFoundException.class, executable, expectedMessage);
     }
 
     // endregion

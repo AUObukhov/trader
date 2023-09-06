@@ -6,6 +6,8 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.CollectionUtils;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
+import ru.obukhov.trader.common.exception.MultipleInstrumentsFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -169,10 +171,14 @@ public class ExtMarketDataService {
         final Map<String, BigDecimal> result = new LinkedHashMap<>(figies.size(), 1);
 
         for (final String figi : figies) {
+            final SingleItemCollector<BigDecimal> collector = new SingleItemCollector<>(
+                    () -> new InstrumentNotFoundException(figi),
+                    () -> new MultipleInstrumentsFoundException(figi)
+            );
             final BigDecimal currentLastPrice = lastPrices.stream()
                     .filter(lastPrice -> lastPrice.getFigi().equals(figi))
                     .map(lastPrice -> QUOTATION_MAPPER.toBigDecimal(lastPrice.getPrice()))
-                    .collect(new SingleItemCollector<>());
+                    .collect(collector);
             result.put(figi, currentLastPrice);
         }
 
