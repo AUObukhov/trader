@@ -14,15 +14,13 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     // region getTradingStatus tests
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getTradingStatus_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/market/status")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test

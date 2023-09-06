@@ -15,15 +15,13 @@ import java.util.List;
 class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
     void getOrders_returnsBadRequest_whenAccountIdIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/orders/get")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'accountId' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test

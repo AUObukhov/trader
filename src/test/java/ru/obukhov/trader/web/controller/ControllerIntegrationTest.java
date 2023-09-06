@@ -41,7 +41,7 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponseString));
     }
 
-    protected void performAndExpectBadRequestResult(final MockHttpServletRequestBuilder requestBuilder, final String expectedResultMessage)
+    protected void assertBadRequestResult(final MockHttpServletRequestBuilder requestBuilder, final String expectedResultMessage)
             throws Exception {
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())

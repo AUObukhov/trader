@@ -47,14 +47,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings({"java:S2699", "java:S5976"})
+    @SuppressWarnings("java:S5976")
+        // Similar tests should be grouped in a single Parameterized test
     void getInstrument_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/instrument")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     // endregion
@@ -76,14 +77,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings({"java:S2699", "java:S5976"})
+    @SuppressWarnings("java:S5976")
+        // Similar tests should be grouped in a single Parameterized test
     void getShare_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     // endregion
@@ -105,14 +107,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings({"java:S2699", "java:S5976"})
+    @SuppressWarnings("java:S5976")
+        // Similar tests should be grouped in a single Parameterized test
     void getEtf_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     // endregion
@@ -134,14 +137,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings({"java:S2699", "java:S5976"})
+    @SuppressWarnings("java:S5976")
+        // Similar tests should be grouped in a single Parameterized test
     void getBond_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     // endregion
@@ -163,14 +167,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings({"java:S2699", "java:S5976"})
+    @SuppressWarnings("java:S5976")
+        // Similar tests should be grouped in a single Parameterized test
     void getCurrency_returnsBadRequest_whenFigiIsNull() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        assertBadRequestResult(requestBuilder, expectedMessage);
     }
 
     // endregion
