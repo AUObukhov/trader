@@ -1,5 +1,6 @@
 package ru.obukhov.trader.trading.bots;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -250,7 +251,6 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
     void run_catchesException_whenPlaceMarketOrderThrowsException() {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare2.FIGI;
@@ -279,7 +279,7 @@ class RunnableBotUnitTest {
                 null
         )).thenThrow(new IllegalArgumentException());
 
-        createRunnableBot().run();
+        Assertions.assertDoesNotThrow(() -> createRunnableBot().run());
     }
 
     @Test

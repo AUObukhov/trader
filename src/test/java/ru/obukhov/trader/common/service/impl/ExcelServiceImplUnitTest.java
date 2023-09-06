@@ -316,8 +316,6 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Tests should include assertions
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
         final String figi = TestShare1.FIGI;
 
@@ -338,7 +336,7 @@ class ExcelServiceImplUnitTest {
                 .when(excelFileService)
                 .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith("BackTestResul"));
 
-        excelService.saveBackTestResults(results);
+        Assertions.assertDoesNotThrow(() -> excelService.saveBackTestResults(results));
     }
 
     private void assertBotConfig(BotConfig botConfig, Iterator<Row> rowIterator) {
@@ -442,8 +440,6 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    @SuppressWarnings("java:S2699")
-        // Tests should include assertions
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
         final String figi = TestShare1.FIGI;
 
@@ -458,7 +454,7 @@ class ExcelServiceImplUnitTest {
                 .when(excelFileService)
                 .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith(fileNamePrefix));
 
-        excelService.saveCandles(figi, interval, response);
+        Assertions.assertDoesNotThrow(() -> excelService.saveCandles(figi, interval, response));
     }
 
     private BackTestResult createBackTestResult(final BotConfig botConfig, final String error) {
