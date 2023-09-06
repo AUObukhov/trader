@@ -11,9 +11,12 @@ import ru.obukhov.trader.common.exception.MultipleInstrumentsFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.SingleItemCollector;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
@@ -171,10 +174,7 @@ public class ExtMarketDataService {
         final Map<String, BigDecimal> result = new LinkedHashMap<>(figies.size(), 1);
 
         for (final String figi : figies) {
-            final SingleItemCollector<BigDecimal> collector = new SingleItemCollector<>(
-                    () -> new InstrumentNotFoundException(figi),
-                    () -> new MultipleInstrumentsFoundException(figi)
-            );
+            final SingleItemCollector<BigDecimal> collector = createSingleItemCollector(figi);
             final BigDecimal currentLastPrice = lastPrices.stream()
                     .filter(lastPrice -> lastPrice.getFigi().equals(figi))
                     .map(lastPrice -> QUOTATION_MAPPER.toBigDecimal(lastPrice.getPrice()))
@@ -275,6 +275,48 @@ public class ExtMarketDataService {
 
     public SecurityTradingStatus getTradingStatus(final String id) {
         return marketDataService.getTradingStatusSync(id).getTradingStatus();
+    }
+
+    /**
+     * Converts the given {@code sourceValue} of the given {@code sourceCurrencyIsoName}<br/>
+     * to corresponding value of the given {@code targetCurrencyIsoName}
+     *
+     * @return conversion result
+     */
+    public BigDecimal convertCurrency(final String sourceCurrencyIsoName, final String targetCurrencyIsoName, final BigDecimal sourceValue) {
+        final List<Currency> currencies = extInstrumentsService.getCurrenciesByIsoNames(sourceCurrencyIsoName, targetCurrencyIsoName);
+        final List<String> figies = currencies.stream().map(Currency::figi).toList();
+        final Map<String, BigDecimal> lastPrices = getLastPrices(figies);
+
+        final BigDecimal sourceCurrencyLastPrice = getTomCurrencyLastPrice(sourceCurrencyIsoName, currencies, lastPrices);
+        final BigDecimal targetCurrencyLastPrice = getTomCurrencyLastPrice(targetCurrencyIsoName, currencies, lastPrices);
+
+        return DecimalUtils.divide(sourceValue.multiply(sourceCurrencyLastPrice), targetCurrencyLastPrice);
+    }
+
+    private static BigDecimal getTomCurrencyLastPrice(
+            final String currencyIsoName,
+            final List<Currency> currencies,
+            final Map<String, BigDecimal> lastPrices
+    ) {
+        if (Currencies.RUB.equals(currencyIsoName)) {
+            return DecimalUtils.setDefaultScale(1);
+        }
+
+        final SingleItemCollector<String> collector = createSingleItemCollector(currencyIsoName);
+        final String figi = currencies.stream()
+                .filter(currency -> currencyIsoName.equals(currency.isoCurrencyName()) && currency.ticker().endsWith("TOM"))
+                .map(Currency::figi)
+                .collect(collector);
+
+        return lastPrices.get(figi);
+    }
+
+    private static <T> SingleItemCollector<T> createSingleItemCollector(final String instrumentId) {
+        return new SingleItemCollector<>(
+                () -> new InstrumentNotFoundException(instrumentId),
+                () -> new MultipleInstrumentsFoundException(instrumentId)
+        );
     }
 
 }

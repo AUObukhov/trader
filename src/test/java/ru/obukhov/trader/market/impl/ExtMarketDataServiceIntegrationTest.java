@@ -3,6 +3,9 @@ package ru.obukhov.trader.market.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,6 +26,9 @@ import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.test.utils.model.share.TestShare3;
@@ -38,6 +44,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -219,7 +226,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         figiesToPrices.put(figi1, price1);
         figiesToPrices.put(figi2, price2);
         figiesToPrices.put(figi3, price3);
-        Mocker.mockLastPrices(marketDataService, figiesToPrices);
+        Mocker.mockLastPricesBigDecimal(marketDataService, figiesToPrices);
 
         final Map<String, BigDecimal> actualResult = extMarketDataService.getLastPrices(figies);
 
@@ -233,9 +240,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final String figi3 = TestShare3.FIGI;
         final String figi4 = TestShare4.FIGI;
 
-        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
-        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
-        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
+        final double price1 = 111.111;
+        final double price2 = 222.222;
+        final double price3 = 333.333;
 
         final List<String> figies = List.of(figi1, figi2, figi3, figi4);
 
@@ -256,9 +263,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final String figi2 = TestShare1.FIGI;
         final String figi3 = TestShare3.FIGI;
 
-        final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
-        final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
-        final BigDecimal price3 = DecimalUtils.setDefaultScale(333.333);
+        final double price1 = 111.111;
+        final double price2 = 222.222;
+        final double price3 = 333.333;
 
         final List<String> figies = List.of(figi1, figi2, figi3);
 
@@ -680,5 +687,90 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Assertions.assertEquals(status, result);
     }
+
+    // region convertCurrency tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forConvertCurrencyToItself() {
+        return Stream.of(
+                Arguments.of(TestCurrency1.TINKOFF_CURRENCY, 97.31),
+                Arguments.of(TestCurrency2.TINKOFF_CURRENCY, 1)
+        );
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrencyToItself")
+    void convertCurrencyToItself(final ru.tinkoff.piapi.contract.v1.Currency currency, final double price) {
+        Mocker.mockAllCurrencies(instrumentsService, currency);
+
+        final Map<String, Double> figiesToPrices = Map.of(currency.getFigi(), price);
+        Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
+
+        final String currencyIsoName = currency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal actualResult = extMarketDataService.convertCurrency(currencyIsoName, currencyIsoName, sourceValue);
+
+        AssertUtils.assertEquals(sourceValue, actualResult);
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forConvertCurrency() {
+        return Stream.of(
+                Arguments.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY, 97.31, 1, 97310),
+                Arguments.of(TestCurrency2.TINKOFF_CURRENCY, TestCurrency1.TINKOFF_CURRENCY, 1, 97.31, 10.276436132),
+                Arguments.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency3.TINKOFF_CURRENCY, 97.31, 13.322, 7304.458789971),
+                Arguments.of(TestCurrency3.TINKOFF_CURRENCY, TestCurrency1.TINKOFF_CURRENCY, 13.322, 97.31, 136.90268215)
+        );
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency(
+            final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency,
+            final ru.tinkoff.piapi.contract.v1.Currency targetCurrency,
+            final double price1,
+            final double price2,
+            final double expectedResult
+    ) {
+        Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
+
+        final Map<String, Double> figiesToPrices = new LinkedHashMap<>();
+        figiesToPrices.put(sourceCurrency.getFigi(), price1);
+        figiesToPrices.put(targetCurrency.getFigi(), price2);
+        Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
+
+        final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
+        final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal actualResult1 = extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue);
+
+        AssertUtils.assertEquals(expectedResult, actualResult1);
+    }
+
+    @Test
+    @DirtiesContext
+    void convertCurrency_throwsIllegalArgumentException_whenCurrencyNotFound() {
+        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = TestCurrency1.TINKOFF_CURRENCY;
+        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = TestCurrency2.TINKOFF_CURRENCY;
+
+        Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
+
+        final Map<String, Double> figiesToPrices = new LinkedHashMap<>(2, 1);
+        figiesToPrices.put(targetCurrency.getFigi(), 1.0);
+
+        Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
+
+        final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
+        final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+
+        final Executable executable = () -> extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue);
+        final String expectedMessage = "Instrument not found for id " + sourceCurrencyIsoName;
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
+    }
+
+    // endregion
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,6 +44,15 @@ public class TraderExceptionHandler {
         log.error("Unknown exception", exception);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(createResponseMap(exception));
+    }
+
+    @SuppressWarnings("unused")
+    @ExceptionHandler(InstrumentNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleException(final InstrumentNotFoundException exception) {
+        log.error(exception.getMessage(), exception);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(createResponseMap(exception));
     }
 

@@ -336,6 +336,13 @@ public class TestData {
         return Interval.of(from, to);
     }
 
+    public static LastPrice createLastPrice(final String figi, final double price) {
+        return LastPrice.newBuilder()
+                .setFigi(figi)
+                .setPrice(QUOTATION_MAPPER.fromDouble(price))
+                .build();
+    }
+
     public static LastPrice createLastPrice(final String figi, final BigDecimal price) {
         return LastPrice.newBuilder()
                 .setFigi(figi)

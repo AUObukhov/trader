@@ -163,7 +163,19 @@ public class Mocker {
         return TestData.createTradingDay(isTradingDay, startDateTime, endDateTime);
     }
 
-    public static void mockLastPrices(final MarketDataService marketDataService, final Map<String, BigDecimal> figiesToPrices) {
+    public static void mockLastPricesDouble(final MarketDataService marketDataService, final Map<String, Double> figiesToPrices) {
+        final List<String> figies = figiesToPrices.keySet().stream().toList();
+        final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
+                .map(entry -> TestData.createLastPrice(entry.getKey(), entry.getValue()))
+                .toList();
+
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+    }
+
+    public static void mockLastPricesBigDecimal(
+            final MarketDataService marketDataService,
+            final Map<String, BigDecimal> figiesToPrices
+    ) {
         final List<String> figies = figiesToPrices.keySet().stream().toList();
         final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
                 .map(entry -> TestData.createLastPrice(entry.getKey(), entry.getValue()))

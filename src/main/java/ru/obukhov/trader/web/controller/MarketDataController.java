@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
+import java.math.BigDecimal;
+
 @Slf4j
 @RestController
 @RequestMapping("/trader/market")
@@ -31,6 +33,21 @@ public class MarketDataController {
     })
     public SecurityTradingStatus getTradingStatus(@RequestParam @ApiParam(example = "BBG000B9XRY4") final String figi) {
         return extMarketDataService.getTradingStatus(figi);
+    }
+
+    @GetMapping("/convert-currency")
+    @ApiOperation("Convert value from one currency to another")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public BigDecimal convertCurrency(
+            @RequestParam @ApiParam(example = "usd") final String sourceCurrencyIsoName,
+            @RequestParam @ApiParam(example = "rub") final String targetCurrencyIsoName,
+            @RequestParam @ApiParam(example = "1000") final BigDecimal sourceValue
+    ) {
+        return extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue);
     }
 
 }
