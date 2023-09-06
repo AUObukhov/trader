@@ -51,16 +51,16 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
 
     protected void assertPostBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(urlTemplate);
-        performAndExpectBadRequestError(requestBuilder, request, expectedError);
+        assertBadRequestError(requestBuilder, request, expectedError);
     }
 
     @SuppressWarnings("SameParameterValue")
     protected void assertGetBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(urlTemplate);
-        performAndExpectBadRequestError(requestBuilder, request, expectedError);
+        assertBadRequestError(requestBuilder, request, expectedError);
     }
 
-    protected void performAndExpectBadRequestError(
+    protected void assertBadRequestError(
             final MockHttpServletRequestBuilder requestBuilder,
             final Object request,
             final String expectedError
