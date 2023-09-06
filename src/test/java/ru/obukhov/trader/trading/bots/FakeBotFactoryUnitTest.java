@@ -155,7 +155,7 @@ class FakeBotFactoryUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
-        final String expectedMessage = "Instrument " + figi + " not found";
+        final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 

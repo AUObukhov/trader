@@ -81,7 +81,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = TestShare1.FIGI;
 
         final Executable executable = () -> realExtInstrumentsService.getTickerByFigi(figi);
-        final String expectedMessage = "Instrument " + figi + " not found";
+        final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
@@ -103,7 +103,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = TestInstrument1.FIGI;
 
         final Executable executable = () -> realExtInstrumentsService.getExchange(figi);
-        final String expectedMessage = "Instrument " + figi + " not found";
+        final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
@@ -218,7 +218,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime timestamp = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(figi, timestamp);
-        final String expectedMessage = "Instrument " + figi + " not found";
+        final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
@@ -484,7 +484,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
-        final String expectedMessage = "Instrument " + figi + " not found";
+        final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 

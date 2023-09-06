@@ -11,7 +11,7 @@ class InstrumentNotFoundExceptionUnitTest {
         final String instrumentId = TestInstrument1.FIGI;
         final InstrumentNotFoundException exception = new InstrumentNotFoundException(instrumentId);
 
-        final String expectedMessage = "Instrument " + instrumentId + " not found";
+        final String expectedMessage = "Instrument not found for id " + instrumentId;
         Assertions.assertEquals(expectedMessage, exception.getMessage());
     }
 

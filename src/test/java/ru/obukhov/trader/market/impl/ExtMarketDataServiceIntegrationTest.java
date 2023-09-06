@@ -246,7 +246,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
 
         final Executable executable = () -> extMarketDataService.getLastPrices(figies);
-        final String expectedMessage = "Instrument " + figi4 + " not found";
+        final String expectedMessage = "Instrument not found for id " + figi4;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
