@@ -20,7 +20,8 @@ import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
-import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
@@ -37,14 +38,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getInstrument_returnsInstrument() throws Exception {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/instrument")
-                .param("figi", TestInstrument1.FIGI)
+                .param("figi", testInstrument.instrument().figi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, TestInstrument1.JSON_STRING);
+        assertResponse(requestBuilder, testInstrument.jsonString());
     }
 
     @Test

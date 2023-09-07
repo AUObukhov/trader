@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Instrument;
-import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 
 class InstrumentMapperUnitTest {
 
@@ -12,9 +13,10 @@ class InstrumentMapperUnitTest {
 
     @Test
     void map() {
-        final Instrument instrument = instrumentMapper.map(TestInstrument1.TINKOFF_INSTRUMENT);
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final Instrument instrument = instrumentMapper.map(testInstrument.tinkoffInstrument());
 
-        Assertions.assertEquals(TestInstrument1.INSTRUMENT, instrument);
+        Assertions.assertEquals(testInstrument.instrument(), instrument);
     }
 
     @Test

@@ -29,12 +29,13 @@ import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
-import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.tinkoff.piapi.contract.v1.Instrument;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -93,16 +94,17 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_returnsExchange() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final String result = realExtInstrumentsService.getExchange(TestInstrument1.FIGI);
+        final String result = realExtInstrumentsService.getExchange(instrument.getFigi());
 
-        Assertions.assertEquals(TestInstrument1.EXCHANGE, result);
+        Assertions.assertEquals(instrument.getExchange(), result);
     }
 
     @Test
     void getExchange_throwInstrumentNotFoundException_whenNoInstrument() {
-        final String figi = TestInstrument1.FIGI;
+        final String figi = TestInstruments.APPLE.instrument().figi();
 
         final Executable executable = () -> realExtInstrumentsService.getExchange(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
@@ -211,15 +213,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingDay_returnsTradingDay() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        mockTradingSchedule(TestInstrument1.EXCHANGE, dateTime, dateTime);
+        mockTradingSchedule(instrument.getExchange(), dateTime, dateTime);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(dateTime);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestInstrument1.FIGI, dateTime);
+            final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(instrument.getFigi(), dateTime);
 
             Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
         }
@@ -227,7 +230,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingDay_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String figi = TestInstrument1.FIGI;
+        final String figi = TestInstruments.APPLE.instrument().figi();
 
         final OffsetDateTime timestamp = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
@@ -377,17 +380,18 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_forFuture_adjustsFromInstant_positiveOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
-        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
+        mockTradingSchedule(instrument.getExchange(), from, to);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
+            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
             final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -397,17 +401,18 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_forFuture_adjustsFromInstant_negativeOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
-        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
+        mockTradingSchedule(instrument.getExchange(), from, to);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
+            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
             final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -417,17 +422,18 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_forFuture_adjustsToInstant_positiveOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
 
-        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
+        mockTradingSchedule(instrument.getExchange(), from, to);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
+            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
             final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -437,17 +443,18 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_forFuture_adjustsToInstant_negativeOffset() {
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
 
-        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
+        mockTradingSchedule(instrument.getExchange(), from, to);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
+            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
             final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -462,12 +469,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final String figi = TestInstrument1.FIGI;
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
         final Interval interval = Interval.of(from, to);
 
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
@@ -492,7 +500,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingScheduleByFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String figi = TestInstrument1.FIGI;
+        final String figi = TestInstruments.APPLE.instrument().figi();
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);

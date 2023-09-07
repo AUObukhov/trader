@@ -14,8 +14,9 @@ import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
-import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
+import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -54,9 +55,10 @@ public class ApiCallsThrottlingIntegrationTest {
 
     @Test
     void instrumentsService() throws InterruptedException {
-        final String figi = TestInstrument1.FIGI;
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
 
-        Mockito.doReturn(TestInstrument1.TINKOFF_INSTRUMENT).when(instrumentsService).getInstrumentByFigiSync(figi);
+        Mockito.doReturn(instrument).when(instrumentsService).getInstrumentByFigiSync(figi);
 
         resetThrottlingCounters();
 
@@ -105,7 +107,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
     @Test
     void marketDataService() throws InterruptedException {
-        final String instrumentId = TestInstrument1.FIGI;
+        final String instrumentId = TestInstruments.APPLE.instrument().figi();
 
         Mockito.doReturn(null).when(marketDataService).getTradingStatusSync(instrumentId);
 
@@ -147,7 +149,7 @@ public class ApiCallsThrottlingIntegrationTest {
     void ordersService_postOrders() throws InterruptedException {
         final String accountId = TestAccounts.IIS.account().id();
         final String orderId = TestOrderState1.ORDER_ID;
-        final String figi = TestInstrument1.FIGI;
+        final String figi = TestInstruments.APPLE.instrument().figi();
         final int quantity = 1;
         final Quotation price = Quotation.newBuilder().build();
         final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;

@@ -24,7 +24,7 @@ import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -237,7 +237,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
-        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
+        Mocker.mockInstrument(instrumentsService, TestInstruments.APPLE.tinkoffInstrument());
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
