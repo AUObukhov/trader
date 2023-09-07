@@ -21,12 +21,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         true
@@ -48,7 +48,7 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         null,
@@ -57,12 +57,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ).toString(),
                         false
@@ -71,12 +71,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
-                                DecimalUtils.setDefaultScale(1),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -84,12 +84,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 null,
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -97,12 +97,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 null,
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -111,7 +111,7 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
@@ -129,7 +129,7 @@ class BalanceConfigUnitTest {
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -137,7 +137,7 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
@@ -151,12 +151,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(0),
+                                DecimalUtils.ZERO,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 2 * ?")
                         ),
                         false
@@ -164,12 +164,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 null
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         false
@@ -177,12 +177,12 @@ class BalanceConfigUnitTest {
                 Arguments.of(
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 new CronExpression("0 0 0 1 * ?")
                         ),
                         new BalanceConfig(
                                 DecimalUtils.setDefaultScale(10),
-                                DecimalUtils.setDefaultScale(1),
+                                DecimalUtils.ONE,
                                 null
                         ),
                         false
@@ -202,12 +202,12 @@ class BalanceConfigUnitTest {
     void hashCode_returnsEqualsCodes_whenObjectsAreEqual() throws ParseException {
         final BalanceConfig balanceConfig1 = new BalanceConfig(
                 DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(1),
+                DecimalUtils.ONE,
                 new CronExpression("0 0 0 1 * ?")
         );
         final BalanceConfig balanceConfig2 = new BalanceConfig(
                 DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(1),
+                DecimalUtils.ONE,
                 new CronExpression("0 0 0 1 * ?")
         );
 

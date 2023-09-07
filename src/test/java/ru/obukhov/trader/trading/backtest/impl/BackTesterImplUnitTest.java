@@ -708,7 +708,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
+        final BigDecimal currentBalance = DecimalUtils.ZERO;
 
         final double commission1 = 0.001;
         final Operation operation = TestData.newOperation(
@@ -772,7 +772,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
+        final BigDecimal currentBalance = DecimalUtils.ZERO;
 
         final double commission1 = 0.001;
         final Operation operation = TestData.newOperation(
@@ -969,7 +969,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
+        final BigDecimal currentBalance = DecimalUtils.ZERO;
 
         final double commission1 = 0.003;
         final Operation operation = TestData.newOperation(

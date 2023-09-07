@@ -23,12 +23,12 @@ public class TestEtf1 {
     public static final String ISIN = "IE00BD3QJ757";
     public static final int LOT = 1;
     public static final String CURRENCY = "rub";
-    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal KLONG = DecimalUtils.ZERO;
+    public static final BigDecimal KSHORT = DecimalUtils.ZERO;
+    public static final BigDecimal DLONG = DecimalUtils.ZERO;
+    public static final BigDecimal DSHORT = DecimalUtils.ZERO;
+    public static final BigDecimal DLONG_MIN = DecimalUtils.ZERO;
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.ZERO;
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "FinEx Акции компаний IT-сектора США";
     public static final String EXCHANGE = "moex_close";
@@ -44,7 +44,7 @@ public class TestEtf1 {
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
-    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(1);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.ONE;
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "232b3cca-ecef-439c-8e3c-bdd9e669f6e0";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;

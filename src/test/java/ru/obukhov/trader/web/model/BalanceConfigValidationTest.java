@@ -13,7 +13,7 @@ class BalanceConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(1),
+                DecimalUtils.ONE,
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -24,7 +24,7 @@ class BalanceConfigValidationTest {
     void validationFails_whenInitialBalanceIsNull() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 null,
-                DecimalUtils.setDefaultScale(1),
+                DecimalUtils.ONE,
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -46,7 +46,7 @@ class BalanceConfigValidationTest {
     void validationFails_whenBalanceIncrementIsZero() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.ZERO,
                 new CronExpression("0 0 0 1 * ?")
         );
 
@@ -67,7 +67,7 @@ class BalanceConfigValidationTest {
     void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(1),
+                DecimalUtils.ONE,
                 null
         );
 

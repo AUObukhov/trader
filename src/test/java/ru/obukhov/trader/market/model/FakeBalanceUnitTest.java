@@ -67,7 +67,7 @@ class FakeBalanceUnitTest {
     @Test
     void addInvestment_changesInvestmentsButNotChangesCurrentBalance_whenAmountIsZero() {
         final BigDecimal amount1 = DecimalUtils.setDefaultScale(20L);
-        final BigDecimal amount2 = DecimalUtils.setDefaultScale(0);
+        final BigDecimal amount2 = DecimalUtils.ZERO;
         final BigDecimal amount3 = DecimalUtils.setDefaultScale(10L);
         final OffsetDateTime investment1DateTime = OffsetDateTime.now();
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);

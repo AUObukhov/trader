@@ -130,7 +130,7 @@ class BackTestRequestValidationTest {
 
         BalanceConfig balanceConfig = new BalanceConfig(
                 DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(1),
+                DecimalUtils.ONE,
                 new CronExpression("0 0 0 1 * ?")
         );
         request.setBalanceConfig(balanceConfig);

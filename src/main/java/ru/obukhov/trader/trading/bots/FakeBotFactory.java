@@ -89,7 +89,7 @@ public class FakeBotFactory {
             final OffsetDateTime ceilingWorkDateTime,
             final BalanceConfig balanceConfig
     ) {
-        BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? DecimalUtils.setDefaultScale(0) : balanceConfig.getInitialBalance();
+        BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? DecimalUtils.ZERO : balanceConfig.getInitialBalance();
 
         // adding balance increments which were skipped by moving to ceiling work time above
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();

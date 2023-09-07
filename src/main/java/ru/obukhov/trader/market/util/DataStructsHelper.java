@@ -53,14 +53,14 @@ public class DataStructsHelper {
 
     public static WithdrawLimits createWithdrawLimits(final List<MoneyValue> moneys) {
         final List<MoneyValue> blocked = moneys.stream()
-                .map(money -> createMoneyValue(money.getCurrency(), DecimalUtils.setDefaultScale(0)))
+                .map(money -> createMoneyValue(money.getCurrency(), DecimalUtils.ZERO))
                 .toList();
         return createWithdrawLimits(moneys, blocked, blocked);
     }
 
     public static WithdrawLimits createWithdrawLimits(final List<MoneyValue> moneys, final List<MoneyValue> blocked) {
         final List<MoneyValue> blockedGuarantee = moneys.stream()
-                .map(money -> createMoneyValue(money.getCurrency(), DecimalUtils.setDefaultScale(0)))
+                .map(money -> createMoneyValue(money.getCurrency(), DecimalUtils.ZERO))
                 .toList();
         return createWithdrawLimits(moneys, blocked, blockedGuarantee);
     }

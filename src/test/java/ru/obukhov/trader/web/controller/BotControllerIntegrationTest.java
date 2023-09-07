@@ -65,7 +65,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -85,7 +85,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -129,7 +129,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 null,
-                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -169,7 +169,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.ZERO,
                 null,
                 Map.of("minimumProfit", 0.01)
         );
@@ -301,7 +301,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 botConfig2,
                 interval,
                 balances2,
-                new Profits(DecimalUtils.setDefaultScale(0), 0.0, 0.0),
+                new Profits(DecimalUtils.ZERO, 0.0, 0.0),
                 List.of(backTestPosition2),
                 Collections.emptyList(),
                 Collections.emptyList(),

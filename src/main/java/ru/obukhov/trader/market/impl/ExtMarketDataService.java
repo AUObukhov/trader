@@ -300,7 +300,7 @@ public class ExtMarketDataService {
             final Map<String, BigDecimal> lastPrices
     ) {
         if (Currencies.RUB.equals(currencyIsoName)) {
-            return DecimalUtils.setDefaultScale(1);
+            return DecimalUtils.ONE;
         }
 
         final SingleItemCollector<String> collector = createSingleItemCollector(currencyIsoName);

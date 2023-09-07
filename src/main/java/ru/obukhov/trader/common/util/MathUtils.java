@@ -24,7 +24,7 @@ public class MathUtils {
         return numbers.stream()
                 .reduce(BigDecimal::add)
                 .map(sum -> DecimalUtils.divide(sum, numbers.size()))
-                .orElse(DecimalUtils.setDefaultScale(0));
+                .orElse(DecimalUtils.ZERO);
     }
 
     /**
@@ -63,7 +63,7 @@ public class MathUtils {
     private static BigDecimal getWeightedAverage(final Map<Long, BigDecimal> weightedAmounts) {
         final BigDecimal weightsSum = DecimalUtils.setDefaultScale(weightedAmounts.keySet().stream().reduce(0L, Long::sum));
 
-        BigDecimal weightedAverage = DecimalUtils.setDefaultScale(0);
+        BigDecimal weightedAverage = DecimalUtils.ZERO;
         for (final Map.Entry<Long, BigDecimal> entry : weightedAmounts.entrySet()) {
             final BigDecimal normalizedWeight = DecimalUtils.divideAccurate(entry.getKey(), weightsSum);
             final BigDecimal weightedAmount = entry.getValue().multiply(normalizedWeight);

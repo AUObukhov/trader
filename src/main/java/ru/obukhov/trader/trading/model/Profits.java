@@ -15,6 +15,6 @@ public record Profits(
     /**
      * Instance of the class with zero values of all profits
      */
-    public static final Profits ZEROS = new Profits(DecimalUtils.setDefaultScale(0), 0.0, 0.0);
+    public static final Profits ZEROS = new Profits(DecimalUtils.ZERO, 0.0, 0.0);
 
 }

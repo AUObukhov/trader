@@ -24,6 +24,9 @@ public class DecimalUtils {
      */
     private static final int HIGH_SCALE = 15;
 
+    public static final BigDecimal ZERO = setDefaultScale(0);
+    public static final BigDecimal ONE = setDefaultScale(1);
+
     /**
      * @param units part of number before decimal point
      * @param nano  part of number after decimal point

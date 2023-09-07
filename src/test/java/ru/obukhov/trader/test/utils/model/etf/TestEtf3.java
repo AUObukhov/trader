@@ -23,12 +23,12 @@ public class TestEtf3 {
     public static final String ISIN = "US4642867802";
     public static final int LOT = 1;
     public static final String CURRENCY = "usd";
-    public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(0);
-    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(0);
+    public static final BigDecimal KLONG = DecimalUtils.ZERO;
+    public static final BigDecimal KSHORT = DecimalUtils.ZERO;
+    public static final BigDecimal DLONG = DecimalUtils.ZERO;
+    public static final BigDecimal DSHORT = DecimalUtils.ZERO;
+    public static final BigDecimal DLONG_MIN = DecimalUtils.ZERO;
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.ZERO;
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "iShares MSCI South Africa ETF";
     public static final String EXCHANGE = "spb_etf";
@@ -44,7 +44,7 @@ public class TestEtf3 {
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
     public static final boolean SELL_AVAILABLE_FLAG = true;
-    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(1);
+    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.ONE;
     public static final boolean API_TRADE_AVAILABLE_FLAG = true;
     public static final String UID = "5375cdb7-4ad8-4139-aef1-6003dc331d07";
     public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_RTS;

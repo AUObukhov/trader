@@ -21,7 +21,7 @@ public class FakeBalance {
     private final SortedMap<OffsetDateTime, BigDecimal> investments;
 
     public FakeBalance() {
-        this.currentAmount = DecimalUtils.setDefaultScale(0);
+        this.currentAmount = DecimalUtils.ZERO;
         this.investments = new TreeMap<>();
     }
 

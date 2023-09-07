@@ -214,7 +214,7 @@ class FakeContextUnitTest {
                 5
         );
 
-        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currencies.USD, DecimalUtils.setDefaultScale(0));
+        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currencies.USD, DecimalUtils.ZERO);
 
         final OffsetDateTime actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
 
@@ -371,7 +371,7 @@ class FakeContextUnitTest {
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
-        final BigDecimal investment = DecimalUtils.setDefaultScale(0);
+        final BigDecimal investment = DecimalUtils.ZERO;
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -470,7 +470,7 @@ class FakeContextUnitTest {
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
-        final BigDecimal investment = DecimalUtils.setDefaultScale(0);
+        final BigDecimal investment = DecimalUtils.ZERO;
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);

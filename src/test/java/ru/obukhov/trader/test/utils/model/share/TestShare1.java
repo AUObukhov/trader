@@ -29,10 +29,10 @@ public class TestShare1 {
     public static final String CURRENCY = Currencies.USD;
     public static final BigDecimal KLONG = DecimalUtils.setDefaultScale(2);
     public static final BigDecimal KSHORT = DecimalUtils.setDefaultScale(2);
-    public static final BigDecimal DLONG = DecimalUtils.setDefaultScale(1);
-    public static final BigDecimal DSHORT = DecimalUtils.setDefaultScale(1);
-    public static final BigDecimal DLONG_MIN = DecimalUtils.setDefaultScale(1);
-    public static final BigDecimal DSHORT_MIN = DecimalUtils.setDefaultScale(1);
+    public static final BigDecimal DLONG = DecimalUtils.ONE;
+    public static final BigDecimal DSHORT = DecimalUtils.ONE;
+    public static final BigDecimal DLONG_MIN = DecimalUtils.ONE;
+    public static final BigDecimal DSHORT_MIN = DecimalUtils.ONE;
     public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Apple";
     public static final String EXCHANGE = "SPB";

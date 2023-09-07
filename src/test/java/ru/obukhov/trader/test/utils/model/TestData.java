@@ -69,7 +69,7 @@ public class TestData {
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setShare(Share.builder().build());
-        decisionData.setCommission(DecimalUtils.setDefaultScale(0));
+        decisionData.setCommission(DecimalUtils.ZERO);
 
         return decisionData;
     }
