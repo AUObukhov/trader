@@ -14,7 +14,8 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.bond.TestBond2;
+import ru.obukhov.trader.test.utils.model.bond.TestBond;
+import ru.obukhov.trader.test.utils.model.bond.TestBonds;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
@@ -119,14 +120,16 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getBond_returnsBond() throws Exception {
-        Mocker.mockBond(instrumentsService, TestBond2.TINKOFF_BOND);
+        final TestBond testBond = TestBonds.KAZAKHSTAN;
+
+        Mocker.mockBond(instrumentsService, testBond.tinkoffBond());
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
-                .param("figi", TestBond2.FIGI)
+                .param("figi", testBond.tinkoffBond().getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, TestBond2.JSON_STRING);
+        assertResponse(requestBuilder, testBond.jsonString());
     }
 
     @Test

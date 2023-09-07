@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Bond;
-import ru.obukhov.trader.test.utils.model.bond.TestBond1;
+import ru.obukhov.trader.test.utils.model.bond.TestBond;
+import ru.obukhov.trader.test.utils.model.bond.TestBonds;
 
 class BondMapperUnitTest {
 
@@ -12,9 +13,11 @@ class BondMapperUnitTest {
 
     @Test
     void map() {
-        final Bond bond = bondMapper.map(TestBond1.TINKOFF_BOND);
+        final TestBond testBond = TestBonds.ROSTELECOM;
 
-        Assertions.assertEquals(TestBond1.BOND, bond);
+        final Bond bond = bondMapper.map(testBond.tinkoffBond());
+
+        Assertions.assertEquals(testBond.bond(), bond);
     }
 
     @Test

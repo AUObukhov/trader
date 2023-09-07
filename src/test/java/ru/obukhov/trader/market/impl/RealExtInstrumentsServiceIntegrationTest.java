@@ -23,7 +23,8 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.bond.TestBond2;
+import ru.obukhov.trader.test.utils.model.bond.TestBond;
+import ru.obukhov.trader.test.utils.model.bond.TestBonds;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
@@ -129,11 +130,12 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getBond_returnsBond() {
-        Mocker.mockBond(instrumentsService, TestBond2.TINKOFF_BOND);
+        final TestBond testBond = TestBonds.KAZAKHSTAN;
+        Mocker.mockBond(instrumentsService, testBond.tinkoffBond());
 
-        final Bond result = realExtInstrumentsService.getBond(TestBond2.FIGI);
+        final Bond result = realExtInstrumentsService.getBond(testBond.tinkoffBond().getFigi());
 
-        Assertions.assertEquals(TestBond2.BOND, result);
+        Assertions.assertEquals(testBond.bond(), result);
     }
 
     @Test
