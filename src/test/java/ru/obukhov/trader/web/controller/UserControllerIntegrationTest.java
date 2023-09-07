@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.Account;
-import ru.obukhov.trader.test.utils.model.account.TestAccount1;
-import ru.obukhov.trader.test.utils.model.account.TestAccount2;
+import ru.obukhov.trader.test.utils.model.account.TestAccount;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 
 import java.util.List;
 
@@ -21,13 +21,16 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getAccounts() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(TestAccount1.TINKOFF_ACCOUNT, TestAccount2.TINKOFF_ACCOUNT);
+        final TestAccount testAccount1 = TestAccounts.IIS;
+        final TestAccount testAccount2 = TestAccounts.TINKOFF;
+
+        final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(testAccount1.tinkoffAccount(), testAccount2.tinkoffAccount());
         Mockito.when(usersService.getAccountsSync())
                 .thenReturn(accounts);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/user/accounts")
                 .contentType(MediaType.APPLICATION_JSON);
-        final List<Account> expectedAccounts = List.of(TestAccount1.ACCOUNT, TestAccount2.ACCOUNT);
+        final List<Account> expectedAccounts = List.of(testAccount1.account(), testAccount2.account());
         assertResponse(requestBuilder, expectedAccounts);
     }
 

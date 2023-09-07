@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.market.model.Account;
-import ru.obukhov.trader.test.utils.model.account.TestAccount1;
-import ru.obukhov.trader.test.utils.model.account.TestAccount2;
+import ru.obukhov.trader.test.utils.model.account.TestAccount;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.util.List;
@@ -25,7 +25,10 @@ class ExtUsersServiceUnitTest {
 
     @Test
     void getAccounts() {
-        final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(TestAccount1.TINKOFF_ACCOUNT, TestAccount2.TINKOFF_ACCOUNT);
+        final TestAccount testAccount1 = TestAccounts.IIS;
+        final TestAccount testAccount2 = TestAccounts.TINKOFF;
+
+        final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(testAccount1.tinkoffAccount(), testAccount2.tinkoffAccount());
         Mockito.when(usersService.getAccountsSync())
                 .thenReturn(accounts);
 
@@ -33,7 +36,7 @@ class ExtUsersServiceUnitTest {
 
         final List<Account> actualResult = extUsersService.getAccounts();
 
-        final List<Account> expectedResult = List.of(TestAccount1.ACCOUNT, TestAccount2.ACCOUNT);
+        final List<Account> expectedResult = List.of(testAccount1.account(), testAccount2.account());
         Assertions.assertEquals(expectedResult, actualResult);
     }
 
