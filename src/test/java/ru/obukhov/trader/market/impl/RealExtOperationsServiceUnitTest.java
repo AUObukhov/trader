@@ -8,11 +8,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
+import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -79,13 +80,14 @@ class RealExtOperationsServiceUnitTest {
         final int currentPrice2 = 4;
         final String currency2 = TestShare2.CURRENCY;
 
-        final String figi3 = TestEtf1.FIGI;
+        final Etf etf = TestEtfs.FXIT.etf();
+        final String figi3 = etf.figi();
         final InstrumentType instrumentType3 = InstrumentType.INSTRUMENT_TYPE_ETF;
         final int quantity3 = 5;
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;
-        final String currency3 = TestEtf1.CURRENCY;
+        final String currency3 = etf.currency();
 
         final PortfolioPosition portfolioPosition1 = TestData.newPortfolioPosition(
                 figi1,

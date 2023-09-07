@@ -27,7 +27,8 @@ import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.bond.TestBonds;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
+import ru.obukhov.trader.test.utils.model.etf.TestEtf;
+import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
@@ -121,11 +122,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getEtf_returnsEtf() {
-        Mocker.mockEtf(instrumentsService, TestEtf3.TINKOFF_ETF);
+        final TestEtf testEtf = TestEtfs.EZA;
 
-        final Etf result = realExtInstrumentsService.getEtf(TestEtf3.FIGI);
+        Mocker.mockEtf(instrumentsService, testEtf.tinkoffEtf());
 
-        Assertions.assertEquals(TestEtf3.ETF, result);
+        final Etf result = realExtInstrumentsService.getEtf(testEtf.tinkoffEtf().getFigi());
+
+        Assertions.assertEquals(testEtf.etf(), result);
     }
 
     @Test

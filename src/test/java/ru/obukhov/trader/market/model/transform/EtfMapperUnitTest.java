@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Etf;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
+import ru.obukhov.trader.test.utils.model.etf.TestEtf;
+import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 
 class EtfMapperUnitTest {
 
@@ -12,9 +13,11 @@ class EtfMapperUnitTest {
 
     @Test
     void map() {
-        final Etf result = etfMapper.map(TestEtf1.TINKOFF_ETF);
+        final TestEtf testEtf = TestEtfs.FXIT;
 
-        Assertions.assertEquals(TestEtf1.ETF, result);
+        final Etf result = etfMapper.map(testEtf.tinkoffEtf());
+
+        Assertions.assertEquals(testEtf.etf(), result);
     }
 
     @Test

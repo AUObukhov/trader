@@ -18,7 +18,8 @@ import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.bond.TestBonds;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
+import ru.obukhov.trader.test.utils.model.etf.TestEtf;
+import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
@@ -92,14 +93,16 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getEtf_returnsEtf() throws Exception {
-        Mocker.mockEtf(instrumentsService, TestEtf2.TINKOFF_ETF);
+        final TestEtf testEtf = TestEtfs.FXUS;
+
+        Mocker.mockEtf(instrumentsService, testEtf.tinkoffEtf());
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
-                .param("figi", TestEtf2.FIGI)
+                .param("figi", testEtf.etf().figi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, TestEtf2.JSON_STRING);
+        assertResponse(requestBuilder, testEtf.jsonString());
     }
 
     @Test
