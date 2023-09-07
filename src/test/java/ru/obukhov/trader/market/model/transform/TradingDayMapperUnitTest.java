@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.TradingDay;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
 
 class TradingDayMapperUnitTest {
 
@@ -12,11 +13,13 @@ class TradingDayMapperUnitTest {
 
     @Test
     void mapTinkoffToCustom() {
-        final ru.tinkoff.piapi.contract.v1.TradingDay source = TestTradingDay1.TINKOFF_TRADING_DAY;
+        final TestTradingDay testTradingDay = TestTradingDays.TRADING_DAY1;
+
+        final ru.tinkoff.piapi.contract.v1.TradingDay source = testTradingDay.tinkoffTradingDay();
 
         final TradingDay result = TRADING_DAY_MAPPER.map(source);
 
-        final TradingDay expectedResult = TestTradingDay1.TRADING_DAY;
+        final TradingDay expectedResult = testTradingDay.tradingDay();
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -31,11 +34,13 @@ class TradingDayMapperUnitTest {
 
     @Test
     void mapCustomToTinkoff() {
-        final TradingDay source = TestTradingDay1.TRADING_DAY;
+        final TestTradingDay testTradingDay = TestTradingDays.TRADING_DAY1;
+
+        final TradingDay source = testTradingDay.tradingDay();
 
         final ru.tinkoff.piapi.contract.v1.TradingDay result = TRADING_DAY_MAPPER.map(source);
 
-        final ru.tinkoff.piapi.contract.v1.TradingDay expectedResult = TestTradingDay1.TINKOFF_TRADING_DAY;
+        final ru.tinkoff.piapi.contract.v1.TradingDay expectedResult = testTradingDay.tinkoffTradingDay();
         Assertions.assertEquals(expectedResult, result);
     }
 

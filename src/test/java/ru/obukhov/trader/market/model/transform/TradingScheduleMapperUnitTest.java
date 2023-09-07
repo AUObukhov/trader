@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
 
 import java.util.List;
 
@@ -18,16 +18,19 @@ class TradingScheduleMapperUnitTest {
     void map() {
         final String exchange = "MOEX";
 
+        final TestTradingDay testTradingDay1 = TestTradingDays.TRADING_DAY1;
+        final TestTradingDay testTradingDay2 = TestTradingDays.TRADING_DAY2;
+
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
-                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
+                .addDays(testTradingDay1.tinkoffTradingDay())
+                .addDays(testTradingDay2.tinkoffTradingDay())
                 .build();
 
         final TradingSchedule result = TRADING_SCHEDULE_MAPPER.map(tradingSchedule);
 
-        final TradingDay expectedTradingDay1 = TestTradingDay1.TRADING_DAY;
-        final TradingDay expectedTradingDay2 = TestTradingDay2.TRADING_DAY;
+        final TradingDay expectedTradingDay1 = testTradingDay1.tradingDay();
+        final TradingDay expectedTradingDay2 = testTradingDay2.tradingDay();
         final TradingSchedule expectedResult = new TradingSchedule(exchange, List.of(expectedTradingDay1, expectedTradingDay2));
 
         Assertions.assertEquals(expectedResult, result);

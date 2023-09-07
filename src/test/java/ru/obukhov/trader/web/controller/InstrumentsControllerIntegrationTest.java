@@ -22,9 +22,8 @@ import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 
 import java.time.Instant;
@@ -195,7 +194,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+        final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
 
@@ -220,7 +219,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+        final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
@@ -244,7 +243,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+        final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
@@ -302,14 +301,18 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
 
+        final TestTradingDay testTradingDay1 = TestTradingDays.TRADING_DAY1;
+        final TestTradingDay testTradingDay2 = TestTradingDays.TRADING_DAY2;
+        final TestTradingDay testTradingDay3 = TestTradingDays.TRADING_DAY3;
+
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1)
-                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
-                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
+                .addDays(testTradingDay1.tinkoffTradingDay())
+                .addDays(testTradingDay2.tinkoffTradingDay())
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2)
-                .addDays(TestTradingDay3.TINKOFF_TRADING_DAY)
+                .addDays(testTradingDay3.tinkoffTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
@@ -319,8 +322,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-        final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, TestTradingDay3.TRADING_DAY);
+        final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, testTradingDay1.tradingDay(), testTradingDay2.tradingDay());
+        final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, testTradingDay3.tradingDay());
         final List<TradingSchedule> expectedResult = List.of(expectedTradingSchedule1, expectedTradingSchedule2);
 
         assertResponse(requestBuilder, expectedResult);
@@ -331,8 +334,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final Instant toInstant = DateUtils.toSameDayInstant(to);
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
-                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDays.TRADING_DAY1.tinkoffTradingDay())
+                .addDays(TestTradingDays.TRADING_DAY2.tinkoffTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }

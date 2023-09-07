@@ -30,9 +30,8 @@ import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.Instrument;
@@ -224,7 +223,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(instrument.getFigi(), dateTime);
 
-            Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
+            Assertions.assertEquals(TestTradingDays.TRADING_DAY1.tradingDay(), tradingDay);
         }
     }
 
@@ -255,7 +254,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
-            final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedResult, actualResult);
         }
@@ -275,7 +274,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
-            final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedResult, actualResult);
         }
@@ -295,7 +294,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
-            final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedResult, result);
         }
@@ -315,7 +314,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
-            final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedResult, result);
         }
@@ -335,7 +334,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
-            final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedResult, result);
         }
@@ -393,7 +392,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedSchedule, schedule);
         }
@@ -414,7 +413,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedSchedule, schedule);
         }
@@ -435,7 +434,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedSchedule, schedule);
         }
@@ -456,7 +455,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
 
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedSchedule, schedule);
         }
@@ -522,22 +521,26 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange1 = "MOEX";
         final String exchange2 = "SPB";
 
+        final TestTradingDay testTradingDay1 = TestTradingDays.TRADING_DAY1;
+        final TestTradingDay testTradingDay2 = TestTradingDays.TRADING_DAY2;
+        final TestTradingDay testTradingDay3 = TestTradingDays.TRADING_DAY3;
+
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1)
-                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
-                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
+                .addDays(testTradingDay1.tinkoffTradingDay())
+                .addDays(testTradingDay2.tinkoffTradingDay())
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2)
-                .addDays(TestTradingDay3.TINKOFF_TRADING_DAY)
+                .addDays(testTradingDay3.tinkoffTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
 
         final List<TradingSchedule> result = realExtInstrumentsService.getTradingSchedules(Interval.of(from, to));
 
-        final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-        final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, TestTradingDay3.TRADING_DAY);
+        final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, testTradingDay1.tradingDay(), testTradingDay2.tradingDay());
+        final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, testTradingDay3.tradingDay());
 
         final List<TradingSchedule> expectedResult = List.of(expectedTradingSchedule1, expectedTradingSchedule2);
 
@@ -551,8 +554,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Instant toInstant = DateUtils.toSameDayInstant(to);
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
-                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDays.TRADING_DAY1.tinkoffTradingDay())
+                .addDays(TestTradingDays.TRADING_DAY2.tinkoffTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }
