@@ -108,9 +108,9 @@ class FakeBotFactoryUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateBot_initializesBalance() {
         return Stream.of(
-                Arguments.of(TestData.createBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"), 1001000.0),
-                Arguments.of(TestData.createBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"), 1000000.0),
-                Arguments.of(TestData.createBalanceConfig(1000000.0), 1000000.0)
+                Arguments.of(TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"), 1001000.0),
+                Arguments.of(TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"), 1000000.0),
+                Arguments.of(TestData.newBalanceConfig(1000000.0), 1000000.0)
         );
     }
 
@@ -151,7 +151,7 @@ class FakeBotFactoryUnitTest {
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(1000000.0);
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);

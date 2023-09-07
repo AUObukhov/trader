@@ -64,21 +64,21 @@ class FakeExtOperationsServiceUnitTest {
                 .setFigi(figi)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime1))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(price1, ""))
+                .setPrice(TestData.newMoneyValue(price1, ""))
                 .setQuantity(quantity1)
                 .build();
         final Operation operation2 = Operation.newBuilder()
                 .setFigi(figi)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime2))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(price2, ""))
+                .setPrice(TestData.newMoneyValue(price2, ""))
                 .setQuantity(quantity2)
                 .build();
         final Operation operation3 = Operation.newBuilder()
                 .setFigi(figi)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime3))
                 .setOperationType(OperationType.OPERATION_TYPE_SELL)
-                .setPrice(TestData.createMoneyValue(price3, ""))
+                .setPrice(TestData.newMoneyValue(price3, ""))
                 .setQuantity(quantity3)
                 .build();
 
@@ -93,9 +93,9 @@ class FakeExtOperationsServiceUnitTest {
 
         // assert
 
-        final Operation expectedOperation1 = TestData.createOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi);
-        final Operation expectedOperation2 = TestData.createOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi);
-        final Operation expectedOperation3 = TestData.createOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi);
+        final Operation expectedOperation1 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi);
+        final Operation expectedOperation2 = TestData.newOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi);
+        final Operation expectedOperation3 = TestData.newOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi);
 
         AssertUtils.assertEquals(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
 
@@ -129,21 +129,21 @@ class FakeExtOperationsServiceUnitTest {
                 .setFigi(figi1)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime1))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(price1, ""))
+                .setPrice(TestData.newMoneyValue(price1, ""))
                 .setQuantity(quantity1)
                 .build();
         final Operation operation2 = Operation.newBuilder()
                 .setFigi(figi2)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime2))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(price2, ""))
+                .setPrice(TestData.newMoneyValue(price2, ""))
                 .setQuantity(quantity2)
                 .build();
         final Operation operation3 = Operation.newBuilder()
                 .setFigi(figi2)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime3))
                 .setOperationType(OperationType.OPERATION_TYPE_SELL)
-                .setPrice(TestData.createMoneyValue(price3, ""))
+                .setPrice(TestData.newMoneyValue(price3, ""))
                 .setQuantity(quantity3)
                 .build();
 
@@ -158,11 +158,11 @@ class FakeExtOperationsServiceUnitTest {
 
         // assert
 
-        final Operation expectedFigi1Operation = TestData.createOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi1);
+        final Operation expectedFigi1Operation = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi1);
         AssertUtils.assertEquals(List.of(expectedFigi1Operation), figi1Operations);
 
-        final Operation expectedFigi2Operation1 = TestData.createOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi2);
-        final Operation expectedFigi2Operation2 = TestData.createOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi2);
+        final Operation expectedFigi2Operation1 = TestData.newOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi2);
+        final Operation expectedFigi2Operation2 = TestData.newOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi2);
         AssertUtils.assertEquals(List.of(expectedFigi2Operation1, expectedFigi2Operation2), figi2Operations);
     }
 
@@ -191,21 +191,21 @@ class FakeExtOperationsServiceUnitTest {
                 .setFigi(figi1)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime1))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(price1, ""))
+                .setPrice(TestData.newMoneyValue(price1, ""))
                 .setQuantity(quantity1)
                 .build();
         final Operation operation2 = Operation.newBuilder()
                 .setFigi(figi2)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime2))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(price2, ""))
+                .setPrice(TestData.newMoneyValue(price2, ""))
                 .setQuantity(quantity2)
                 .build();
         final Operation operation3 = Operation.newBuilder()
                 .setFigi(figi2)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(dateTime3))
                 .setOperationType(OperationType.OPERATION_TYPE_SELL)
-                .setPrice(TestData.createMoneyValue(price3, ""))
+                .setPrice(TestData.newMoneyValue(price3, ""))
                 .setQuantity(quantity3)
                 .build();
 
@@ -219,21 +219,21 @@ class FakeExtOperationsServiceUnitTest {
 
         // assert
 
-        final Operation expectedOperation1 = TestData.createOperation(
+        final Operation expectedOperation1 = TestData.newOperation(
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
                 price1,
                 quantity1,
                 figi1
         );
-        final Operation expectedOperation2 = TestData.createOperation(
+        final Operation expectedOperation2 = TestData.newOperation(
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
                 price2,
                 quantity2,
                 figi2
         );
-        final Operation expectedOperation3 = TestData.createOperation(
+        final Operation expectedOperation3 = TestData.newOperation(
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
                 price3,

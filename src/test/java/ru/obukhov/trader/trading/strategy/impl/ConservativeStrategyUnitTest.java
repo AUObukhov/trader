@@ -25,9 +25,9 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenExistsOperationStateInUnspecified() {
-        final Operation operation1 = TestData.createOperation(OperationState.OPERATION_STATE_EXECUTED);
-        final Operation operation2 = TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
-        final Operation operation3 = TestData.createOperation(OperationState.OPERATION_STATE_CANCELED);
+        final Operation operation1 = TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED);
+        final Operation operation2 = TestData.newOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
+        final Operation operation3 = TestData.newOperation(OperationState.OPERATION_STATE_CANCELED);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
@@ -40,7 +40,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenNoAvailableLots() {
-        final DecisionData data = TestData.createDecisionData(2000.0, 2000.0, 1, 0.003);
+        final DecisionData data = TestData.newDecisionData(2000.0, 2000.0, 1, 0.003);
 
         final Decision decision = strategy.decide(data, strategy.initCache());
 
@@ -50,7 +50,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsBuy_whenThereAreAvailableLots() {
-        final DecisionData data = TestData.createDecisionData(10000.0, 2000.0, 1, 0.003);
+        final DecisionData data = TestData.newDecisionData(10000.0, 2000.0, 1, 0.003);
 
         final Decision decision = strategy.decide(data, strategy.initCache());
 

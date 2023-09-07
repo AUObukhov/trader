@@ -543,28 +543,28 @@ class ExcelServiceImplUnitTest {
                 .setFigi(figi)
                 .setDate(TimestampUtils.newTimestamp(2020, 10, 1, 10))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(150, ""))
+                .setPrice(TestData.newMoneyValue(150, ""))
                 .setQuantity(1L)
                 .build();
         Operation operation2 = Operation.newBuilder()
                 .setFigi(figi)
                 .setDate(TimestampUtils.newTimestamp(2020, 10, 5, 10, 11))
                 .setOperationType(OperationType.OPERATION_TYPE_SELL)
-                .setPrice(TestData.createMoneyValue(180, ""))
+                .setPrice(TestData.newMoneyValue(180, ""))
                 .setQuantity(1L)
                 .build();
         Operation operation3 = Operation.newBuilder()
                 .setFigi(figi)
                 .setDate(TimestampUtils.newTimestamp(2020, 10, 10, 10, 50))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(160, ""))
+                .setPrice(TestData.newMoneyValue(160, ""))
                 .setQuantity(3L)
                 .build();
         Operation operation4 = Operation.newBuilder()
                 .setFigi(figi)
                 .setDate(TimestampUtils.newTimestamp(2020, 11, 1, 10))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(120, ""))
+                .setPrice(TestData.newMoneyValue(120, ""))
                 .setQuantity(2L)
                 .build();
 

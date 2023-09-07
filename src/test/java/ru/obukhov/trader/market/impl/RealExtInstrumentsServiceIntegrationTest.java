@@ -341,16 +341,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
             final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, interval);
 
             final List<TradingDay> expectedResult = List.of(
-                    TestData.createTradingDay(true, year, month, 18, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 19, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 20, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 21, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 22, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 23, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 24, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 25, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 26, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 26, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 27, hour, durationHours)
             );
 
             Assertions.assertEquals(expectedResult, actualResult);
@@ -460,16 +460,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
             final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigi(figi, interval);
 
             final List<TradingDay> expectedResult = List.of(
-                    TestData.createTradingDay(true, year, month, 18, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 19, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 20, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 21, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 22, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 23, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 24, hour, durationHours),
-                    TestData.createTradingDay(true, year, month, 25, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 26, hour, durationHours),
-                    TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 26, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 27, hour, durationHours)
             );
 
             Assertions.assertEquals(expectedResult, actualResult);

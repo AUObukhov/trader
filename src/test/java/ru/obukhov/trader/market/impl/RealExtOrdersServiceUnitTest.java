@@ -60,11 +60,11 @@ class RealExtOrdersServiceUnitTest {
 
         mockOrders(
                 accountId,
-                TestData.createOrderState("order0", figi),
-                TestData.createOrderState("order1", figi),
-                TestData.createOrderState("order2", "figi3"),
-                TestData.createOrderState("order3", "figi4"),
-                TestData.createOrderState("order4", figi)
+                TestData.newOrderState("order0", figi),
+                TestData.newOrderState("order1", figi),
+                TestData.newOrderState("order2", "figi3"),
+                TestData.newOrderState("order3", "figi4"),
+                TestData.newOrderState("order4", figi)
         );
 
         final List<OrderState> orders = realExtOrdersService.getOrders(accountId, figi);

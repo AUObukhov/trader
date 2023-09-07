@@ -208,7 +208,7 @@ class FakeContextUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forNextScheduleMinute")
     void nextScheduleMinute(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
-        final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
+        final List<TradingDay> tradingSchedule = TestData.newTradingSchedule(
                 DateTimeTestData.createDateTime(2023, 7, 21, 7),
                 DateTimeTestData.createTime(19, 0, 0),
                 5

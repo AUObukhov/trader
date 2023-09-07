@@ -59,7 +59,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(null);
         request.setTo(null);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(false);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -99,7 +99,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         request.setBotConfigs(null);
 
@@ -111,7 +111,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         request.setBotConfigs(Collections.emptyList());
 
@@ -123,7 +123,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -143,7 +143,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -163,7 +163,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -195,7 +195,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         request.setFrom(from);
         request.setTo(to);
-        request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(false);
 
         final Map<String, Object> strategyParams1 = Map.of("minimumProfit", 0.01);
@@ -264,7 +264,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 .setFigi(figi)
                 .setDate(TimestampUtils.newTimestamp(from))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
-                .setPrice(TestData.createMoneyValue(10000, currency))
+                .setPrice(TestData.newMoneyValue(10000, currency))
                 .setQuantity(1L)
                 .build();
         final Candle candle = new CandleBuilder()
@@ -294,7 +294,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final Position backTestPosition2 = Position.builder()
                 .figi(figi)
-                .currentPrice(TestData.createMoney(100000, currency))
+                .currentPrice(TestData.newMoney(100000, currency))
                 .quantity(BigDecimal.valueOf(10))
                 .build();
         final BackTestResult backTestResult2 = new BackTestResult(

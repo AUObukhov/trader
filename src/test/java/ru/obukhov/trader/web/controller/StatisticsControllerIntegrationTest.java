@@ -174,8 +174,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .add(historicCandles)
                 .mock();
 
-        final List<BigDecimal> shortAverages = TestData.createBigDecimals(12000, 1200, 120);
-        final List<BigDecimal> longAverages = TestData.createBigDecimals(12000, 6600, 660);
+        final List<BigDecimal> shortAverages = TestData.newBigDecimalList(12000, 1200, 120);
+        final List<BigDecimal> longAverages = TestData.newBigDecimalList(12000, 6600, 660);
         final List<Candle> candles = historicCandles.stream().map(CANDLE_MAPPER::map).toList();
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, shortAverages, longAverages);
 

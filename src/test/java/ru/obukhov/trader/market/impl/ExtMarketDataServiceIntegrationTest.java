@@ -246,9 +246,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final List<String> figies = List.of(figi1, figi2, figi3, figi4);
 
-        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
-        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
-        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
+        final LastPrice lastPrice1 = TestData.newLastPrice(figi1, price1);
+        final LastPrice lastPrice2 = TestData.newLastPrice(figi2, price2);
+        final LastPrice lastPrice3 = TestData.newLastPrice(figi3, price3);
 
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3));
 
@@ -269,10 +269,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final List<String> figies = List.of(figi1, figi2, figi3);
 
-        final LastPrice lastPrice1 = TestData.createLastPrice(figi1, price1);
-        final LastPrice lastPrice2 = TestData.createLastPrice(figi2, price2);
-        final LastPrice lastPrice3 = TestData.createLastPrice(figi3, price3);
-        final LastPrice lastPrice4 = TestData.createLastPrice(figi1, price3);
+        final LastPrice lastPrice1 = TestData.newLastPrice(figi1, price1);
+        final LastPrice lastPrice2 = TestData.newLastPrice(figi2, price2);
+        final LastPrice lastPrice3 = TestData.newLastPrice(figi3, price3);
+        final LastPrice lastPrice4 = TestData.newLastPrice(figi1, price3);
 
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(List.of(lastPrice1, lastPrice2, lastPrice3, lastPrice4));
 

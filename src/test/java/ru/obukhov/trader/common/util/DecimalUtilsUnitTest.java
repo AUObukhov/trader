@@ -42,7 +42,7 @@ class DecimalUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBigDecimal")
     void createBigDecimal_fromMoneyValue(final long units, final int nanos, final double expectedResult) {
-        final MoneyValue moneyValue = TestData.createMoneyValue(units, nanos, Currencies.RUB);
+        final MoneyValue moneyValue = TestData.newMoneyValue(units, nanos, Currencies.RUB);
 
         final BigDecimal result = DecimalUtils.createBigDecimal(moneyValue);
 

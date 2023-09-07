@@ -109,11 +109,11 @@ class PositionBuilderUnitTest {
         final String figi = TestShare1.FIGI;
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity = 20;
-        final Money averagePositionPrice = TestData.createMoney(500, currency);
+        final Money averagePositionPrice = TestData.newMoney(500, currency);
         final BigDecimal expectedYield = BigDecimal.valueOf(20000);
-        final Money currentNkd = TestData.createMoney(12, currency);
-        final Money currentPrice = TestData.createMoney(1500, currency);
-        final Money averagePositionPriceFifo = TestData.createMoney(300, currency);
+        final Money currentNkd = TestData.newMoney(12, currency);
+        final Money currentPrice = TestData.newMoney(1500, currency);
+        final Money averagePositionPriceFifo = TestData.newMoney(300, currency);
 
         final Position position = new PositionBuilder()
                 .setCurrency(currency)

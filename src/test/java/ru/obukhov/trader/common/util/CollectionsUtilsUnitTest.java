@@ -118,7 +118,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
-        final List<BigDecimal> list = TestData.createBigDecimals(5, 10);
+        final List<BigDecimal> list = TestData.newBigDecimalList(5, 10);
         final int index = 0;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -131,7 +131,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
-        final List<BigDecimal> list = TestData.createBigDecimals(5, 10);
+        final List<BigDecimal> list = TestData.newBigDecimalList(5, 10);
         final int index = 2;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -144,7 +144,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
-        final List<BigDecimal> list = TestData.createBigDecimals(5, 10, 0);
+        final List<BigDecimal> list = TestData.newBigDecimalList(5, 10, 0);
         final int index = 1;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);

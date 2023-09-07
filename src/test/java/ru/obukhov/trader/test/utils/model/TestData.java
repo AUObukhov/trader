@@ -59,11 +59,7 @@ public class TestData {
 
     // region DecisionData creation
 
-    public static DecisionData createDecisionData(
-            final double averagePositionPrice,
-            final int quantity,
-            final double currentPrice
-    ) {
+    public static DecisionData newDecisionData(final double averagePositionPrice, final int quantity, final double currentPrice) {
         final DecisionData decisionData = new DecisionData();
         final Position portfolioPosition = new PositionBuilder()
                 .setAveragePositionPrice(averagePositionPrice)
@@ -78,7 +74,7 @@ public class TestData {
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
+    public static DecisionData newDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
@@ -91,7 +87,7 @@ public class TestData {
 
     // endregion
 
-    public static PortfolioPosition createPortfolioPosition(
+    public static PortfolioPosition newPortfolioPosition(
             final String figi,
             final InstrumentType instrumentType,
             final long quantity,
@@ -103,18 +99,18 @@ public class TestData {
         return PortfolioPosition.newBuilder()
                 .setFigi(figi)
                 .setInstrumentType(instrumentType.name())
-                .setQuantity(createQuotation(quantity))
-                .setAveragePositionPrice(createMoneyValue(averagePositionPrice, currency))
-                .setExpectedYield(createQuotation(expectedYield))
-                .setCurrentNkd(createMoneyValue(currency))
-                .setCurrentPrice(createMoneyValue(currentPrice, currency))
-                .setAveragePositionPriceFifo(createMoneyValue(currency))
+                .setQuantity(newQuotation(quantity))
+                .setAveragePositionPrice(newMoneyValue(averagePositionPrice, currency))
+                .setExpectedYield(newQuotation(expectedYield))
+                .setCurrentNkd(newMoneyValue(currency))
+                .setCurrentPrice(newMoneyValue(currentPrice, currency))
+                .setAveragePositionPriceFifo(newMoneyValue(currency))
                 .build();
     }
 
     // region Operation
 
-    public static Operation createOperation(
+    public static Operation newOperation(
             final OffsetDateTime operationDateTime,
             final OperationType operationType,
             final double operationPrice,
@@ -124,19 +120,19 @@ public class TestData {
         return Operation.newBuilder()
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(operationDateTime))
                 .setOperationType(operationType)
-                .setPrice(createMoneyValue(operationPrice))
+                .setPrice(newMoneyValue(operationPrice))
                 .setQuantity(operationQuantity)
                 .setFigi(figi)
                 .build();
     }
 
-    public static Operation createOperation(final OperationState state) {
+    public static Operation newOperation(final OperationState state) {
         return Operation.newBuilder()
                 .setState(state)
                 .build();
     }
 
-    public static Operation createOperation() {
+    public static Operation newOperation() {
         return Operation.newBuilder()
                 .build();
     }
@@ -145,19 +141,19 @@ public class TestData {
 
     // region BigDecimals list creation
 
-    public static List<BigDecimal> createBigDecimals(final List<Double> values) {
+    public static List<BigDecimal> newBigDecimalList(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createBigDecimals(final Double... values) {
+    public static List<BigDecimal> newBigDecimalList(final Double... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createBigDecimals(final Integer... values) {
+    public static List<BigDecimal> newBigDecimalList(final Integer... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createRandomBigDecimals(final int size) {
+    public static List<BigDecimal> newRandomBigDecimalList(final int size) {
         final List<BigDecimal> values = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             values.add(DecimalUtils.setDefaultScale(RANDOM.nextDouble()));
@@ -165,7 +161,7 @@ public class TestData {
         return values;
     }
 
-    public static List<BigDecimal> createRandomBigDecimals(final int size, final long origin, final long bound) {
+    public static List<BigDecimal> newRandomBigDecimalList(final int size, final long origin, final long bound) {
         final List<BigDecimal> values = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             values.add(DecimalUtils.setDefaultScale(RANDOM.nextDouble(origin, bound)));
@@ -176,21 +172,21 @@ public class TestData {
     // endregion
 
     @SneakyThrows
-    public static CronExpression createCronExpression(final String expression) {
+    public static CronExpression newCronExpression(final String expression) {
         return new CronExpression(expression);
     }
 
     // region BalanceConfig creation
 
-    public static BalanceConfig createBalanceConfig(final Double initialBalance) {
-        return createBalanceConfig(initialBalance, null);
+    public static BalanceConfig newBalanceConfig(final Double initialBalance) {
+        return newBalanceConfig(initialBalance, null);
     }
 
-    public static BalanceConfig createBalanceConfig(final Double initialBalance, final Double balanceIncrement) {
-        return createBalanceConfig(initialBalance, balanceIncrement, null);
+    public static BalanceConfig newBalanceConfig(final Double initialBalance, final Double balanceIncrement) {
+        return newBalanceConfig(initialBalance, balanceIncrement, null);
     }
 
-    public static BalanceConfig createBalanceConfig(final Double initialBalance, final Double balanceIncrement, final String balanceIncrementCron) {
+    public static BalanceConfig newBalanceConfig(final Double initialBalance, final Double balanceIncrement, final String balanceIncrementCron) {
         final BalanceConfig balanceConfig = new BalanceConfig();
 
         if (initialBalance != null) {
@@ -202,7 +198,7 @@ public class TestData {
         }
 
         if (balanceIncrementCron != null) {
-            balanceConfig.setBalanceIncrementCron(createCronExpression(balanceIncrementCron));
+            balanceConfig.setBalanceIncrementCron(newCronExpression(balanceIncrementCron));
         }
 
         return balanceConfig;
@@ -210,7 +206,7 @@ public class TestData {
 
     // endregion
 
-    public static OrderState createOrderState(final String orderId, final String figi) {
+    public static OrderState newOrderState(final String orderId, final String figi) {
         return OrderState.newBuilder()
                 .setOrderId(orderId)
                 .setFigi(figi)
@@ -219,11 +215,11 @@ public class TestData {
 
     // region Quotation creation
 
-    public static Quotation createQuotation(final long units) {
+    public static Quotation newQuotation(final long units) {
         return Quotation.newBuilder().setUnits(units).build();
     }
 
-    public static Quotation createQuotation() {
+    public static Quotation newQuotation() {
         return Quotation.newBuilder().build();
     }
 
@@ -231,19 +227,19 @@ public class TestData {
 
     // region MoneyValue creation
 
-    public static MoneyValue createMoneyValue(final String currency) {
+    public static MoneyValue newMoneyValue(final String currency) {
         return MoneyValue.newBuilder().setCurrency(currency).build();
     }
 
-    public static MoneyValue createMoneyValue(final double value) {
+    public static MoneyValue newMoneyValue(final double value) {
         return DataStructsHelper.createMoneyValue(StringUtils.EMPTY, DecimalUtils.setDefaultScale(value));
     }
 
-    public static MoneyValue createMoneyValue(final double value, final String currency) {
+    public static MoneyValue newMoneyValue(final double value, final String currency) {
         return DataStructsHelper.createMoneyValue(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static MoneyValue createMoneyValue(final long units, final int nano, final String currency) {
+    public static MoneyValue newMoneyValue(final long units, final int nano, final String currency) {
         return MoneyValue.newBuilder()
                 .setCurrency(currency)
                 .setUnits(units)
@@ -253,18 +249,18 @@ public class TestData {
 
     // endregion
 
-    public static Money createMoney(final int value, final String currency) {
+    public static Money newMoney(final int value, final String currency) {
         return DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(value), currency);
     }
 
-    public static Portfolio createPortfolio(final PortfolioPosition... portfolioPositions) {
+    public static Portfolio newPortfolio(final PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()
-                .setTotalAmountShares(createMoneyValue(Currencies.RUB))
-                .setTotalAmountBonds(createMoneyValue(Currencies.RUB))
-                .setTotalAmountEtf(createMoneyValue(Currencies.RUB))
-                .setTotalAmountCurrencies(createMoneyValue(Currencies.RUB))
-                .setTotalAmountFutures(createMoneyValue(Currencies.RUB))
-                .setExpectedYield(createQuotation());
+                .setTotalAmountShares(newMoneyValue(Currencies.RUB))
+                .setTotalAmountBonds(newMoneyValue(Currencies.RUB))
+                .setTotalAmountEtf(newMoneyValue(Currencies.RUB))
+                .setTotalAmountCurrencies(newMoneyValue(Currencies.RUB))
+                .setTotalAmountFutures(newMoneyValue(Currencies.RUB))
+                .setExpectedYield(newQuotation());
         for (final PortfolioPosition portfolioPosition : portfolioPositions) {
             builder.addPositions(portfolioPosition);
         }
@@ -273,7 +269,7 @@ public class TestData {
         return Portfolio.fromResponse(portfolioResponse);
     }
 
-    public static TradingDay createTradingDay(final boolean isTradingDay, OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
+    public static TradingDay newTradingDay(final boolean isTradingDay, OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
         return new TradingDay(
                 DateUtils.toStartOfDay(startDateTime),
                 isTradingDay,
@@ -291,7 +287,7 @@ public class TestData {
         );
     }
 
-    public static TradingDay createTradingDay(
+    public static TradingDay newTradingDay(
             final boolean isTradingDay,
             final int year,
             final int month,
@@ -301,20 +297,20 @@ public class TestData {
     ) {
         final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(year, month, dayOfMonth, hour);
         final OffsetDateTime endDateTime = startDateTime.plusHours(durationHours);
-        return createTradingDay(isTradingDay, startDateTime, endDateTime);
+        return newTradingDay(isTradingDay, startDateTime, endDateTime);
     }
 
-    public static TradingDay createTradingDay(final OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
-        return createTradingDay(true, startDateTime, endDateTime);
+    public static TradingDay newTradingDay(final OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
+        return newTradingDay(true, startDateTime, endDateTime);
     }
 
-    public static List<TradingDay> createTradingSchedule(final OffsetDateTime startDateTime, final OffsetTime endTime, final int daysCount) {
+    public static List<TradingDay> newTradingSchedule(final OffsetDateTime startDateTime, final OffsetTime endTime, final int daysCount) {
         List<TradingDay> schedule = new ArrayList<>();
         for (int i = 0; i < daysCount; i++) {
             final OffsetDateTime currentStartDateTime = startDateTime.plusDays(i);
             final OffsetDateTime currentEndDateTime = DateUtils.setTime(currentStartDateTime, endTime);
             final boolean isTradingDay = DateUtils.isWorkDay(currentStartDateTime);
-            schedule.add(createTradingDay(isTradingDay, currentStartDateTime, currentEndDateTime));
+            schedule.add(newTradingDay(isTradingDay, currentStartDateTime, currentEndDateTime));
         }
 
         return schedule;
@@ -323,27 +319,27 @@ public class TestData {
     /**
      * @return WorkSchedule with start equal to given @{code hour} of day and given duration of given {@code durationHours}
      */
-    public static WorkSchedule createWorkSchedule(final int hour, final int durationHours) {
+    public static WorkSchedule newWorkSchedule(final int hour, final int durationHours) {
         return new WorkSchedule(DateTimeTestData.createTime(hour), Duration.ofHours(durationHours));
     }
 
     /**
      * @return new Interval where {@code from} is start of given {@code dateTime} and {@code to} is end of given {@code dateTime}
      */
-    public static Interval createIntervalOfDay(@NotNull final OffsetDateTime dateTime) {
+    public static Interval newIntervalOfDay(@NotNull final OffsetDateTime dateTime) {
         final OffsetDateTime from = DateUtils.toStartOfDay(dateTime);
         final OffsetDateTime to = DateUtils.toEndOfDay(from);
         return Interval.of(from, to);
     }
 
-    public static LastPrice createLastPrice(final String figi, final double price) {
+    public static LastPrice newLastPrice(final String figi, final double price) {
         return LastPrice.newBuilder()
                 .setFigi(figi)
                 .setPrice(QUOTATION_MAPPER.fromDouble(price))
                 .build();
     }
 
-    public static LastPrice createLastPrice(final String figi, final BigDecimal price) {
+    public static LastPrice newLastPrice(final String figi, final BigDecimal price) {
         return LastPrice.newBuilder()
                 .setFigi(figi)
                 .setPrice(QUOTATION_MAPPER.fromBigDecimal(price))

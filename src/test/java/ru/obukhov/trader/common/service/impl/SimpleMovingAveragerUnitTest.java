@@ -27,7 +27,7 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder_throwsIllegalArgumentException")
     void getAverages_withoutOrder_throwsIllegalArgumentException(final List<Double> values, final int window, final String expectedMessage) {
-        final List<BigDecimal> decimalValues = TestData.createBigDecimals(values);
+        final List<BigDecimal> decimalValues = TestData.newBigDecimalList(values);
 
         final Executable executable = () -> averager.getAverages(decimalValues, window);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -103,11 +103,11 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
     void getAverages_withoutOrder(final List<Double> values, final int window, final List<Double> expectedValues) {
-        final List<BigDecimal> decimalValues = TestData.createBigDecimals(values);
+        final List<BigDecimal> decimalValues = TestData.newBigDecimalList(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(decimalValues, window);
 
-        final List<BigDecimal> quotationExpectedValues = TestData.createBigDecimals(expectedValues);
+        final List<BigDecimal> quotationExpectedValues = TestData.newBigDecimalList(expectedValues);
         AssertUtils.assertEquals(quotationExpectedValues, movingAverages);
     }
 
@@ -133,7 +133,7 @@ class SimpleMovingAveragerUnitTest {
             final int order,
             final String expectedMessage
     ) {
-        final List<BigDecimal> decimalValues = TestData.createBigDecimals(values);
+        final List<BigDecimal> decimalValues = TestData.newBigDecimalList(values);
 
         final Executable executable = () -> averager.getAverages(decimalValues, window, order);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -295,22 +295,22 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
     void getAverages_withOrderOne(final List<Double> values, final int window, final List<Double> expectedValues) {
-        final List<BigDecimal> decimalValues = TestData.createBigDecimals(values);
+        final List<BigDecimal> decimalValues = TestData.newBigDecimalList(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(decimalValues, window, 1);
 
-        final List<BigDecimal> quotationExpectedValues = TestData.createBigDecimals(expectedValues);
+        final List<BigDecimal> quotationExpectedValues = TestData.newBigDecimalList(expectedValues);
         AssertUtils.assertEquals(quotationExpectedValues, movingAverages);
     }
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder")
     void getAverages_withOrder(final List<Double> values, final int window, final int order, final List<Double> expectedValues) {
-        final List<BigDecimal> decimalValues = TestData.createBigDecimals(values);
+        final List<BigDecimal> decimalValues = TestData.newBigDecimalList(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(decimalValues, window, order);
 
-        final List<BigDecimal> quotationExpectedValues = TestData.createBigDecimals(expectedValues);
+        final List<BigDecimal> quotationExpectedValues = TestData.newBigDecimalList(expectedValues);
         AssertUtils.assertEquals(quotationExpectedValues, movingAverages);
     }
 

@@ -45,8 +45,8 @@ class RealExtOperationsServiceUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 8, 10, 19);
 
         final List<Operation> operations = List.of(
-                TestData.createOperation(OperationState.OPERATION_STATE_EXECUTED),
-                TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED)
+                TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED),
+                TestData.newOperation(OperationState.OPERATION_STATE_UNSPECIFIED)
         );
 
         Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi))
@@ -87,7 +87,7 @@ class RealExtOperationsServiceUnitTest {
         final int currentPrice3 = 10;
         final String currency3 = TestEtf1.CURRENCY;
 
-        final PortfolioPosition portfolioPosition1 = TestData.createPortfolioPosition(
+        final PortfolioPosition portfolioPosition1 = TestData.newPortfolioPosition(
                 figi1,
                 instrumentType1,
                 quantity1,
@@ -96,7 +96,7 @@ class RealExtOperationsServiceUnitTest {
                 currentPrice1,
                 currency1
         );
-        final PortfolioPosition portfolioPosition2 = TestData.createPortfolioPosition(
+        final PortfolioPosition portfolioPosition2 = TestData.newPortfolioPosition(
                 figi2,
                 instrumentType2,
                 quantity2,
@@ -105,7 +105,7 @@ class RealExtOperationsServiceUnitTest {
                 currentPrice2,
                 currency2
         );
-        final PortfolioPosition portfolioPosition3 = TestData.createPortfolioPosition(
+        final PortfolioPosition portfolioPosition3 = TestData.newPortfolioPosition(
                 figi3,
                 instrumentType3,
                 quantity3,
@@ -115,7 +115,7 @@ class RealExtOperationsServiceUnitTest {
                 currency3
         );
 
-        final Portfolio portfolio = TestData.createPortfolio(portfolioPosition1, portfolioPosition2, portfolioPosition3);
+        final Portfolio portfolio = TestData.newPortfolio(portfolioPosition1, portfolioPosition2, portfolioPosition3);
         Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
 
         // action

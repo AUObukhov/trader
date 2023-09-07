@@ -73,7 +73,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         Mocker.mockTickerByFigi(instrumentsService, ticker2, figi2);
         Mocker.mockTickerByFigi(instrumentsService, ticker3, figi3);
 
-        final PortfolioPosition tinkoffPosition1 = TestData.createPortfolioPosition(
+        final PortfolioPosition tinkoffPosition1 = TestData.newPortfolioPosition(
                 figi1,
                 instrumentType1,
                 quantity1,
@@ -82,7 +82,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 currentPrice1,
                 currency1
         );
-        final PortfolioPosition tinkoffPosition2 = TestData.createPortfolioPosition(
+        final PortfolioPosition tinkoffPosition2 = TestData.newPortfolioPosition(
                 figi2,
                 instrumentType2,
                 quantity2,
@@ -91,7 +91,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 currentPrice2,
                 currency2
         );
-        final PortfolioPosition tinkoffPosition3 = TestData.createPortfolioPosition(
+        final PortfolioPosition tinkoffPosition3 = TestData.newPortfolioPosition(
                 figi3,
                 instrumentType3,
                 quantity3,
@@ -100,7 +100,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 currentPrice3,
                 currency3
         );
-        final Portfolio portfolio = TestData.createPortfolio(tinkoffPosition1, tinkoffPosition2, tinkoffPosition3);
+        final Portfolio portfolio = TestData.newPortfolio(tinkoffPosition1, tinkoffPosition2, tinkoffPosition3);
 
         Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
 

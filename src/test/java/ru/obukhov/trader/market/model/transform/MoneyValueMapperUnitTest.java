@@ -28,7 +28,7 @@ class MoneyValueMapperUnitTest {
     @Test
     void moneyValueToBigDecimal_whenNotNull() {
         final double value = 100;
-        final MoneyValue moneyValue = TestData.createMoneyValue(value, Currencies.RUB);
+        final MoneyValue moneyValue = TestData.newMoneyValue(value, Currencies.RUB);
 
         final BigDecimal bigDecimal = mapper.map(moneyValue);
 

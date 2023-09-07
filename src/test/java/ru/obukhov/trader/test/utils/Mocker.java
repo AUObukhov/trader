@@ -160,13 +160,13 @@ public class Mocker {
         final OffsetDateTime startDateTime = DateUtils.setTime(interval.getFrom(), startTime);
         final OffsetDateTime endDateTime = DateUtils.setTime(interval.getTo(), endTime);
         final boolean isTradingDay = DateUtils.isWorkDay(startDateTime);
-        return TestData.createTradingDay(isTradingDay, startDateTime, endDateTime);
+        return TestData.newTradingDay(isTradingDay, startDateTime, endDateTime);
     }
 
     public static void mockLastPricesDouble(final MarketDataService marketDataService, final Map<String, Double> figiesToPrices) {
         final List<String> figies = figiesToPrices.keySet().stream().toList();
         final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
-                .map(entry -> TestData.createLastPrice(entry.getKey(), entry.getValue()))
+                .map(entry -> TestData.newLastPrice(entry.getKey(), entry.getValue()))
                 .toList();
 
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
@@ -178,7 +178,7 @@ public class Mocker {
     ) {
         final List<String> figies = figiesToPrices.keySet().stream().toList();
         final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
-                .map(entry -> TestData.createLastPrice(entry.getKey(), entry.getValue()))
+                .map(entry -> TestData.newLastPrice(entry.getKey(), entry.getValue()))
                 .toList();
 
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);

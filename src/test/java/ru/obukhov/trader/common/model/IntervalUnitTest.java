@@ -1189,21 +1189,21 @@ class IntervalUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
         final Interval interval = Interval.of(from, to);
-        final WorkSchedule workSchedule = TestData.createWorkSchedule(hour, durationHours);
+        final WorkSchedule workSchedule = TestData.newWorkSchedule(hour, durationHours);
 
         final List<TradingDay> actualResult = interval.toTradingDays(workSchedule);
 
         final List<TradingDay> expectedResult = List.of(
-                TestData.createTradingDay(true, year, month, 18, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 19, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 20, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 21, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 22, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 23, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 24, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 25, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 26, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+                TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 26, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 27, hour, durationHours)
         );
 
         Assertions.assertEquals(expectedResult, actualResult);
@@ -1219,21 +1219,21 @@ class IntervalUnitTest {
         final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
         final Interval interval = Interval.of(from, to);
-        final WorkSchedule workSchedule = TestData.createWorkSchedule(hour, durationHours);
+        final WorkSchedule workSchedule = TestData.newWorkSchedule(hour, durationHours);
 
         final List<TradingDay> actualResult = interval.toTradingDays(workSchedule);
 
         final List<TradingDay> expectedResult = List.of(
-                TestData.createTradingDay(true, year, month, 18, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 19, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 20, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 21, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 22, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 23, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 24, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 25, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 26, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+                TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 26, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 27, hour, durationHours)
         );
 
         Assertions.assertEquals(expectedResult, actualResult);
@@ -1249,21 +1249,21 @@ class IntervalUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
         final Interval interval = Interval.of(from, to);
-        final WorkSchedule workSchedule = TestData.createWorkSchedule(hour, durationHours);
+        final WorkSchedule workSchedule = TestData.newWorkSchedule(hour, durationHours);
 
         final List<TradingDay> actualResult = interval.toTradingDays(workSchedule);
 
         final List<TradingDay> expectedResult = List.of(
-                TestData.createTradingDay(true, year, month, 18, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 19, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 20, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 21, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 22, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 23, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 24, hour, durationHours),
-                TestData.createTradingDay(true, year, month, 25, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 26, hour, durationHours),
-                TestData.createTradingDay(false, year, month, 27, hour, durationHours)
+                TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 26, hour, durationHours),
+                TestData.newTradingDay(false, year, month, 27, hour, durationHours)
         );
 
         Assertions.assertEquals(expectedResult, actualResult);

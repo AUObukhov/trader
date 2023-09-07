@@ -97,7 +97,7 @@ class TradingDayUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forIncludes")
     void includes(final OffsetDateTime startTimestamp, final OffsetDateTime endTimestamp, final OffsetDateTime timestamp, final boolean expectedResult) {
-        final TradingDay tradingDay = TestData.createTradingDay(startTimestamp, endTimestamp);
+        final TradingDay tradingDay = TestData.newTradingDay(startTimestamp, endTimestamp);
 
         final boolean actualResult = TradingDayUtils.includes(tradingDay, timestamp);
 
@@ -256,7 +256,7 @@ class TradingDayUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forNextScheduleMinute")
     void nextScheduleMinute(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
-        final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
+        final List<TradingDay> tradingSchedule = TestData.newTradingSchedule(
                 DateTimeTestData.createDateTime(2023, 7, 21, 7),
                 DateTimeTestData.createTime(19, 0, 0),
                 5
@@ -390,7 +390,7 @@ class TradingDayUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCeilingScheduleMinute")
     void ceilingScheduleMinute(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
-        final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
+        final List<TradingDay> tradingSchedule = TestData.newTradingSchedule(
                 DateTimeTestData.createDateTime(2023, 7, 21, 7),
                 DateTimeTestData.createTime(19, 0, 0),
                 5

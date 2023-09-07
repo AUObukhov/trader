@@ -68,7 +68,7 @@ class AbstractTradingStrategyUnitTest {
             @Nullable final Long expectedLots
     ) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.createDecisionData(balance, currentPrice, lotSize, 0.003);
+        final DecisionData data = TestData.newDecisionData(balance, currentPrice, lotSize, 0.003);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getBuyOrWaitDecision(data, strategyCache);
@@ -116,7 +116,7 @@ class AbstractTradingStrategyUnitTest {
             final DecisionAction expectedAction
     ) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.createDecisionData(averagePositionPrice, quantity, currentPrice);
+        final DecisionData data = TestData.newDecisionData(averagePositionPrice, quantity, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getSellOrWaitDecision(data, minimumProfit, strategyCache);
@@ -136,9 +136,9 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsTrue_whenOperationInUnspecifiedStateExists() {
-        final Operation operation1 = TestData.createOperation(OperationState.OPERATION_STATE_EXECUTED);
-        final Operation operation2 = TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
-        final Operation operation3 = TestData.createOperation(OperationState.OPERATION_STATE_CANCELED);
+        final Operation operation1 = TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED);
+        final Operation operation2 = TestData.newOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
+        final Operation operation3 = TestData.newOperation(OperationState.OPERATION_STATE_CANCELED);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
@@ -148,8 +148,8 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsFalse_whenOperationInProgressDoesNotExists() {
-        final Operation operation1 = TestData.createOperation(OperationState.OPERATION_STATE_EXECUTED);
-        final Operation operation2 = TestData.createOperation(OperationState.OPERATION_STATE_CANCELED);
+        final Operation operation1 = TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED);
+        final Operation operation2 = TestData.newOperation(OperationState.OPERATION_STATE_CANCELED);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2));

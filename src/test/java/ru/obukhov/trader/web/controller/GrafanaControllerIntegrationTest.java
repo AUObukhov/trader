@@ -216,7 +216,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     private GetDataRequest createGetDataRequest() {
         final GetDataRequest getDataRequest = new GetDataRequest();
-        getDataRequest.setInterval(TestData.createIntervalOfDay(OffsetDateTime.now()));
+        getDataRequest.setInterval(TestData.newIntervalOfDay(OffsetDateTime.now()));
 
         final Target target = new Target();
         target.setMetric(Metric.CANDLES);

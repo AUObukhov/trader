@@ -428,7 +428,7 @@ class RunnableBotUnitTest {
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(position);
 
-        final List<Operation> operations = List.of(TestData.createOperation());
+        final List<Operation> operations = List.of(TestData.newOperation());
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 

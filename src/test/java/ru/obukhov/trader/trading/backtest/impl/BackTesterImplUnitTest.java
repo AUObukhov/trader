@@ -70,7 +70,7 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_throwsIllegalArgumentException_whenFromIsInFuture() {
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
@@ -89,7 +89,7 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_throwsIllegalArgumentException_whenToIsInFuture() {
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
@@ -108,7 +108,7 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_throwsIllegalArgumentException_whenToIntervalIsShorterThanOneDay() {
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
@@ -135,7 +135,7 @@ class BackTesterImplUnitTest {
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final BotConfig botConfig = new BotConfig(accountId, figi, candleInterval, commission, strategyType, Collections.emptyMap());
 
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
         final List<BotConfig> botConfigs = List.of(botConfig);
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, from);
@@ -184,7 +184,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final BigDecimal finalBalance1 = DecimalUtils.setDefaultScale(2000);
         final int finalQuantity1 = 8;
@@ -303,7 +303,7 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final double balanceIncrement = 1000;
 
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
@@ -398,7 +398,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(10), 100.0);
@@ -472,7 +472,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final String figi1 = TestShare1.FIGI;
         final double commission1 = 0.003;
@@ -485,7 +485,7 @@ class BackTesterImplUnitTest {
         final OperationType operationType1 = OperationType.OPERATION_TYPE_BUY;
         final double operationPrice1 = 100;
         final int operationQuantity1 = 2;
-        final Operation operation1 = TestData.createOperation(operationDateTime1, operationType1, operationPrice1, operationQuantity1, figi1);
+        final Operation operation1 = TestData.newOperation(operationDateTime1, operationType1, operationPrice1, operationQuantity1, figi1);
 
         final String figi2 = TestShare2.FIGI;
         final double commission2 = 0.001;
@@ -498,7 +498,7 @@ class BackTesterImplUnitTest {
         final OperationType operationType2 = OperationType.OPERATION_TYPE_SELL;
         final double operationPrice2 = 1000;
         final int operationQuantity2 = 4;
-        final Operation operation2 = TestData.createOperation(operationDateTime2, operationType2, operationPrice2, operationQuantity2, figi2);
+        final Operation operation2 = TestData.newOperation(operationDateTime2, operationType2, operationPrice2, operationQuantity2, figi2);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -572,7 +572,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(1), 100.0);
@@ -650,7 +650,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
@@ -707,11 +707,11 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
         final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.001;
-        final Operation operation = TestData.createOperation(
+        final Operation operation = TestData.newOperation(
                 from.plusMinutes(2),
                 OperationType.OPERATION_TYPE_BUY,
                 100,
@@ -771,11 +771,11 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
         final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.001;
-        final Operation operation = TestData.createOperation(
+        final Operation operation = TestData.newOperation(
                 from.plusMinutes(2),
                 OperationType.OPERATION_TYPE_BUY,
                 100,
@@ -836,10 +836,10 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 0;
         final BigDecimal currentBalance = DecimalUtils.setDefaultScale(20000);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment);
 
         final double commission1 = 0.003;
-        final Operation operation = TestData.createOperation(
+        final Operation operation = TestData.newOperation(
                 from.plusMinutes(2),
                 OperationType.OPERATION_TYPE_BUY,
                 100,
@@ -903,7 +903,7 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
@@ -968,11 +968,11 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
         final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.003;
-        final Operation operation = TestData.createOperation(
+        final Operation operation = TestData.newOperation(
                 from.plusMinutes(2),
                 OperationType.OPERATION_TYPE_BUY,
                 100,
