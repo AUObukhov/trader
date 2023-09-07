@@ -13,8 +13,8 @@ import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState2;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -39,16 +39,17 @@ class RealExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
+        final List<TestOrderState> testOrderStates = List.of(TestOrderStates.ORDER_STATE1, TestOrderStates.ORDER_STATE2);
 
         Mockito.when(ordersService.getOrdersSync(accountId))
-                .thenReturn(List.of(TestOrderState1.TINKOFF_ORDER_STATE, TestOrderState2.TINKOFF_ORDER_STATE));
+                .thenReturn(testOrderStates.stream().map(TestOrderState::tinkoffOrderState).toList());
 
         // action
 
         final List<OrderState> result = realExtOrdersService.getOrders(accountId);
 
         // assert
-        final List<OrderState> expectedOrderStates = List.of(TestOrderState1.ORDER_STATE, TestOrderState2.ORDER_STATE);
+        final List<OrderState> expectedOrderStates = testOrderStates.stream().map(TestOrderState::orderState).toList();
         AssertUtils.assertEquals(expectedOrderStates, result);
     }
 

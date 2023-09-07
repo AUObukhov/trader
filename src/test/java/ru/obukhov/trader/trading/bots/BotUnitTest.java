@@ -20,7 +20,7 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.Decision;
@@ -63,7 +63,7 @@ class BotUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
 
-        final List<OrderState> orders = List.of(TestOrderState1.ORDER_STATE);
+        final List<OrderState> orders = List.of(TestOrderStates.ORDER_STATE1.orderState());
         Mockito.when(ordersService.getOrders(figi)).thenReturn(orders);
 
         final BotConfig botConfig = new BotConfig(

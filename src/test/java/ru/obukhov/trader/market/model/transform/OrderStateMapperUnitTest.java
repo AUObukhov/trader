@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.OrderState;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 
 class OrderStateMapperUnitTest {
 
@@ -12,9 +13,11 @@ class OrderStateMapperUnitTest {
 
     @Test
     void map() {
-        final OrderState orderState = orderStateMapper.map(TestOrderState1.TINKOFF_ORDER_STATE);
+        final TestOrderState testOrderState = TestOrderStates.ORDER_STATE1;
 
-        Assertions.assertEquals(TestOrderState1.ORDER_STATE, orderState);
+        final OrderState orderState = orderStateMapper.map(testOrderState.tinkoffOrderState());
+
+        Assertions.assertEquals(testOrderState.orderState(), orderState);
     }
 
 }

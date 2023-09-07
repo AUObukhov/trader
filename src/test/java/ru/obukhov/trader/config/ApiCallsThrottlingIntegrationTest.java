@@ -15,7 +15,7 @@ import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -121,7 +121,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService() throws InterruptedException {
         final String accountId = TestAccounts.IIS.account().id();
-        final String orderId = TestOrderState1.ORDER_ID;
+        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
 
@@ -133,7 +133,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService_getOrders() throws InterruptedException {
         final String accountId = TestAccounts.IIS.account().id();
-        final String orderId = TestOrderState1.ORDER_ID;
+        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
         Mockito.doReturn(null).when(ordersService).getOrdersSync(accountId);
@@ -148,7 +148,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService_postOrders() throws InterruptedException {
         final String accountId = TestAccounts.IIS.account().id();
-        final String orderId = TestOrderState1.ORDER_ID;
+        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
         final String figi = TestInstruments.APPLE.instrument().figi();
         final int quantity = 1;
         final Quotation price = Quotation.newBuilder().build();
@@ -168,7 +168,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService_cancelOrder() throws InterruptedException {
         final String accountId = TestAccounts.IIS.account().id();
-        final String orderId = TestOrderState1.ORDER_ID;
+        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
 
         Mockito.doReturn(null).when(ordersService).cancelOrderSync(accountId, orderId);
 
