@@ -32,8 +32,8 @@ import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 
 import java.time.Instant;
@@ -53,8 +53,9 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTickerByFigi_returnsTicker_whenInstrumentFound() {
-        final String ticker = TestShare1.TICKER;
-        final String figi = TestShare1.FIGI;
+        final Share share = TestShares.APPLE.share();
+        final String ticker = share.ticker();
+        final String figi = share.figi();
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
         final String result = realExtInstrumentsService.getTickerByFigi(figi);
@@ -65,8 +66,9 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTickerByFigi_returnsCachedValue() {
-        final String ticker = TestShare1.TICKER;
-        final String figi = TestShare1.FIGI;
+        final Share share = TestShares.APPLE.share();
+        final String ticker = share.ticker();
+        final String figi = share.figi();
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
         realExtInstrumentsService.getTickerByFigi(figi);
@@ -80,7 +82,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTickerByFigi_throwsInstrumentNotFoundException_whenNoInstrument() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final Executable executable = () -> realExtInstrumentsService.getTickerByFigi(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
@@ -114,11 +116,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getShare_returnsShare() {
-        Mocker.mockShare(instrumentsService, TestShare2.TINKOFF_SHARE);
+        final TestShare testShare = TestShares.SBER;
 
-        final Share result = realExtInstrumentsService.getShare(TestShare2.FIGI);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
-        Assertions.assertEquals(TestShare2.SHARE, result);
+        final Share result = realExtInstrumentsService.getShare(testShare.share().figi());
+
+        Assertions.assertEquals(testShare.share(), result);
     }
 
     @Test

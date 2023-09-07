@@ -25,7 +25,7 @@ import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
@@ -36,6 +36,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -63,7 +64,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(false);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -83,7 +84,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -127,7 +128,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 null,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -147,7 +148,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -167,7 +168,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 null,
@@ -182,8 +183,9 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @DirtiesContext
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.tinkoffShare();
+        final String figi = share.getFigi();
+        final String currency = share.getCurrency();
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
         final Interval interval = Interval.of(from, to);
@@ -236,7 +238,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, share);
         Mocker.mockInstrument(instrumentsService, TestInstruments.APPLE.tinkoffInstrument());
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");

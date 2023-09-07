@@ -21,7 +21,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -83,7 +83,8 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime")
     void createBot_movesCurrentTimestampToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
-        final String figi = TestShare1.FIGI;
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
                 figi,
@@ -95,7 +96,7 @@ class FakeBotFactoryUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig();
 
-        mockCurrency(figi, TestShare1.CURRENCY);
+        mockCurrency(figi, share.currency());
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
         mockFakeContext();
         Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
@@ -117,8 +118,9 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource(value = "getData_forCreateBot_initializesBalance")
     void createBot_initializesBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
-        final String figi = TestShare1.FIGI;
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
+        final String currency = share.currency();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
                 figi,
@@ -142,7 +144,7 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_throwsIllegalArgumentException_whenShareNotFound() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
                 figi,

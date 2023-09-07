@@ -15,8 +15,7 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.core.models.Money;
@@ -46,7 +45,7 @@ class FakeExtOperationsServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -110,8 +109,8 @@ class FakeExtOperationsServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String figi1 = TestShare1.FIGI;
-        final String figi2 = TestShare2.FIGI;
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -172,8 +171,8 @@ class FakeExtOperationsServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String figi1 = TestShare1.FIGI;
-        final String figi2 = TestShare2.FIGI;
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);

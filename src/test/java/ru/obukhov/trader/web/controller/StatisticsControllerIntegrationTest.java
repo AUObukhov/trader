@@ -19,7 +19,8 @@ import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -58,7 +59,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void getCandles_returnsBadRequest_whenIntervalIsMissing() throws Exception {
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShare1.FIGI);
+        request.setFigi(TestShares.APPLE.share().figi());
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
         request.setSmallWindow(50);
@@ -74,7 +75,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShare1.FIGI);
+        request.setFigi(TestShares.APPLE.share().figi());
         request.setInterval(Interval.of(from, to));
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
         request.setSmallWindow(50);
@@ -90,7 +91,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShare1.FIGI);
+        request.setFigi(TestShares.APPLE.share().figi());
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setSmallWindow(50);
@@ -106,7 +107,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShare1.FIGI);
+        request.setFigi(TestShares.APPLE.share().figi());
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
@@ -122,7 +123,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShare1.FIGI);
+        request.setFigi(TestShares.APPLE.share().figi());
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
@@ -135,12 +136,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpen(12000)
@@ -199,12 +202,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -231,12 +236,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -266,12 +273,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -298,9 +307,11 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        final String figi = testShare.share().figi();
+
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final String requestString = String.format("""
                 {

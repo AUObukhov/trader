@@ -13,16 +13,14 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.obukhov.trader.test.utils.model.share.TestShare3;
-import ru.obukhov.trader.test.utils.model.share.TestShare4;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -68,7 +66,7 @@ class FakeExtOrdersServiceUnitTest {
     @Test
     void getOrders_byAccountIdAndFigi_returnsEmptyList() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         List<OrderState> orders = fakeExtOrdersService.getOrders(accountId, figi);
 
@@ -82,13 +80,14 @@ class FakeExtOrdersServiceUnitTest {
     @Test
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
         final String accountId = TestData.ACCOUNT_ID1;
+        final Share share = TestShares.APPLE.share();
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
+        mockBalances(accountId, share.currency(), 1000);
+        Mocker.mockShare(extInstrumentsService, share);
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
-        mockBalances(accountId, TestShare1.CURRENCY, 1000);
-        Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
 
-        final Executable executable = () -> postOrder(accountId, TestShare1.FIGI, 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime, 500);
+        final Executable executable = () -> postOrder(accountId, share.figi(), 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime, 500);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Mockito.verify(fakeContext, Mockito.never())
@@ -100,18 +99,19 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
+        final Share share = TestShares.SBER.share();
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final String currency = TestShare2.CURRENCY;
-        final String figi = TestShare2.FIGI;
+        final String currency = share.currency();
+        final String figi = share.figi();
         final int quantity = 10;
         final double currentPrice = 1000;
         final double balance1 = 1000000;
         final double balance2 = balance1 - currentPrice * quantity * COMMISSION_COEF;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
         mockBalances(accountId, currency, balance1);
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
 
         // action
 
@@ -137,10 +137,11 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
+        final Share share = TestShares.SBER.share();
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
-        final String currency = TestShare2.CURRENCY;
-        final String figi = TestShare2.FIGI;
+        final String currency = share.currency();
+        final String figi = share.figi();
         final int quantity1 = 20;
         final int quantity2 = 10;
         final double price1 = 1000;
@@ -149,9 +150,9 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = balance1 - price1 * quantity1 * COMMISSION_COEF;
         final double balance3 = balance2 - price2 * quantity2 * COMMISSION_COEF;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2);
         mockBalances(accountId, currency, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2);
 
         final Position expectedPosition1 = new PositionBuilder()
                 .setCurrency(currency)
@@ -197,15 +198,19 @@ class FakeExtOrdersServiceUnitTest {
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final String currency = TestShare2.CURRENCY;
+        final Share share1 = TestShares.SBER.share();
+        final Share share2 = TestShares.YANDEX.share();
+        final Share share3 = TestShares.DIOD.share();
+
+        final String currency = share1.currency();
         final double initialBalance = 1000000;
         final double balance1 = 989970;
         final double balance2 = 989669.1;
         final double balance3 = 939519.1;
 
-        final String figi1 = TestShare2.FIGI;
-        final String figi2 = TestShare3.FIGI;
-        final String figi3 = TestShare4.FIGI;
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+        final String figi3 = share3.figi();
 
         final double price1 = 1000;
         final double price2 = 100;
@@ -218,9 +223,9 @@ class FakeExtOrdersServiceUnitTest {
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
-        Mocker.mockShare(extInstrumentsService, TestShare3.SHARE);
-        Mocker.mockShare(extInstrumentsService, TestShare4.SHARE);
+        Mocker.mockShare(extInstrumentsService, share1);
+        Mocker.mockShare(extInstrumentsService, share2);
+        Mocker.mockShare(extInstrumentsService, share3);
 
         final Position expectedPosition1 = new PositionBuilder()
                 .setCurrency(currency)
@@ -278,18 +283,19 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
+        final Share share = TestShares.SBER.share();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final String currency = TestShare2.CURRENCY;
+        final String currency = share.currency();
 
         final double initialBalance = 1000000;
         final double balance1 = 979940;
         final double balance2 = 939820;
 
-        final String figi = TestShare2.FIGI;
+        final String figi = share.figi();
 
         final double price1 = 1000;
         final double price2 = 4000;
@@ -301,7 +307,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final Position expectedPosition1 = new PositionBuilder()
                 .setCurrency(currency)
@@ -344,19 +350,20 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
+        final Share share = TestShares.SBER.share();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final String currency = TestShare2.CURRENCY;
+        final String currency = share.currency();
 
         final double initialBalance = 1000000;
         final double balance1 = 979940;
         final double balance2 = 939820;
         final double balance3 = 1029550;
 
-        final String figi = TestShare2.FIGI;
+        final String figi = share.figi();
 
         final double price1 = 1000;
         final double price2 = 4000;
@@ -368,7 +375,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final Position expectedPosition1 = new PositionBuilder()
                 .setCurrency(currency)
@@ -412,19 +419,20 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
+        final Share share = TestShares.SBER.share();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final String currency = TestShare2.CURRENCY;
+        final String currency = share.currency();
 
         final double initialBalance = 1000000;
         final double balance1 = 979940;
         final double balance2 = 939820;
         final double balance3 = 969730;
 
-        final String figi = TestShare2.FIGI;
+        final String figi = share.figi();
 
         final double price1 = 1000;
         final double price2 = 4000;
@@ -436,7 +444,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final Position expectedPosition1 = new PositionBuilder()
                 .setCurrency(currency)

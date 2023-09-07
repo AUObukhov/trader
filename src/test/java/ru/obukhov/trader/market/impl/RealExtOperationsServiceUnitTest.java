@@ -10,12 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
@@ -40,7 +40,7 @@ class RealExtOperationsServiceUnitTest {
     void getOperations() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 8, 10, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 8, 10, 19);
@@ -64,21 +64,23 @@ class RealExtOperationsServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String figi1 = TestShare1.FIGI;
+        final Share share1 = TestShares.APPLE.share();
+        final String figi1 = share1.figi();
         final InstrumentType instrumentType1 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity1 = 10;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
-        final String currency1 = TestShare1.CURRENCY;
+        final String currency1 = share1.currency();
 
-        final String figi2 = TestShare2.FIGI;
+        final Share share2 = TestShares.SBER.share();
+        final String figi2 = share2.figi();
         final InstrumentType instrumentType2 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity2 = 20;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
-        final String currency2 = TestShare2.CURRENCY;
+        final String currency2 = share2.currency();
 
         final Etf etf = TestEtfs.FXIT.etf();
         final String figi3 = etf.figi();

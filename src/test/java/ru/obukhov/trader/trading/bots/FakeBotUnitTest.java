@@ -19,7 +19,7 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
@@ -51,7 +51,7 @@ class FakeBotUnitTest {
 
     @Test
     void getShare() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final Share expectedShare = Share.builder().figi(figi).lot(10).build();
         Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(expectedShare);
 
@@ -114,7 +114,7 @@ class FakeBotUnitTest {
     void getOperations() {
         final String accountId = TestData.ACCOUNT_ID1;
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final List<Operation> expectedOperations = new ArrayList<>();
         Mockito.when(extOperationsService.getOperations(accountId, interval, figi)).thenReturn(expectedOperations);
 
@@ -136,7 +136,7 @@ class FakeBotUnitTest {
 
     @Test
     void getCurrentPrice() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 

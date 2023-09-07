@@ -12,7 +12,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
@@ -37,7 +37,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getTradingStatus_returnsStatus() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final SecurityTradingStatus status = SecurityTradingStatus.SECURITY_TRADING_STATUS_OPENING_PERIOD;
         Mocker.mockTradingStatus(marketDataService, figi, status);

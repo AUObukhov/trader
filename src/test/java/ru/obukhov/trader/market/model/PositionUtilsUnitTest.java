@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -14,10 +14,11 @@ class PositionUtilsUnitTest {
 
     @Test
     void getCurrency() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
-                .setFigi(TestShare1.FIGI)
+                .setFigi(share.figi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(1)
                 .setAveragePositionPrice(10)
@@ -29,9 +30,10 @@ class PositionUtilsUnitTest {
 
     @Test
     void getTotalPrice() {
+        final Share share = TestShares.APPLE.share();
         final Position position = new PositionBuilder()
-                .setCurrency(TestShare1.CURRENCY)
-                .setFigi(TestShare1.FIGI)
+                .setCurrency(share.currency())
+                .setFigi(share.figi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -43,10 +45,11 @@ class PositionUtilsUnitTest {
 
     @Test
     void addQuantities() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
-                .setFigi(TestShare1.FIGI)
+                .setFigi(share.figi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -84,10 +87,11 @@ class PositionUtilsUnitTest {
 
     @Test
     void cloneWithNewCurrentPrice() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
-                .setFigi(TestShare1.FIGI)
+                .setFigi(share.figi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -118,10 +122,11 @@ class PositionUtilsUnitTest {
 
     @Test
     void cloneWithNewValues() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
-                .setFigi(TestShare1.FIGI)
+                .setFigi(share.figi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)

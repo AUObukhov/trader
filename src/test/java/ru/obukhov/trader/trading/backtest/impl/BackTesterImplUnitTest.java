@@ -22,8 +22,8 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.obukhov.trader.trading.bots.FakeBotFactory;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -129,7 +129,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
@@ -197,9 +197,11 @@ class BackTesterImplUnitTest {
         final double finalPrice1 = 1004.0;
         prices1.put(from.plusMinutes(50), finalPrice1);
 
+        final TestShare testShare1 = TestShares.APPLE;
+
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                testShare1.share(),
                 0.003,
                 balanceConfig,
                 interval,
@@ -223,7 +225,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
                 interval,
@@ -254,7 +256,7 @@ class BackTesterImplUnitTest {
         assertCommonStatistics(
                 backTestResults.get(1), botConfigs.get(0),
                 interval, initialInvestment,
-                finalPrice1, finalQuantity1 * TestShare1.LOT, finalBalance1,
+                finalPrice1, finalQuantity1 * testShare1.share().lot(), finalBalance1,
                 0.0032, 2.212128816
         );
     }
@@ -306,8 +308,9 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
         final String accountId1 = TestData.ACCOUNT_ID1;
-        final String figi1 = TestShare1.FIGI;
-        final String currency1 = TestShare1.CURRENCY;
+        final TestShare testShare1 = TestShares.APPLE;
+        final String figi1 = testShare1.share().figi();
+        final String currency1 = testShare1.share().currency();
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
@@ -322,7 +325,7 @@ class BackTesterImplUnitTest {
         final BotConfig botConfig1 = new BotConfig(accountId1, figi1, null, commission1, null, null);
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
-        Mockito.when(fakeBot1.getShare(figi1)).thenReturn(TestShare1.SHARE);
+        Mockito.when(fakeBot1.getShare(figi1)).thenReturn(testShare1.share());
 
         mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, figi1, 500);
@@ -333,8 +336,9 @@ class BackTesterImplUnitTest {
         mockPortfolioPosition(fakeBot1, accountId1, figi1, 500, 1);
 
         final String accountId2 = TestData.ACCOUNT_ID2;
-        final String figi2 = TestShare2.FIGI;
-        final String currency2 = TestShare2.CURRENCY;
+        final TestShare testShare2 = TestShares.SBER;
+        final String figi2 = testShare2.share().figi();
+        final String currency2 = testShare2.share().currency();
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
 
         final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
@@ -349,7 +353,7 @@ class BackTesterImplUnitTest {
         final BotConfig botConfig2 = new BotConfig(accountId2, figi2, null, commission2, null, null);
 
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
-        Mockito.when(fakeBot2.getShare(figi2)).thenReturn(TestShare2.SHARE);
+        Mockito.when(fakeBot2.getShare(figi2)).thenReturn(testShare2.share());
 
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, figi2, 50);
@@ -393,6 +397,9 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -412,7 +419,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share1,
                 0.003,
                 balanceConfig,
                 interval,
@@ -425,10 +432,9 @@ class BackTesterImplUnitTest {
 
         final int quantity2 = 10;
         final double currentPrice2 = 5000.0;
-
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                share2,
                 0.001,
                 balanceConfig,
                 interval,
@@ -448,8 +454,8 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertPosition(backTestResults.get(0), TestShare2.FIGI, currentPrice2, quantity2);
-        assertPosition(backTestResults.get(1), TestShare1.FIGI, currentPrice1, quantity1);
+        assertPosition(backTestResults.get(0), share2.figi(), currentPrice2, quantity2);
+        assertPosition(backTestResults.get(1), share1.figi(), currentPrice1, quantity1);
     }
 
     private void assertPosition(final BackTestResult backTestResult, final String figi, final double currentPrice, final int quantity) {
@@ -467,6 +473,9 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -474,7 +483,7 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final String figi1 = TestShare1.FIGI;
+        final String figi1 = share1.figi();
         final double commission1 = 0.003;
 
         final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(20000);
@@ -487,7 +496,7 @@ class BackTesterImplUnitTest {
         final int operationQuantity1 = 2;
         final Operation operation1 = TestData.newOperation(operationDateTime1, operationType1, operationPrice1, operationQuantity1, figi1);
 
-        final String figi2 = TestShare2.FIGI;
+        final String figi2 = share2.figi();
         final double commission2 = 0.001;
 
         final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(10000);
@@ -502,7 +511,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share1,
                 commission1,
                 balanceConfig,
                 interval,
@@ -515,7 +524,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                share2,
                 commission2,
                 balanceConfig,
                 interval,
@@ -567,6 +576,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share = TestShares.APPLE.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -583,7 +594,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share,
                 0.003,
                 balanceConfig,
                 interval,
@@ -602,7 +613,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share,
                 0.001,
                 balanceConfig,
                 interval,
@@ -654,7 +665,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                TestShares.APPLE.share(),
                 0.003,
                 balanceConfig,
                 interval,
@@ -667,7 +678,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
                 interval,
@@ -702,6 +713,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share1 = TestShares.APPLE.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -716,12 +729,12 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                TestShare1.FIGI
+                share1.figi()
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share1,
                 commission1,
                 balanceConfig,
                 interval,
@@ -734,7 +747,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                TestShares.SBER.share(),
                 0.003,
                 balanceConfig,
                 interval,
@@ -766,6 +779,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share1 = TestShares.APPLE.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -780,12 +795,12 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                TestShare1.FIGI
+                share1.figi()
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share1,
                 commission1,
                 balanceConfig,
                 interval,
@@ -798,7 +813,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                TestShares.SBER.share(),
                 0.003,
                 balanceConfig,
                 interval,
@@ -830,6 +845,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share1 = TestShares.APPLE.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -844,11 +861,11 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                TestShare1.FIGI
+                share1.figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share1,
                 commission1,
                 balanceConfig,
                 interval,
@@ -861,7 +878,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 null,
-                TestShare2.SHARE,
+                TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
                 interval,
@@ -906,7 +923,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
         final String accountId1 = TestData.ACCOUNT_ID1;
-        final String figi1 = TestShare1.FIGI;
+        final String figi1 = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
@@ -920,7 +937,7 @@ class BackTesterImplUnitTest {
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
         final String accountId2 = TestData.ACCOUNT_ID2;
-        final String figi2 = TestShare2.FIGI;
+        final String figi2 = TestShares.SBER.share().figi();
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
         final StrategyType strategyType2 = StrategyType.CROSS;
@@ -963,6 +980,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final Share share1 = TestShares.APPLE.share();
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -977,11 +996,11 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                TestShare1.FIGI
+                share1.figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.SHARE,
+                share1,
                 commission1,
                 balanceConfig,
                 interval,
@@ -994,7 +1013,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.SHARE,
+                TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
                 interval,

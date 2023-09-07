@@ -24,7 +24,8 @@ import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -66,14 +67,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getShare_returnsShare() throws Exception {
-        Mocker.mockShare(instrumentsService, TestShare2.TINKOFF_SHARE);
+        final TestShare testShare = TestShares.SBER;
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")
-                .param("figi", TestShare2.FIGI)
+                .param("figi", testShare.share().figi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, TestShare2.SHARE);
+        assertResponse(requestBuilder, testShare.share());
     }
 
     @Test

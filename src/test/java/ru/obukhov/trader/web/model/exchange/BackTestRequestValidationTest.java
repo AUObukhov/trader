@@ -5,7 +5,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -64,7 +64,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 null,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -80,7 +80,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 null,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -96,7 +96,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -112,7 +112,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 null,
@@ -139,7 +139,7 @@ class BackTestRequestValidationTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,

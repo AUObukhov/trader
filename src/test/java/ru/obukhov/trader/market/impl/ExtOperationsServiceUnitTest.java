@@ -16,8 +16,7 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Money;
@@ -40,8 +39,8 @@ class ExtOperationsServiceUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String accountId2 = TestData.ACCOUNT_ID2;
 
-        final String figi1 = TestShare1.FIGI;
-        final String figi2 = TestShare2.FIGI;
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
         final Position portfolioPosition1 = new PositionBuilder().setFigi(figi1).setQuantity(1).build();
         final Position portfolioPosition2 = new PositionBuilder().setFigi(figi2).setQuantity(20).build();

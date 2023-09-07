@@ -5,7 +5,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.OffsetDateTime;
@@ -72,7 +72,7 @@ class GetCandlesRequestValidationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShare1.FIGI);
+        request.setFigi(TestShares.APPLE.share().figi());
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.SIMPLE);

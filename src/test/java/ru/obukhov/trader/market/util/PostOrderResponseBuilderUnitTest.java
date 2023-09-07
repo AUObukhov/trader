@@ -3,8 +3,9 @@ package ru.obukhov.trader.market.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -16,12 +17,13 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsSet() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
         final long lots = 10;
-        final String figi = TestShare1.FIGI;
+        final String figi = share.figi();
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
@@ -55,12 +57,13 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsNotSet() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
         final long lots = 10;
-        final String figi = TestShare1.FIGI;
+        final String figi = share.figi();
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
 
@@ -93,12 +96,13 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreComplex() {
-        final String currency = TestShare1.CURRENCY;
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
         final BigDecimal totalPrice = DecimalUtils.setDefaultScale(1000);
         final BigDecimal totalCommissionAmount = DecimalUtils.setDefaultScale(5);
         final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
         final long lots = 10;
-        final String figi = TestShare1.FIGI;
+        final String figi = share.figi();
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";

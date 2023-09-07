@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 
 class ShareMapperUnitTest {
 
@@ -12,9 +13,11 @@ class ShareMapperUnitTest {
 
     @Test
     void map() {
-        final Share result = shareMapper.map(TestShare1.TINKOFF_SHARE);
+        final TestShare testShare = TestShares.APPLE;
 
-        Assertions.assertEquals(TestShare1.SHARE, result);
+        final Share result = shareMapper.map(testShare.tinkoffShare());
+
+        Assertions.assertEquals(testShare.share(), result);
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
@@ -15,8 +15,8 @@ class PositionBuilderUnitTest {
 
     @Test
     void testPrimitives() {
-        final String currency = TestShare1.CURRENCY;
-        final String figi = TestShare1.FIGI;
+        final String currency = TestShares.APPLE.share().currency();
+        final String figi = TestShares.APPLE.share().figi();
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final long quantity = 20;
         final double averagePositionPrice = 500;
@@ -60,8 +60,8 @@ class PositionBuilderUnitTest {
 
     @Test
     void testBigDecimals() {
-        final String currency = TestShare1.CURRENCY;
-        final String figi = TestShare1.FIGI;
+        final String currency = TestShares.APPLE.share().currency();
+        final String figi = TestShares.APPLE.share().figi();
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final BigDecimal quantity = BigDecimal.valueOf(20);
         final BigDecimal averagePositionPrice = BigDecimal.valueOf(500);
@@ -105,8 +105,8 @@ class PositionBuilderUnitTest {
 
     @Test
     void testMoney() {
-        final String currency = TestShare1.CURRENCY;
-        final String figi = TestShare1.FIGI;
+        final String currency = TestShares.APPLE.share().currency();
+        final String figi = TestShares.APPLE.share().figi();
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity = 20;
         final Money averagePositionPrice = TestData.newMoney(500, currency);

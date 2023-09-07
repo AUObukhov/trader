@@ -17,12 +17,12 @@ import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -61,7 +61,7 @@ class BotUnitTest {
     @Test
     void processBotConfig_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final List<OrderState> orders = List.of(TestOrderStates.ORDER_STATE1.orderState());
         Mockito.when(ordersService.getOrders(figi)).thenReturn(orders);
@@ -87,7 +87,7 @@ class BotUnitTest {
     void processBotConfig_doesNoOrder_whenThereAreUncompletedOrders() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         Mocker.mockEmptyOrder(ordersService, figi);
 
@@ -110,7 +110,7 @@ class BotUnitTest {
     @Test
     void processBotConfig_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -131,7 +131,7 @@ class BotUnitTest {
     @Test
     void processBotConfig_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
@@ -157,9 +157,10 @@ class BotUnitTest {
     @Test
     void processBotConfig_doesNoOrder_whenDecisionIsWait() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(figi, List.of(candle));
@@ -190,12 +191,13 @@ class BotUnitTest {
     @Test
     void processBotConfig_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
-        Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
                 .thenReturn(balance);
 
         final Position portfolioPosition = new PositionBuilder().setFigi(figi).build();
@@ -244,12 +246,13 @@ class BotUnitTest {
     @Test
     void processBotConfig_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
                 .thenReturn(balance);
 
         final Position position = new PositionBuilder().setFigi(figi).build();

@@ -31,7 +31,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
@@ -144,13 +144,13 @@ class GrafanaServiceUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("figi", TestShare1.FIGI),
+                        Map.of("figi", TestShares.APPLE.share().figi()),
                         "\"candleInterval\" is mandatory"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "figi", TestShare1.FIGI,
+                                "figi", TestShares.APPLE.share().figi(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -161,7 +161,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "figi", TestShare1.FIGI,
+                                "figi", TestShares.APPLE.share().figi(),
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "window1", 2,
                                 "window2", 5
@@ -172,7 +172,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "figi", TestShare1.FIGI,
+                                "figi", TestShares.APPLE.share().figi(),
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window2", 5
@@ -183,7 +183,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "figi", TestShare1.FIGI,
+                                "figi", TestShares.APPLE.share().figi(),
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2
@@ -208,7 +208,7 @@ class GrafanaServiceUnitTest {
     void getData_returnsCandles_whenMetricIsCandles_andParamsAreValid() {
         final GetDataRequest request = new GetDataRequest();
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> data = Map.of("figi", figi, "candleInterval", candleInterval.name());
         final Target target = new Target().setMetric(Metric.CANDLES).setData(data);
@@ -259,7 +259,7 @@ class GrafanaServiceUnitTest {
 
         final GetDataRequest request = new GetDataRequest();
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final Integer window1 = 2;

@@ -28,7 +28,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
@@ -67,7 +67,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_savesMultipleResults() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig1 = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -131,7 +131,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -167,7 +167,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -203,7 +203,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final String error = "error";
 
         final BotConfig botConfig = new BotConfig(
@@ -243,7 +243,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -280,7 +280,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -317,7 +317,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
@@ -399,7 +399,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveCandles_createsAndSaveWorkbook() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
@@ -441,7 +441,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);

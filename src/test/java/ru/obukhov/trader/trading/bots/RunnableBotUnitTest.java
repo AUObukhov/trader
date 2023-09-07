@@ -19,12 +19,12 @@ import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -76,7 +76,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNothing_whenWrongTradingStatus() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figi()).thenReturn(figi);
@@ -89,7 +89,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNothing_whenThereAreOrders() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figi()).thenReturn(figi);
@@ -107,7 +107,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetLastCandlesThrowsException() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime currentTimestamp = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -129,7 +129,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNothing_whenGetOrdersThrowsException() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figi()).thenReturn(figi);
@@ -145,7 +145,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetInstrumentThrowsException() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -164,7 +164,8 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -174,7 +175,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.anyString()))
                 .thenThrow(new IllegalArgumentException());
@@ -186,7 +187,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetPositionThrowsException() {
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -197,7 +199,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         Mockito.when(extOperationsService.getSecurity(accountId, figi)).thenThrow(new IllegalArgumentException());
 
@@ -208,7 +210,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetOperationsThrowsException() {
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -218,7 +221,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         Mockito.when(extOperationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenThrow(new IllegalArgumentException());
@@ -230,7 +233,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenDecideThrowsException() {
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -240,7 +244,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -253,7 +257,8 @@ class RunnableBotUnitTest {
     @Test
     void run_catchesException_whenPlaceMarketOrderThrowsException() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -263,7 +268,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -284,7 +289,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenThereAreOrders() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figi()).thenReturn(figi);
@@ -298,7 +303,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenCurrentCandlesIsEmpty() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figi()).thenReturn(figi);
@@ -311,7 +316,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenDecisionIsWait() {
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -321,7 +327,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(figi, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, share);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -334,15 +340,16 @@ class RunnableBotUnitTest {
     @Test
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
-        mockData(accountId, figi, TestShare2.CURRENCY);
+        Mocker.mockShare(extInstrumentsService, share);
+        mockData(accountId, figi, share.currency());
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -365,15 +372,16 @@ class RunnableBotUnitTest {
     @Test
     void run_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare2.FIGI;
+        final Share share = TestShares.SBER.share();
+        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
-        mockData(accountId, figi, TestShare2.CURRENCY);
+        Mocker.mockShare(extInstrumentsService, share);
+        mockData(accountId, figi, share.currency());
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))

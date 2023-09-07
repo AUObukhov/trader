@@ -15,8 +15,7 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -524,7 +523,7 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final Position position = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi, position);
@@ -543,8 +542,8 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String figi1 = TestShare1.FIGI;
-        final String figi2 = TestShare2.FIGI;
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
         final Position position1 = new PositionBuilder().build();
         final Position position2 = new PositionBuilder().build();
 
@@ -567,7 +566,7 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final Position position = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi, position);

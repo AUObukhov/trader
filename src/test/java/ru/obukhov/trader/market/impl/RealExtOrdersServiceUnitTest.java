@@ -15,7 +15,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
@@ -57,7 +57,7 @@ class RealExtOrdersServiceUnitTest {
     void getOrders_filtersOrdersByFigi() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         mockOrders(
                 accountId,
@@ -79,7 +79,7 @@ class RealExtOrdersServiceUnitTest {
     @Test
     void postOrder() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final String currency = Currencies.USD;
         final int totalOrderAmount = 2000;

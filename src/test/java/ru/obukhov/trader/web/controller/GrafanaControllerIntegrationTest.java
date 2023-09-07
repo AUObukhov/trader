@@ -24,7 +24,8 @@ import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
@@ -91,9 +92,10 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getData_returnsCandles_whenMetricIsCandles() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -141,9 +143,10 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getData_returnsExtendedCandles_whenMetricIsExtendedCandles() throws Exception {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);

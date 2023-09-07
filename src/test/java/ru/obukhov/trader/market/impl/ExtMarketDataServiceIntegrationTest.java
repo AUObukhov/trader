@@ -28,10 +28,8 @@ import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.obukhov.trader.test.utils.model.share.TestShare3;
-import ru.obukhov.trader.test.utils.model.share.TestShare4;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
@@ -58,10 +56,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_skipsCandlesByDays_whenFromIsReached() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2020, 1, 5))
@@ -90,10 +89,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_filterCandlesByYears() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2016, 1, 1))
@@ -123,10 +123,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_skipsCandlesByYears_whenFromIsReached() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2016, 1, 1, 1))
@@ -157,10 +158,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(0, DateTimeTestData.createDateTime(2017, 1, 1, 1))
@@ -189,13 +191,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastPrice_returnsPrice_whenCandleExists() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final OffsetDateTime to = DateTimeTestData.createEndOfDay(2020, 1, 10);
-        final OffsetDateTime candlesTo = TestShare1.FIRST_1_MIN_CANDLE_DATE.plusDays(1);
+        final OffsetDateTime candlesTo = testShare.share().first1MinCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(close, candlesFrom)
@@ -211,9 +214,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrices_returnsPricesInProperOrder() {
-        final String figi1 = TestShare2.FIGI;
-        final String figi2 = TestShare1.FIGI;
-        final String figi3 = TestShare3.FIGI;
+        final String figi1 = TestShares.SBER.share().figi();
+        final String figi2 = TestShares.APPLE.share().figi();
+        final String figi3 = TestShares.YANDEX.share().figi();
 
         final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
         final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
@@ -234,10 +237,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrices_throwsInstrumentNotFoundException_whenPriceNotFound() {
-        final String figi1 = TestShare2.FIGI;
-        final String figi2 = TestShare1.FIGI;
-        final String figi3 = TestShare3.FIGI;
-        final String figi4 = TestShare4.FIGI;
+        final String figi1 = TestShares.SBER.share().figi();
+        final String figi2 = TestShares.APPLE.share().figi();
+        final String figi3 = TestShares.YANDEX.share().figi();
+        final String figi4 = TestShares.DIOD.share().figi();
 
         final double price1 = 111.111;
         final double price2 = 222.222;
@@ -258,9 +261,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrices_throwsMultipleInstrumentsFoundException_whenMultiplePricesForSingleFigi() {
-        final String figi1 = TestShare2.FIGI;
-        final String figi2 = TestShare1.FIGI;
-        final String figi3 = TestShare3.FIGI;
+        final String figi1 = TestShares.SBER.share().figi();
+        final String figi2 = TestShares.APPLE.share().figi();
+        final String figi3 = TestShares.YANDEX.share().figi();
 
         final double price1 = 111.111;
         final double price2 = 222.222;
@@ -287,11 +290,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final OffsetDateTime currentDateTIme = DateTimeTestData.createEndOfDay(2020, 9, 10);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTIme);
 
@@ -301,11 +305,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -331,11 +336,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -362,11 +368,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
@@ -393,11 +400,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final OffsetDateTime currentDateTime = DateTimeTestData.createEndOfDay(2020, 9, 10);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
 
@@ -407,11 +415,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -437,11 +446,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -468,11 +478,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2019, 9, 8))
@@ -499,11 +510,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 8))
@@ -524,11 +536,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 1))
@@ -552,11 +565,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
-        final String figi = TestShare1.FIGI;
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 12))
@@ -582,7 +596,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getMarketCandles_returnsMappedCandles() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -659,7 +673,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -677,7 +691,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingStatus_returnsTradingStatus_whenInstrumentExists() {
-        final String figi = TestShare1.FIGI;
+        final String figi = TestShares.APPLE.share().figi();
 
         final SecurityTradingStatus status = SecurityTradingStatus.SECURITY_TRADING_STATUS_OPENING_PERIOD;
         Mocker.mockTradingStatus(marketDataService, figi, status);

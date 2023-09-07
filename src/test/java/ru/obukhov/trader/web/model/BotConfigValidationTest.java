@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
@@ -21,7 +21,7 @@ class BotConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.FIGI,
+                TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -35,7 +35,7 @@ class BotConfigValidationTest {
         return Stream.of(
                 Arguments.of(
                         null,
-                        TestShare1.FIGI,
+                        TestShares.APPLE.share().figi(),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -53,7 +53,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestData.ACCOUNT_ID1,
-                        TestShare1.FIGI,
+                        TestShares.APPLE.share().figi(),
                         null,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -62,7 +62,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestData.ACCOUNT_ID1,
-                        TestShare1.FIGI,
+                        TestShares.APPLE.share().figi(),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         null,
                         StrategyType.CONSERVATIVE,
@@ -71,7 +71,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestData.ACCOUNT_ID1,
-                        TestShare1.FIGI,
+                        TestShares.APPLE.share().figi(),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         null,
