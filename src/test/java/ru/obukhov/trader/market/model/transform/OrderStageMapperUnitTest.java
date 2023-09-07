@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.OrderStage;
-import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage1;
-import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage2;
+import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage;
+import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStages;
 
 class OrderStageMapperUnitTest {
 
@@ -13,9 +13,11 @@ class OrderStageMapperUnitTest {
 
     @Test
     void map_tinkoffToCustom() {
-        final OrderStage orderStage = orderStageMapper.map(TestOrderStage1.TINKOFF_ORDER_STAGE);
+        final TestOrderStage testOrderStage = TestOrderStages.ORDER_STAGE1;
 
-        Assertions.assertEquals(TestOrderStage1.ORDER_STAGE, orderStage);
+        final OrderStage orderStage = orderStageMapper.map(testOrderStage.tinkoffOrderStage());
+
+        Assertions.assertEquals(testOrderStage.orderStage(), orderStage);
     }
 
     @Test
@@ -27,9 +29,11 @@ class OrderStageMapperUnitTest {
 
     @Test
     void map_customToTinkoff() {
-        final ru.tinkoff.piapi.contract.v1.OrderStage orderStage = orderStageMapper.map(TestOrderStage2.ORDER_STAGE);
+        final TestOrderStage testOrderStage = TestOrderStages.ORDER_STAGE1;
 
-        Assertions.assertEquals(TestOrderStage2.TINKOFF_ORDER_STAGE, orderStage);
+        final ru.tinkoff.piapi.contract.v1.OrderStage orderStage = orderStageMapper.map(testOrderStage.orderStage());
+
+        Assertions.assertEquals(testOrderStage.tinkoffOrderStage(), orderStage);
     }
 
     @Test

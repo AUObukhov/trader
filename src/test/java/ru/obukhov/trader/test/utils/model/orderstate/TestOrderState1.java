@@ -9,8 +9,7 @@ import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.OrderStageMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage1;
-import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage2;
+import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStages;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -37,7 +36,7 @@ public class TestOrderState1 {
     public static final String FIGI = "BBG00K7T3037";
     public static final OrderDirection DIRECTION = OrderDirection.ORDER_DIRECTION_SELL;
     public static final BigDecimal INITIAL_SECURITY_PRICE = DecimalUtils.setDefaultScale(30);
-    public static final List<OrderStage> STAGES = List.of(TestOrderStage1.ORDER_STAGE, TestOrderStage2.ORDER_STAGE);
+    public static final List<OrderStage> STAGES = List.of(TestOrderStages.ORDER_STAGE1.orderStage(), TestOrderStages.ORDER_STAGE2.orderStage());
     public static final BigDecimal SERVICE_COMMISSION = DecimalUtils.ZERO;
     public static final String CURRENCY = "usd";
     public static final OrderType ORDER_TYPE = OrderType.ORDER_TYPE_LIMIT;
@@ -104,7 +103,7 @@ public class TestOrderState1 {
             "\"figi\":\"BBG00K7T3037\"," +
             "\"direction\":\"ORDER_DIRECTION_SELL\"," +
             "\"initialSecurityPrice\":30.000000000," +
-            "\"stages\":[" + TestOrderStage1.JSON_STRING + "," + TestOrderStage2.JSON_STRING + "]," +
+            "\"stages\":[" + TestOrderStages.ORDER_STAGE1.jsonString() + "," + TestOrderStages.ORDER_STAGE2.jsonString() + "]," +
             "\"serviceCommission\":0.000000000," +
             "\"currency\":\"usd\"," +
             "\"orderType\":\"ORDER_TYPE_LIMIT\"," +
