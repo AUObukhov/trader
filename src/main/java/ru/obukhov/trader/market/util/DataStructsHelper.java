@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.util;
 import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.WithdrawLimitsResponse;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -18,17 +17,7 @@ import java.util.NoSuchElementException;
 @UtilityClass
 public class DataStructsHelper {
 
-    // region createMoneyValue
-
-    public static MoneyValue createMoneyValue(final String currency, final Quotation value) {
-        return MoneyValue.newBuilder()
-                .setCurrency(currency)
-                .setUnits(value.getUnits())
-                .setNano(value.getNano())
-                .build();
-    }
-
-    public static MoneyValue createMoneyValue(final String currency, final BigDecimal value) {
+    public static MoneyValue newMoneyValue(final String currency, final BigDecimal value) {
         return MoneyValue.newBuilder()
                 .setCurrency(currency)
                 .setUnits(value.longValue())
@@ -36,36 +25,30 @@ public class DataStructsHelper {
                 .build();
     }
 
-    // endregion
-
-    // region createWithdrawLimits
-
-    public static Money createMoney(final BigDecimal value, final String currency) {
+    public static Money newMoney(final BigDecimal value, final String currency) {
         return Money.builder()
                 .currency(currency)
                 .value(value)
                 .build();
     }
 
-    // endregion
+    // region newWithdrawLimits
 
-    // region createWithdrawLimits
-
-    public static WithdrawLimits createWithdrawLimits(final List<MoneyValue> moneys) {
+    public static WithdrawLimits newWithdrawLimits(final List<MoneyValue> moneys) {
         final List<MoneyValue> blocked = moneys.stream()
-                .map(money -> createMoneyValue(money.getCurrency(), DecimalUtils.ZERO))
+                .map(money -> newMoneyValue(money.getCurrency(), DecimalUtils.ZERO))
                 .toList();
-        return createWithdrawLimits(moneys, blocked, blocked);
+        return newWithdrawLimits(moneys, blocked, blocked);
     }
 
-    public static WithdrawLimits createWithdrawLimits(final List<MoneyValue> moneys, final List<MoneyValue> blocked) {
+    public static WithdrawLimits newWithdrawLimits(final List<MoneyValue> moneys, final List<MoneyValue> blocked) {
         final List<MoneyValue> blockedGuarantee = moneys.stream()
-                .map(money -> createMoneyValue(money.getCurrency(), DecimalUtils.ZERO))
+                .map(money -> newMoneyValue(money.getCurrency(), DecimalUtils.ZERO))
                 .toList();
-        return createWithdrawLimits(moneys, blocked, blockedGuarantee);
+        return newWithdrawLimits(moneys, blocked, blockedGuarantee);
     }
 
-    public static WithdrawLimits createWithdrawLimits(
+    public static WithdrawLimits newWithdrawLimits(
             final List<MoneyValue> moneys,
             final List<MoneyValue> blocked,
             final List<MoneyValue> blockedGuarantee

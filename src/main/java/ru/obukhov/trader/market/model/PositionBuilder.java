@@ -84,12 +84,12 @@ public class PositionBuilder {
                 .figi(figi)
                 .instrumentType(instrumentType)
                 .quantity(quantity)
-                .averagePositionPrice(DataStructsHelper.createMoney(averagePositionPrice, currency))
+                .averagePositionPrice(DataStructsHelper.newMoney(averagePositionPrice, currency))
                 .expectedYield(expectedYield)
-                .currentNkd(DataStructsHelper.createMoney(currentNkd, currency))
+                .currentNkd(DataStructsHelper.newMoney(currentNkd, currency))
                 .averagePositionPricePt(BigDecimal.ZERO)
-                .currentPrice(DataStructsHelper.createMoney(currentPrice, currency))
-                .averagePositionPriceFifo(DataStructsHelper.createMoney(averagePositionPriceFifo, currency))
+                .currentPrice(DataStructsHelper.newMoney(currentPrice, currency))
+                .averagePositionPriceFifo(DataStructsHelper.newMoney(averagePositionPriceFifo, currency))
                 .quantityLots(BigDecimal.ZERO)
                 .build();
     }

@@ -42,20 +42,20 @@ public class PostOrderResponseBuilder {
     }
 
     public PostOrderResponse build() {
-        final MoneyValue orderPrice = DataStructsHelper.createMoneyValue(currency, totalOrderAmount.add(totalCommissionAmount));
-        final MoneyValue commission = DataStructsHelper.createMoneyValue(currency, totalCommissionAmount);
+        final MoneyValue orderPrice = DataStructsHelper.newMoneyValue(currency, totalOrderAmount.add(totalCommissionAmount));
+        final MoneyValue commission = DataStructsHelper.newMoneyValue(currency, totalCommissionAmount);
         final PostOrderResponse.Builder builder = PostOrderResponse.newBuilder()
                 .setExecutionReportStatus(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL)
                 .setLotsRequested(lots)
                 .setLotsExecuted(lots)
                 .setInitialOrderPrice(orderPrice)
                 .setExecutedOrderPrice(orderPrice)
-                .setTotalOrderAmount(DataStructsHelper.createMoneyValue(currency, totalOrderAmount))
+                .setTotalOrderAmount(DataStructsHelper.newMoneyValue(currency, totalOrderAmount))
                 .setInitialCommission(commission)
                 .setExecutedCommission(commission)
                 .setFigi(figi)
                 .setDirection(direction)
-                .setInitialSecurityPrice(DataStructsHelper.createMoneyValue(currency, initialSecurityPrice))
+                .setInitialSecurityPrice(DataStructsHelper.newMoneyValue(currency, initialSecurityPrice))
                 .setOrderType(type);
         if (orderId != null) {
             builder.setOrderId(orderId);

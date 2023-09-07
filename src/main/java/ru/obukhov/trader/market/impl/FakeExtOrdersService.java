@@ -189,7 +189,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
                 .setFigi(figi)
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(currentTimestamp))
                 .setOperationType(operationType)
-                .setPrice(DataStructsHelper.createMoneyValue(currency, price))
+                .setPrice(DataStructsHelper.newMoneyValue(currency, price))
                 .setQuantity(quantity)
                 .build();
 

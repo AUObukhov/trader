@@ -232,11 +232,11 @@ public class TestData {
     }
 
     public static MoneyValue newMoneyValue(final double value) {
-        return DataStructsHelper.createMoneyValue(StringUtils.EMPTY, DecimalUtils.setDefaultScale(value));
+        return DataStructsHelper.newMoneyValue(StringUtils.EMPTY, DecimalUtils.setDefaultScale(value));
     }
 
     public static MoneyValue newMoneyValue(final double value, final String currency) {
-        return DataStructsHelper.createMoneyValue(currency, DecimalUtils.setDefaultScale(value));
+        return DataStructsHelper.newMoneyValue(currency, DecimalUtils.setDefaultScale(value));
     }
 
     public static MoneyValue newMoneyValue(final long units, final int nano, final String currency) {
@@ -250,7 +250,7 @@ public class TestData {
     // endregion
 
     public static Money newMoney(final int value, final String currency) {
-        return DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(value), currency);
+        return DataStructsHelper.newMoney(DecimalUtils.setDefaultScale(value), currency);
     }
 
     public static Portfolio newPortfolio(final PortfolioPosition... portfolioPositions) {

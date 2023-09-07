@@ -89,8 +89,8 @@ class ExtOperationsServiceUnitTest {
                 TestData.newMoneyValue(eurBalance2, Currencies.EUR)
         );
 
-        final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1);
-        final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2);
+        final WithdrawLimits withdrawLimits1 = DataStructsHelper.newWithdrawLimits(moneys1);
+        final WithdrawLimits withdrawLimits2 = DataStructsHelper.newWithdrawLimits(moneys2);
 
         final Map<String, WithdrawLimits> accountToWithdrawLimits = Map.of(
                 accountId1, withdrawLimits1,
@@ -131,8 +131,8 @@ class ExtOperationsServiceUnitTest {
         final List<MoneyValue> blocked1 = List.of(TestData.newMoneyValue(rubBlocked1, Currencies.RUB));
         final List<MoneyValue> blocked2 = List.of(TestData.newMoneyValue(rubBlocked2, Currencies.RUB));
 
-        final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1, blocked1);
-        final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2, blocked2);
+        final WithdrawLimits withdrawLimits1 = DataStructsHelper.newWithdrawLimits(moneys1, blocked1);
+        final WithdrawLimits withdrawLimits2 = DataStructsHelper.newWithdrawLimits(moneys2, blocked2);
 
         final Map<String, WithdrawLimits> accountToWithdrawLimits = Map.of(
                 accountId1, withdrawLimits1,
@@ -178,8 +178,8 @@ class ExtOperationsServiceUnitTest {
         final List<MoneyValue> blockedGuarantee1 = List.of(TestData.newMoneyValue(rubGuaranteeBlocked1, Currencies.RUB));
         final List<MoneyValue> blockedGuarantee2 = List.of(TestData.newMoneyValue(rubGuaranteeBlocked2, Currencies.RUB));
 
-        final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1, blocked1, blockedGuarantee1);
-        final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2, blocked2, blockedGuarantee2);
+        final WithdrawLimits withdrawLimits1 = DataStructsHelper.newWithdrawLimits(moneys1, blocked1, blockedGuarantee1);
+        final WithdrawLimits withdrawLimits2 = DataStructsHelper.newWithdrawLimits(moneys2, blocked2, blockedGuarantee2);
 
         final Map<String, WithdrawLimits> accountToWithdrawLimits = Map.of(
                 accountId1, withdrawLimits1,
@@ -202,7 +202,7 @@ class ExtOperationsServiceUnitTest {
                 TestData.newMoneyValue(100, Currencies.USD),
                 TestData.newMoneyValue(10, Currencies.EUR)
         );
-        final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
+        final WithdrawLimits withdrawLimits = DataStructsHelper.newWithdrawLimits(moneys);
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), Map.of(accountId, withdrawLimits));
 
         final Executable executable = () -> extOperationsService.getAvailableBalance(accountId, Currencies.RUB);
@@ -224,25 +224,25 @@ class ExtOperationsServiceUnitTest {
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
-        final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
-        final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);
+        final MoneyValue moneyValue1 = DataStructsHelper.newMoneyValue(currency1, value1);
+        final MoneyValue moneyValue2 = DataStructsHelper.newMoneyValue(currency2, value2);
         final List<MoneyValue> moneys = List.of(moneyValue1, moneyValue2);
 
         final BigDecimal blockedValue1 = DecimalUtils.setDefaultScale(12.34);
         final BigDecimal blockedValue2 = DecimalUtils.setDefaultScale(56.78);
 
-        final MoneyValue blocked1 = DataStructsHelper.createMoneyValue(currency1, blockedValue1);
-        final MoneyValue blocked2 = DataStructsHelper.createMoneyValue(currency2, blockedValue2);
+        final MoneyValue blocked1 = DataStructsHelper.newMoneyValue(currency1, blockedValue1);
+        final MoneyValue blocked2 = DataStructsHelper.newMoneyValue(currency2, blockedValue2);
         final List<MoneyValue> blocked = List.of(blocked1, blocked2);
 
         final BigDecimal blockedGuaranteeValue1 = DecimalUtils.setDefaultScale(1.2);
         final BigDecimal blockedGuaranteeValue2 = DecimalUtils.setDefaultScale(3.4);
 
-        final MoneyValue blockedGuarantee1 = DataStructsHelper.createMoneyValue(currency1, blockedGuaranteeValue1);
-        final MoneyValue blockedGuarantee2 = DataStructsHelper.createMoneyValue(currency2, blockedGuaranteeValue2);
+        final MoneyValue blockedGuarantee1 = DataStructsHelper.newMoneyValue(currency1, blockedGuaranteeValue1);
+        final MoneyValue blockedGuarantee2 = DataStructsHelper.newMoneyValue(currency2, blockedGuaranteeValue2);
         final List<MoneyValue> blockedGuarantee = List.of(blockedGuarantee1, blockedGuarantee2);
 
-        final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
+        final WithdrawLimits withdrawLimits = DataStructsHelper.newWithdrawLimits(moneys, blocked, blockedGuarantee);
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), Map.of(accountId, withdrawLimits));
 
         // action
@@ -251,8 +251,8 @@ class ExtOperationsServiceUnitTest {
 
         // assert
 
-        final Money money1 = DataStructsHelper.createMoney(value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1), currency1);
-        final Money money2 = DataStructsHelper.createMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
+        final Money money1 = DataStructsHelper.newMoney(value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1), currency1);
+        final Money money2 = DataStructsHelper.newMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         AssertUtils.assertEquals(expectedBalances, balances);
@@ -269,14 +269,14 @@ class ExtOperationsServiceUnitTest {
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
-        final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
-        final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);
+        final MoneyValue moneyValue1 = DataStructsHelper.newMoneyValue(currency1, value1);
+        final MoneyValue moneyValue2 = DataStructsHelper.newMoneyValue(currency2, value2);
 
         final List<MoneyValue> moneys = List.of(moneyValue1, moneyValue2);
         final List<MoneyValue> blocked = Collections.emptyList();
         final List<MoneyValue> blockedGuarantee = Collections.emptyList();
 
-        final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
+        final WithdrawLimits withdrawLimits = DataStructsHelper.newWithdrawLimits(moneys, blocked, blockedGuarantee);
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), Map.of(accountId, withdrawLimits));
 
         // action
@@ -285,8 +285,8 @@ class ExtOperationsServiceUnitTest {
 
         // assert
 
-        final Money money1 = DataStructsHelper.createMoney(value1, currency1);
-        final Money money2 = DataStructsHelper.createMoney(value2, currency2);
+        final Money money1 = DataStructsHelper.newMoney(value1, currency1);
+        final Money money2 = DataStructsHelper.newMoney(value2, currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         AssertUtils.assertEquals(expectedBalances, balances);

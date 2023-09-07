@@ -46,9 +46,9 @@ public class FakeExtOperationsService implements ExtOperationsService {
     @Override
     public WithdrawLimits getWithdrawLimits(final String accountId) {
         final List<MoneyValue> money = fakeContext.getBalances(accountId).entrySet().stream()
-                .map(entry -> DataStructsHelper.createMoneyValue(entry.getKey(), entry.getValue()))
+                .map(entry -> DataStructsHelper.newMoneyValue(entry.getKey(), entry.getValue()))
                 .toList();
-        return DataStructsHelper.createWithdrawLimits(money);
+        return DataStructsHelper.newWithdrawLimits(money);
     }
 
 }
