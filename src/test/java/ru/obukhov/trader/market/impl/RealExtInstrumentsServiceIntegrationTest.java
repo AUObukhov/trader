@@ -24,8 +24,8 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
@@ -138,21 +138,25 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrencyByFigi_returnsCurrency() {
-        Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
+        final ru.tinkoff.piapi.contract.v1.Currency currency = TestCurrencies.RUB.tinkoffCurrency();
+        Mocker.mockCurrency(instrumentsService, currency);
 
-        final Currency result = realExtInstrumentsService.getCurrencyByFigi(TestCurrency2.FIGI);
+        final Currency result = realExtInstrumentsService.getCurrencyByFigi(currency.getFigi());
 
-        Assertions.assertEquals(TestCurrency2.CURRENCY, result);
+        Assertions.assertEquals(TestCurrencies.RUB.currency(), result);
     }
 
     @Test
     @DirtiesContext
     void getAllCurrencies_returnsCachedValue() {
-        Mocker.mockAllCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
+        final TestCurrency testCurrency1 = TestCurrencies.USD;
+        final TestCurrency testCurrency2 = TestCurrencies.RUB;
+
+        Mocker.mockAllCurrencies(instrumentsService, testCurrency1.tinkoffCurrency(), testCurrency2.tinkoffCurrency());
 
         final List<Currency> actualResult1 = realExtInstrumentsService.getAllCurrencies();
 
-        final List<Currency> expectedResult = List.of(TestCurrency1.CURRENCY, TestCurrency2.CURRENCY);
+        final List<Currency> expectedResult = List.of(testCurrency1.currency(), testCurrency2.currency());
         Assertions.assertEquals(expectedResult, actualResult1);
 
         Mocker.mockAllCurrencies(instrumentsService);
@@ -166,27 +170,32 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCurrenciesByIsoNames() {
-        Mocker.mockAllCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
+        final TestCurrency testCurrency1 = TestCurrencies.USD;
+        final TestCurrency testCurrency2 = TestCurrencies.RUB;
+
+        final ru.tinkoff.piapi.contract.v1.Currency currency1 = testCurrency1.tinkoffCurrency();
+        final ru.tinkoff.piapi.contract.v1.Currency currency2 = testCurrency2.tinkoffCurrency();
+        Mocker.mockAllCurrencies(instrumentsService, currency1, currency2);
 
         final List<Currency> actualResult1 = realExtInstrumentsService.getCurrenciesByIsoNames(
-                TestCurrency1.ISO_CURRENCY_NAME,
-                TestCurrency2.ISO_CURRENCY_NAME,
-                TestCurrency1.ISO_CURRENCY_NAME,
-                TestCurrency2.ISO_CURRENCY_NAME,
-                TestCurrency2.ISO_CURRENCY_NAME
+                currency1.getIsoCurrencyName(),
+                currency2.getIsoCurrencyName(),
+                currency1.getIsoCurrencyName(),
+                currency2.getIsoCurrencyName(),
+                currency2.getIsoCurrencyName()
         );
 
-        final List<Currency> expectedResult = List.of(TestCurrency1.CURRENCY, TestCurrency2.CURRENCY);
+        final List<Currency> expectedResult = List.of(testCurrency1.currency(), testCurrency2.currency());
         Assertions.assertEquals(expectedResult, actualResult1);
 
         Mocker.mockAllCurrencies(instrumentsService);
 
         final List<Currency> actualResult2 = realExtInstrumentsService.getCurrenciesByIsoNames(
-                TestCurrency1.ISO_CURRENCY_NAME,
-                TestCurrency2.ISO_CURRENCY_NAME,
-                TestCurrency1.ISO_CURRENCY_NAME,
-                TestCurrency2.ISO_CURRENCY_NAME,
-                TestCurrency2.ISO_CURRENCY_NAME
+                currency1.getIsoCurrencyName(),
+                currency2.getIsoCurrencyName(),
+                currency1.getIsoCurrencyName(),
+                currency2.getIsoCurrencyName(),
+                currency2.getIsoCurrencyName()
         );
         Assertions.assertEquals(expectedResult, actualResult2);
     }

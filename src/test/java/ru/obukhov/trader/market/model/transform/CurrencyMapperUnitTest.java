@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 
 class CurrencyMapperUnitTest {
 
@@ -12,9 +13,11 @@ class CurrencyMapperUnitTest {
 
     @Test
     void map() {
-        final Currency result = currencyMapper.map(TestCurrency1.TINKOFF_CURRENCY);
+        final TestCurrency testCurrency = TestCurrencies.USD;
 
-        Assertions.assertEquals(TestCurrency1.CURRENCY, result);
+        final Currency result = currencyMapper.map(testCurrency.tinkoffCurrency());
+
+        Assertions.assertEquals(testCurrency.currency(), result);
     }
 
     @Test

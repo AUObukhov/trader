@@ -10,9 +10,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency3;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
@@ -58,15 +57,17 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forConvertCurrencyToItself() {
         return Stream.of(
-                Arguments.of(TestCurrency1.TINKOFF_CURRENCY, 97.31),
-                Arguments.of(TestCurrency2.TINKOFF_CURRENCY, 1)
+                Arguments.of(TestCurrencies.USD, 97.31),
+                Arguments.of(TestCurrencies.RUB, 1)
         );
     }
 
     @DirtiesContext
     @ParameterizedTest
     @MethodSource("getData_forConvertCurrencyToItself")
-    void convertCurrencyToItself(final ru.tinkoff.piapi.contract.v1.Currency currency, final double price) throws Exception {
+    void convertCurrencyToItself(final TestCurrency testCurrency, final double price) throws Exception {
+        final ru.tinkoff.piapi.contract.v1.Currency currency = testCurrency.tinkoffCurrency();
+
         Mocker.mockAllCurrencies(instrumentsService, currency);
 
         final Map<String, Double> figiesToPrices = Map.of(currency.getFigi(), price);
@@ -87,10 +88,10 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forConvertCurrency() {
         return Stream.of(
-                Arguments.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY, 97.31, 1, 97310),
-                Arguments.of(TestCurrency2.TINKOFF_CURRENCY, TestCurrency1.TINKOFF_CURRENCY, 1, 97.31, 10.276436132),
-                Arguments.of(TestCurrency1.TINKOFF_CURRENCY, TestCurrency3.TINKOFF_CURRENCY, 97.31, 13.322, 7304.458789971),
-                Arguments.of(TestCurrency3.TINKOFF_CURRENCY, TestCurrency1.TINKOFF_CURRENCY, 13.322, 97.31, 136.90268215)
+                Arguments.of(TestCurrencies.USD, TestCurrencies.RUB, 97.31, 1, 97310),
+                Arguments.of(TestCurrencies.RUB, TestCurrencies.USD, 1, 97.31, 10.276436132),
+                Arguments.of(TestCurrencies.USD, TestCurrencies.CNY, 97.31, 13.322, 7304.458789971),
+                Arguments.of(TestCurrencies.CNY, TestCurrencies.USD, 13.322, 97.31, 136.90268215)
         );
     }
 
@@ -98,12 +99,15 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @ParameterizedTest
     @MethodSource("getData_forConvertCurrency")
     void convertCurrency(
-            final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency,
-            final ru.tinkoff.piapi.contract.v1.Currency targetCurrency,
+            final TestCurrency sourceTestCurrency,
+            final TestCurrency targetTestCurrency,
             final double price1,
             final double price2,
             final double expectedResult
     ) throws Exception {
+        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = sourceTestCurrency.tinkoffCurrency();
+        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = targetTestCurrency.tinkoffCurrency();
+
         Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
 
         final Map<String, Double> figiesToPrices = new LinkedHashMap<>();
@@ -124,8 +128,8 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void convertCurrency_returnsBadRequest_whenCurrencyNotFound() throws Exception {
-        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = TestCurrency1.TINKOFF_CURRENCY;
-        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = TestCurrency2.TINKOFF_CURRENCY;
+        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = TestCurrencies.USD.tinkoffCurrency();
+        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = TestCurrencies.RUB.tinkoffCurrency();
 
         Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
 

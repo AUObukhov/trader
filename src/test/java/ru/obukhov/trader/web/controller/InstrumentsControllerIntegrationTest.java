@@ -15,7 +15,8 @@ import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
@@ -146,14 +147,16 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getCurrency_returnsCurrency() throws Exception {
-        Mocker.mockCurrency(instrumentsService, TestCurrency1.TINKOFF_CURRENCY);
+        final TestCurrency testCurrency = TestCurrencies.USD;
+
+        Mocker.mockCurrency(instrumentsService, testCurrency.tinkoffCurrency());
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
-                .param("figi", TestCurrency1.FIGI)
+                .param("figi", testCurrency.currency().figi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, TestCurrency1.JSON_STRING);
+        assertResponse(requestBuilder, testCurrency.jsonString());
     }
 
     @Test
