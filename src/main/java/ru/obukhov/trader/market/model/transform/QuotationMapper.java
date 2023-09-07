@@ -12,7 +12,7 @@ public interface QuotationMapper {
     default BigDecimal toBigDecimal(final Quotation quotation) {
         return quotation == null
                 ? null
-                : DecimalUtils.createBigDecimal(quotation.getUnits(), quotation.getNano());
+                : DecimalUtils.newBigDecimal(quotation.getUnits(), quotation.getNano());
     }
 
     default Quotation fromBigDecimal(final BigDecimal bigDecimal) {

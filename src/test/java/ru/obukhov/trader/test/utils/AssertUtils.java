@@ -98,7 +98,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final Double expected, @Nullable final MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (actual != null && !DecimalUtils.numbersEqual(DecimalUtils.createBigDecimal(actual), expected)) {
+        } else if (actual != null && !DecimalUtils.numbersEqual(DecimalUtils.newBigDecimal(actual), expected)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -106,7 +106,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final BigDecimal expected, @Nullable final MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (actual != null && !DecimalUtils.numbersEqual(expected, DecimalUtils.createBigDecimal(actual))) {
+        } else if (actual != null && !DecimalUtils.numbersEqual(expected, DecimalUtils.newBigDecimal(actual))) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }

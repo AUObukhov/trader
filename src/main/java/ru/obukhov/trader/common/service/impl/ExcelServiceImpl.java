@@ -451,7 +451,7 @@ public class ExcelServiceImpl implements ExcelService {
             final MarkerProperties markerProperties
     ) {
         final BigDecimal[] bigDecimals = Arrays.stream(moneyValues)
-                .map(DecimalUtils::createBigDecimal)
+                .map(DecimalUtils::newBigDecimal)
                 .toArray(BigDecimal[]::new);
         addSeries(chartData, timesDataSource, bigDecimals, markerProperties, null);
     }

@@ -384,7 +384,7 @@ class ExcelServiceImplUnitTest {
                     rowIterator.next(),
                     operation.getDate(),
                     operation.getOperationType().name(),
-                    DecimalUtils.createBigDecimal(operation.getPrice()).doubleValue(),
+                    DecimalUtils.newBigDecimal(operation.getPrice()).doubleValue(),
                     operation.getQuantity()
             );
         }

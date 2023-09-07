@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 class DecimalUtilsUnitTest {
 
-    // region createBigDecimal tests
+    // region newBigDecimal tests
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateBigDecimal() {
@@ -34,7 +34,7 @@ class DecimalUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBigDecimal")
     void createBigDecimal_fromUnitsAndNanos(final long units, final int nanos, final double expectedResult) {
-        final BigDecimal result = DecimalUtils.createBigDecimal(units, nanos);
+        final BigDecimal result = DecimalUtils.newBigDecimal(units, nanos);
 
         AssertUtils.assertEquals(expectedResult, result);
     }
@@ -44,14 +44,14 @@ class DecimalUtilsUnitTest {
     void createBigDecimal_fromMoneyValue(final long units, final int nanos, final double expectedResult) {
         final MoneyValue moneyValue = TestData.newMoneyValue(units, nanos, Currencies.RUB);
 
-        final BigDecimal result = DecimalUtils.createBigDecimal(moneyValue);
+        final BigDecimal result = DecimalUtils.newBigDecimal(moneyValue);
 
         AssertUtils.assertEquals(expectedResult, result);
     }
 
     @Test
     void createBigDecimal_fromMoneyValue_whenMoneyValueIsNull() {
-        Assertions.assertNull(DecimalUtils.createBigDecimal(null));
+        Assertions.assertNull(DecimalUtils.newBigDecimal(null));
     }
 
     // endregion

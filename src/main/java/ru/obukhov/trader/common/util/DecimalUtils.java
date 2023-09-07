@@ -29,16 +29,16 @@ public class DecimalUtils {
      * @param nano  part of number after decimal point
      * @return BigDecimal result
      */
-    public static BigDecimal createBigDecimal(final long units, final int nano) {
+    public static BigDecimal newBigDecimal(final long units, final int nano) {
         return units == 0 && nano == 0
                 ? BigDecimal.valueOf(0, DecimalUtils.DEFAULT_SCALE)
                 : BigDecimal.valueOf(units).add(BigDecimal.valueOf(nano, DecimalUtils.DEFAULT_SCALE));
     }
 
-    public static BigDecimal createBigDecimal(final MoneyValue moneyValue) {
+    public static BigDecimal newBigDecimal(final MoneyValue moneyValue) {
         return moneyValue == null
                 ? null
-                : createBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
+                : newBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
     }
 
     /**

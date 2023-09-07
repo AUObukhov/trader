@@ -221,7 +221,7 @@ public class ExtendedRow implements Row {
      * @return created cell
      */
     public ExtendedCell createCell(final int column, final MoneyValue value) {
-        final BigDecimal bigDecimalValue = value == null ? null : DecimalUtils.createBigDecimal(value);
+        final BigDecimal bigDecimalValue = value == null ? null : DecimalUtils.newBigDecimal(value);
         return createCell(column, bigDecimalValue);
     }
 

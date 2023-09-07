@@ -12,7 +12,7 @@ public interface MoneyValueMapper {
     default BigDecimal map(final MoneyValue moneyValue) {
         return moneyValue == null
                 ? null
-                : DecimalUtils.createBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
+                : DecimalUtils.newBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
     }
 
     default MoneyValue map(final BigDecimal bigDecimal) {

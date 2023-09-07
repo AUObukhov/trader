@@ -20,7 +20,7 @@ class DataStructsHelperUnitTest {
         final String currency = Currencies.EUR;
         final long units = 123;
         final int nano = 456;
-        final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
+        final BigDecimal value = DecimalUtils.newBigDecimal(units, nano);
 
         final MoneyValue moneyValue = DataStructsHelper.createMoneyValue(currency, value);
 
