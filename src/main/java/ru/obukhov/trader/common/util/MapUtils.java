@@ -5,6 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class MapUtils {
@@ -25,6 +28,15 @@ public class MapUtils {
         final Integer value = (Integer) map.get(key);
         Assert.notNull(value, () -> "\"" + key + "\" is mandatory");
         return value;
+    }
+
+    /**
+     * @param <T> stream items type
+     * @param <K> result map keys type
+     * @return collector, creating map with keys provied by given {@code keyMapper} and stream items as values
+     */
+    public static <T, K> Collector<T, ?, Map<K, T>> newMapKeyCollector(final Function<? super T, ? extends K> keyMapper) {
+        return Collectors.toMap(keyMapper, Function.identity());
     }
 
 }

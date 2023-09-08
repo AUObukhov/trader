@@ -3,10 +3,9 @@ package ru.obukhov.trader.trading.model;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ru.obukhov.trader.common.util.MapUtils;
 
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
@@ -17,7 +16,7 @@ public enum StrategyType {
     CROSS("cross");
 
     private static final Map<String, StrategyType> LOOKUP = Stream.of(StrategyType.values())
-            .collect(Collectors.toMap(StrategyType::getValue, Function.identity()));
+            .collect(MapUtils.newMapKeyCollector(StrategyType::getValue));
 
     @JsonValue
     private final String value;

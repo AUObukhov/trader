@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
+import java.util.List;
 import java.util.Map;
 
 class MapUtilsUnitTest {
@@ -88,5 +89,20 @@ class MapUtilsUnitTest {
     }
 
     // endregion
+
+    @Test
+    void newMapKeyCollector() {
+        final List<String> values = List.of("val1", "value2", "value 3");
+
+        final Map<Integer, String> actualResult = values.stream().collect(MapUtils.newMapKeyCollector(String::length));
+
+        final Map<Integer, String> expectedResult = Map.of(
+                4, "val1",
+                6, "value2",
+                7, "value 3"
+        );
+
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
 
 }
