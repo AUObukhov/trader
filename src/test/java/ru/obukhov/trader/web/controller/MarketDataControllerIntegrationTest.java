@@ -55,30 +55,22 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     // region convertCurrency tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forConvertCurrencyToItself() {
+    static Stream<Arguments> getData_forConvertCurrencyIntoItself() {
         return Stream.of(
-                Arguments.of(TestCurrencies.USD, 97.31),
-                Arguments.of(TestCurrencies.RUB, 1)
+                Arguments.of(TestCurrencies.USD),
+                Arguments.of(TestCurrencies.RUB)
         );
     }
 
-    @DirtiesContext
     @ParameterizedTest
-    @MethodSource("getData_forConvertCurrencyToItself")
-    void convertCurrencyToItself(final TestCurrency testCurrency, final double price) throws Exception {
-        final ru.tinkoff.piapi.contract.v1.Currency currency = testCurrency.tinkoffCurrency();
-
-        Mocker.mockAllCurrencies(instrumentsService, currency);
-
-        final Map<String, Double> figiesToPrices = Map.of(currency.getFigi(), price);
-        Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
-
+    @MethodSource("getData_forConvertCurrencyIntoItself")
+    void convertCurrencyIntoItself(final TestCurrency testCurrency) throws Exception {
+        final String currencyIsoName = testCurrency.tinkoffCurrency().getIsoCurrencyName();
         final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
-
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/market/convert-currency")
-                .param("sourceCurrencyIsoName", currency.getIsoCurrencyName())
-                .param("targetCurrencyIsoName", currency.getIsoCurrencyName())
+                .param("sourceCurrencyIsoName", currencyIsoName)
+                .param("targetCurrencyIsoName", currencyIsoName)
                 .param("sourceValue", sourceValue.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 

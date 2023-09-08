@@ -704,24 +704,17 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     // region convertCurrency tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forConvertCurrencyToItself() {
+    static Stream<Arguments> getData_forConvertCurrencyIntoItself() {
         return Stream.of(
-                Arguments.of(TestCurrencies.USD, 97.31),
-                Arguments.of(TestCurrencies.RUB, 1)
+                Arguments.of(TestCurrencies.USD),
+                Arguments.of(TestCurrencies.RUB)
         );
     }
 
-    @DirtiesContext
     @ParameterizedTest
-    @MethodSource("getData_forConvertCurrencyToItself")
-    void convertCurrencyToItself(final TestCurrency testCurrency, final double price) {
-        final ru.tinkoff.piapi.contract.v1.Currency currency = testCurrency.tinkoffCurrency();
-        Mocker.mockAllCurrencies(instrumentsService, currency);
-
-        final Map<String, Double> figiesToPrices = Map.of(currency.getFigi(), price);
-        Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
-
-        final String currencyIsoName = currency.getIsoCurrencyName();
+    @MethodSource("getData_forConvertCurrencyIntoItself")
+    void convertCurrencyIntoItself(final TestCurrency testCurrency) {
+        final String currencyIsoName = testCurrency.tinkoffCurrency().getIsoCurrencyName();
         final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
         final BigDecimal actualResult = extMarketDataService.convertCurrency(currencyIsoName, currencyIsoName, sourceValue);
 

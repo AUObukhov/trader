@@ -284,6 +284,10 @@ public class ExtMarketDataService {
      * @return conversion result
      */
     public BigDecimal convertCurrency(final String sourceCurrencyIsoName, final String targetCurrencyIsoName, final BigDecimal sourceValue) {
+        if (sourceCurrencyIsoName.equals(targetCurrencyIsoName)) {
+            return sourceValue;
+        }
+
         final List<Currency> currencies = extInstrumentsService.getCurrenciesByIsoNames(sourceCurrencyIsoName, targetCurrencyIsoName);
         final List<String> figies = currencies.stream().map(Currency::figi).toList();
         final Map<String, BigDecimal> lastPrices = getLastPrices(figies);
