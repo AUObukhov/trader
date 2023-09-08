@@ -37,7 +37,6 @@ import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -644,8 +643,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .setIsComplete(false)
                 .build();
 
-        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
-                .thenReturn(List.of(historicCandle1, historicCandle2, historicCandle3));
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(historicCandle1, historicCandle2, historicCandle3)
+                .mock();
 
         final List<Candle> candles = extMarketDataService.getMarketCandles(figi, interval, candleInterval);
 
@@ -679,8 +679,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
-                .thenReturn(Collections.emptyList());
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .mock();
 
         final List<Candle> candles = extMarketDataService.getMarketCandles(figi, interval, candleInterval);
 
