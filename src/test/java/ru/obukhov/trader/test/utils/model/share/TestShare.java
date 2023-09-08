@@ -10,10 +10,10 @@ import ru.obukhov.trader.market.model.transform.QuotationMapper;
 public record TestShare(Share share, ru.tinkoff.piapi.contract.v1.Share tinkoffShare, String jsonString) {
 
     TestShare(final Share share) {
-        this(share, buildTinkoffAccount(share), buildJsonString(share));
+        this(share, buildTinkoffShare(share), buildJsonString(share));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffAccount(final Share share) {
+    private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         final MoneyValueMapper moneyValueMapper = Mappers.getMapper(MoneyValueMapper.class);
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);

@@ -7,10 +7,10 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 public record TestTradingDay(TradingDay tradingDay, ru.tinkoff.piapi.contract.v1.TradingDay tinkoffTradingDay, String jsonString) {
 
     TestTradingDay(final TradingDay tradingDay) {
-        this(tradingDay, buildTinkoffAccount(tradingDay), buildJsonString(tradingDay));
+        this(tradingDay, buildTinkoffTradingDay(tradingDay), buildJsonString(tradingDay));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.TradingDay buildTinkoffAccount(final TradingDay tradingDay) {
+    private static ru.tinkoff.piapi.contract.v1.TradingDay buildTinkoffTradingDay(final TradingDay tradingDay) {
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         return ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
                 .setDate(dateTimeMapper.offsetDateTimeToTimestamp(tradingDay.date()))
