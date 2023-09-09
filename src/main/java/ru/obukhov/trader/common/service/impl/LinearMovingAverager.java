@@ -27,7 +27,7 @@ public class LinearMovingAverager implements MovingAverager {
         return averages;
     }
 
-    private List<BigDecimal> getAveragesInner(List<BigDecimal> values, int window) {
+    private List<BigDecimal> getAveragesInner(final List<BigDecimal> values, final int window) {
         final List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
         int normalizedWindow = Math.min(window, values.size());
 

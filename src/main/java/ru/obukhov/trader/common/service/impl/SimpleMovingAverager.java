@@ -27,7 +27,7 @@ public class SimpleMovingAverager implements MovingAverager {
         return averages;
     }
 
-    private List<BigDecimal> getAveragesInner(List<BigDecimal> values, int window) {
+    private List<BigDecimal> getAveragesInner(final List<BigDecimal> values, final int window) {
         final int size = values.size();
 
         // filling of first {window} averages
