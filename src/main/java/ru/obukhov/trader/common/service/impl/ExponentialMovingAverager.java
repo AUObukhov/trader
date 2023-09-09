@@ -19,10 +19,11 @@ public class ExponentialMovingAverager implements MovingAverager {
         Assert.isTrue(order > 0, "order must be positive");
         Assert.isTrue(window > 0, "window must be positive");
 
-        List<BigDecimal> averages = new ArrayList<>(values);
-        if (averages.isEmpty()) {
-            return averages;
+        if (values.isEmpty()) {
+            return values;
         }
+        List<BigDecimal> averages = new ArrayList<>(values);
+
         final double weightDecrease = 2.0 / (window + 1);
         final double revertedWeightDecrease = 1.0 - weightDecrease;
 
