@@ -27,6 +27,7 @@ import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -141,14 +142,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
-        final TestShare testShare = TestShares.APPLE;
+        final Share share = TestShares.APPLE.tinkoffShare();
 
-        final String figi = testShare.share().figi();
+        final String figi = share.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+
+        Mocker.mockShare(instrumentsService, share);
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpen(12000)
@@ -241,14 +243,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
-        final TestShare testShare = TestShares.APPLE;
+        final Share share = TestShares.APPLE.tinkoffShare();
 
-        final String figi = testShare.share().figi();
+        final String figi = share.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockShare(instrumentsService, share);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -278,14 +280,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
-        final TestShare testShare = TestShares.APPLE;
+        final Share share = TestShares.APPLE.tinkoffShare();
 
-        final String figi = testShare.share().figi();
+        final String figi = share.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockShare(instrumentsService, share);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -312,11 +314,11 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
-        final TestShare testShare = TestShares.APPLE;
+        final Share share = TestShares.APPLE.tinkoffShare();
 
-        final String figi = testShare.share().figi();
+        final String figi = share.getFigi();
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockShare(instrumentsService, share);
 
         final String requestString = String.format("""
                 {
@@ -349,11 +351,11 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getIndexWeights() throws Exception {
-        final ru.tinkoff.piapi.contract.v1.Share share1 = TestShares.APPLE.tinkoffShare();
-        final ru.tinkoff.piapi.contract.v1.Share share2 = TestShares.SBER.tinkoffShare();
-        final ru.tinkoff.piapi.contract.v1.Share share3 = TestShares.YANDEX.tinkoffShare();
+        final Share share1 = TestShares.APPLE.tinkoffShare();
+        final Share share2 = TestShares.SBER.tinkoffShare();
+        final Share share3 = TestShares.YANDEX.tinkoffShare();
 
-        final Map<ru.tinkoff.piapi.contract.v1.Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
+        final Map<Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
         sharesLastPrices.put(share1, 178.7);
         sharesLastPrices.put(share2, 258.79);
         sharesLastPrices.put(share3, 2585.6);
