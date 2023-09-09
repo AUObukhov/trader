@@ -133,8 +133,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public StatisticsService statisticsService(final ExtMarketDataService realExtMarketDataService, final ApplicationContext applicationContext) {
-        return new StatisticsService(realExtMarketDataService, applicationContext);
+    public StatisticsService statisticsService(
+            final ExtMarketDataService realExtMarketDataService,
+            final ExtInstrumentsService realExtInstrumentsService,
+            final ApplicationContext applicationContext
+    ) {
+        return new StatisticsService(realExtMarketDataService, realExtInstrumentsService, applicationContext);
     }
 
     @Bean

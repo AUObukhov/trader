@@ -60,6 +60,18 @@ public class TimestampUtils {
             final int hour,
             final int minute,
             final int second,
+            final int nanoOfSecond
+    ) {
+        return newTimestamp(year, month, dayOfMonth, hour, minute, second, nanoOfSecond, DateUtils.DEFAULT_OFFSET);
+    }
+
+    public static Timestamp newTimestamp(
+            final int year,
+            final int month,
+            final int dayOfMonth,
+            final int hour,
+            final int minute,
+            final int second,
             final int nanoOfSecond,
             final ZoneOffset offset
     ) {

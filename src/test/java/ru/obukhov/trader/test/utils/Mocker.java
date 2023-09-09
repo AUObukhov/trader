@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -115,6 +116,10 @@ public class Mocker {
         Mockito.when(instrumentsService.getShareByFigiSync(share.getFigi())).thenReturn(share);
     }
 
+    public static void mockAllShares(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Share... shares) {
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(shares));
+    }
+
     public static void mockEtf(final InstrumentsService instrumentsService, final Etf etf) {
         Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf);
     }
@@ -182,6 +187,36 @@ public class Mocker {
                 .toList();
 
         Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+    }
+
+    public static void mockCurrenciesLastPrices(
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final Map<ru.tinkoff.piapi.contract.v1.Currency, Double> prices
+    ) {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = prices.keySet().stream().toList();
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final Map<String, Double> currenciesLastPrices = new LinkedHashMap<>(prices.size(), 1);
+        for (Map.Entry<ru.tinkoff.piapi.contract.v1.Currency, Double> entry : prices.entrySet()) {
+            currenciesLastPrices.put(entry.getKey().getFigi(), entry.getValue());
+        }
+        Mocker.mockLastPricesDouble(marketDataService, currenciesLastPrices);
+    }
+
+    public static void mockSharesLastPrices(
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final Map<ru.tinkoff.piapi.contract.v1.Share, Double> prices
+    ) {
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = prices.keySet().stream().toList();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+
+        final Map<String, Double> lastPrices = new LinkedHashMap<>(3, 1);
+        for (final Map.Entry<ru.tinkoff.piapi.contract.v1.Share, Double> entry : prices.entrySet()) {
+            lastPrices.put(entry.getKey().getFigi(), entry.getValue());
+        }
+        Mocker.mockLastPricesDouble(marketDataService, lastPrices);
     }
 
 }

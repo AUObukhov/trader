@@ -126,6 +126,26 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    void getShares() {
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+        final TestShare testShare3 = TestShares.YANDEX;
+        final TestShare testShare4 = TestShares.DIOD;
+
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare1 = testShare1.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare2 = testShare2.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare3 = testShare3.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare4 = testShare4.tinkoffShare();
+
+        Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare2, tinkoffShare3, tinkoffShare4);
+        final List<String> figies = List.of(tinkoffShare1.getFigi(), tinkoffShare2.getFigi(), tinkoffShare4.getFigi());
+        final List<Share> actualResult = realExtInstrumentsService.getShares(figies);
+
+        final List<Share> expectedResult = List.of(testShare1.share(), testShare2.share(), testShare4.share());
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
     void getEtf_returnsEtf() {
         final TestEtf testEtf = TestEtfs.EZA;
 

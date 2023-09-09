@@ -93,6 +93,14 @@ class TimestampUtilsUnitTest {
     }
 
     @Test
+    void newTimestamp_fromYearMonthDayOfMonthHourMinuteSecondNanoOfSecond() {
+        final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 10, 20, 30, 123);
+
+        Assertions.assertEquals(1651562430L, actualResult.getSeconds());
+        Assertions.assertEquals(123, actualResult.getNanos());
+    }
+
+    @Test
     void newTimestamp_fromDateTimeUnits() {
         final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 10, 20, 30, 123, ZoneOffset.ofHours(6));
 

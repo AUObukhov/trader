@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
@@ -19,6 +20,7 @@ import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
@@ -29,7 +31,10 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
@@ -340,5 +345,38 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     // endregion
+
+    @Test
+    @DirtiesContext
+    void getIndexWeights() throws Exception {
+        final ru.tinkoff.piapi.contract.v1.Share share1 = TestShares.APPLE.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Share share2 = TestShares.SBER.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Share share3 = TestShares.YANDEX.tinkoffShare();
+
+        final Map<ru.tinkoff.piapi.contract.v1.Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
+        sharesLastPrices.put(share1, 178.7);
+        sharesLastPrices.put(share2, 258.79);
+        sharesLastPrices.put(share3, 2585.6);
+        Mocker.mockSharesLastPrices(instrumentsService, marketDataService, sharesLastPrices);
+
+        final Map<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
+        currenciesLastPrices.put(TestCurrencies.USD.tinkoffCurrency(), 98.4225);
+        currenciesLastPrices.put(TestCurrencies.RUB.tinkoffCurrency(), 1.0);
+        Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);
+
+        final String figiesString = sharesLastPrices.keySet().stream().map(share -> '"' + share.getFigi() + '"').collect(Collectors.joining(","));
+        final String requestString = "{\"shareFigies\":[" + figiesString + "]}";
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/capitalization-weights")
+                        .content(requestString)
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        final Map<String, BigDecimal> expectedResponse = new LinkedHashMap<>();
+        expectedResponse.put(share1.getFigi(), DecimalUtils.setDefaultScale(0.978361221));
+        expectedResponse.put(share2.getFigi(), DecimalUtils.setDefaultScale(0.018799306));
+        expectedResponse.put(share3.getFigi(), DecimalUtils.setDefaultScale(0.002839473));
+
+        assertResponse(requestBuilder, expectedResponse);
+    }
 
 }

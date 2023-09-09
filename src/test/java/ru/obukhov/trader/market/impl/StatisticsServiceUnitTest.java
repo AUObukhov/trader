@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,8 +11,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
+import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.market.model.SetCapitalization;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
@@ -23,7 +29,9 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceUnitTest {
@@ -33,10 +41,14 @@ class StatisticsServiceUnitTest {
     @Mock
     private ExtMarketDataService extMarketDataService;
     @Mock
+    private ExtInstrumentsService extInstrumentsService;
+    @Mock
     private ApplicationContext applicationContext;
 
     @InjectMocks
     private StatisticsService service;
+
+    // region getExtendedCandles tests
 
     @Test
     void getExtendedCandles_extendsCandles_withoutExtremes() {
@@ -165,6 +177,97 @@ class StatisticsServiceUnitTest {
 
     private void mockAverages(Integer window, List<BigDecimal> averages) {
         Mockito.when(averager.getAverages(Mockito.anyList(), Mockito.eq(window), Mockito.eq(1))).thenReturn(averages);
+    }
+
+    // endregion
+
+    @Test
+    void getIndexWeights() {
+        // arrange
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+        final Share share3 = TestShares.YANDEX.share();
+        final List<String> figies = List.of(share1.figi(), share2.figi(), share3.figi());
+
+        final List<Share> shares = List.of(share1, share2, share3);
+        Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(shares);
+
+        final BigDecimal share1Price = DecimalUtils.setDefaultScale(178.7);
+        final BigDecimal share2Price = DecimalUtils.setDefaultScale(258.79);
+        final BigDecimal share3Price = DecimalUtils.setDefaultScale(2585.6);
+        final Map<String, BigDecimal> lastPrices = Map.of(
+                share1.figi(), share1Price,
+                share2.figi(), share2Price,
+                share3.figi(), share3Price
+        );
+        Mockito.when(extMarketDataService.getLastPrices(figies)).thenReturn(lastPrices);
+
+        Mockito.when(extMarketDataService.convertCurrency(share1.currency(), Currencies.RUB, share1Price))
+                .thenReturn(DecimalUtils.setDefaultScale(17588.10075)); // USD = 98.4225 RUB
+        Mockito.when(extMarketDataService.convertCurrency(share2.currency(), Currencies.RUB, share2Price))
+                .thenReturn(share2Price);
+        Mockito.when(extMarketDataService.convertCurrency(share3.currency(), Currencies.RUB, share3Price))
+                .thenReturn(share3Price);
+
+        // action
+
+        final Map<String, BigDecimal> actualResult = service.getCapitalizationWeights(figies);
+
+        // assert
+
+        final Map<String, BigDecimal> expectedWeights = new LinkedHashMap<>(3, 1);
+        expectedWeights.put(share1.figi(), DecimalUtils.setDefaultScale(0.978361221));
+        expectedWeights.put(share2.figi(), DecimalUtils.setDefaultScale(0.018799306));
+        expectedWeights.put(share3.figi(), DecimalUtils.setDefaultScale(0.002839473));
+
+        Assertions.assertEquals(expectedWeights, actualResult);
+    }
+
+    @Test
+    void getCapitalization() {
+        // arrange
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+        final Share share3 = TestShares.YANDEX.share();
+        final List<String> figies = List.of(share1.figi(), share2.figi(), share3.figi());
+
+        final List<Share> shares = List.of(share1, share2, share3);
+        Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(shares);
+
+        final BigDecimal share1Price = DecimalUtils.setDefaultScale(178.7);
+        final BigDecimal share2Price = DecimalUtils.setDefaultScale(258.79);
+        final BigDecimal share3Price = DecimalUtils.setDefaultScale(2585.6);
+        final Map<String, BigDecimal> lastPrices = Map.of(
+                share1.figi(), share1Price,
+                share2.figi(), share2Price,
+                share3.figi(), share3Price
+        );
+        Mockito.when(extMarketDataService.getLastPrices(figies)).thenReturn(lastPrices);
+
+        Mockito.when(extMarketDataService.convertCurrency(share1.currency(), Currencies.RUB, share1Price))
+                .thenReturn(DecimalUtils.setDefaultScale(17588.10075)); // USD = 98.4225 RUB
+        Mockito.when(extMarketDataService.convertCurrency(share2.currency(), Currencies.RUB, share2Price))
+                .thenReturn(share2Price);
+        Mockito.when(extMarketDataService.convertCurrency(share3.currency(), Currencies.RUB, share3Price))
+                .thenReturn(share3Price);
+
+        // action
+
+        final SetCapitalization actualResult = service.getCapitalization(figies);
+
+        // assert
+
+        final Map<String, BigDecimal> securitiesCapitalizations = Map.of(
+                share1.figi(), DecimalUtils.setDefaultScale(290734225022224.5),
+                share2.figi(), DecimalUtils.setDefaultScale(5586486272920L),
+                share3.figi(), DecimalUtils.setDefaultScale(843790573312L)
+        );
+        final BigDecimal totalCapitalization = DecimalUtils.setDefaultScale(297164501868456.5);
+        final SetCapitalization expectedResult = new SetCapitalization(securitiesCapitalizations, totalCapitalization);
+
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
 }

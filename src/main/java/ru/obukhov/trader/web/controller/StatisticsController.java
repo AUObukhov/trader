@@ -15,11 +15,16 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.GetWeightsRequest;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/trader/statistics")
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
@@ -56,6 +61,17 @@ public class StatisticsController {
         } catch (RuntimeException exception) {
             log.error("Failed to save candles for FIGI {} to file", figi, exception);
         }
+    }
+
+    @GetMapping("/capitalization-weights")
+    @ApiOperation("Get improvised index weights proportional to shares capitalizations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public Map<String, BigDecimal> getCapitalizationWeights(@Valid @RequestBody final GetWeightsRequest getWeightsRequest) {
+        return statisticsService.getCapitalizationWeights(getWeightsRequest.getShareFigies());
     }
 
 }

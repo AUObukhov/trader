@@ -28,6 +28,7 @@ import ru.tinkoff.piapi.core.InstrumentsService;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class RealExtInstrumentsService implements ExtInstrumentsService {
@@ -90,6 +91,20 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     @Override
     public Share getShare(final String figi) {
         return SHARE_MAPPER.map(instrumentsService.getShareByFigiSync(figi));
+    }
+
+    /**
+     * @return List of {@link Share} corresponding to given {@code figies}
+     * Keep same order as in given {@code figies}
+     */
+    public List<Share> getShares(final List<String> figies) {
+        final Comparator<Share> comparator = Comparator.comparing(share -> figies.indexOf(share.figi()));
+        return instrumentsService.getAllSharesSync()
+                .stream()
+                .filter(share -> figies.contains(share.getFigi()))
+                .map(SHARE_MAPPER::map)
+                .sorted(comparator)
+                .toList();
     }
 
     /**

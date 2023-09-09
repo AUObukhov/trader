@@ -22,6 +22,8 @@ public interface ExtInstrumentsService {
 
     Share getShare(final String figi);
 
+    List<Share> getShares(final List<String> figies);
+
     Etf getEtf(final String figi);
 
     Bond getBond(final String figi);
