@@ -55,8 +55,8 @@ class CandleMapperUnitTest {
         final Candle candle = new CandleBuilder()
                 .setOpen(open)
                 .setClose(close)
-                .setHighest(high)
-                .setLowest(low)
+                .setHigh(high)
+                .setLow(low)
                 .setTime(time)
                 .build();
         final boolean isComplete = true;

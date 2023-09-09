@@ -653,16 +653,16 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Candle expectedCandle1 = new CandleBuilder()
                 .setOpen(open1)
                 .setClose(close1)
-                .setHighest(high1)
-                .setLowest(low1)
+                .setHigh(high1)
+                .setLow(low1)
                 .setTime(time1)
                 .build();
 
         final Candle expectedCandle2 = new CandleBuilder()
                 .setOpen(open2)
                 .setClose(close2)
-                .setHighest(high2)
-                .setLowest(low2)
+                .setHigh(high2)
+                .setLow(low2)
                 .setTime(time2)
                 .build();
 

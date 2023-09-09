@@ -272,8 +272,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final Candle candle = new CandleBuilder()
                 .setOpen(10000)
                 .setClose(20000)
-                .setHighest(30000)
-                .setLowest(5000)
+                .setHigh(30000)
+                .setLow(5000)
                 .setTime(from)
                 .build();
         final BackTestResult backTestResult1 = new BackTestResult(

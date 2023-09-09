@@ -281,34 +281,34 @@ class GrafanaServiceUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                new CandleBuilder().setOpen(80).setClose(15).setHighest(20).setLowest(5)
+                new CandleBuilder().setOpen(80).setClose(15).setHigh(20).setLow(5)
                         .setTime(from)
                         .build(),
-                new CandleBuilder().setOpen(1000).setClose(20).setHighest(25).setLowest(10)
+                new CandleBuilder().setOpen(1000).setClose(20).setHigh(25).setLow(10)
                         .setTime(from.plusMinutes(1))
                         .build(),
-                new CandleBuilder().setOpen(70).setClose(17).setHighest(24).setLowest(15)
+                new CandleBuilder().setOpen(70).setClose(17).setHigh(24).setLow(15)
                         .setTime(from.plusMinutes(2))
                         .build(),
-                new CandleBuilder().setOpen(40).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(40).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(3))
                         .build(),
-                new CandleBuilder().setOpen(50).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(50).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(4))
                         .build(),
-                new CandleBuilder().setOpen(10).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(10).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(5))
                         .build(),
-                new CandleBuilder().setOpen(90).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(90).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(6))
                         .build(),
-                new CandleBuilder().setOpen(1000).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(1000).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(7))
                         .build(),
-                new CandleBuilder().setOpen(60).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(60).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(8))
                         .build(),
-                new CandleBuilder().setOpen(30).setClose(18).setHighest(22).setLowest(14)
+                new CandleBuilder().setOpen(30).setClose(18).setHigh(22).setLow(14)
                         .setTime(from.plusMinutes(9))
                         .build()
         );

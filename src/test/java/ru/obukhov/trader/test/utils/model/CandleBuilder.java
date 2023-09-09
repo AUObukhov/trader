@@ -9,8 +9,8 @@ public class CandleBuilder {
 
     private Double open;
     private Double close;
-    private Double highest;
-    private Double lowest;
+    private Double high;
+    private Double low;
     private OffsetDateTime time;
 
     public CandleBuilder setOpen(final double open) {
@@ -23,13 +23,13 @@ public class CandleBuilder {
         return this;
     }
 
-    public CandleBuilder setHighest(final double highest) {
-        this.highest = highest;
+    public CandleBuilder setHigh(final double high) {
+        this.high = high;
         return this;
     }
 
-    public CandleBuilder setLowest(final double lowest) {
-        this.lowest = lowest;
+    public CandleBuilder setLow(final double low) {
+        this.low = low;
         return this;
     }
 
@@ -49,12 +49,12 @@ public class CandleBuilder {
             candle.setClose(DecimalUtils.setDefaultScale(close));
         }
 
-        if (highest != null) {
-            candle.setHigh(DecimalUtils.setDefaultScale(highest));
+        if (high != null) {
+            candle.setHigh(DecimalUtils.setDefaultScale(high));
         }
 
-        if (lowest != null) {
-            candle.setLow(DecimalUtils.setDefaultScale(lowest));
+        if (low != null) {
+            candle.setLow(DecimalUtils.setDefaultScale(low));
         }
 
         if (time != null) {
