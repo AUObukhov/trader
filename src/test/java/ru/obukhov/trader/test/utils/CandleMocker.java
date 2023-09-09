@@ -24,8 +24,10 @@ public class CandleMocker {
     private final Answer<List<HistoricCandle>> answer = new Answer<>() {
         @Override
         public List<HistoricCandle> answer(InvocationOnMock invocation) {
+            final Instant from = invocation.getArgument(1);
+            final Instant to = invocation.getArgument(2);
             return candles.stream()
-                    .filter(candle -> DateUtils.timestampIsInInterval(candle.getTime(), invocation.getArgument(1), invocation.getArgument(2)))
+                    .filter(candle -> DateUtils.timestampIsInInterval(candle.getTime(), from, to))
                     .toList();
         }
     };
