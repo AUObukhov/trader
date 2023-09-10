@@ -228,6 +228,7 @@ public class DateUtils {
 
     /**
      * @return true if given {@code timestamp} is in interval {@code [from; to)}
+     * @throws IllegalArgumentException if {@code from} is not before {@code to}
      */
     public static boolean timestampIsInInterval(final Timestamp timestamp, final Instant from, final Instant to) {
         Assert.isTrue(from.isBefore(to), "From must be before to");
