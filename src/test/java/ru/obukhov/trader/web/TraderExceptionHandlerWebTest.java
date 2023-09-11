@@ -50,7 +50,6 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
             .build();
 
     @Test
-    @SuppressWarnings("unused")
     void handlesMethodArgumentNotValidException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         final Map<String, Object> expectedResponse = Map.of(
@@ -60,7 +59,7 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
         );
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/validation")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -70,7 +69,6 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void handlesMissingServletRequestParameterException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         final Map<String, String> expectedResponse = Map.of(
@@ -79,7 +77,7 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
         );
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/missingParam")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -89,7 +87,6 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void handlesRuntimeException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         final Map<String, String> expectedResponse = Map.of(
@@ -98,7 +95,7 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
         );
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/runtime")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isInternalServerError())
@@ -108,7 +105,6 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void handlesInstrumentNotFoundException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         final Map<String, String> expectedResponse = Map.of(
@@ -117,7 +113,7 @@ class TraderExceptionHandlerWebTest extends IntegrationTest {
         );
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/instrumentNotFound")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())

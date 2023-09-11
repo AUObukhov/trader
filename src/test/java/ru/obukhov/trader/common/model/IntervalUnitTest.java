@@ -130,7 +130,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToDay_throwsIllegalArgumentException_whenFromIsInFuture() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10, 11, 12);
 
@@ -138,7 +137,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = from.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToDay;
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -146,7 +145,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToDay_throwsIllegalArgumentException_whenToIsInFuture() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10, 11, 12);
 
@@ -154,7 +152,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = mockedNow.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> timestampStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> timestampStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToDay;
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -162,7 +160,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToDay_extendsToWholeDay_whenEqualsDatesBeforeToday() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2021, 9, 23, 10, 11, 12);
 
@@ -170,7 +167,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 10, 5);
@@ -181,7 +178,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToDay_extendsToPartOfDayTillNow_whenDatesAreToday() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10, 11, 12);
 
@@ -189,7 +185,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 9, 23, 6, 11, 12);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 9, 23);
@@ -213,7 +209,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToYear_throwsIllegalArgumentException_whenFromIsInFuture() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10, 11, 12);
 
@@ -221,7 +216,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = from.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToYear;
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -229,7 +224,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToYear_throwsIllegalArgumentException_whenToIsInFuture() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10, 11, 12);
 
@@ -237,7 +231,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = mockedNow.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToYear;
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
@@ -245,7 +239,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToYear_extendsToWholeYear_whenEqualsYearsBeforeCurrentYear() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2021, 9, 23, 10, 11, 12);
 
@@ -253,7 +246,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 1, 1);
@@ -264,7 +257,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void extendToYear_extendsToPartOfDayTillNow_whenYearsAreCurrentYear() {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10, 11, 12);
 
@@ -272,7 +264,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 4, 23, 10, 11, 12);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 1, 1);
