@@ -206,7 +206,11 @@ public class DateUtils {
     /**
      * @return dates which match given {@code expression} and between given {@code from} inclusively and {@code to} exclusively
      */
-    public static List<OffsetDateTime> getCronHitsBetweenDates(final CronExpression expression, final OffsetDateTime from, final OffsetDateTime to) {
+    public static List<OffsetDateTime> getCronHitsBetweenDates(
+            final CronExpression expression,
+            final OffsetDateTime from,
+            final OffsetDateTime to
+    ) {
         Assert.isTrue(from.isBefore(to), () -> "from [" + from + "] must be before to [" + to + "]");
 
         final Date dateFrom = DateUtils.toDate(from);
