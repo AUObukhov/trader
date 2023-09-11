@@ -262,8 +262,8 @@ class GrafanaServiceUnitTest {
         final String figi = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
-        final Integer window1 = 2;
-        final Integer window2 = 5;
+        final int window1 = 2;
+        final int window2 = 5;
 
         final Map<String, Object> data = Map.of(
                 "figi", figi,
