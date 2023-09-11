@@ -231,7 +231,7 @@ class GrafanaServiceUnitTest {
 
         Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(currentDateTime)) {
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(currentDateTime)) {
             final List<QueryResult> results = service.getData(request);
 
             Assertions.assertEquals(1, results.size());
