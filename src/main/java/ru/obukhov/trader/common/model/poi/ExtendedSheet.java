@@ -129,9 +129,9 @@ public class ExtendedSheet implements Sheet {
     // region Sheet implementation
 
     @Override
-    public Row createRow(int rownum) {
-        ExtendedRow row = new ExtendedRow(this, delegate.createRow(rownum));
-        rows.put(rownum, row);
+    public Row createRow(int rowNum) {
+        ExtendedRow row = new ExtendedRow(this, delegate.createRow(rowNum));
+        rows.put(rowNum, row);
         return row;
     }
 
@@ -142,8 +142,8 @@ public class ExtendedSheet implements Sheet {
     }
 
     @Override
-    public Row getRow(int rownum) {
-        return rows.get(rownum);
+    public Row getRow(int rowNum) {
+        return rows.get(rowNum);
     }
 
     @Override
@@ -703,8 +703,8 @@ public class ExtendedSheet implements Sheet {
     }
 
     @Override
-    public Hyperlink getHyperlink(CellAddress addr) {
-        return delegate.getHyperlink(addr);
+    public Hyperlink getHyperlink(CellAddress address) {
+        return delegate.getHyperlink(address);
     }
 
     @Override

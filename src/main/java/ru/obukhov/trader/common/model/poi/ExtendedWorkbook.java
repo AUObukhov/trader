@@ -107,7 +107,7 @@ public class ExtendedWorkbook implements Workbook {
     }
 
     /**
-     * @return cell style with given {@code name} or null if it does not exists
+     * @return cell style with given {@code name} or null if it does not exist
      */
     @Nullable
     public CellStyle getCellStyle(final String name) {
@@ -148,10 +148,10 @@ public class ExtendedWorkbook implements Workbook {
     }
 
     @Override
-    public void setSheetOrder(String sheetname, int pos) {
-        int index = getSheetIndex(sheetname);
+    public void setSheetOrder(String sheetName, int pos) {
+        int index = getSheetIndex(sheetName);
         sheets.add(pos, sheets.remove(index));
-        delegate.setSheetOrder(sheetname, pos);
+        delegate.setSheetOrder(sheetName, pos);
     }
 
     @Override
@@ -187,8 +187,8 @@ public class ExtendedWorkbook implements Workbook {
     }
 
     @Override
-    public Sheet createSheet(String sheetname) {
-        ExtendedSheet sheet = new ExtendedSheet(this, delegate.createSheet(sheetname));
+    public Sheet createSheet(String sheetName) {
+        ExtendedSheet sheet = new ExtendedSheet(this, delegate.createSheet(sheetName));
         sheets.add(sheet);
         return sheet;
     }
@@ -412,8 +412,8 @@ public class ExtendedWorkbook implements Workbook {
     }
 
     @Override
-    public void addToolPack(UDFFinder toopack) {
-        delegate.addToolPack(toopack);
+    public void addToolPack(UDFFinder toolPack) {
+        delegate.addToolPack(toolPack);
     }
 
     @Override

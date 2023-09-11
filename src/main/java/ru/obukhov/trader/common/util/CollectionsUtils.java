@@ -47,10 +47,10 @@ public class CollectionsUtils {
      * Interpolates element at given {@code index} in given {@code list} and inserts it there.<br/>
      * If {@code index} = 0, then interpolated element is equal to first element of {@code list}.<br/>
      * If {@code index} = {@code list.size()} then interpolated element is equal to last element of {@code list}.<br/>
-     * Otherwise interpolated element is computed by given {@code interpolator} from
+     * Otherwise, interpolated element is computed by given {@code interpolator} from
      * {@code list.get(index - 1)} and {@code list.get(index)}
      *
-     * @throws IllegalArgumentException {@code index} is negative or greater then size of list
+     * @throws IllegalArgumentException {@code index} is negative or greater than size of list
      * @throws IllegalArgumentException {@code list} is empty
      */
     public static <T> void insertInterpolated(final List<T> list, final int index, final BinaryOperator<T> interpolator) {

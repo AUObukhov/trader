@@ -230,7 +230,7 @@ public class TrendUtils {
     // endregion
 
     /**
-     * @return - {@link Crossover#NONE} if not enough values too calculate crossovers or if there is no crossover<br/>
+     * @return - {@link Crossover#NONE} if not enough values to calculate crossovers or if there is no crossover<br/>
      * - {@link Crossover#ABOVE} if {@code values1} crosses {@code values2} from below at given {@code index} and
      * there are no crossovers or touches after {@code index}<br/>
      * - {@link Crossover#BELOW} if {@code values1} crosses {@code values2} from above at given {@code index} and

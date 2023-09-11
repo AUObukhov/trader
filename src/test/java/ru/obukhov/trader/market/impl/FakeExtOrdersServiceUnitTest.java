@@ -189,7 +189,7 @@ class FakeExtOrdersServiceUnitTest {
     }
 
     @Test
-    void postOrder_buy_createsMultiplePositions_whenDifferentFigiessAreBought() {
+    void postOrder_buy_createsMultiplePositions_whenDifferentFigiesAreBought() {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;

@@ -347,17 +347,17 @@ public class ExtendedRow implements Row {
     }
 
     @Override
-    public Cell getCell(int cellnum) {
-        return getCell(cellnum, getWorkbook().getMissingCellPolicy());
+    public Cell getCell(int cellNum) {
+        return getCell(cellNum, getWorkbook().getMissingCellPolicy());
     }
 
     @Override
-    public Cell getCell(int cellnum, MissingCellPolicy policy) {
-        Cell cell = cells.get(cellnum);
+    public Cell getCell(int cellNum, MissingCellPolicy policy) {
+        Cell cell = cells.get(cellNum);
         return switch (policy) {
             case RETURN_NULL_AND_BLANK -> cell;
             case RETURN_BLANK_AS_NULL -> cell != null && cell.getCellType() == CellType.BLANK ? null : cell;
-            case CREATE_NULL_AS_BLANK -> cell == null ? createCell(cellnum) : cell;
+            case CREATE_NULL_AS_BLANK -> cell == null ? createCell(cellNum) : cell;
         };
     }
 

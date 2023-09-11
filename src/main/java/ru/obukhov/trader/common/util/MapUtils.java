@@ -33,7 +33,7 @@ public class MapUtils {
     /**
      * @param <T> stream items type
      * @param <K> result map keys type
-     * @return collector, creating map with keys provied by given {@code keyMapper} and stream items as values
+     * @return collector, creating map with keys provided by given {@code keyMapper} and stream items as values
      */
     public static <T, K> Collector<T, ?, Map<K, T>> newMapKeyCollector(final Function<? super T, ? extends K> keyMapper) {
         return Collectors.toMap(keyMapper, Function.identity());

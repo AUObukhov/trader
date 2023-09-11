@@ -7,7 +7,7 @@ import ru.obukhov.trader.test.utils.model.TestData;
 class FakePortfolioUnitTest {
 
     @Test
-    void constructor_initsFields() {
+    void constructor_initializesFields() {
         final String accountId = TestData.ACCOUNT_ID1;
 
         final FakePortfolio portfolio = new FakePortfolio(accountId);

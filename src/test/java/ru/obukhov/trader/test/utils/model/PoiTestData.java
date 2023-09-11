@@ -58,8 +58,8 @@ public class PoiTestData {
         }
     }
 
-    public static void addRows(ExtendedSheet extendedSheet, int... rownums) {
-        Arrays.stream(rownums).forEach(extendedSheet::createRow);
+    public static void addRows(ExtendedSheet extendedSheet, int... rowNums) {
+        Arrays.stream(rowNums).forEach(extendedSheet::createRow);
     }
 
     public static List<Sheet> createSheets(Workbook workbook, String... sheetNames) {
