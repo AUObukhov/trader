@@ -10,6 +10,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
+import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
@@ -21,6 +22,7 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -344,6 +346,37 @@ public class TestData {
                 .setFigi(figi)
                 .setPrice(QUOTATION_MAPPER.fromBigDecimal(price))
                 .build();
+    }
+
+    public static List<HistoricCandle> newHistoricCandles(final List<Integer> prices, final OffsetDateTime startDateTime) {
+        final List<HistoricCandle> historicCandles = new ArrayList<>(prices.size());
+        for (int i = 0; i < prices.size(); i++) {
+            final OffsetDateTime currentTime = startDateTime.plusMinutes(i);
+
+            final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                    .setOpen(prices.get(i))
+                    .setTime(currentTime)
+                    .setIsComplete(true)
+                    .build();
+            historicCandles.add(historicCandle);
+        }
+
+        return historicCandles;
+    }
+
+    public static List<Candle> newCandles(final List<Integer> prices, final OffsetDateTime startDateTime) {
+        final List<Candle> historicCandles = new ArrayList<>(prices.size());
+        for (int i = 0; i < prices.size(); i++) {
+            final OffsetDateTime currentTime = startDateTime.plusMinutes(i);
+
+            final Candle historicCandle = new CandleBuilder()
+                    .setOpen(prices.get(i))
+                    .setTime(currentTime)
+                    .build();
+            historicCandles.add(historicCandle);
+        }
+
+        return historicCandles;
     }
 
 }
