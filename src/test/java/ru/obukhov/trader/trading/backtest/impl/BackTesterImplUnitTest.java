@@ -1078,7 +1078,7 @@ class BackTesterImplUnitTest {
     }
 
     private void mockCurrentPrice(final FakeBot fakeBot, final String figi, final double currentPrice) {
-        Mockito.when(fakeBot.getCurrentPrice(figi))
+        Mockito.when(fakeBot.getCurrentPrice(Mockito.eq(figi), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 

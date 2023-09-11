@@ -135,7 +135,7 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void getCurrentPrice() {
+    void getCurrentPrice_usesCurrentDateTime_whenCurrentDateTimeIsNotNull() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
@@ -144,7 +144,22 @@ class FakeBotUnitTest {
 
         Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(expectedCurrentPrice);
 
-        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi);
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, null);
+
+        AssertUtils.assertEquals(expectedCurrentPrice, currentPrice);
+    }
+
+    @Test
+    void getCurrentPrice_usesTo_whenCurrentDateTimeIsNull() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime to = OffsetDateTime.now();
+        final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
+
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(null);
+
+        Mockito.when(extMarketDataService.getLastPrice(figi, to)).thenReturn(expectedCurrentPrice);
+
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, to);
 
         AssertUtils.assertEquals(expectedCurrentPrice, currentPrice);
     }

@@ -389,8 +389,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                     TestData.newTradingDay(true, year, month, 23, hour, durationHours),
                     TestData.newTradingDay(true, year, month, 24, hour, durationHours),
                     TestData.newTradingDay(true, year, month, 25, hour, durationHours),
-                    TestData.newTradingDay(false, year, month, 26, hour, durationHours),
-                    TestData.newTradingDay(false, year, month, 27, hour, durationHours)
+                    TestData.newTradingDay(false, year, month, 26, hour, durationHours)
             );
 
             Assertions.assertEquals(expectedResult, actualResult);
@@ -513,8 +512,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                     TestData.newTradingDay(true, year, month, 23, hour, durationHours),
                     TestData.newTradingDay(true, year, month, 24, hour, durationHours),
                     TestData.newTradingDay(true, year, month, 25, hour, durationHours),
-                    TestData.newTradingDay(false, year, month, 26, hour, durationHours),
-                    TestData.newTradingDay(false, year, month, 27, hour, durationHours)
+                    TestData.newTradingDay(false, year, month, 26, hour, durationHours)
             );
 
             Assertions.assertEquals(expectedResult, actualResult);

@@ -152,7 +152,7 @@ public class Interval {
     }
 
     /**
-     * @return list of consecutive intervals starting with {@code from} and ending with {@code to}.
+     * @return list of consecutive intervals starting with {@code from} inclusive and ending with {@code to} exclusive.
      * Every interval is in one day.
      * <br/>
      * {@code from} of first interval equals {@code from} of current interval.
@@ -175,7 +175,9 @@ public class Interval {
             currentFrom = endOfDay.plusNanos(1);
             endOfDay = endOfDay.plusDays(1);
         }
-        result.add(Interval.of(currentFrom, to));
+        if (!currentFrom.isEqual(to)) {
+            result.add(Interval.of(currentFrom, to));
+        }
 
         return result;
     }

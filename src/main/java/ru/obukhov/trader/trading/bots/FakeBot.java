@@ -1,6 +1,7 @@
 package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
@@ -74,8 +75,9 @@ public class FakeBot extends Bot {
         return getFakeContext().getBalance(accountId, currency);
     }
 
-    public BigDecimal getCurrentPrice(final String figi) {
-        return extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
+    public BigDecimal getCurrentPrice(final String figi, final OffsetDateTime to) {
+        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(context.getCurrentDateTime(), to);
+        return extMarketDataService.getLastPrice(figi, innerTo);
     }
 
     private FakeContext getFakeContext() {

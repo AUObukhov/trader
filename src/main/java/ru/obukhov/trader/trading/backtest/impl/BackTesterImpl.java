@@ -2,6 +2,7 @@ package ru.obukhov.trader.trading.backtest.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.quartz.CronExpression;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;
@@ -153,7 +154,7 @@ public class BackTesterImpl implements BackTester {
             }
 
             moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, interval.getTo());
-        } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
+        } while (fakeBot.getCurrentDateTime() != null && fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
     }
@@ -176,18 +177,24 @@ public class BackTesterImpl implements BackTester {
             final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
             final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
             fakeBot.nextScheduleMinute(tradingSchedule);
-        } else {
-            final OffsetDateTime previousDate = fakeBot.getCurrentDateTime();
+            return;
+        }
 
-            final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
-            final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
-            final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextScheduleMinute(tradingSchedule), to);
+        final OffsetDateTime previousDate = fakeBot.getCurrentDateTime();
+        if (!previousDate.isBefore(to)) {
+            return;
+        }
 
-            final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final String currency = fakeBot.getShare(figi).currency();
-            for (final OffsetDateTime investmentTime : investmentsTimes) {
-                fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
-            }
+        final Interval interval = Interval.of(previousDate, to);
+        final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+        final OffsetDateTime nextScheduleMinute = fakeBot.nextScheduleMinute(tradingSchedule);
+        final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(nextScheduleMinute, to);
+
+        final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
+        final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, previousDate, nextDate);
+        final String currency = fakeBot.getShare(figi).currency();
+        for (final OffsetDateTime investmentTime : investmentsTimes) {
+            fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
         }
     }
 
@@ -200,7 +207,7 @@ public class BackTesterImpl implements BackTester {
         final String accountId = botConfig.accountId();
         final String figi = botConfig.figi();
 
-        final List<Position> positions = getPositions(fakeBot, accountId);
+        final List<Position> positions = getPositions(fakeBot, accountId, interval.getTo());
         final Balances balances = getBalances(accountId, interval, fakeBot, positions, figi);
         final Profits profits = getProfits(balances, interval);
         final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
@@ -242,15 +249,15 @@ public class BackTesterImpl implements BackTester {
         );
     }
 
-    private List<Position> getPositions(FakeBot fakeBot, String accountId) {
+    private List<Position> getPositions(final FakeBot fakeBot, final String accountId, final OffsetDateTime to) {
         return fakeBot.getPortfolioPositions(accountId).stream()
-                .map(position -> cloneWithActualCurrentPrice(position, fakeBot))
+                .map(position -> cloneWithActualCurrentPrice(position, fakeBot, to))
                 .toList();
     }
 
-    private Position cloneWithActualCurrentPrice(final Position portfolioPosition, final FakeBot fakeBot) {
+    private Position cloneWithActualCurrentPrice(final Position portfolioPosition, final FakeBot fakeBot, final OffsetDateTime to) {
         final String figi = portfolioPosition.getFigi();
-        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi);
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, to);
         return PositionUtils.cloneWithNewCurrentPrice(portfolioPosition, currentPrice);
     }
 

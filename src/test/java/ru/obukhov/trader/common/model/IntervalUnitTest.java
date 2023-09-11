@@ -856,16 +856,13 @@ class IntervalUnitTest {
     // region splitIntoDailyIntervals tests
 
     @Test
-    void splitIntoDailyIntervals_returnsOnePair_whenFromAndToAreEqual() {
+    void splitIntoDailyIntervals_returnsEmptyList_whenFromAndToAreEqual() {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
-        Assertions.assertEquals(1, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(to, intervals.get(0).getTo());
+        Assertions.assertTrue(intervals.isEmpty());
     }
 
     @Test
@@ -913,21 +910,17 @@ class IntervalUnitTest {
     }
 
     @Test
-    void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToAreAtStartOfNeighbourDays() {
+    void splitIntoDailyIntervals_returnsOnePair_whenFromAndToAreAtStartOfNeighbourDays() {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 6);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
-        Assertions.assertEquals(2, intervals.size());
+        Assertions.assertEquals(1, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
         final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
-
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2020, 10, 6);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
@@ -1202,8 +1195,7 @@ class IntervalUnitTest {
                 TestData.newTradingDay(true, year, month, 23, hour, durationHours),
                 TestData.newTradingDay(true, year, month, 24, hour, durationHours),
                 TestData.newTradingDay(true, year, month, 25, hour, durationHours),
-                TestData.newTradingDay(false, year, month, 26, hour, durationHours),
-                TestData.newTradingDay(false, year, month, 27, hour, durationHours)
+                TestData.newTradingDay(false, year, month, 26, hour, durationHours)
         );
 
         Assertions.assertEquals(expectedResult, actualResult);
@@ -1232,8 +1224,7 @@ class IntervalUnitTest {
                 TestData.newTradingDay(true, year, month, 23, hour, durationHours),
                 TestData.newTradingDay(true, year, month, 24, hour, durationHours),
                 TestData.newTradingDay(true, year, month, 25, hour, durationHours),
-                TestData.newTradingDay(false, year, month, 26, hour, durationHours),
-                TestData.newTradingDay(false, year, month, 27, hour, durationHours)
+                TestData.newTradingDay(false, year, month, 26, hour, durationHours)
         );
 
         Assertions.assertEquals(expectedResult, actualResult);
@@ -1262,8 +1253,7 @@ class IntervalUnitTest {
                 TestData.newTradingDay(true, year, month, 23, hour, durationHours),
                 TestData.newTradingDay(true, year, month, 24, hour, durationHours),
                 TestData.newTradingDay(true, year, month, 25, hour, durationHours),
-                TestData.newTradingDay(false, year, month, 26, hour, durationHours),
-                TestData.newTradingDay(false, year, month, 27, hour, durationHours)
+                TestData.newTradingDay(false, year, month, 26, hour, durationHours)
         );
 
         Assertions.assertEquals(expectedResult, actualResult);
