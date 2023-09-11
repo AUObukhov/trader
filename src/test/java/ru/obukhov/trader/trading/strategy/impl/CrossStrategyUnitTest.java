@@ -71,10 +71,7 @@ class CrossStrategyUnitTest {
 
         final DecisionData data = TestData.newDecisionData(1000.0, 100.0, 1, 0.003);
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.NONE)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.NONE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
