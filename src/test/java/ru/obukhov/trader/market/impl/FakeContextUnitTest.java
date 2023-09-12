@@ -31,8 +31,17 @@ class FakeContextUnitTest {
 
     // region constructor tests
 
+    @Test
+    void constructor_withoutBalance() {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+
+        final FakeContext fakeContext = new FakeContext(currentDateTime);
+
+        Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
+    }
+
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forConstructor() {
+    static Stream<Arguments> getData_forConstructor_withBalance() {
         return Stream.of(
                 Arguments.of(TestData.ACCOUNT_ID1, 100),
                 Arguments.of(TestData.ACCOUNT_ID1, -100),
@@ -41,8 +50,8 @@ class FakeContextUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forConstructor")
-    void constructor(final int balance) {
+    @MethodSource("getData_forConstructor_withBalance")
+    void constructor_withBalance(final int balance) {
         final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();

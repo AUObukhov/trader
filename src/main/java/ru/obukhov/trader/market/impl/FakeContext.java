@@ -34,14 +34,18 @@ public class FakeContext implements Context {
 
     private final List<FakePortfolio> portfolios;
 
+    public FakeContext(final OffsetDateTime currentDateTime) {
+        this.currentDateTime = currentDateTime;
+        this.portfolios = new ArrayList<>();
+    }
+
     public FakeContext(
             final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
             final BigDecimal initialBalance
     ) {
-        this.currentDateTime = currentDateTime;
-        this.portfolios = new ArrayList<>();
+        this(currentDateTime);
 
         addInvestment(accountId, currency, initialBalance);
     }
