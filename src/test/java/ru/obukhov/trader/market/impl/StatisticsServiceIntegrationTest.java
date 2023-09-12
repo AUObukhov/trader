@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-@ActiveProfiles("test")
 class StatisticsServiceIntegrationTest extends IntegrationTest {
 
     @Autowired

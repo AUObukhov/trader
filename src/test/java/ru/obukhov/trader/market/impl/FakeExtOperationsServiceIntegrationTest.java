@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
-@ActiveProfiles("test")
 class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
 
     // region getOperations tests
