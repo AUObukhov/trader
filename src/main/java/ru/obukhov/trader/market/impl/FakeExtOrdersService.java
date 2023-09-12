@@ -42,19 +42,15 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private final BigDecimal commission;
 
     /**
-     * @return returns list of active orders with given {@code figi} at given {@code accountId}.
-     * If {@code accountId} null, works with default broker account
+     * @return returns empty list - orders in fake context are considered to be executed immediately
      */
     @Override
     public List<OrderState> getOrders(final String accountId, final String figi) {
-        return getOrders(accountId).stream()
-                .filter(order -> figi.equals(order.figi()))
-                .toList();
+        return Collections.emptyList();
     }
 
     /**
-     * @return returns list of active orders at given {@code accountId}
-     * If {@code accountId} null, works with default broker account
+     * @return returns empty list - orders in fake context are considered to be executed immediately
      */
     @Override
     public List<OrderState> getOrders(final String accountId) {
