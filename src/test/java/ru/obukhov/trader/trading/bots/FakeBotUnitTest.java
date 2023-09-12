@@ -19,6 +19,7 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -87,7 +88,7 @@ class FakeBotUnitTest {
 
     @Test
     void getInvestments() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), DecimalUtils.setDefaultScale(10));
@@ -100,7 +101,7 @@ class FakeBotUnitTest {
 
     @Test
     void getBalance() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
         final BigDecimal expectedBalance = DecimalUtils.setDefaultScale(10);
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
@@ -112,7 +113,7 @@ class FakeBotUnitTest {
 
     @Test
     void getOperations() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String figi = TestShares.APPLE.share().figi();
         final List<Operation> expectedOperations = new ArrayList<>();
@@ -125,7 +126,7 @@ class FakeBotUnitTest {
 
     @Test
     void getPortfolioPositions() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final List<Position> expectedPositions = new ArrayList<>();
         Mockito.when(extOperationsService.getPositions(accountId)).thenReturn(expectedPositions);
 

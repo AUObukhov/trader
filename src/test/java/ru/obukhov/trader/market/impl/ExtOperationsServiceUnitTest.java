@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -36,8 +37,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getSecurity() {
-        final String accountId1 = TestData.ACCOUNT_ID1;
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId2 = TestAccounts.IIS.account().id();
 
         final String figi1 = TestShares.APPLE.share().figi();
         final String figi2 = TestShares.SBER.share().figi();
@@ -66,8 +67,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalance_whenNoBlocked() {
-        final String accountId1 = TestData.ACCOUNT_ID1;
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId2 = TestAccounts.IIS.account().id();
 
         final int usdBalance1 = 11;
         final int rubBalance1 = 12;
@@ -107,8 +108,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
-        final String accountId1 = TestData.ACCOUNT_ID1;
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId2 = TestAccounts.IIS.account().id();
 
         final int rubBalance1 = 1000;
         final int rubBlocked1 = 100;
@@ -149,8 +150,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlockedMinusBlockedGuarantee_whenCurrencyExists() {
-        final String accountId1 = TestData.ACCOUNT_ID1;
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId2 = TestAccounts.IIS.account().id();
 
         final int rubBalance1 = 1000;
         final int rubBlocked1 = 100;
@@ -195,7 +196,7 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final List<MoneyValue> moneys = List.of(
                 TestData.newMoneyValue(100, Currencies.USD),
@@ -215,7 +216,7 @@ class ExtOperationsServiceUnitTest {
     @Test
     void getAvailableBalances_withBlockedValues() {
         // arrange
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;
@@ -260,7 +261,7 @@ class ExtOperationsServiceUnitTest {
     @Test
     void getAvailableBalances_withoutBlockedValues() {
         // arrange
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;

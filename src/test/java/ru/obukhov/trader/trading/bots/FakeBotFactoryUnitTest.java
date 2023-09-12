@@ -21,6 +21,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -86,7 +87,7 @@ class FakeBotFactoryUnitTest {
         final Share share = TestShares.APPLE.share();
         final String figi = share.figi();
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
@@ -122,7 +123,7 @@ class FakeBotFactoryUnitTest {
         final String figi = share.figi();
         final String currency = share.currency();
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
@@ -146,7 +147,7 @@ class FakeBotFactoryUnitTest {
     void createBot_throwsIllegalArgumentException_whenShareNotFound() {
         final String figi = TestShares.APPLE.share().figi();
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),

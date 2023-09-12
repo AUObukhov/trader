@@ -13,6 +13,7 @@ import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
@@ -38,7 +39,7 @@ class RealExtOrdersServiceUnitTest {
 
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final List<TestOrderState> testOrderStates = List.of(TestOrderStates.ORDER_STATE1, TestOrderStates.ORDER_STATE2);
 
         Mockito.when(ordersService.getOrdersSync(accountId))
@@ -55,7 +56,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_filtersOrdersByFigi() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String figi = TestShares.APPLE.share().figi();
 
@@ -78,7 +79,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void postOrder() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
 
         final String currency = Currencies.USD;
@@ -124,7 +125,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void cancelOrder() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String orderId = "orderId";
 
         realExtOrdersService.cancelOrder(accountId, orderId);

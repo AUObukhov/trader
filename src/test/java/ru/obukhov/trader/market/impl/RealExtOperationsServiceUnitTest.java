@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -38,7 +39,7 @@ class RealExtOperationsServiceUnitTest {
 
     @Test
     void getOperations() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String figi = TestShares.APPLE.share().figi();
 
@@ -62,7 +63,7 @@ class RealExtOperationsServiceUnitTest {
     void getPositions() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final Share share1 = TestShares.APPLE.share();
         final String figi1 = share1.figi();

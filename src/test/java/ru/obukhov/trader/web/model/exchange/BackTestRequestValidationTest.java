@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -79,7 +79,7 @@ class BackTestRequestValidationTest {
     void validationFails_whenCandleIntervalIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.APPLE.share().figi(),
                 null,
                 DecimalUtils.setDefaultScale(0.003),
@@ -95,7 +95,7 @@ class BackTestRequestValidationTest {
     void validationFails_whenCommissionIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
@@ -111,7 +111,7 @@ class BackTestRequestValidationTest {
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
@@ -138,7 +138,7 @@ class BackTestRequestValidationTest {
         request.setFrom(OffsetDateTime.now());
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),

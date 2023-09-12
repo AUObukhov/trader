@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
@@ -43,16 +44,16 @@ class FakeContextUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forConstructor_withBalance() {
         return Stream.of(
-                Arguments.of(TestData.ACCOUNT_ID1, 100),
-                Arguments.of(TestData.ACCOUNT_ID1, -100),
-                Arguments.of(TestData.ACCOUNT_ID1, 0)
+                Arguments.of(TestAccounts.TINKOFF.account().id(), 100),
+                Arguments.of(TestAccounts.TINKOFF.account().id(), -100),
+                Arguments.of(TestAccounts.TINKOFF.account().id(), 0)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forConstructor_withBalance")
     void constructor_withBalance(final int balance) {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
@@ -222,7 +223,7 @@ class FakeContextUnitTest {
                 5
         );
 
-        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currencies.USD, DecimalUtils.ZERO);
+        final FakeContext fakeContext = getFakeContext(dateTime, TestAccounts.TINKOFF.account().id(), Currencies.USD, DecimalUtils.ZERO);
 
         final OffsetDateTime actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
 
@@ -235,8 +236,8 @@ class FakeContextUnitTest {
     void getBalances() {
         // arrange
 
-        final String accountId1 = TestData.ACCOUNT_ID1;
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId2 = TestAccounts.IIS.account().id();
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
@@ -306,7 +307,7 @@ class FakeContextUnitTest {
     void addInvestment_withoutTimestamp_changesInvestmentsAndCurrentBalance() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
@@ -344,7 +345,7 @@ class FakeContextUnitTest {
     void addInvestment_withoutDateTime_subtractsBalance_whenAmountIsNegative() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
@@ -375,7 +376,7 @@ class FakeContextUnitTest {
     void addInvestment_withoutDateTime_notChangesBalance_whenAmountIsZero() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
@@ -409,7 +410,7 @@ class FakeContextUnitTest {
     void addInvestment_withTimestamp_changesInvestmentsAndCurrentBalance() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
@@ -444,7 +445,7 @@ class FakeContextUnitTest {
     void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsNegative() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
@@ -474,7 +475,7 @@ class FakeContextUnitTest {
     void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsZero() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
@@ -504,7 +505,7 @@ class FakeContextUnitTest {
 
     @Test
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
@@ -524,7 +525,7 @@ class FakeContextUnitTest {
 
     @Test
     void addPosition_addsPosition_and_getPosition_returnsPosition() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
@@ -543,7 +544,7 @@ class FakeContextUnitTest {
 
     @Test
     void getPositions_returnsAllPositions() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;
@@ -567,7 +568,7 @@ class FakeContextUnitTest {
 
     @Test
     void removePosition_removesPosition() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final String currency = Currencies.RUB;

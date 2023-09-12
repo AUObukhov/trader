@@ -213,7 +213,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
     void getWithdrawLimits() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String currency1 = Currencies.USD;
         final String currency2 = Currencies.EUR;

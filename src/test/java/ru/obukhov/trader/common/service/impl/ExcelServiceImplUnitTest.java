@@ -28,6 +28,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -70,7 +71,7 @@ class ExcelServiceImplUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig1 = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_HOUR,
                 DecimalUtils.ZERO,
@@ -80,7 +81,7 @@ class ExcelServiceImplUnitTest {
         final BackTestResult result1 = createBackTestResult(botConfig1);
 
         final BotConfig botConfig2 = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -90,7 +91,7 @@ class ExcelServiceImplUnitTest {
         final BackTestResult result2 = createBackTestResult(botConfig2);
 
         final BotConfig botConfig3 = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -134,7 +135,7 @@ class ExcelServiceImplUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -170,7 +171,7 @@ class ExcelServiceImplUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -207,7 +208,7 @@ class ExcelServiceImplUnitTest {
         final String error = "error";
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -246,7 +247,7 @@ class ExcelServiceImplUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -283,7 +284,7 @@ class ExcelServiceImplUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -320,7 +321,7 @@ class ExcelServiceImplUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,

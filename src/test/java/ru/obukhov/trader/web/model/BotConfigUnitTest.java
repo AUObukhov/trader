@@ -3,7 +3,7 @@ package ru.obukhov.trader.web.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -20,7 +20,7 @@ class BotConfigUnitTest {
         strategyParams.put("indexCoefficient", 0.5);
 
         final BotConfig botConfig = new BotConfig(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.APPLE.share().figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.03),

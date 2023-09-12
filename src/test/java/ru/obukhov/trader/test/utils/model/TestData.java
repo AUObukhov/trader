@@ -56,9 +56,6 @@ public class TestData {
 
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
-    public static final String ACCOUNT_ID1 = "2000124699";
-    public static final String ACCOUNT_ID2 = "2000124698";
-
     // region DecisionData creation
 
     public static DecisionData newDecisionData(final double averagePositionPrice, final int quantity, final double currentPrice) {

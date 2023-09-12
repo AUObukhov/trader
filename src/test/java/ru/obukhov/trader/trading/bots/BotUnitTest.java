@@ -21,6 +21,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
@@ -60,7 +61,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
 
         final List<OrderState> orders = List.of(TestOrderStates.ORDER_STATE1.orderState());
@@ -85,7 +86,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNoOrder_whenThereAreUncompletedOrders() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String figi = TestShares.APPLE.share().figi();
 
@@ -109,7 +110,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNoOrder_whenCurrentCandlesIsEmpty() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
 
         final BotConfig botConfig = new BotConfig(
@@ -130,7 +131,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
@@ -156,7 +157,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNoOrder_whenDecisionIsWait() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
@@ -190,7 +191,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.APPLE.share();
         final String figi = share.figi();
 
@@ -245,7 +246,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 

@@ -12,6 +12,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -39,7 +40,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getPositions() throws Exception {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -165,7 +166,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getAvailableBalances_withBlockedValues() throws Exception {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;
@@ -208,7 +209,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getAvailableBalances_withoutBlockedValues() throws Exception {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;

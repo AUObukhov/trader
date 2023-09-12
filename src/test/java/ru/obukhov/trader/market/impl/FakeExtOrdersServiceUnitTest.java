@@ -19,7 +19,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -56,7 +56,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_byAccountId_returnsEmptyList() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         List<OrderState> orders = fakeExtOrdersService.getOrders(accountId);
 
@@ -65,7 +65,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_byAccountIdAndFigi_returnsEmptyList() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
 
         List<OrderState> orders = fakeExtOrdersService.getOrders(accountId, figi);
@@ -79,7 +79,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.APPLE.share();
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
@@ -98,7 +98,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_buy_createsNewPosition_whenNoPositions() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final String currency = share.currency();
@@ -136,7 +136,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -192,7 +192,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_buy_createsMultiplePositions_whenDifferentFigiesAreBought() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -282,7 +282,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
@@ -349,7 +349,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_sell_removesPosition_whenAllLotsAreSold() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
@@ -418,7 +418,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_sell_reducesLotsCount() {
         // arrange
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
@@ -544,7 +544,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void cancelOrder_throwsUnsupportedOperationException() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String orderId = "orderId";
 
         AssertUtils.assertThrowsWithMessage(

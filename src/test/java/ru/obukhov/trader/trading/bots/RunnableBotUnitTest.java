@@ -23,6 +23,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
@@ -163,7 +164,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
@@ -189,7 +190,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetPositionThrowsException() {
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -256,7 +257,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_catchesException_whenPlaceMarketOrderThrowsException() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
@@ -339,7 +340,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
@@ -371,7 +372,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_andPlacesSellOrder_whenDecisionIsSell() {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);

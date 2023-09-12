@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.tinkoff.piapi.contract.v1.OrderState;
@@ -26,7 +26,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getOrders_returnsOrders() throws Exception {
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final TestOrderState testOrderState1 = TestOrderStates.ORDER_STATE1;
         final TestOrderState testOrderState2 = TestOrderStates.ORDER_STATE2;
 

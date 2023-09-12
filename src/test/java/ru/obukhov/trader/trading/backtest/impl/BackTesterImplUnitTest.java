@@ -22,6 +22,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.bots.FakeBot;
@@ -128,7 +129,7 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final String accountId = TestData.ACCOUNT_ID1;
+        final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
@@ -200,7 +201,7 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 testShare1.share(),
                 0.003,
                 balanceConfig,
@@ -224,7 +225,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(500), finalPrice2);
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
@@ -307,7 +308,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
-        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
         final TestShare testShare1 = TestShares.APPLE;
         final String figi1 = testShare1.share().figi();
         final String currency1 = testShare1.share().currency();
@@ -335,7 +336,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
         mockPortfolioPosition(fakeBot1, accountId1, figi1, 500, 1);
 
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId2 = TestAccounts.IIS.account().id();
         final TestShare testShare2 = TestShares.SBER;
         final String figi2 = testShare2.share().figi();
         final String currency2 = testShare2.share().currency();
@@ -418,7 +419,7 @@ class BackTesterImplUnitTest {
         final int quantity1 = 2;
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share1,
                 0.003,
                 balanceConfig,
@@ -433,7 +434,7 @@ class BackTesterImplUnitTest {
         final int quantity2 = 10;
         final double currentPrice2 = 5000.0;
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share2,
                 0.001,
                 balanceConfig,
@@ -510,7 +511,7 @@ class BackTesterImplUnitTest {
         final Operation operation2 = TestData.newOperation(operationDateTime2, operationType2, operationPrice2, operationQuantity2, figi2);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share1,
                 commission1,
                 balanceConfig,
@@ -523,7 +524,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share2,
                 commission2,
                 balanceConfig,
@@ -593,7 +594,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share,
                 0.003,
                 balanceConfig,
@@ -612,7 +613,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(40), 4000.0);
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share,
                 0.001,
                 balanceConfig,
@@ -664,7 +665,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.APPLE.share(),
                 0.003,
                 balanceConfig,
@@ -677,7 +678,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
@@ -733,7 +734,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share1,
                 commission1,
                 balanceConfig,
@@ -746,7 +747,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.SBER.share(),
                 0.003,
                 balanceConfig,
@@ -799,7 +800,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share1,
                 commission1,
                 balanceConfig,
@@ -812,7 +813,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.SBER.share(),
                 0.003,
                 balanceConfig,
@@ -864,7 +865,7 @@ class BackTesterImplUnitTest {
                 share1.figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share1,
                 commission1,
                 balanceConfig,
@@ -922,7 +923,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
-        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId1 = TestAccounts.TINKOFF.account().id();
         final String figi1 = TestShares.APPLE.share().figi();
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
@@ -936,7 +937,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(botConfig1, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
-        final String accountId2 = TestData.ACCOUNT_ID2;
+        final String accountId2 = TestAccounts.IIS.account().id();
         final String figi2 = TestShares.SBER.share().figi();
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
@@ -999,7 +1000,7 @@ class BackTesterImplUnitTest {
                 share1.figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 share1,
                 commission1,
                 balanceConfig,
@@ -1012,7 +1013,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestData.ACCOUNT_ID1,
+                TestAccounts.TINKOFF.account().id(),
                 TestShares.SBER.share(),
                 0.001,
                 balanceConfig,
