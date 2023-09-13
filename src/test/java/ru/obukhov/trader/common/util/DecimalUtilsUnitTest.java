@@ -155,6 +155,14 @@ class DecimalUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forMultiplyByDouble")
+    void multiplyByBigDecimal(final double multiplier, final double multiplicand, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(multiplier), BigDecimal.valueOf(multiplicand));
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forMultiplyByDouble")
     void multiplyByDouble(final double multiplier, final double multiplicand, final double expectedResult) {
         final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(multiplier), multiplicand);
 

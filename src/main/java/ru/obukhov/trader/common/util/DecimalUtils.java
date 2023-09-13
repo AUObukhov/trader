@@ -82,15 +82,22 @@ public class DecimalUtils {
     /**
      * @return multiplier * multiplicand with scale = {@link DecimalUtils#DEFAULT_SCALE}
      */
+    public static BigDecimal multiply(final BigDecimal multiplier, final BigDecimal multiplicand) {
+        return setDefaultScale(multiplier.multiply(multiplicand));
+    }
+
+    /**
+     * @return multiplier * multiplicand with scale = {@link DecimalUtils#DEFAULT_SCALE}
+     */
     public static BigDecimal multiply(final BigDecimal multiplier, final double multiplicand) {
-        return setDefaultScale(multiplier.multiply(BigDecimal.valueOf(multiplicand)));
+        return multiply(multiplier, BigDecimal.valueOf(multiplicand));
     }
 
     /**
      * @return multiplier * multiplicand with scale = {@link DecimalUtils#DEFAULT_SCALE}
      */
     public static BigDecimal multiply(final BigDecimal multiplier, final int multiplicand) {
-        return setDefaultScale(multiplier.multiply(BigDecimal.valueOf(multiplicand)));
+        return multiply(multiplier, BigDecimal.valueOf(multiplicand));
     }
 
     // endregion
