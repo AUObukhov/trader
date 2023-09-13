@@ -43,7 +43,7 @@ public class CandleMocker {
         this.candles = new ArrayList<>();
     }
 
-    public CandleMocker add(@NotNull final Integer close, @NotNull final OffsetDateTime time) {
+    public CandleMocker add(final double close, @NotNull final OffsetDateTime time) {
         final HistoricCandle candle = new HistoricCandleBuilder()
                 .setClose(close)
                 .setTime(time)
