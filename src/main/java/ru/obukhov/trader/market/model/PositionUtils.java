@@ -5,7 +5,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @UtilityClass
 public class PositionUtils {
@@ -32,10 +31,10 @@ public class PositionUtils {
             final BigDecimal additionalTotalPrice,
             final BigDecimal newCurrentPrice
     ) {
-        final BigDecimal newQuantity = DecimalUtils.add(position.getQuantity(), additionalQuantity);
+        final BigDecimal newQuantity = position.getQuantity().add(BigDecimal.valueOf(additionalQuantity));
         final BigDecimal newTotalPrice = getTotalPrice(position).add(additionalTotalPrice);
-        final BigDecimal newAveragePositionPriceValue = newTotalPrice.divide(newQuantity, RoundingMode.HALF_UP);
-        final BigDecimal newExpectedYield = newCurrentPrice.subtract(newAveragePositionPriceValue).multiply(newQuantity);
+        final BigDecimal newAveragePositionPriceValue = DecimalUtils.divide(newTotalPrice, newQuantity);
+        final BigDecimal newExpectedYield = DecimalUtils.multiply(newCurrentPrice.subtract(newAveragePositionPriceValue), newQuantity);
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
                 .setFigi(position.getFigi())
