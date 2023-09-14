@@ -15,14 +15,10 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
-import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
-import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
-import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.trading.bots.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -84,16 +80,6 @@ public class BeanConfiguration {
             final BigDecimal initialBalance
     ) {
         return new FakeContext(currentDateTime, accountId, currency, initialBalance);
-    }
-
-    @Bean
-    public ServicesContainer services(
-            final ExtMarketDataService realExtMarketDataService,
-            final ExtInstrumentsService realExtInstrumentsService,
-            final ExtOperationsService realExtOperationsService,
-            final RealExtOrdersService realExtOrdersService
-    ) {
-        return new ServicesContainer(realExtMarketDataService, realExtInstrumentsService, realExtOperationsService, realExtOrdersService);
     }
 
     @Bean
