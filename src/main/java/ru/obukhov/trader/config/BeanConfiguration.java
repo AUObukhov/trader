@@ -69,12 +69,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ru.tinkoff.piapi.core.OperationsService operationsService(final InvestApi investApi) {
+    public OperationsService operationsService(final InvestApi investApi) {
         return investApi.getOperationsService();
     }
 
     @Bean
-    public ru.tinkoff.piapi.core.OrdersService ordersService(final InvestApi investApi) {
+    public OrdersService ordersService(final InvestApi investApi) {
         return investApi.getOrdersService();
     }
 
