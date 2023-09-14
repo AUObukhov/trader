@@ -3,6 +3,9 @@ package ru.obukhov.trader.market.impl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.FakeBalance;
@@ -26,6 +29,8 @@ import java.util.stream.Collectors;
  * Prices are loaded from real market, but any operations do not affect the real portfolio - all data is stored in memory.
  */
 @Slf4j
+@Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FakeContext implements Context {
 
     @Getter

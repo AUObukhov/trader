@@ -3,11 +3,9 @@ package ru.obukhov.trader.config;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
@@ -15,10 +13,8 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.ServicesContainer;
-import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.trading.bots.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -28,9 +24,7 @@ import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,17 +63,6 @@ public class BeanConfiguration {
     @Bean
     public UsersService usersService(final InvestApi investApi) {
         return investApi.getUserService();
-    }
-
-    @Bean
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public Context fakeContext(
-            final OffsetDateTime currentDateTime,
-            final String accountId,
-            final String currency,
-            final BigDecimal initialBalance
-    ) {
-        return new FakeContext(currentDateTime, accountId, currency, initialBalance);
     }
 
     @Bean
