@@ -90,11 +90,6 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealExtOrdersService realExtOrdersService(final OrdersService ordersService) {
-        return new RealExtOrdersService(ordersService);
-    }
-
-    @Bean
     public StatisticsService statisticsService(
             final ExtMarketDataService realExtMarketDataService,
             final ExtInstrumentsService realExtInstrumentsService,

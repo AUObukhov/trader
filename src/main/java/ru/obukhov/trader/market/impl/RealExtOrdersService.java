@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.OrderState;
@@ -19,6 +20,7 @@ import java.util.List;
 /**
  * Service to control customer orders at market
  */
+@Service
 @AllArgsConstructor
 public class RealExtOrdersService implements ExtOrdersService {
 
