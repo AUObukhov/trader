@@ -20,7 +20,6 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.RealExtInstrumentsService;
@@ -81,11 +80,6 @@ public class BeanConfiguration {
     @Bean
     public UsersService usersService(final InvestApi investApi) {
         return investApi.getUserService();
-    }
-
-    @Bean
-    public ExtUsersService extUsersService(final UsersService usersService) {
-        return new ExtUsersService(usersService);
     }
 
     @Bean
