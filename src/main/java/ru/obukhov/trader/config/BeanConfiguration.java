@@ -7,14 +7,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
@@ -22,7 +20,6 @@ import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
-import ru.obukhov.trader.market.impl.RealExtInstrumentsService;
 import ru.obukhov.trader.market.impl.RealExtOperationsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
@@ -91,15 +88,6 @@ public class BeanConfiguration {
             final BigDecimal initialBalance
     ) {
         return new FakeContext(currentDateTime, accountId, currency, initialBalance);
-    }
-
-    @Bean
-    public RealExtInstrumentsService realExtInstrumentsService(
-            final MarketProperties marketProperties,
-            final InstrumentsService instrumentsService,
-            @Lazy final RealExtInstrumentsService realExtInstrumentsService
-    ) {
-        return new RealExtInstrumentsService(marketProperties, instrumentsService, realExtInstrumentsService);
     }
 
     @Bean

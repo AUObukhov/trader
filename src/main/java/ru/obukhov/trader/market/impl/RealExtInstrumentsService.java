@@ -2,6 +2,8 @@ package ru.obukhov.trader.market.impl;
 
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.Asserter;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+@Service
 public class RealExtInstrumentsService implements ExtInstrumentsService {
 
     private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
@@ -48,11 +51,11 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     public RealExtInstrumentsService(
             final MarketProperties marketProperties,
             final InstrumentsService instrumentsService,
-            final RealExtInstrumentsService realExtInstrumentsService
+            @Lazy final RealExtInstrumentsService self
     ) {
         this.workSchedule = marketProperties.getWorkSchedule();
         this.instrumentsService = instrumentsService;
-        this.self = realExtInstrumentsService;
+        this.self = self;
     }
 
     /**
