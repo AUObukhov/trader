@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * Service to get extended statistics about market prices and instruments
  */
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class StatisticsService {
 

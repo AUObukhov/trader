@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -87,15 +86,6 @@ public class BeanConfiguration {
             final BigDecimal initialBalance
     ) {
         return new FakeContext(currentDateTime, accountId, currency, initialBalance);
-    }
-
-    @Bean
-    public StatisticsService statisticsService(
-            final ExtMarketDataService realExtMarketDataService,
-            final ExtInstrumentsService realExtInstrumentsService,
-            final ApplicationContext applicationContext
-    ) {
-        return new StatisticsService(realExtMarketDataService, realExtInstrumentsService, applicationContext);
     }
 
     @Bean
