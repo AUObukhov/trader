@@ -89,11 +89,6 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealContext realContext() {
-        return new RealContext();
-    }
-
-    @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public Context fakeContext(
             final OffsetDateTime currentDateTime,
