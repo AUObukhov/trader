@@ -94,15 +94,6 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtMarketDataService extMarketDataService(
-            final RealExtInstrumentsService realExtInstrumentsService,
-            final MarketDataService marketDataService,
-            @Lazy final ExtMarketDataService extMarketDataService
-    ) {
-        return new ExtMarketDataService(realExtInstrumentsService, marketDataService, extMarketDataService);
-    }
-
-    @Bean
     public RealExtInstrumentsService realExtInstrumentsService(
             final MarketProperties marketProperties,
             final InstrumentsService instrumentsService,

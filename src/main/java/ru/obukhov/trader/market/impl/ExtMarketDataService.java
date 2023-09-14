@@ -5,6 +5,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.exception.MultipleInstrumentsFoundException;
@@ -42,6 +43,7 @@ import java.util.Map;
  * Service to get information about market prices and instruments
  */
 @Slf4j
+@Service
 public class ExtMarketDataService {
 
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
