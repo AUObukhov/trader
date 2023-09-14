@@ -20,7 +20,6 @@ import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
-import ru.obukhov.trader.market.impl.RealExtOperationsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.impl.StatisticsService;
@@ -88,11 +87,6 @@ public class BeanConfiguration {
             final BigDecimal initialBalance
     ) {
         return new FakeContext(currentDateTime, accountId, currency, initialBalance);
-    }
-
-    @Bean
-    public ExtOperationsService realExtOperationsService(final OperationsService operationsService) {
-        return new RealExtOperationsService(operationsService);
     }
 
     @Bean
