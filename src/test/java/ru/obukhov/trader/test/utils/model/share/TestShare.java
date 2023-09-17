@@ -2,15 +2,17 @@ package ru.obukhov.trader.test.utils.model.share;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
-public record TestShare(Share share, ru.tinkoff.piapi.contract.v1.Share tinkoffShare, String jsonString) {
+public record TestShare(Share share, ru.tinkoff.piapi.contract.v1.Share tinkoffShare, Instrument instrument, String jsonString) {
 
     TestShare(final Share share) {
-        this(share, buildTinkoffShare(share), buildJsonString(share));
+        this(share, buildTinkoffShare(share), buildInstrument(share), buildJsonString(share));
     }
 
     private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
@@ -57,6 +59,45 @@ public record TestShare(Share share, ru.tinkoff.piapi.contract.v1.Share tinkoffS
                 .setBlockedTcaFlag(share.blockedTcaFlag())
                 .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
                 .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
+                .build();
+    }
+
+    private static Instrument buildInstrument(final Share share) {
+        return Instrument.builder()
+                .figi(share.figi())
+                .ticker(share.ticker())
+                .classCode(share.classCode())
+                .isin(share.isin())
+                .lot(share.lot())
+                .currency(share.currency())
+                .klong(share.klong())
+                .kshort(share.kshort())
+                .dlong(share.dlong())
+                .dshort(share.dshort())
+                .dlongMin(share.dlongMin())
+                .dshortMin(share.dshortMin())
+                .shortEnabledFlag(share.shortEnabledFlag())
+                .name(share.name())
+                .exchange(share.exchange())
+                .countryOfRisk(share.countryOfRisk())
+                .countryOfRiskName(share.countryOfRiskName())
+                .instrumentType("share")
+                .tradingStatus(share.tradingStatus())
+                .otcFlag(share.otcFlag())
+                .buyAvailableFlag(share.buyAvailableFlag())
+                .sellAvailableFlag(share.sellAvailableFlag())
+                .minPriceIncrement(share.minPriceIncrement())
+                .apiTradeAvailableFlag(share.apiTradeAvailableFlag())
+                .uid(share.uid())
+                .realExchange(share.realExchange())
+                .positionUid(share.positionUid())
+                .forIisFlag(share.forIisFlag())
+                .forQualInvestorFlag(share.forQualInvestorFlag())
+                .weekendFlag(share.weekendFlag())
+                .blockedTcaFlag(share.blockedTcaFlag())
+                .instrumentKind(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .first1MinCandleDate(share.first1MinCandleDate())
+                .first1DayCandleDate(share.first1DayCandleDate())
                 .build();
     }
 
