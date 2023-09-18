@@ -33,6 +33,8 @@ spring:
   mvc.pathmatch.matching-strategy: ant_path_matcher
   cache:
     cache-names:
+      exchange,
+      share,
       allShares,
       allCurrencies,
       marketStocks,

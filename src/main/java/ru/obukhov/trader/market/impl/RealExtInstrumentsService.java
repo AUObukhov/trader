@@ -73,6 +73,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return exchange of instrument for given {@code figi}
      */
     @Override
+    @Cacheable(value = "exchange", sync = true)
     public String getExchange(final String figi) {
         ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Asserter.notNull(instrument, () -> new InstrumentNotFoundException(figi));
@@ -92,6 +93,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return {@link Share} corresponding to given {@code figi}
      */
     @Override
+    @Cacheable(value = "share", sync = true)
     public Share getShare(final String figi) {
         return SHARE_MAPPER.map(instrumentsService.getShareByFigiSync(figi));
     }
@@ -188,7 +190,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     @Override
     public List<TradingDay> getTradingScheduleByFigi(final String figi, final Interval interval) {
-        final String exchange = getExchange(figi);
+        final String exchange = self.getExchange(figi);
         return getTradingSchedule(exchange, interval);
     }
 

@@ -91,6 +91,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getExchange tests
 
     @Test
+    @DirtiesContext
     void getExchange_returnsExchange() {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -98,6 +99,22 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String result = realExtInstrumentsService.getExchange(instrument.getFigi());
 
         Assertions.assertEquals(instrument.getExchange(), result);
+    }
+
+    @Test
+    @DirtiesContext
+    void getExchange_returnsCachedValue() {
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+        realExtInstrumentsService.getExchange(figi);
+
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(null);
+        final String result = realExtInstrumentsService.getExchange(figi);
+
+        Assertions.assertEquals(instrument.getExchange(), result);
+        Mockito.verify(instrumentsService, Mockito.times(1)).getInstrumentByFigiSync(figi);
     }
 
     @Test
@@ -111,7 +128,10 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
+    // region getShare tests
+
     @Test
+    @DirtiesContext
     void getShare_returnsShare() {
         final TestShare testShare = TestShares.SBER;
 
@@ -121,6 +141,23 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Assertions.assertEquals(testShare.share(), result);
     }
+
+    @Test
+    @DirtiesContext
+    void getShare_returnsCachedShare() {
+        final TestShare testShare = TestShares.SBER;
+        final String figi = testShare.share().figi();
+
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        realExtInstrumentsService.getShare(figi);
+
+        Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
+        final Share result = realExtInstrumentsService.getShare(figi);
+
+        Assertions.assertEquals(testShare.share(), result);
+    }
+
+    // endregion
 
     @Test
     void getShares() {
@@ -232,6 +269,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getTradingDay tests
 
     @Test
+    @DirtiesContext
     void getTradingDay_returnsTradingDay() {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -398,6 +436,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getTradingScheduleByFigi tests
 
     @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_forFuture_adjustsFromInstant_positiveOffset() {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -419,6 +458,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_forFuture_adjustsFromInstant_negativeOffset() {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -440,6 +480,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_forFuture_adjustsToInstant_positiveOffset() {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -461,6 +502,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_forFuture_adjustsToInstant_negativeOffset() {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -482,6 +524,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_forPast() {
         final int year = 2023;
         final int month = 8;
@@ -517,6 +560,38 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
+    void getTradingScheduleByFigi_usesCachedExchange() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 12;
+        final int durationHours = 8;
+
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
+        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 20);
+        final Interval interval = Interval.of(from, to);
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+        realExtInstrumentsService.getExchange(figi); // to cache exchange
+        Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
+
+        final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigi(figi, interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours)
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String figi = TestInstruments.APPLE.instrument().figi();
 
