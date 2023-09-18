@@ -1,7 +1,6 @@
 package ru.obukhov.trader.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -82,7 +81,7 @@ public class ApiCallsThrottling {
             + " && !execution(* ru.tinkoff.piapi.core.OrdersService.postOrder*(..))"
             + " && !execution(* ru.tinkoff.piapi.core.OrdersService.cancelOrder*(..)))"
     )
-    public void throttleOrdersService(JoinPoint joinPoint) {
+    public void throttleOrdersService() {
         increment(ordersServiceCounter, "OrdersService");
     }
 
