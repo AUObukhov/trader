@@ -78,7 +78,6 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    @DirtiesContext
     void getTickerByFigi_throwsInstrumentNotFoundException_whenNoInstrument() {
         final String figi = TestShares.APPLE.share().figi();
 
