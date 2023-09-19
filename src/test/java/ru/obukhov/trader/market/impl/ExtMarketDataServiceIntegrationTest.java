@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -381,13 +382,98 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .mock();
 
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 9, 23);
 
-        final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
-        Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(1, candles.get(0).getClose());
-        AssertUtils.assertEquals(2, candles.get(1).getClose());
-        AssertUtils.assertEquals(3, candles.get(2).getClose());
+            Assertions.assertEquals(3, candles.size());
+            AssertUtils.assertEquals(1, candles.get(0).getClose());
+            AssertUtils.assertEquals(2, candles.get(1).getClose());
+            AssertUtils.assertEquals(3, candles.get(2).getClose());
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getLastCandlesDaily_cachesLastDayCandles_whenLastInPast() {
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
+        final int limit = 5;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
+                .add(2, DateTimeTestData.createDateTime(2020, 9, 9, 2))
+                .add(3, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .mock();
+
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2021, 1, 1);
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
+        }
+
+        Mockito.reset(marketDataService);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 1))
+                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 2))
+                .add(6, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .mock();
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
+
+            Assertions.assertEquals(3, candles.size());
+            AssertUtils.assertEquals(1, candles.get(0).getClose());
+            AssertUtils.assertEquals(2, candles.get(1).getClose());
+            AssertUtils.assertEquals(3, candles.get(2).getClose());
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getLastCandlesDaily_doesNotCacheLastDayCandles_whenLastInToday() {
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
+        final int limit = 5;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
+                .add(2, DateTimeTestData.createDateTime(2020, 9, 9, 2))
+                .add(3, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .mock();
+
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 9, 23);
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
+        }
+
+        Mockito.reset(marketDataService);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 1))
+                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 2))
+                .add(6, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .mock();
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
+
+            Assertions.assertEquals(3, candles.size());
+            AssertUtils.assertEquals(4, candles.get(0).getClose());
+            AssertUtils.assertEquals(5, candles.get(1).getClose());
+            AssertUtils.assertEquals(6, candles.get(2).getClose());
+        }
     }
 
     // endregion

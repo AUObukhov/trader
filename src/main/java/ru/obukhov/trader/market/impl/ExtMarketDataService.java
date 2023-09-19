@@ -211,19 +211,25 @@ public class ExtMarketDataService {
             final Share share,
             final int limit,
             final CandleInterval candleInterval,
-            final OffsetDateTime currentTimestamp
+            final OffsetDateTime currentDateTime
     ) {
-        final OffsetDateTime from = DateUtils.toStartOfDay(currentTimestamp);
-        Interval interval = Interval.of(from, currentTimestamp);
+        final OffsetDateTime from = DateUtils.toStartOfDay(currentDateTime);
+        final OffsetDateTime to = DateUtils.toEndOfDay(currentDateTime);
+        Interval interval;
 
-        List<Candle> currentCandles = getMarketCandles(share.figi(), interval, candleInterval);
-        final List<Candle> candles = new ArrayList<>(currentCandles);
+        final List<Candle> candles = new ArrayList<>();
 
-        interval = interval.minusDays(1).extendToDay();
+        if (OffsetDateTime.now().isBefore(to)) { // if last day in interval is today
+            // retrieving candles without caching
+            interval = Interval.of(from, currentDateTime);
+            candles.addAll(getMarketCandles(share.figi(), interval, candleInterval));
+            interval = interval.extendToDay().minusDays(1);
+        } else {
+            interval = Interval.of(from, to);
+        }
 
         do {
-            currentCandles = self.getMarketCandles(share.figi(), interval, candleInterval);
-            candles.addAll(currentCandles);
+            candles.addAll(self.getMarketCandles(share.figi(), interval, candleInterval));
             interval = interval.minusDays(1);
         } while (candles.size() < limit && share.first1MinCandleDate().isBefore(interval.getTo()));
 
