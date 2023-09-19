@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -95,10 +94,7 @@ public class InstrumentsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<TradingDay> getTradingSchedule(
-            @RequestParam @ApiParam(example = "SPB") final String exchange,
-            @Valid @RequestBody final Interval interval
-    ) {
+    public List<TradingDay> getTradingSchedule(@RequestParam @ApiParam(example = "SPB") final String exchange, @Valid final Interval interval) {
         return extInstrumentsService.getTradingSchedule(exchange, interval);
     }
 
@@ -109,7 +105,7 @@ public class InstrumentsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<TradingSchedule> getTradingSchedules(@Valid @RequestBody final Interval interval) {
+    public List<TradingSchedule> getTradingSchedules(@Valid final Interval interval) {
         return extInstrumentsService.getTradingSchedules(interval);
     }
 

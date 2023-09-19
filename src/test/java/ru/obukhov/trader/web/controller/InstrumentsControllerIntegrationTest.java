@@ -6,12 +6,10 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond;
@@ -182,6 +180,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     // endregion
 
+    // region getTradingSchedule tests
+
     @Test
     void getTradingSchedule_forFuture() throws Exception {
         final String exchange = "MOEX";
@@ -193,7 +193,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
                 .param("exchange", exchange)
-                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .contentType(MediaType.APPLICATION_JSON);
 
         final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
@@ -218,7 +219,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
                 .param("exchange", exchange)
-                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .contentType(MediaType.APPLICATION_JSON);
 
         final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
@@ -242,7 +244,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
                 .param("exchange", exchange)
-                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .contentType(MediaType.APPLICATION_JSON);
 
         final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
@@ -269,7 +272,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
                 .param("exchange", exchange)
-                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .contentType(MediaType.APPLICATION_JSON);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusNanos(1);
@@ -320,7 +324,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedules")
-                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .contentType(MediaType.APPLICATION_JSON);
 
         final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, testTradingDay1.tradingDay(), testTradingDay2.tradingDay());

@@ -25,6 +25,67 @@ import java.util.stream.Stream;
 
 class IntervalUnitTest {
 
+    // region constructor tests
+
+    @Test
+    void constructor_throwsIllegalArgumentException_whenFromIsAfterTo() {
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
+
+        final Executable executable = () -> new Interval(from, to);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "from can't be after to");
+    }
+
+    @Test
+    void constructor_throwsIllegalArgumentException_whenOffsetsAreDifferent() {
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, ZoneOffset.ofHours(1));
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 10, ZoneOffset.ofHours(2));
+
+        final Executable executable = () -> new Interval(from, to);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
+    }
+
+    @Test
+    void constructor_returnsInterval_whenFromAndToAreNull() {
+        final Interval interval = new Interval(null, null);
+
+        Assertions.assertNull(interval.getFrom());
+        Assertions.assertNull(interval.getTo());
+    }
+
+    @Test
+    void constructor_returnsInterval_whenFromIsNull() {
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 10);
+
+        final Interval interval = new Interval(null, to);
+
+        Assertions.assertNull(interval.getFrom());
+        Assertions.assertEquals(to, interval.getTo());
+    }
+
+    @Test
+    void constructor_returnsInterval_whenToIsNull() {
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
+
+        final Interval interval = new Interval(from, null);
+
+        Assertions.assertEquals(from, interval.getFrom());
+        Assertions.assertNull(interval.getTo());
+    }
+
+    @Test
+    void constructor_returnsInterval_whenFromAndToAreNotNull() {
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 10);
+
+        final Interval interval = new Interval(from, to);
+
+        Assertions.assertEquals(from, interval.getFrom());
+        Assertions.assertEquals(to, interval.getTo());
+    }
+
+    // endregion
+
     // region of tests
 
     @Test

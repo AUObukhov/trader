@@ -1,11 +1,9 @@
 package ru.obukhov.trader.common.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.ApiParam;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,6 +13,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.market.model.TradingDay;
 
+import java.beans.ConstructorProperties;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.List;
 @Getter
 @ToString
 @EqualsAndHashCode(cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Interval {
 
     private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
@@ -39,17 +37,15 @@ public class Interval {
     @ApiModelProperty(value = "end of the interval", position = 2, example = "2021-08-01T12:00:00+03:00")
     private final OffsetDateTime to;
 
-    /**
-     * @return new Interval with given {@code from} and {@code to}
-     * @throws IllegalArgumentException if {@code from} is after {@code to} or if they have different offsets
-     */
-    @JsonCreator
-    public static Interval of(
+    @ConstructorProperties({"from", "to"})
+    public Interval(
             @Nullable
+            @ApiParam(example = "2023-09-01T00:00:00+0300")
             @JsonProperty("from")
             @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT) final OffsetDateTime from,
 
             @Nullable
+            @ApiParam(example = "2023-09-10T00:00:00+0300")
             @JsonProperty("to")
             @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT) final OffsetDateTime to
     ) {
@@ -58,6 +54,15 @@ public class Interval {
             Assert.isTrue(from.getOffset().equals(to.getOffset()), "offsets of from and to must be equal");
         }
 
+        this.from = from;
+        this.to = to;
+    }
+
+    /**
+     * @return new Interval with given {@code from} and {@code to}
+     * @throws IllegalArgumentException if {@code from} is after {@code to} or if they have different offsets
+     */
+    public static Interval of(final OffsetDateTime from, final OffsetDateTime to) {
         return new Interval(from, to);
     }
 
