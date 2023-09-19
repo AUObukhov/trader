@@ -326,15 +326,12 @@ class TradingStrategyFactoryUnitTest {
                 Collections.emptyMap()
         );
         final Executable executable = () -> factory.createStrategy(botConfig);
-        AssertUtils.assertThrowsWithMessageSubStrings(
-                IllegalArgumentException.class,
-                executable,
-                "minimumProfit is mandatory",
+        final String[] expectedMessageSubstrings = {"minimumProfit is mandatory",
                 "smallWindow is mandatory",
                 "bigWindow is mandatory",
                 "indexCoefficient is mandatory",
-                "greedy is mandatory"
-        );
+                "greedy is mandatory"};
+        AssertUtils.assertThrowsWithMessageSubStrings(IllegalArgumentException.class, executable, expectedMessageSubstrings);
 
 
     }

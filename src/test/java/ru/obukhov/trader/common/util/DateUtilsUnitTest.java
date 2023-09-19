@@ -595,11 +595,8 @@ class DateUtilsUnitTest {
         final Instant fromInstant = from.toInstant();
         final Instant toInstant = to.toInstant();
 
-        AssertUtils.assertThrowsWithMessage(
-                IllegalArgumentException.class,
-                () -> DateUtils.timestampIsInInterval(timestamp, fromInstant, toInstant),
-                "From must be before to"
-        );
+        final Executable executable = () -> DateUtils.timestampIsInInterval(timestamp, fromInstant, toInstant);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "From must be before to");
     }
 
     @SuppressWarnings("unused")
