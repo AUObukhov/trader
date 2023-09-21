@@ -58,7 +58,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/validation")
+            mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/methodArgumentNotValid")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -127,7 +127,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
     @SuppressWarnings("unused")
     public static class TestController {
 
-        @PostMapping("/validation")
+        @PostMapping("/methodArgumentNotValid")
         public void throwMethodArgumentNotValidException() throws MethodArgumentNotValidException, NoSuchMethodException {
 
             final Method method = this.getClass().getMethod("throwMethodArgumentNotValidException");
