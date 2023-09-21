@@ -40,7 +40,7 @@ import java.util.Map;
         args = "--trading.token=i identify myself as token"
 )
 @AutoConfigureMockMvc
-class TraderExceptionHandlerWebTest extends IntegrationTest {
+class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
 
     private final TestController controller = new TestController();
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
