@@ -10,20 +10,19 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
-import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -51,28 +50,27 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
-        request.setSmallWindow(50);
-        request.setBigWindow(50);
-        request.setSaveToFile(true);
-
-        assertGetBadRequestError("/trader/statistics/candles", request, "figi is mandatory");
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("smallWindow", "50")
+                .param("bigWindow", "50")
+                .param("saveToFile", "true");
+        assertBadRequestError(requestBuilder, "figi is mandatory");
     }
 
     @Test
     void getCandles_returnsBadRequest_whenIntervalIsMissing() throws Exception {
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
-        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
-        request.setSmallWindow(50);
-        request.setBigWindow(50);
-        request.setSaveToFile(true);
-
-        assertGetBadRequestError("/trader/statistics/candles", request, "interval is mandatory");
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", TestShares.APPLE.share().figi())
+                .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("smallWindow", "50")
+                .param("bigWindow", "50")
+                .param("saveToFile", "true");
+        assertBadRequestError(requestBuilder, "from and to can't be both null");
     }
 
     @Test
@@ -80,15 +78,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
-        request.setInterval(Interval.of(from, to));
-        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
-        request.setSmallWindow(50);
-        request.setBigWindow(50);
-        request.setSaveToFile(true);
-
-        assertGetBadRequestError("/trader/statistics/candles", request, "candleInterval is mandatory");
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", TestShares.APPLE.share().figi())
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("smallWindow", "50")
+                .param("bigWindow", "50")
+                .param("saveToFile", "true");
+        assertBadRequestError(requestBuilder, "candleInterval is mandatory");
     }
 
     @Test
@@ -96,15 +94,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        request.setSmallWindow(50);
-        request.setBigWindow(50);
-        request.setSaveToFile(true);
-
-        assertGetBadRequestError("/trader/statistics/candles", request, "movingAverageType is mandatory");
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", TestShares.APPLE.share().figi())
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
+                .param("smallWindow", "50")
+                .param("bigWindow", "50")
+                .param("saveToFile", "true");
+        assertBadRequestError(requestBuilder, "movingAverageType is mandatory");
     }
 
     @Test
@@ -112,15 +110,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
-        request.setBigWindow(50);
-        request.setSaveToFile(true);
-
-        assertGetBadRequestError("/trader/statistics/candles", request, "smallWindow is mandatory");
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", TestShares.APPLE.share().figi())
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("bigWindow", "50")
+                .param("saveToFile", "true");
+        assertBadRequestError(requestBuilder, "smallWindow is mandatory");
     }
 
     @Test
@@ -128,15 +126,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
-        request.setSmallWindow(50);
-        request.setSaveToFile(true);
-
-        assertGetBadRequestError("/trader/statistics/candles", request, "bigWindow is mandatory");
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", TestShares.APPLE.share().figi())
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("smallWindow", "50")
+                .param("saveToFile", "true");
+        assertBadRequestError(requestBuilder, "bigWindow is mandatory");
     }
 
     @Test
@@ -148,7 +146,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
-
 
         Mocker.mockShare(instrumentsService, share);
 
@@ -189,19 +186,16 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final List<Candle> candles = historicCandles.stream().map(CANDLE_MAPPER::map).toList();
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, shortAverages, longAverages);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(figi);
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(candleInterval);
-        request.setMovingAverageType(MovingAverageType.SIMPLE);
-        request.setSmallWindow(1);
-        request.setBigWindow(2);
-        request.setSaveToFile(true);
-
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", figi)
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", candleInterval.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("smallWindow", "1")
+                .param("bigWindow", "2")
+                .param("saveToFile", "true")
+                .contentType(MediaType.APPLICATION_JSON);
 
         assertResponse(requestBuilder, expectedResponse);
     }
@@ -218,19 +212,16 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(figi);
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(candleInterval);
-        request.setMovingAverageType(MovingAverageType.SIMPLE);
-        request.setSmallWindow(1);
-        request.setBigWindow(2);
-        request.setSaveToFile(true);
-
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", figi)
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", candleInterval.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("smallWindow", "1")
+                .param("bigWindow", "2")
+                .param("saveToFile", "true")
+                .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
@@ -252,19 +243,16 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, share);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(figi);
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(candleInterval);
-        request.setMovingAverageType(MovingAverageType.SIMPLE);
-        request.setSmallWindow(1);
-        request.setBigWindow(2);
-        request.setSaveToFile(true);
-
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", figi)
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", candleInterval.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("smallWindow", "1")
+                .param("bigWindow", "2")
+                .param("saveToFile", "true")
+                .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         Mockito.doThrow(new RuntimeException())
@@ -289,19 +277,16 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, share);
 
-        final GetCandlesRequest request = new GetCandlesRequest();
-        request.setFigi(figi);
-        request.setInterval(Interval.of(from, to));
-        request.setCandleInterval(candleInterval);
-        request.setMovingAverageType(MovingAverageType.SIMPLE);
-        request.setSmallWindow(1);
-        request.setBigWindow(2);
-        request.setSaveToFile(false);
-
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", figi)
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", candleInterval.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("smallWindow", "1")
+                .param("bigWindow", "2")
+                .param("saveToFile", "false")
+                .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
@@ -315,28 +300,22 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
         final Share share = TestShares.APPLE.tinkoffShare();
-
         final String figi = share.getFigi();
 
         Mocker.mockShare(instrumentsService, share);
 
-        final String requestString = String.format("""
-                {
-                  "figi": "%s",
-                  "interval": {
-                    "from": "2021-03-25T10:00:00+03:00",
-                    "to": "2021-03-25T19:00:00+03:00"
-                  },
-                  "candleInterval": "CANDLE_INTERVAL_1_MIN",
-                  "movingAverageType": "SMA",
-                  "smallWindow": 1,
-                  "bigWindow": 2
-                }""", figi);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .content(requestString)
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("figi", figi)
+                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
+                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
+                .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("smallWindow", "1")
+                .param("bigWindow", "2")
+                .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 

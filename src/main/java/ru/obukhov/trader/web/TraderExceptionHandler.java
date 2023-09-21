@@ -1,5 +1,7 @@
 package ru.obukhov.trader.web;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,15 @@ public class TraderExceptionHandler {
 
     @SuppressWarnings("unused")
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(final MethodArgumentNotValidException exception) {
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(createResponseMap(exception));
+    }
+
+    @SuppressWarnings("unused")
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolationException(final ConstraintViolationException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(createResponseMap(exception));
@@ -62,6 +72,13 @@ public class TraderExceptionHandler {
                 .filter(Objects::nonNull)
                 .toList();
 
+        return createResponseMap("Invalid request", errors);
+    }
+
+    private Map<String, Object> createResponseMap(final ConstraintViolationException exception) {
+        final List<String> errors = exception.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .toList();
         return createResponseMap("Invalid request", errors);
     }
 

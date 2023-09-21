@@ -1,5 +1,10 @@
 package ru.obukhov.trader.web;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
+import jakarta.validation.metadata.ConstraintDescriptor;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +36,11 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SpringBootTest(
         classes = Application.class,
@@ -50,15 +58,34 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
     @Test
     void handlesMethodArgumentNotValidException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
-        final Map<String, Object> expectedResponse = Map.of(
-                "time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow),
-                "message", "Invalid request",
-                "errors", List.of("validation error1", "validation error2")
-        );
+        final Map<String, Object> expectedResponse = new LinkedHashMap<>();
+        expectedResponse.put("time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow));
+        expectedResponse.put("message", "Invalid request");
+        expectedResponse.put("errors", List.of("validation error1", "validation error2"));
+
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/methodArgumentNotValid")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                    .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.content().json(expectedResponseString));
+        }
+    }
+
+    @Test
+    void handlesConstraintViolationException() throws Exception {
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
+        final Map<String, Object> expectedResponse = new LinkedHashMap<>(3, 1);
+        expectedResponse.put("time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow));
+        expectedResponse.put("message", "Invalid request");
+        expectedResponse.put("errors", List.of("validation error1", "validation error2"));
+
+        final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/constraintViolation")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -140,6 +167,16 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
             throw new MethodArgumentNotValidException(parameter, bindingResult);
         }
 
+        @PostMapping("/constraintViolation")
+        public void throwConstraintViolationException() throws ConstraintViolationException {
+            final ConstraintViolation<Object> constraintViolation1 = new TestConstraintViolation("validation error1");
+            final ConstraintViolation<Object> constraintViolation2 = new TestConstraintViolation("validation error2");
+            final Set<ConstraintViolation<Object>> constraintViolations = new LinkedHashSet<>(2, 1);
+            constraintViolations.add(constraintViolation1);
+            constraintViolations.add(constraintViolation2);
+            throw new ConstraintViolationException(StringUtils.EMPTY, constraintViolations);
+        }
+
         @PostMapping("/missingParam")
         public void throwMissingServletRequestParameterException(@RequestParam final String param) {
         }
@@ -155,4 +192,66 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
         }
 
     }
+
+    @AllArgsConstructor
+    private static class TestConstraintViolation implements ConstraintViolation<Object> {
+
+        private final String message;
+
+        @Override
+        public String getMessage() {
+            return this.message;
+        }
+
+        @Override
+        public String getMessageTemplate() {
+            return null;
+        }
+
+        @Override
+        public Object getRootBean() {
+            return null;
+        }
+
+        @Override
+        public Class<Object> getRootBeanClass() {
+            return null;
+        }
+
+        @Override
+        public Object getLeafBean() {
+            return null;
+        }
+
+        @Override
+        public Object[] getExecutableParameters() {
+            return new Object[0];
+        }
+
+        @Override
+        public Object getExecutableReturnValue() {
+            return null;
+        }
+
+        @Override
+        public Path getPropertyPath() {
+            return null;
+        }
+
+        @Override
+        public Object getInvalidValue() {
+            return null;
+        }
+
+        @Override
+        public ConstraintDescriptor<?> getConstraintDescriptor() {
+            return null;
+        }
+
+        @Override
+        public <U> U unwrap(Class<U> type) {
+            return null;
+        }
+    }
+
 }

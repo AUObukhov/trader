@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.market.model.TradingDay;
+import ru.obukhov.trader.web.model.validation.constraint.NotAllNull;
 
 import java.beans.ConstructorProperties;
 import java.time.Duration;
@@ -25,6 +26,7 @@ import java.util.List;
 @Getter
 @ToString
 @EqualsAndHashCode(cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
+@NotAllNull(message = "from and to can't be both null")
 public class Interval {
 
     private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;

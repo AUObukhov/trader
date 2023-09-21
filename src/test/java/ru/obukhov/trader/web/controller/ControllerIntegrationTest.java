@@ -52,12 +52,6 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
         assertBadRequestError(requestBuilder, request, expectedError);
     }
 
-    @SuppressWarnings("SameParameterValue")
-    protected void assertGetBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(urlTemplate);
-        assertBadRequestError(requestBuilder, request, expectedError);
-    }
-
     protected void assertBadRequestError(
             final MockHttpServletRequestBuilder requestBuilder,
             final Object request,
@@ -74,4 +68,15 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
                 .andExpect(ERRORS_MATCHER.value(expectedError))
                 .andExpect(JSON_CONTENT_MATCHER);
     }
+
+    protected void assertBadRequestError(final MockHttpServletRequestBuilder requestBuilder, final String expectedError) throws Exception {
+        final MockHttpServletRequestBuilder innerRequestBuilder = requestBuilder
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(innerRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(RESULT_MESSAGE_MATCHER.value("Invalid request"))
+                .andExpect(ERRORS_MATCHER.value(expectedError))
+                .andExpect(JSON_CONTENT_MATCHER);
+    }
+
 }
