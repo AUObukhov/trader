@@ -46,8 +46,8 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final String figi = share.getFigi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -56,7 +56,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 9912, 9898, 9876, 9897, 9897, 9898, 9885, 9896, 9888, 9888,
                 9881, 9878, 9887, 9878, 9878, 9883, 9878, 9861, 9862, 9862
         );
-        final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(2020, 1, 1, 10);
+        final OffsetDateTime startDateTime = DateTimeTestData.newDateTime(2020, 1, 1, 10);
 
         final List<HistoricCandle> historicCandles = TestData.newHistoricCandles(prices, startDateTime);
         new CandleMocker(marketDataService, figi, candleInterval)
@@ -98,7 +98,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final String figi = share.getFigi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
         final Interval interval = Interval.of(from, null);
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -107,7 +107,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 9912, 9898, 9876, 9897, 9897, 9898, 9885, 9896, 9888, 9888,
                 9881, 9878, 9887, 9878, 9878, 9883, 9878, 9861, 9862, 9862
         );
-        final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(2020, 1, 1, 10);
+        final OffsetDateTime startDateTime = DateTimeTestData.newDateTime(2020, 1, 1, 10);
 
         final List<HistoricCandle> historicCandles = TestData.newHistoricCandles(prices, startDateTime);
         new CandleMocker(marketDataService, figi, candleInterval)
@@ -118,7 +118,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         final int smallWindow = 2;
         final int bigWindow = 4;
 
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 2, 1);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 2, 1);
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             // act
 
@@ -152,8 +152,8 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final String figi = share.getFigi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -162,7 +162,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 9912, 9898, 9876, 9897, 9897, 9898, 9885, 9896, 9888, 9888,
                 9881, 9878, 9887, 9878, 9878, 9883, 9878, 9861, 9862, 9862
         );
-        final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(2020, 1, 1, 10);
+        final OffsetDateTime startDateTime = DateTimeTestData.newDateTime(2020, 1, 1, 10);
 
         final List<HistoricCandle> historicCandles = TestData.newHistoricCandles(prices, startDateTime);
         new CandleMocker(marketDataService, figi, candleInterval)
@@ -204,8 +204,8 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final String figi = share.getFigi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -214,7 +214,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 9912, 9898, 9876, 9897, 9897, 9898, 9885, 9896, 9888, 9888,
                 9881, 9878, 9887, 9878, 9878, 9883, 9878, 9861, 9862, 9862
         );
-        final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(2020, 1, 1, 10);
+        final OffsetDateTime startDateTime = DateTimeTestData.newDateTime(2020, 1, 1, 10);
 
         final List<HistoricCandle> historicCandles = TestData.newHistoricCandles(prices, startDateTime);
         new CandleMocker(marketDataService, figi, candleInterval)

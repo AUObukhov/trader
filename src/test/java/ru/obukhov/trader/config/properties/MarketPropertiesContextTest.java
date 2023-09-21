@@ -26,7 +26,7 @@ class MarketPropertiesContextTest {
 
                     final MarketProperties marketProperties = context.getBean(MarketProperties.class);
 
-                    final OffsetTime expectedWorkStartTime = DateTimeTestData.createTime(12, 0, 0);
+                    final OffsetTime expectedWorkStartTime = DateTimeTestData.newTime(12, 0, 0);
                     Assertions.assertEquals(expectedWorkStartTime, marketProperties.getWorkSchedule().getStartTime());
 
                     Assertions.assertEquals(Duration.ofMinutes(480), marketProperties.getWorkSchedule().getDuration());

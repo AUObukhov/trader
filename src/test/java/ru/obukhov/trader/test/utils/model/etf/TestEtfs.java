@@ -26,7 +26,7 @@ public class TestEtfs {
             .exchange("moex_close")
             .fixedCommission(DecimalUtils.setDefaultScale(0.9))
             .focusType("equity")
-            .releasedDate(DateTimeTestData.createDateTime(2013, 10, 31, 3))
+            .releasedDate(DateTimeTestData.newDateTime(2013, 10, 31, 3))
             .numShares(DecimalUtils.setDefaultScale(692000))
             .countryOfRisk("US")
             .countryOfRiskName("Соединенные Штаты Америки")
@@ -45,8 +45,8 @@ public class TestEtfs {
             .forQualInvestorFlag(true)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 3, 7, 21, 35))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(2013, 10, 31, 3))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 3, 7, 21, 35))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(2013, 10, 31, 3))
             .build();
 
     private static final Etf FXUS_ETF = Etf.builder()
@@ -67,7 +67,7 @@ public class TestEtfs {
             .exchange("moex_close")
             .fixedCommission(DecimalUtils.setDefaultScale(0.9))
             .focusType("equity")
-            .releasedDate(DateTimeTestData.createDateTime(2013, 10, 31, 3))
+            .releasedDate(DateTimeTestData.newDateTime(2013, 10, 31, 3))
             .numShares(DecimalUtils.setDefaultScale(330000))
             .countryOfRisk("US")
             .countryOfRiskName("Соединенные Штаты Америки")
@@ -86,8 +86,8 @@ public class TestEtfs {
             .forQualInvestorFlag(true)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 3, 7, 22, 17))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(2013, 10, 31, 3))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 3, 7, 22, 17))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(2013, 10, 31, 3))
             .build();
 
     private static final Etf EZA_ETF = Etf.builder()
@@ -108,7 +108,7 @@ public class TestEtfs {
             .exchange("spb_etf")
             .fixedCommission(DecimalUtils.setDefaultScale(0.64))
             .focusType("equity")
-            .releasedDate(DateTimeTestData.createDateTime(2003, 2, 7, 3))
+            .releasedDate(DateTimeTestData.newDateTime(2003, 2, 7, 3))
             .numShares(DecimalUtils.setDefaultScale(9600000))
             .countryOfRisk("ZA")
             .countryOfRiskName("Южно-Африканская Республика")
@@ -127,8 +127,8 @@ public class TestEtfs {
             .forQualInvestorFlag(true)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2022, 11, 11, 15, 30))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(2022, 11, 11, 10))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2022, 11, 11, 15, 30))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(2022, 11, 11, 10))
             .build();
 
     public static final TestEtf FXIT = new TestEtf(FXIT_ETF);

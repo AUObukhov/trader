@@ -24,7 +24,7 @@ class DateTimeMapperUnitTest {
     @Test
     void timestampToOffsetDateTime_whenNotNull() {
         final Timestamp timestamp = TimestampUtils.newTimestamp(1651562430L, 123);
-        final OffsetDateTime expectedDateTime = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123);
+        final OffsetDateTime expectedDateTime = DateTimeTestData.newDateTime(2022, 5, 3, 10, 20, 30, 123);
 
         final OffsetDateTime dateTime = mapper.timestampToOffsetDateTime(timestamp);
 
@@ -40,7 +40,7 @@ class DateTimeMapperUnitTest {
 
     @Test
     void offsetDateTimeToTimestamp_whenNotNull() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2022, 5, 3, 10, 20, 30, 123);
         final Timestamp expectedTimestamp = TimestampUtils.newTimestamp(1651562430, 123);
 
         final Timestamp timestamp = mapper.offsetDateTimeToTimestamp(dateTime);
@@ -57,7 +57,7 @@ class DateTimeMapperUnitTest {
 
     @Test
     void instantToTimestampToTimestamp_whenNotNull() {
-        final Instant instant = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123)
+        final Instant instant = DateTimeTestData.newDateTime(2022, 5, 3, 10, 20, 30, 123)
                 .toInstant();
         final Timestamp expectedTimestamp = TimestampUtils.newTimestamp(1651562430, 123);
 

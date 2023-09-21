@@ -47,8 +47,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getCandles_returnsBadRequest_whenFigiIsMissing() throws Exception {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
@@ -75,8 +75,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getCandles_returnsBadRequest_whenCandleIntervalIsMissing() throws Exception {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", TestShares.APPLE.share().figi())
@@ -91,8 +91,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", TestShares.APPLE.share().figi())
@@ -107,8 +107,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", TestShares.APPLE.share().figi())
@@ -123,8 +123,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", TestShares.APPLE.share().figi())
@@ -144,8 +144,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String figi = share.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         Mocker.mockShare(instrumentsService, share);
 
@@ -154,7 +154,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(8000)
                 .setHigh(15000)
                 .setLow(6000)
-                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10))
+                .setTime(DateTimeTestData.newDateTime(2021, 3, 25, 10))
                 .setIsComplete(true)
                 .build();
 
@@ -163,7 +163,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(800)
                 .setHigh(1500)
                 .setLow(600)
-                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 1))
+                .setTime(DateTimeTestData.newDateTime(2021, 3, 25, 10, 1))
                 .setIsComplete(true)
                 .build();
 
@@ -172,7 +172,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClose(80)
                 .setHigh(150)
                 .setLow(60)
-                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 2))
+                .setTime(DateTimeTestData.newDateTime(2021, 3, 25, 10, 2))
                 .setIsComplete(true)
                 .build();
 
@@ -207,8 +207,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
@@ -238,8 +238,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String figi = share.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         Mocker.mockShare(instrumentsService, share);
 
@@ -272,8 +272,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String figi = share.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         Mocker.mockShare(instrumentsService, share);
 
@@ -304,8 +304,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, share);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", figi)

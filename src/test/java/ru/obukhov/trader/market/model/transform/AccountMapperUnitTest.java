@@ -25,9 +25,9 @@ class AccountMapperUnitTest {
         final String name = "ИИС";
         final AccountStatus accountStatus = AccountStatus.ACCOUNT_STATUS_OPEN;
         final Timestamp openedTimestamp = TimestampUtils.newTimestamp(1562889600);
-        final OffsetDateTime openedDateTime = DateTimeTestData.createDateTime(2019, 7, 12, 3, ZoneOffset.ofHours(3));
+        final OffsetDateTime openedDateTime = DateTimeTestData.newDateTime(2019, 7, 12, 3, ZoneOffset.ofHours(3));
         final Timestamp closedTimestamp = TimestampUtils.newTimestamp(-10800);
-        final OffsetDateTime closedDateTime = DateTimeTestData.createDateTime(1970, 1, 1, ZoneOffset.ofHours(3));
+        final OffsetDateTime closedDateTime = DateTimeTestData.newDateTime(1970, 1, 1, ZoneOffset.ofHours(3));
         final AccessLevel accessLevel = AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS;
 
         final ru.tinkoff.piapi.contract.v1.Account account = ru.tinkoff.piapi.contract.v1.Account.newBuilder()

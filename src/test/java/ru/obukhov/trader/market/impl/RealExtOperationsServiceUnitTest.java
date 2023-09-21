@@ -43,8 +43,8 @@ class RealExtOperationsServiceUnitTest {
 
         final String figi = TestShares.APPLE.share().figi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 8, 10, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 8, 10, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 8, 10, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 8, 10, 19);
 
         final List<Operation> operations = List.of(
                 TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED),

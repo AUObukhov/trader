@@ -185,8 +185,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void getTradingSchedule_forFuture() throws Exception {
         final String exchange = "MOEX";
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -211,8 +211,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final String exchange = "SPB";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -236,8 +236,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 1, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -264,8 +264,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final int durationHours = 8;
 
         final String exchange = "MOEX";
-        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -303,8 +303,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final String exchange1 = "MOEX";
         final String exchange2 = "SPB";
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 8, 3);
 
         final TestTradingDay testTradingDay1 = TestTradingDays.TRADING_DAY1;
         final TestTradingDay testTradingDay2 = TestTradingDays.TRADING_DAY2;

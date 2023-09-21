@@ -70,7 +70,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final int initialBalance = 1000;
 
         Mocker.mockShare(instrumentsService, share);
@@ -97,7 +97,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
 
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final int quantity = 10;
         final int currentPrice = 1000;
         final int balance1 = 1000000;
@@ -139,7 +139,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
 
         final int quantity1 = 20;
@@ -213,7 +213,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String currency = share1.getCurrency();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
@@ -303,7 +303,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
@@ -377,7 +377,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
@@ -457,7 +457,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 

@@ -30,7 +30,7 @@ public class TestOrderStates {
             .serviceCommission(DecimalUtils.ZERO)
             .currency("usd")
             .orderType(OrderType.ORDER_TYPE_LIMIT)
-            .orderDate(DateTimeTestData.createDateTime(2023, 8, 10, 8, 20, 27, 513541))
+            .orderDate(DateTimeTestData.newDateTime(2023, 8, 10, 8, 20, 27, 513541))
             .instrumentUid("46fef208-a525-4471-85e5-8fe4cee5f8ec")
             .orderRequestId("5627319091032181721")
             .build();
@@ -53,7 +53,7 @@ public class TestOrderStates {
             .serviceCommission(DecimalUtils.setDefaultScale(0.1))
             .currency("usd")
             .orderType(OrderType.ORDER_TYPE_LIMIT)
-            .orderDate(DateTimeTestData.createDateTime(2023, 8, 10, 8, 20, 27, 513541))
+            .orderDate(DateTimeTestData.newDateTime(2023, 8, 10, 8, 20, 27, 513541))
             .instrumentUid("46fef208-a525-4471-85e5-8fe4cee5f8ec")
             .orderRequestId("5627319091032181721")
             .build();

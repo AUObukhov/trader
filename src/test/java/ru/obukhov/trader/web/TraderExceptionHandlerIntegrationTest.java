@@ -57,7 +57,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
 
     @Test
     void handlesMethodArgumentNotValidException() throws Exception {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
         final Map<String, Object> expectedResponse = new LinkedHashMap<>();
         expectedResponse.put("time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow));
         expectedResponse.put("message", "Invalid request");
@@ -76,7 +76,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
 
     @Test
     void handlesConstraintViolationException() throws Exception {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
         final Map<String, Object> expectedResponse = new LinkedHashMap<>(3, 1);
         expectedResponse.put("time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow));
         expectedResponse.put("message", "Invalid request");
@@ -95,7 +95,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
 
     @Test
     void handlesMissingServletRequestParameterException() throws Exception {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
         final Map<String, String> expectedResponse = Map.of(
                 "time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow),
                 "message", "Required request parameter 'param' for method parameter type String is not present"
@@ -113,7 +113,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
 
     @Test
     void handlesRuntimeException() throws Exception {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
         final Map<String, String> expectedResponse = Map.of(
                 "time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow),
                 "message", "runtime exception message"
@@ -131,7 +131,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
 
     @Test
     void handlesInstrumentNotFoundException() throws Exception {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
         final Map<String, String> expectedResponse = Map.of(
                 "time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow),
                 "message", "Instrument not found for id instrumentId"

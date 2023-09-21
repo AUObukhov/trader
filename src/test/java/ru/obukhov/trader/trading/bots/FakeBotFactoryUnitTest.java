@@ -38,8 +38,8 @@ import java.util.stream.Stream;
 @ExtendWith(MockitoExtension.class)
 class FakeBotFactoryUnitTest {
 
-    private static final OffsetTime START_TIME = DateTimeTestData.createTime(7, 0, 0);
-    private static final OffsetTime END_TIME = DateTimeTestData.createTime(19, 0, 0);
+    private static final OffsetTime START_TIME = DateTimeTestData.newTime(7, 0, 0);
+    private static final OffsetTime END_TIME = DateTimeTestData.newTime(19, 0, 0);
 
     @Mock
     private TradingStrategyFactory strategyFactory;
@@ -55,28 +55,28 @@ class FakeBotFactoryUnitTest {
     static Stream<Arguments> getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime() {
         return Stream.of(
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
-                        DateTimeTestData.createDateTime(2020, 10, 5, 12)
+                        DateTimeTestData.newDateTime(2020, 10, 5, 12),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 12)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 5, 19),
-                        DateTimeTestData.createDateTime(2020, 10, 6, START_TIME.getHour())
+                        DateTimeTestData.newDateTime(2020, 10, 5, 19),
+                        DateTimeTestData.newDateTime(2020, 10, 6, START_TIME.getHour())
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 5, 19, 20),
-                        DateTimeTestData.createDateTime(2020, 10, 6, START_TIME.getHour())
+                        DateTimeTestData.newDateTime(2020, 10, 5, 19, 20),
+                        DateTimeTestData.newDateTime(2020, 10, 6, START_TIME.getHour())
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 9, 19), // friday
-                        DateTimeTestData.createDateTime(2020, 10, 12, START_TIME.getHour()) // monday
+                        DateTimeTestData.newDateTime(2020, 10, 9, 19), // friday
+                        DateTimeTestData.newDateTime(2020, 10, 12, START_TIME.getHour()) // monday
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 10, 12), // saturday
-                        DateTimeTestData.createDateTime(2020, 10, 12, START_TIME.getHour()) // monday
+                        DateTimeTestData.newDateTime(2020, 10, 10, 12), // saturday
+                        DateTimeTestData.newDateTime(2020, 10, 12, START_TIME.getHour()) // monday
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 9, 6, 59, 59, 999999999),
-                        DateTimeTestData.createDateTime(2020, 10, 9, START_TIME.getHour())
+                        DateTimeTestData.newDateTime(2020, 10, 9, 6, 59, 59, 999999999),
+                        DateTimeTestData.newDateTime(2020, 10, 9, START_TIME.getHour())
                 )
         );
     }
@@ -131,7 +131,7 @@ class FakeBotFactoryUnitTest {
                 Collections.emptyMap()
         );
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 10, 1);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 10, 1);
 
         mockCurrency(figi, currency);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);

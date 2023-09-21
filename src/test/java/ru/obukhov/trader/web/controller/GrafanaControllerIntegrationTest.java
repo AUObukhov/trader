@@ -97,8 +97,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 2, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 2, 1, 19);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -148,8 +148,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 2, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 2, 1, 19);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 

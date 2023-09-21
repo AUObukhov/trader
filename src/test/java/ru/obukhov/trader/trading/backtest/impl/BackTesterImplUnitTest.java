@@ -119,8 +119,8 @@ class BackTesterImplUnitTest {
     void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() {
         // arrange
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final String accountId = TestAccounts.TINKOFF.account().id();
@@ -174,8 +174,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -293,8 +293,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -395,8 +395,8 @@ class BackTesterImplUnitTest {
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -471,8 +471,8 @@ class BackTesterImplUnitTest {
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -573,8 +573,8 @@ class BackTesterImplUnitTest {
 
         final Share share = TestShares.APPLE.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -651,8 +651,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -710,8 +710,8 @@ class BackTesterImplUnitTest {
 
         final Share share1 = TestShares.APPLE.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -776,8 +776,8 @@ class BackTesterImplUnitTest {
 
         final Share share1 = TestShares.APPLE.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
@@ -842,8 +842,8 @@ class BackTesterImplUnitTest {
 
         final Share share1 = TestShares.APPLE.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 0;
@@ -911,8 +911,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
@@ -977,8 +977,8 @@ class BackTesterImplUnitTest {
 
         final Share share1 = TestShares.APPLE.share();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;

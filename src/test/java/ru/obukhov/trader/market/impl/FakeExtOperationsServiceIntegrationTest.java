@@ -37,7 +37,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
 
         final String figi = TestShares.SBER.share().figi();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 
@@ -86,7 +86,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String figi1 = TestShares.SBER.share().figi();
         final String figi2 = TestShares.YANDEX.share().figi();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 
@@ -136,7 +136,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String figi2 = TestShares.YANDEX.share().figi();
         final String figi3 = TestShares.APPLE.share().figi();
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 

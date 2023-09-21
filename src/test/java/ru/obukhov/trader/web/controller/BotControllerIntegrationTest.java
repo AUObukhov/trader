@@ -79,8 +79,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void backTest_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
-        request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
-        request.setTo(DateTimeTestData.createDateTime(2021, 2, 1));
+        request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
+        request.setTo(DateTimeTestData.newDateTime(2021, 2, 1));
         request.setBalanceConfig(null);
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
@@ -99,7 +99,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void backTest_returnsBadRequest_whenBotConfigsIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
-        request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
+        request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
         request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
@@ -111,7 +111,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void backTest_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
         final BackTestRequest request = new BackTestRequest();
-        request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
+        request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
         request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
@@ -123,7 +123,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void backTest_returnsBadRequest_whenCandleIntervalIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
-        request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
+        request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
         request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
@@ -143,7 +143,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void backTest_returnsBadRequest_whenCommissionIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
-        request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
+        request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
         request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
@@ -163,7 +163,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void backTest_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
         final BackTestRequest request = new BackTestRequest();
-        request.setFrom(DateTimeTestData.createDateTime(2021, 1, 1, 10));
+        request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
         request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
@@ -187,8 +187,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final Share share = TestShares.APPLE.tinkoffShare();
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 2, 1);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 

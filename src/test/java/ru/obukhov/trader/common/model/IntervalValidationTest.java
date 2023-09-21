@@ -16,16 +16,16 @@ class IntervalValidationTest {
     static Stream<Arguments> getData_forValidationSucceeds() {
         return Stream.of(
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 1, 1),
-                        DateTimeTestData.createDateTime(2023, 1, 2)
+                        DateTimeTestData.newDateTime(2023, 1, 1),
+                        DateTimeTestData.newDateTime(2023, 1, 2)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 1, 1),
+                        DateTimeTestData.newDateTime(2023, 1, 1),
                         null
                 ),
                 Arguments.of(
                         null,
-                        DateTimeTestData.createDateTime(2023, 1, 2)
+                        DateTimeTestData.newDateTime(2023, 1, 2)
                 )
         );
     }

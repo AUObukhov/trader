@@ -13,8 +13,8 @@ public class TestAccounts {
             AccountType.ACCOUNT_TYPE_TINKOFF_IIS,
             "ИИС",
             AccountStatus.ACCOUNT_STATUS_OPEN,
-            DateTimeTestData.createDateTime(2019, 7, 12, 3),
-            DateTimeTestData.createDateTime(1970, 1, 1),
+            DateTimeTestData.newDateTime(2019, 7, 12, 3),
+            DateTimeTestData.newDateTime(1970, 1, 1),
             AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS
     );
     private static final Account TINKOFF_ACCOUNT = new Account(
@@ -22,8 +22,8 @@ public class TestAccounts {
             AccountType.ACCOUNT_TYPE_TINKOFF,
             "Брокерский счёт",
             AccountStatus.ACCOUNT_STATUS_OPEN,
-            DateTimeTestData.createDateTime(2018, 5, 25, 3),
-            DateTimeTestData.createDateTime(1970, 1, 1),
+            DateTimeTestData.newDateTime(2018, 5, 25, 3),
+            DateTimeTestData.newDateTime(1970, 1, 1),
             AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS
     );
 

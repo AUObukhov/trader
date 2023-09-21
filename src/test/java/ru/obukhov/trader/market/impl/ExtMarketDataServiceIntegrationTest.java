@@ -61,17 +61,17 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.createDateTime(2020, 1, 5))
-                .add(0, DateTimeTestData.createDateTime(2020, 1, 7))
-                .add(1, DateTimeTestData.createDateTime(2020, 1, 8))
-                .add(2, DateTimeTestData.createDateTime(2020, 1, 9))
-                .add(3, DateTimeTestData.createDateTime(2020, 1, 11))
-                .add(4, DateTimeTestData.createDateTime(2020, 1, 11))
-                .add(5, DateTimeTestData.createDateTime(2020, 1, 12))
+                .add(10, DateTimeTestData.newDateTime(2020, 1, 5))
+                .add(0, DateTimeTestData.newDateTime(2020, 1, 7))
+                .add(1, DateTimeTestData.newDateTime(2020, 1, 8))
+                .add(2, DateTimeTestData.newDateTime(2020, 1, 9))
+                .add(3, DateTimeTestData.newDateTime(2020, 1, 11))
+                .add(4, DateTimeTestData.newDateTime(2020, 1, 11))
+                .add(5, DateTimeTestData.newDateTime(2020, 1, 12))
                 .mock();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 6);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 13);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 6);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 1, 13);
 
         final List<Candle> candles = extMarketDataService.getCandles(figi, Interval.of(from, to), candleInterval);
 
@@ -94,18 +94,18 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.createDateTime(2016, 1, 1))
-                .add(0, DateTimeTestData.createDateTime(2016, 2, 2))
-                .add(1, DateTimeTestData.createDateTime(2016, 2, 2))
-                .add(2, DateTimeTestData.createDateTime(2016, 2, 2))
-                .add(3, DateTimeTestData.createDateTime(2016, 2, 3))
-                .add(4, DateTimeTestData.createDateTime(2016, 2, 3))
-                .add(5, DateTimeTestData.createDateTime(2016, 3, 1))
+                .add(10, DateTimeTestData.newDateTime(2016, 1, 1))
+                .add(0, DateTimeTestData.newDateTime(2016, 2, 2))
+                .add(1, DateTimeTestData.newDateTime(2016, 2, 2))
+                .add(2, DateTimeTestData.newDateTime(2016, 2, 2))
+                .add(3, DateTimeTestData.newDateTime(2016, 2, 3))
+                .add(4, DateTimeTestData.newDateTime(2016, 2, 3))
+                .add(5, DateTimeTestData.newDateTime(2016, 3, 1))
                 .mock();
 
         final Interval interval = Interval.of(
-                DateTimeTestData.createDateTime(2016, 2, 1),
-                DateTimeTestData.createDateTime(2016, 2, 29)
+                DateTimeTestData.newDateTime(2016, 2, 1),
+                DateTimeTestData.newDateTime(2016, 2, 29)
         );
 
         final List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
@@ -128,18 +128,18 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.createDateTime(2016, 1, 1, 1))
-                .add(0, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(1, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(2, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(3, DateTimeTestData.createDateTime(2018, 1, 1, 1))
-                .add(4, DateTimeTestData.createDateTime(2018, 1, 1, 1))
-                .add(5, DateTimeTestData.createDateTime(2019, 1, 1, 1))
+                .add(10, DateTimeTestData.newDateTime(2016, 1, 1, 1))
+                .add(0, DateTimeTestData.newDateTime(2017, 1, 1, 1))
+                .add(1, DateTimeTestData.newDateTime(2017, 1, 1, 1))
+                .add(2, DateTimeTestData.newDateTime(2017, 1, 1, 1))
+                .add(3, DateTimeTestData.newDateTime(2018, 1, 1, 1))
+                .add(4, DateTimeTestData.newDateTime(2018, 1, 1, 1))
+                .add(5, DateTimeTestData.newDateTime(2019, 1, 1, 1))
                 .mock();
 
         final Interval interval = Interval.of(
-                DateTimeTestData.createDateTime(2017, 1, 1),
-                DateTimeTestData.createDateTime(2020, 1, 1)
+                DateTimeTestData.newDateTime(2017, 1, 1),
+                DateTimeTestData.newDateTime(2020, 1, 1)
         );
 
         final List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
@@ -163,17 +163,17 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(0, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(1, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(2, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(3, DateTimeTestData.createDateTime(2018, 1, 1, 1))
-                .add(4, DateTimeTestData.createDateTime(2018, 1, 1, 1))
-                .add(5, DateTimeTestData.createDateTime(2019, 1, 1, 1))
+                .add(0, DateTimeTestData.newDateTime(2017, 1, 1, 1))
+                .add(1, DateTimeTestData.newDateTime(2017, 1, 1, 1))
+                .add(2, DateTimeTestData.newDateTime(2017, 1, 1, 1))
+                .add(3, DateTimeTestData.newDateTime(2018, 1, 1, 1))
+                .add(4, DateTimeTestData.newDateTime(2018, 1, 1, 1))
+                .add(5, DateTimeTestData.newDateTime(2019, 1, 1, 1))
                 .mock();
 
         final Interval interval = Interval.of(
-                DateTimeTestData.createDateTime(2017, 1, 4),
-                DateTimeTestData.createDateTime(2020, 1, 1)
+                DateTimeTestData.newDateTime(2017, 1, 4),
+                DateTimeTestData.newDateTime(2020, 1, 1)
         );
 
         final List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
@@ -191,7 +191,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getLastPrice_returnsPrice_whenCandleExists() {
         final TestShare testShare = TestShares.APPLE;
         final String figi = testShare.share().figi();
-        final OffsetDateTime to = DateTimeTestData.createEndOfDay(2020, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
         final OffsetDateTime candlesTo = testShare.share().first1MinCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
@@ -291,7 +291,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final TestShare testShare = TestShares.APPLE;
         final String figi = testShare.share().figi();
         final int limit = 5;
-        final OffsetDateTime currentDateTIme = DateTimeTestData.createEndOfDay(2020, 9, 10);
+        final OffsetDateTime currentDateTIme = DateTimeTestData.newEndOfDay(2020, 9, 10);
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
@@ -311,15 +311,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 8, 2))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 8, 3))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 10, 1))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 8, 1))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 8, 2))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 8, 3))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 10, 1))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10, 2);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 10, 2);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -342,15 +342,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 8, 2))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 8, 3))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 10, 1))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 8, 1))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 8, 2))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 8, 3))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 10, 1))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10, 2);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 10, 2);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -374,15 +374,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 9, 3))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 4))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 5))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 9, 3))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 9, 4))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 9, 5))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 9, 23);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 9, 4);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 9, 23);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
@@ -405,13 +405,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 9, 3))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 9, 4);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2021, 1, 1);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
@@ -420,9 +420,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.reset(marketDataService);
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 9, 3))
                 .mock();
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
@@ -446,13 +446,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 9, 3))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 9, 23);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 9, 4);
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 9, 23);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
@@ -461,9 +461,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.reset(marketDataService);
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 9, 1))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 2))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 9, 3))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 9, 1))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 9, 2))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 9, 3))
                 .mock();
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
@@ -486,7 +486,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final TestShare testShare = TestShares.APPLE;
         final String figi = testShare.share().figi();
         final int limit = 5;
-        final OffsetDateTime currentDateTime = DateTimeTestData.createEndOfDay(2020, 9, 10);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newEndOfDay(2020, 9, 10);
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
@@ -506,15 +506,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 9))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 10))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 11))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 12))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 13))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 8))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 9))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 10))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 11))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 12))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 13))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 15);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -537,15 +537,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 9))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 10))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 11))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 12))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 13))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 8))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 9))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 10))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 11))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 12))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 13))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 15);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -569,15 +569,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2019, 9, 8))
-                .add(2, DateTimeTestData.createDateTime(2019, 9, 9))
-                .add(3, DateTimeTestData.createDateTime(2019, 9, 10))
-                .add(4, DateTimeTestData.createDateTime(2019, 9, 11))
-                .add(5, DateTimeTestData.createDateTime(2019, 9, 12))
-                .add(6, DateTimeTestData.createDateTime(2019, 9, 13))
+                .add(1, DateTimeTestData.newDateTime(2019, 9, 8))
+                .add(2, DateTimeTestData.newDateTime(2019, 9, 9))
+                .add(3, DateTimeTestData.newDateTime(2019, 9, 10))
+                .add(4, DateTimeTestData.newDateTime(2019, 9, 11))
+                .add(5, DateTimeTestData.newDateTime(2019, 9, 12))
+                .add(6, DateTimeTestData.newDateTime(2019, 9, 13))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 10);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -601,15 +601,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2018, 9, 8))
-                .add(2, DateTimeTestData.createDateTime(2018, 9, 9))
-                .add(3, DateTimeTestData.createDateTime(2018, 9, 10))
-                .add(4, DateTimeTestData.createDateTime(2018, 9, 11))
-                .add(5, DateTimeTestData.createDateTime(2018, 9, 12))
-                .add(6, DateTimeTestData.createDateTime(2018, 9, 13))
+                .add(1, DateTimeTestData.newDateTime(2018, 9, 8))
+                .add(2, DateTimeTestData.newDateTime(2018, 9, 9))
+                .add(3, DateTimeTestData.newDateTime(2018, 9, 10))
+                .add(4, DateTimeTestData.newDateTime(2018, 9, 11))
+                .add(5, DateTimeTestData.newDateTime(2018, 9, 12))
+                .add(6, DateTimeTestData.newDateTime(2018, 9, 13))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 10);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -627,15 +627,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2018, 9, 1))
-                .add(2, DateTimeTestData.createDateTime(2018, 9, 2))
-                .add(3, DateTimeTestData.createDateTime(2018, 9, 3))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 10))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 11))
-                .add(6, DateTimeTestData.createDateTime(2020, 9, 12))
+                .add(1, DateTimeTestData.newDateTime(2018, 9, 1))
+                .add(2, DateTimeTestData.newDateTime(2018, 9, 2))
+                .add(3, DateTimeTestData.newDateTime(2018, 9, 3))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 10))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 11))
+                .add(6, DateTimeTestData.newDateTime(2020, 9, 12))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 15);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -656,14 +656,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(1, DateTimeTestData.createDateTime(2020, 9, 12))
-                .add(2, DateTimeTestData.createDateTime(2020, 9, 13))
-                .add(3, DateTimeTestData.createDateTime(2020, 9, 15))
-                .add(4, DateTimeTestData.createDateTime(2020, 9, 16))
-                .add(5, DateTimeTestData.createDateTime(2020, 9, 17))
+                .add(1, DateTimeTestData.newDateTime(2020, 9, 12))
+                .add(2, DateTimeTestData.newDateTime(2020, 9, 13))
+                .add(3, DateTimeTestData.newDateTime(2020, 9, 15))
+                .add(4, DateTimeTestData.newDateTime(2020, 9, 16))
+                .add(5, DateTimeTestData.newDateTime(2020, 9, 17))
                 .mock();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 15);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(figi, limit, candleInterval, currentDateTime);
 
@@ -680,8 +680,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getMarketCandles_returnsMappedCandles() {
         final String figi = TestShares.APPLE.share().figi();
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -758,8 +758,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
         final String figi = TestShares.APPLE.share().figi();
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 

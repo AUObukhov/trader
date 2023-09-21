@@ -56,7 +56,7 @@ public class BeanConfigurationIntegrationTest {
 
     @Test
     void objectMapper() throws JsonProcessingException {
-        final OffsetDateTime initialDateTime = DateTimeTestData.createDateTime(2023, 9, 15, 11, 34, 45, 123);
+        final OffsetDateTime initialDateTime = DateTimeTestData.newDateTime(2023, 9, 15, 11, 34, 45, 123);
         final String stringDateTime = objectMapper.writeValueAsString(initialDateTime);
         final OffsetDateTime parsedDateTime = objectMapper.readValue(stringDateTime, OffsetDateTime.class);
 

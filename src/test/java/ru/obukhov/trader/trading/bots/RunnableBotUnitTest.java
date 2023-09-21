@@ -109,7 +109,7 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenGetLastCandlesThrowsException() {
         final String figi = TestShares.APPLE.share().figi();
-        final OffsetDateTime currentTimestamp = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentTimestamp = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
@@ -147,7 +147,7 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenGetInstrumentThrowsException() {
         final String figi = TestShares.APPLE.share().figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
@@ -167,7 +167,7 @@ class RunnableBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
@@ -191,7 +191,7 @@ class RunnableBotUnitTest {
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
@@ -213,7 +213,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetOperationsThrowsException() {
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
@@ -236,7 +236,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenDecideThrowsException() {
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
@@ -260,7 +260,7 @@ class RunnableBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
@@ -319,7 +319,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenDecisionIsWait() {
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
@@ -343,7 +343,7 @@ class RunnableBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
@@ -375,7 +375,7 @@ class RunnableBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
-        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);

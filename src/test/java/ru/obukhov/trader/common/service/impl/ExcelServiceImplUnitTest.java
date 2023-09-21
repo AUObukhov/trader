@@ -402,8 +402,8 @@ class ExcelServiceImplUnitTest {
     void saveCandles_createsAndSaveWorkbook() throws IOException {
         final String figi = TestShares.APPLE.share().figi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesResponse response = createGetCandlesResponse();
@@ -444,8 +444,8 @@ class ExcelServiceImplUnitTest {
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
         final String figi = TestShares.APPLE.share().figi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesResponse response = createGetCandlesResponse();
@@ -519,8 +519,8 @@ class ExcelServiceImplUnitTest {
     }
 
     private Interval createInterval() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 15);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 15);
         return Interval.of(from, to);
     }
 
@@ -575,23 +575,23 @@ class ExcelServiceImplUnitTest {
     private List<Candle> createCandles() {
         final Candle candle1 = new CandleBuilder()
                 .setOpen(150)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
+                .setTime(DateTimeTestData.newDateTime(2020, 10, 1, 10))
                 .build();
         final Candle candle2 = new CandleBuilder()
                 .setOpen(160)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11))
+                .setTime(DateTimeTestData.newDateTime(2020, 10, 1, 11))
                 .build();
         final Candle candle3 = new CandleBuilder()
                 .setOpen(180)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
+                .setTime(DateTimeTestData.newDateTime(2020, 10, 5, 10, 11))
                 .build();
         final Candle candle4 = new CandleBuilder()
                 .setOpen(160)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
+                .setTime(DateTimeTestData.newDateTime(2020, 10, 10, 10, 50))
                 .build();
         final Candle candle5 = new CandleBuilder()
                 .setOpen(120)
-                .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
+                .setTime(DateTimeTestData.newDateTime(2020, 11, 1, 10))
                 .build();
 
         return List.of(candle1, candle2, candle3, candle4, candle5);

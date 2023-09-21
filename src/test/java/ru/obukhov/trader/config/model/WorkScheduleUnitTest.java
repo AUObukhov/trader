@@ -11,13 +11,13 @@ class WorkScheduleUnitTest {
 
     @Test
     void getEndTime() {
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
+        final OffsetTime startTime = DateTimeTestData.newTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
         final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
         final OffsetTime endTime = workSchedule.getEndTime();
 
-        final OffsetTime expectedEndTime = DateTimeTestData.createTime(19, 0, 0);
+        final OffsetTime expectedEndTime = DateTimeTestData.newTime(19, 0, 0);
         Assertions.assertEquals(expectedEndTime, endTime);
     }
 

@@ -6,19 +6,19 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 public class TestTradingDays {
 
     private static final TradingDay TRADING_DAY_OBJECT1 = new TradingDay(
-            DateTimeTestData.createDateTime(2022, 10, 3, 3),
+            DateTimeTestData.newDateTime(2022, 10, 3, 3),
             true,
-            DateTimeTestData.createDateTime(2022, 10, 4, 1),
-            DateTimeTestData.createDateTime(2022, 10, 5),
-            DateTimeTestData.createDateTime(2022, 10, 4, 9, 50),
-            DateTimeTestData.createDateTime(2022, 10, 4, 18, 50),
-            DateTimeTestData.createDateTime(2022, 10, 3, 19),
-            DateTimeTestData.createDateTime(2022, 10, 3, 19, 5),
-            DateTimeTestData.createDateTime(2022, 10, 3, 23, 50),
-            DateTimeTestData.createDateTime(2022, 10, 4),
-            DateTimeTestData.createDateTime(2022, 10, 4, 1),
-            DateTimeTestData.createDateTime(2022, 10, 3, 7),
-            DateTimeTestData.createDateTime(2022, 10, 3, 9, 50)
+            DateTimeTestData.newDateTime(2022, 10, 4, 1),
+            DateTimeTestData.newDateTime(2022, 10, 5),
+            DateTimeTestData.newDateTime(2022, 10, 4, 9, 50),
+            DateTimeTestData.newDateTime(2022, 10, 4, 18, 50),
+            DateTimeTestData.newDateTime(2022, 10, 3, 19),
+            DateTimeTestData.newDateTime(2022, 10, 3, 19, 5),
+            DateTimeTestData.newDateTime(2022, 10, 3, 23, 50),
+            DateTimeTestData.newDateTime(2022, 10, 4),
+            DateTimeTestData.newDateTime(2022, 10, 4, 1),
+            DateTimeTestData.newDateTime(2022, 10, 3, 7),
+            DateTimeTestData.newDateTime(2022, 10, 3, 9, 50)
     );
 
     private static final TradingDay TRADING_DAY_OBJECT2 = new TradingDay(

@@ -24,7 +24,7 @@ class CandleMapperUnitTest {
         final int close = 200;
         final int high = 300;
         final int low = 400;
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 1, 1, 10, 30, 15);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2022, 1, 1, 10, 30, 15);
 
         final HistoricCandle historicCandle = new HistoricCandleBuilder()
                 .setOpen(open)
@@ -50,7 +50,7 @@ class CandleMapperUnitTest {
         final int close = 200;
         final int high = 300;
         final int low = 400;
-        final OffsetDateTime time = DateTimeTestData.createDateTime(2022, 1, 1, 10, 30, 15);
+        final OffsetDateTime time = DateTimeTestData.newDateTime(2022, 1, 1, 10, 30, 15);
 
         final Candle candle = new CandleBuilder()
                 .setOpen(open)

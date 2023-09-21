@@ -110,7 +110,7 @@ class TimestampUtilsUnitTest {
 
     @Test
     void newTimestamp_fromOffsetDateTime() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2022, 5, 3, 10, 20, 30, 123);
 
         final Timestamp actualResult = TimestampUtils.newTimestamp(dateTime);
 
@@ -126,7 +126,7 @@ class TimestampUtilsUnitTest {
 
         final Instant instant = TimestampUtils.toInstant(timestamp);
 
-        final Instant expectedInstant = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123)
+        final Instant expectedInstant = DateTimeTestData.newDateTime(2022, 5, 3, 10, 20, 30, 123)
                 .toInstant();
         Assertions.assertEquals(expectedInstant, instant);
     }
@@ -137,7 +137,7 @@ class TimestampUtilsUnitTest {
 
         final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(timestamp);
 
-        final OffsetDateTime expectedDateTime = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123);
+        final OffsetDateTime expectedDateTime = DateTimeTestData.newDateTime(2022, 5, 3, 10, 20, 30, 123);
         Assertions.assertEquals(expectedDateTime, dateTime);
     }
 

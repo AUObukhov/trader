@@ -274,7 +274,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
 
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2022, 10, 3, 3);
 
         mockTradingSchedule(instrument.getExchange(), dateTime, dateTime);
 
@@ -290,7 +290,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTradingDay_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String figi = TestInstruments.APPLE.instrument().figi();
 
-        final OffsetDateTime timestamp = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime timestamp = DateTimeTestData.newDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(figi, timestamp);
         final String expectedMessage = "Instrument not found for id " + figi;
@@ -304,8 +304,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getTradingSchedule_forFuture() {
         final String exchange = "MOEX";
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -324,8 +324,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -344,8 +344,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 22, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -364,8 +364,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 1, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -384,8 +384,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 22, offset);
 
         mockTradingSchedule(exchange, from, to);
 
@@ -407,8 +407,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int durationHours = 8;
 
         final String exchange = "MOEX";
-        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
         final Interval interval = Interval.of(from, to);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
@@ -442,8 +442,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(instrument.getExchange(), from, to);
 
@@ -464,8 +464,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 22, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
 
         mockTradingSchedule(instrument.getExchange(), from, to);
 
@@ -486,8 +486,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 1, offset);
 
         mockTradingSchedule(instrument.getExchange(), from, to);
 
@@ -508,8 +508,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 22, offset);
 
         mockTradingSchedule(instrument.getExchange(), from, to);
 
@@ -533,8 +533,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         final String figi = instrument.getFigi();
-        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 27);
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
         final Interval interval = Interval.of(from, to);
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -569,8 +569,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         final String figi = instrument.getFigi();
-        final OffsetDateTime from = DateTimeTestData.createEndOfDay(year, month, 18);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(year, month, 20);
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 20);
         final Interval interval = Interval.of(from, to);
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -595,8 +595,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTradingScheduleByFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String figi = TestInstruments.APPLE.instrument().figi();
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
         final String expectedMessage = "Instrument not found for id " + figi;
@@ -609,8 +609,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedules() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 8, 3);
 
         final String exchange1 = "MOEX";
         final String exchange2 = "SPB";

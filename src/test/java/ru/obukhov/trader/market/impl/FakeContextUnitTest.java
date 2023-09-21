@@ -73,142 +73,142 @@ class FakeContextUnitTest {
     static Stream<Arguments> getData_forNextScheduleMinute() {
         return Stream.of(
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 6, 59, 59, 999999999),
-                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 0, 59, 999999999)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 6, 59, 59, 999999999),
+                        DateTimeTestData.newDateTime(2023, 7, 21, 7, 0, 59, 999999999)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 6, 59, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 0, 30)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 6, 59, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 21, 7, 0, 30)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 7),
-                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 1)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 7),
+                        DateTimeTestData.newDateTime(2023, 7, 21, 7, 1)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 14, 10),
-                        DateTimeTestData.createDateTime(2023, 7, 21, 14, 11)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 14, 10),
+                        DateTimeTestData.newDateTime(2023, 7, 21, 14, 11)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 58, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59, 30)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 18, 58, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 21, 18, 59, 30)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 58, 59, 999999999),
-                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59, 59, 999999999)
-                ),
-
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 19),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 21, 20),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 22, 8, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 23, 13, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 6, 59, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 0, 30)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 6, 59, 59, 999999999),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 0, 59, 999999999)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 1)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 14, 10),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 14, 11)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 58, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 30)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 58, 59, 999999999),
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 59, 999999999)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 18, 58, 59, 999999999),
+                        DateTimeTestData.newDateTime(2023, 7, 21, 18, 59, 59, 999999999)
                 ),
 
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 18, 59),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 19),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 59, 99999999),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                        DateTimeTestData.newDateTime(2023, 7, 21, 20),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 19),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                        DateTimeTestData.newDateTime(2023, 7, 22, 8, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 24, 20),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                        DateTimeTestData.newDateTime(2023, 7, 23, 13, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 6, 59, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 0, 30)
+                        DateTimeTestData.newDateTime(2023, 7, 24, 6, 59, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7, 0, 30)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 6, 59, 59, 999999999),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 0, 59, 999999999)
+                        DateTimeTestData.newDateTime(2023, 7, 24, 6, 59, 59, 999999999),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7, 0, 59, 999999999)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 1)
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 7, 1)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 14, 10),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 14, 11)
+                        DateTimeTestData.newDateTime(2023, 7, 24, 14, 10),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 14, 11)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 58, 30),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 30)
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 58, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 59, 30)
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 58, 59, 999999999),
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 59, 999999999)
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 58, 59, 999999999),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 59, 59, 999999999)
                 ),
 
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 19),
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 59),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 59, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 24, 18, 59, 59, 99999999),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 24, 19),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 24, 20),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 6, 59, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7, 0, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 6, 59, 59, 999999999),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7, 0, 59, 999999999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 7, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 14, 10),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 14, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 58, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 59, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 58, 59, 999999999),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 59, 59, 999999999)
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2023, 7, 25, 19),
                         null
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 30),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 59, 30),
                         null
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 59, 99999999),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 59, 59, 99999999),
                         null
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 18, 59),
                         null
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 25, 20),
+                        DateTimeTestData.newDateTime(2023, 7, 25, 20),
                         null
                 ),
                 Arguments.of(
-                        DateTimeTestData.createDateTime(2023, 7, 26, 7),
+                        DateTimeTestData.newDateTime(2023, 7, 26, 7),
                         null
                 )
         );
@@ -218,8 +218,8 @@ class FakeContextUnitTest {
     @MethodSource("getData_forNextScheduleMinute")
     void nextScheduleMinute(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
         final List<TradingDay> tradingSchedule = TestData.newTradingSchedule(
-                DateTimeTestData.createDateTime(2023, 7, 21, 7),
-                DateTimeTestData.createTime(19, 0, 0),
+                DateTimeTestData.newDateTime(2023, 7, 21, 7),
+                DateTimeTestData.newTime(19, 0, 0),
                 5
         );
 

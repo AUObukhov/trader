@@ -42,8 +42,8 @@ public class TestCurrencies {
             .forQualInvestorFlag(false)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 3, 7, 19, 16))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(2000, 5, 16, 3))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 3, 7, 19, 16))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(2000, 5, 16, 3))
             .build();
 
     private static final Currency RUB_CURRENCY = Currency.builder()
@@ -79,8 +79,8 @@ public class TestCurrencies {
             .forQualInvestorFlag(false)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(1970, 1, 1))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(1970, 1, 1))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(1970, 1, 1))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(1970, 1, 1))
             .build();
     private static final Currency CNY_CURRENCY = Currency.builder()
             .figi("BBG0013HRTL0")
@@ -115,8 +115,8 @@ public class TestCurrencies {
             .forQualInvestorFlag(false)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 3, 7, 22, 28))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(1993, 7, 9, 3))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 3, 7, 22, 28))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(1993, 7, 9, 3))
             .build();
 
     public static final TestCurrency USD = new TestCurrency(USD_CURRENCY);

@@ -79,7 +79,7 @@ class MathUtilsUnitTest {
     @Test
     void getWeightedAverage_throwsIllegalArgumentException_whenThereIsDateTimeAfterEndDateTime() {
         final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
-        OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
+        OffsetDateTime dateTime = DateTimeTestData.newDateTime(2021, 1, 1);
         BigDecimal amount = DecimalUtils.setDefaultScale(10000);
         dateTimesToAmounts.put(dateTime, amount);
         for (int i = 0; i < 24; i++) {
@@ -88,7 +88,7 @@ class MathUtilsUnitTest {
             dateTimesToAmounts.put(dateTime, amount);
         }
 
-        final OffsetDateTime endDateTime = DateTimeTestData.createDateTime(2021, 1, 24);
+        final OffsetDateTime endDateTime = DateTimeTestData.newDateTime(2021, 1, 24);
 
         final Executable executable = () -> MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "All dateTimes must be before endDateTime");
@@ -97,7 +97,7 @@ class MathUtilsUnitTest {
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
         final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
-        final OffsetDateTime endDateTime = DateTimeTestData.createDateTime(2021, 3, 10, 11, 12, 13);
+        final OffsetDateTime endDateTime = DateTimeTestData.newDateTime(2021, 3, 10, 11, 12, 13);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
 
@@ -107,7 +107,7 @@ class MathUtilsUnitTest {
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
         final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
-        OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
+        OffsetDateTime dateTime = DateTimeTestData.newDateTime(2021, 1, 1);
         BigDecimal amount = DecimalUtils.setDefaultScale(10000);
         dateTimesToAmounts.put(dateTime, amount);
         for (int i = 0; i < 24; i++) {
@@ -116,7 +116,7 @@ class MathUtilsUnitTest {
             dateTimesToAmounts.put(dateTime, amount);
         }
 
-        final OffsetDateTime endDateTime = DateTimeTestData.createDateTime(2021, 1, 25);
+        final OffsetDateTime endDateTime = DateTimeTestData.newDateTime(2021, 1, 25);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endDateTime);
 

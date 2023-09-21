@@ -26,7 +26,7 @@ public class TestShares {
             .shortEnabledFlag(false)
             .name("Apple")
             .exchange("SPB")
-            .ipoDate(DateTimeTestData.createDateTime(1980, 12, 12))
+            .ipoDate(DateTimeTestData.newDateTime(1980, 12, 12))
             .issueSize(16530166000L)
             .countryOfRisk("US")
             .countryOfRiskName("Соединенные Штаты Америки")
@@ -48,8 +48,8 @@ public class TestShares {
             .forQualInvestorFlag(true)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 1, 10, 10, 34))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(1988, 9, 12, 3))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 1, 10, 10, 34))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(1988, 9, 12, 3))
             .build();
 
     private static final Share SBER_SHARE = Share.builder()
@@ -68,7 +68,7 @@ public class TestShares {
             .shortEnabledFlag(true)
             .name("Сбер Банк")
             .exchange("MOEX_EVENING_WEEKEND")
-            .ipoDate(DateTimeTestData.createDateTime(2007, 7, 11))
+            .ipoDate(DateTimeTestData.newDateTime(2007, 7, 11))
             .issueSize(21586948000L)
             .countryOfRisk("RU")
             .countryOfRiskName("Российская Федерация")
@@ -90,8 +90,8 @@ public class TestShares {
             .forQualInvestorFlag(false)
             .weekendFlag(true)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 3, 7, 21, 33))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(2000, 1, 4, 10))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 3, 7, 21, 33))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(2000, 1, 4, 10))
             .build();
 
     private static final Share YANDEX_SHARE = Share.builder()
@@ -110,7 +110,7 @@ public class TestShares {
             .shortEnabledFlag(true)
             .name("Яндекс")
             .exchange("MOEX_PLUS")
-            .ipoDate(DateTimeTestData.createDateTime(2011, 5, 24))
+            .ipoDate(DateTimeTestData.newDateTime(2011, 5, 24))
             .issueSize(326342270L)
             .countryOfRisk("RU")
             .countryOfRiskName("Российская Федерация")
@@ -132,8 +132,8 @@ public class TestShares {
             .forQualInvestorFlag(false)
             .weekendFlag(true)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2018, 3, 7, 21, 38))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(2014, 6, 4, 10))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2018, 3, 7, 21, 38))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(2014, 6, 4, 10))
             .build();
 
     private static final Share DIOD_SHARE = Share.builder()
@@ -152,7 +152,7 @@ public class TestShares {
             .shortEnabledFlag(false)
             .name("ДИОД")
             .exchange("MOEX")
-            .ipoDate(DateTimeTestData.createDateTime(2010, 1, 20))
+            .ipoDate(DateTimeTestData.newDateTime(2010, 1, 20))
             .issueSize(91500000L)
             .countryOfRisk("RU")
             .countryOfRiskName("Российская Федерация")
@@ -174,8 +174,8 @@ public class TestShares {
             .forQualInvestorFlag(false)
             .weekendFlag(false)
             .blockedTcaFlag(false)
-            .first1MinCandleDate(DateTimeTestData.createDateTime(2019, 4, 4, 16, 30))
-            .first1DayCandleDate(DateTimeTestData.createDateTime(1989, 5, 24, 3))
+            .first1MinCandleDate(DateTimeTestData.newDateTime(2019, 4, 4, 16, 30))
+            .first1DayCandleDate(DateTimeTestData.newDateTime(1989, 5, 24, 3))
             .build();
 
     public static final TestShare APPLE = new TestShare(APPLE_SHARE);

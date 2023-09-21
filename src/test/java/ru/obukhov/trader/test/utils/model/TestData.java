@@ -294,7 +294,7 @@ public class TestData {
             final int hour,
             final int durationHours
     ) {
-        final OffsetDateTime startDateTime = DateTimeTestData.createDateTime(year, month, dayOfMonth, hour);
+        final OffsetDateTime startDateTime = DateTimeTestData.newDateTime(year, month, dayOfMonth, hour);
         final OffsetDateTime endDateTime = startDateTime.plusHours(durationHours);
         return newTradingDay(isTradingDay, startDateTime, endDateTime);
     }
@@ -319,7 +319,7 @@ public class TestData {
      * @return WorkSchedule with start equal to given @{code hour} of day and given duration of given {@code durationHours}
      */
     public static WorkSchedule newWorkSchedule(final int hour, final int durationHours) {
-        return new WorkSchedule(DateTimeTestData.createTime(hour), Duration.ofHours(durationHours));
+        return new WorkSchedule(DateTimeTestData.newTime(hour), Duration.ofHours(durationHours));
     }
 
     /**
