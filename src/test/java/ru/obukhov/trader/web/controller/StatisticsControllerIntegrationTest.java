@@ -54,7 +54,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
-                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
                 .param("smallWindow", "50")
                 .param("bigWindow", "50")
                 .param("saveToFile", "true");
@@ -66,7 +66,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", TestShares.APPLE.share().figi())
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
-                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
                 .param("smallWindow", "50")
                 .param("bigWindow", "50")
                 .param("saveToFile", "true");
@@ -82,7 +82,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", TestShares.APPLE.share().figi())
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
-                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
                 .param("smallWindow", "50")
                 .param("bigWindow", "50")
                 .param("saveToFile", "true");
@@ -115,7 +115,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
-                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
                 .param("bigWindow", "50")
                 .param("saveToFile", "true");
         assertBadRequestError(requestBuilder, "smallWindow is mandatory");
@@ -131,7 +131,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
-                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.name())
+                .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
                 .param("smallWindow", "50")
                 .param("saveToFile", "true");
         assertBadRequestError(requestBuilder, "bigWindow is mandatory");
@@ -191,7 +191,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.getValue())
                 .param("smallWindow", "1")
                 .param("bigWindow", "2")
                 .param("saveToFile", "true")
@@ -217,7 +217,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.getValue())
                 .param("smallWindow", "1")
                 .param("bigWindow", "2")
                 .param("saveToFile", "true")
@@ -248,7 +248,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.getValue())
                 .param("smallWindow", "1")
                 .param("bigWindow", "2")
                 .param("saveToFile", "true")
@@ -282,7 +282,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.getValue())
                 .param("smallWindow", "1")
                 .param("bigWindow", "2")
                 .param("saveToFile", "false")
@@ -312,7 +312,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
-                .param("movingAverageType", MovingAverageType.SIMPLE.name())
+                .param("movingAverageType", MovingAverageType.SIMPLE.getValue())
                 .param("smallWindow", "1")
                 .param("bigWindow", "2")
                 .contentType(MediaType.APPLICATION_JSON);
