@@ -53,11 +53,10 @@ public class Interval {
     ) {
         if (from != null && to != null) {
             Assert.isTrue(!from.isAfter(to), "from can't be after to");
-            Assert.isTrue(from.getOffset().equals(to.getOffset()), "offsets of from and to must be equal");
         }
 
-        this.from = from;
-        this.to = to;
+        this.from = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
+        this.to = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
     }
 
     /**

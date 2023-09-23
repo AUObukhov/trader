@@ -37,15 +37,6 @@ class IntervalUnitTest {
     }
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenOffsetsAreDifferent() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, ZoneOffset.ofHours(1));
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 10, ZoneOffset.ofHours(2));
-
-        final Executable executable = () -> new Interval(from, to);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
-    }
-
-    @Test
     void constructor_returnsInterval_whenFromAndToAreNull() {
         final Interval interval = new Interval(null, null);
 
@@ -84,6 +75,19 @@ class IntervalUnitTest {
         Assertions.assertEquals(to, interval.getTo());
     }
 
+    @Test
+    void constructor_adjustsOffsets() {
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 4, ZoneOffset.UTC);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 10, 7, ZoneOffset.UTC);
+
+        final Interval interval = new Interval(from, to);
+
+        final OffsetDateTime expectedFrom = DateTimeTestData.newDateTime(2020, 10, 5, 7);
+        final OffsetDateTime expectedTo = DateTimeTestData.newDateTime(2020, 10, 10, 10);
+        Assertions.assertEquals(expectedFrom, interval.getFrom());
+        Assertions.assertEquals(expectedTo, interval.getTo());
+    }
+
     // endregion
 
     // region of tests
@@ -95,15 +99,6 @@ class IntervalUnitTest {
 
         final Executable executable = () -> Interval.of(from, to);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "from can't be after to");
-    }
-
-    @Test
-    void of_throwsIllegalArgumentException_whenOffsetsAreDifferent() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, ZoneOffset.ofHours(1));
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 10, ZoneOffset.ofHours(2));
-
-        final Executable executable = () -> Interval.of(from, to);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
     }
 
     @Test
@@ -143,6 +138,19 @@ class IntervalUnitTest {
 
         Assertions.assertEquals(from, interval.getFrom());
         Assertions.assertEquals(to, interval.getTo());
+    }
+
+    @Test
+    void of_adjustsOffsets() {
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 4, ZoneOffset.UTC);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 10, 7, ZoneOffset.UTC);
+
+        final Interval interval = Interval.of(from, to);
+
+        final OffsetDateTime expectedFrom = DateTimeTestData.newDateTime(2020, 10, 5, 7);
+        final OffsetDateTime expectedTo = DateTimeTestData.newDateTime(2020, 10, 10, 10);
+        Assertions.assertEquals(expectedFrom, interval.getFrom());
+        Assertions.assertEquals(expectedTo, interval.getTo());
     }
 
     // endregion

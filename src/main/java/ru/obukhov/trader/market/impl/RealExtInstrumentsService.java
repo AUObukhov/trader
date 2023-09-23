@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.Asserter;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -172,12 +171,10 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     @Override
     public List<TradingDay> getTradingSchedule(final String exchange, final Interval interval) {
-        final Instant fromInstant = DateUtils.toSameDayInstant(interval.getFrom());
-        final Instant toInstant = DateUtils.toSameDayInstant(interval.getTo());
-        if (fromInstant.isBefore(Instant.now())) {
+        if (interval.getFrom().isBefore(OffsetDateTime.now())) {
             return interval.toTradingDays(workSchedule);
         } else {
-            return instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)
+            return instrumentsService.getTradingScheduleSync(exchange, interval.getFrom().toInstant(), interval.getTo().toInstant())
                     .getDaysList()
                     .stream()
                     .map(TRADING_DAY_MAPPER::map)

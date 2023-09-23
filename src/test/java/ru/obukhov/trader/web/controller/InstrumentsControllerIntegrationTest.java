@@ -27,7 +27,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
@@ -199,59 +198,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            assertResponse(requestBuilder, expectedResult);
-        }
-    }
-
-    @Test
-    void getTradingSchedule_forFuture_adjustsFromInstant() throws Exception {
-        final String exchange = "SPB";
-
-        final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 1, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
-
-        mockTradingSchedule(exchange, from, to);
-
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/trader/instruments/trading-schedule")
-                .param("exchange", exchange)
-                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
-                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
-                .contentType(MediaType.APPLICATION_JSON);
-
-        final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            assertResponse(requestBuilder, expectedResult);
-        }
-    }
-
-    @Test
-    void getTradingSchedule_forFuture_adjustsToInstant() throws Exception {
-        final String exchange = "MOEX";
-
-        final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 1, offset);
-
-        mockTradingSchedule(exchange, from, to);
-
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/trader/instruments/trading-schedule")
-                .param("exchange", exchange)
-                .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
-                .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
-                .contentType(MediaType.APPLICATION_JSON);
-
-        final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+        final OffsetDateTime mockedNow = DateUtils.toStartOfDay(from);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             assertResponse(requestBuilder, expectedResult);
         }
     }

@@ -37,7 +37,6 @@ import ru.tinkoff.piapi.contract.v1.Instrument;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @SpringBootTest
@@ -278,8 +277,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(instrument.getExchange(), dateTime, dateTime);
 
-        final Instant mockedNow = DateUtils.toSameDayInstant(dateTime);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+        final OffsetDateTime mockedNow = DateUtils.toStartOfDay(dateTime);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(instrument.getFigi(), dateTime);
 
             Assertions.assertEquals(TestTradingDays.TRADING_DAY1.tradingDay(), tradingDay);
@@ -309,93 +308,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(exchange, from, to);
 
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+        final OffsetDateTime mockedNow = DateUtils.toStartOfDay(from);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
             final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
             Assertions.assertEquals(expectedResult, actualResult);
-        }
-    }
-
-    @Test
-    void getTradingSchedule_forFuture_adjustsFromInstant_positiveOffset() {
-        final String exchange = "MOEX";
-
-        final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 1, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
-
-        mockTradingSchedule(exchange, from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
-
-            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedResult, actualResult);
-        }
-    }
-
-    @Test
-    void getTradingSchedule_forFuture_adjustsFromInstant_negativeOffset() {
-        final String exchange = "MOEX";
-
-        final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 22, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
-
-        mockTradingSchedule(exchange, from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
-
-            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedResult, result);
-        }
-    }
-
-    @Test
-    void getTradingSchedule_forFuture_adjustsToInstant_positiveOffset() {
-        final String exchange = "MOEX";
-
-        final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 1, offset);
-
-        mockTradingSchedule(exchange, from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
-
-            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedResult, result);
-        }
-    }
-
-    @Test
-    void getTradingSchedule_forFuture_adjustsToInstant_negativeOffset() {
-        final String exchange = "MOEX";
-
-        final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 22, offset);
-
-        mockTradingSchedule(exchange, from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
-
-            final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedResult, result);
         }
     }
 
@@ -434,94 +353,6 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // endregion
 
     // region getTradingScheduleByFigi tests
-
-    @Test
-    @DirtiesContext
-    void getTradingScheduleByFigi_forFuture_adjustsFromInstant_positiveOffset() {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
-        Mocker.mockInstrument(instrumentsService, instrument);
-
-        final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 1, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
-
-        mockTradingSchedule(instrument.getExchange(), from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
-
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedSchedule, schedule);
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    void getTradingScheduleByFigi_forFuture_adjustsFromInstant_negativeOffset() {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
-        Mocker.mockInstrument(instrumentsService, instrument);
-
-        final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 22, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3, offset);
-
-        mockTradingSchedule(instrument.getExchange(), from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
-
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedSchedule, schedule);
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    void getTradingScheduleByFigi_forFuture_adjustsToInstant_positiveOffset() {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
-        Mocker.mockInstrument(instrumentsService, instrument);
-
-        final ZoneOffset offset = ZoneOffset.ofHours(3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 1, offset);
-
-        mockTradingSchedule(instrument.getExchange(), from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
-
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedSchedule, schedule);
-        }
-    }
-
-    @Test
-    @DirtiesContext
-    void getTradingScheduleByFigi_forFuture_adjustsToInstant_negativeOffset() {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
-        Mocker.mockInstrument(instrumentsService, instrument);
-
-        final ZoneOffset offset = ZoneOffset.ofHours(-3);
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3, offset);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 22, offset);
-
-        mockTradingSchedule(instrument.getExchange(), from, to);
-
-        final Instant mockedNow = DateUtils.toSameDayInstant(from);
-        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(instrument.getFigi(), Interval.of(from, to));
-
-            final List<TradingDay> expectedSchedule = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
-
-            Assertions.assertEquals(expectedSchedule, schedule);
-        }
-    }
 
     @Test
     @DirtiesContext
@@ -644,8 +475,8 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // endregion
 
     private void mockTradingSchedule(final String exchange, final OffsetDateTime from, final OffsetDateTime to) {
-        final Instant fromInstant = DateUtils.toSameDayInstant(from);
-        final Instant toInstant = DateUtils.toSameDayInstant(to);
+        final Instant fromInstant = from.toInstant();
+        final Instant toInstant = to.toInstant();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
                 .addDays(TestTradingDays.TRADING_DAY1.tinkoffTradingDay())

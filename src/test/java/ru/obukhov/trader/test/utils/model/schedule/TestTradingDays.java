@@ -6,10 +6,10 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 public class TestTradingDays {
 
     private static final TradingDay TRADING_DAY_OBJECT1 = new TradingDay(
-            DateTimeTestData.newDateTime(2022, 10, 3, 3),
+            DateTimeTestData.newDateTime(2022, 10, 3),
             true,
-            DateTimeTestData.newDateTime(2022, 10, 4, 1),
-            DateTimeTestData.newDateTime(2022, 10, 5),
+            DateTimeTestData.newDateTime(2022, 10, 3, 12),
+            DateTimeTestData.newDateTime(2022, 10, 3, 20),
             DateTimeTestData.newDateTime(2022, 10, 4, 9, 50),
             DateTimeTestData.newDateTime(2022, 10, 4, 18, 50),
             DateTimeTestData.newDateTime(2022, 10, 3, 19),
