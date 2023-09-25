@@ -18,6 +18,7 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -75,12 +76,9 @@ public abstract class Bot {
         final String figi = botConfig.figi();
         final List<OrderState> orders = ordersService.getOrders(figi);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = extMarketDataService.getLastCandles(
-                    figi,
-                    LAST_CANDLES_COUNT,
-                    botConfig.candleInterval(),
-                    context.getCurrentDateTime()
-            );
+            final CandleInterval candleInterval = botConfig.candleInterval();
+            final OffsetDateTime currentDateTime = context.getCurrentDateTime();
+            final List<Candle> currentCandles = extMarketDataService.getLastCandles(figi, LAST_CANDLES_COUNT, candleInterval, currentDateTime);
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {
