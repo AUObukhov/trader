@@ -71,7 +71,7 @@ public class BackTesterImpl implements BackTester {
      * @param balanceConfig all back tests balance configuration
      * @param interval      all back tests interval
      * @param saveToFiles   flag to save back tests results to file
-     * @return map of back tests results by FIGIes
+     * @return list of back tests results
      */
     @Override
     public List<BackTestResult> test(
