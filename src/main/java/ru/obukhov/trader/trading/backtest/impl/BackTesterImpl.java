@@ -14,6 +14,7 @@ import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionUtils;
@@ -31,7 +32,6 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -51,17 +51,20 @@ public class BackTesterImpl implements BackTester {
 
     private final ExcelService excelService;
     private final ExtInstrumentsService extInstrumentsService;
+    private final ExtMarketDataService extMarketDataService;
     private final FakeBotFactory fakeBotFactory;
     private final ExecutorService executor;
 
     public BackTesterImpl(
             final ExcelService excelService,
             final ExtInstrumentsService extInstrumentsService,
+            final ExtMarketDataService extMarketDataService,
             final FakeBotFactory fakeBotFactory,
             final BackTestProperties backTestProperties
     ) {
         this.excelService = excelService;
         this.extInstrumentsService = extInstrumentsService;
+        this.extMarketDataService = extMarketDataService;
         this.fakeBotFactory = fakeBotFactory;
         this.executor = Executors.newFixedThreadPool(backTestProperties.getThreadCount());
     }
@@ -141,29 +144,21 @@ public class BackTesterImpl implements BackTester {
     private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
         final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, interval.getFrom());
 
-        final List<Candle> historicalCandles = new ArrayList<>();
+        final List<Candle> candles = extMarketDataService.getMarketCandles(botConfig.figi(), interval, botConfig.candleInterval());
         OffsetDateTime previousStartTime = null;
 
         do {
-            final List<Candle> currentCandles = fakeBot.processBotConfig(botConfig, previousStartTime);
+            final List<Candle> currentCandles = fakeBot.processBotConfig(botConfig, candles, previousStartTime);
             if (currentCandles.isEmpty()) {
                 previousStartTime = null;
             } else {
                 previousStartTime = currentCandles.get(0).getTime();
-                addLastCandle(historicalCandles, currentCandles);
             }
 
             moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, interval.getTo());
         } while (fakeBot.getCurrentDateTime() != null && fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
-    }
-
-    private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
-        final Candle candle = currentCandles.get(currentCandles.size() - 1);
-        if (candle != null) {
-            historicalCandles.add(candle);
-        }
+        return createSucceedBackTestResult(botConfig, interval, candles, fakeBot);
     }
 
     private void moveToNextMinuteAndApplyBalanceIncrement(

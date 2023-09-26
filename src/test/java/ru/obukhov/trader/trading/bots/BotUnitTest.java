@@ -38,6 +38,7 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,7 +77,8 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null);
+        final List<Candle> allCandles = TestData.newCandles(List.of(1, 2, 3), OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
 
         Assertions.assertTrue(candles.isEmpty());
 
@@ -101,7 +103,8 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null);
+        final List<Candle> allCandles = TestData.newCandles(List.of(1, 2, 3), OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
 
         Assertions.assertNotNull(candles);
 
@@ -122,7 +125,8 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null);
+        final List<Candle> allCandles = Collections.emptyList();
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
 
         Assertions.assertNotNull(candles);
 
@@ -136,7 +140,6 @@ class BotUnitTest {
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
-        mockCandles(figi, List.of(candle));
         Mocker.mockCurrentDateTime(context);
 
         final BotConfig botConfig = new BotConfig(
@@ -148,7 +151,8 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime);
+        final List<Candle> allCandles = List.of(candle);
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, previousStartTime);
 
         Assertions.assertNotNull(candles);
 
@@ -160,13 +164,11 @@ class BotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         Mocker.mockShare(extInstrumentsService, share);
 
-        final Candle candle = new Candle().setTime(OffsetDateTime.now());
-        mockCandles(figi, List.of(candle));
-
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -180,7 +182,12 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null);
+        final List<Candle> allCandles = List.of(
+                new Candle().setTime(currentDateTime.minusMinutes(1)),
+                new Candle().setTime(currentDateTime),
+                new Candle().setTime(currentDateTime.plusMinutes(1))
+        );
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
 
         Assertions.assertNotNull(candles);
 
@@ -194,6 +201,9 @@ class BotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.APPLE.share();
         final String figi = share.figi();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         Mocker.mockShare(extInstrumentsService, share);
 
@@ -210,10 +220,12 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
-        mockCandles(figi, currentCandles);
-
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        final Candle candle = new Candle().setTime(currentDateTime.minusMinutes(1));
+        final List<Candle> allCandles = List.of(
+                candle,
+                new Candle().setTime(currentDateTime),
+                new Candle().setTime(currentDateTime.plusMinutes(1))
+        );
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -228,9 +240,10 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null);
+        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles, null);
 
-        AssertUtils.assertEquals(currentCandles, candles);
+        final List<Candle> expectedResult = List.of(candle);
+        AssertUtils.assertEquals(expectedResult, actualCandles);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(
@@ -249,6 +262,7 @@ class BotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         Mocker.mockShare(extInstrumentsService, share);
 
@@ -264,10 +278,14 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
-        mockCandles(figi, currentCandles);
+        final Candle candle = new Candle().setTime(currentDateTime.minusMinutes(1));
+        final List<Candle> allCandles = List.of(
+                candle,
+                new Candle().setTime(currentDateTime),
+                new Candle().setTime(currentDateTime.plusMinutes(1))
+        );
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -282,9 +300,10 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null);
+        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles, null);
 
-        AssertUtils.assertEquals(currentCandles, candles);
+        final List<Candle> expectedResult = List.of(candle);
+        AssertUtils.assertEquals(expectedResult, actualCandles);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(
@@ -296,15 +315,6 @@ class BotUnitTest {
                         OrderType.ORDER_TYPE_MARKET,
                         null
                 );
-    }
-
-    private void mockCandles(final String processBotConfig, final List<Candle> candles) {
-        Mockito.when(extMarketDataService.getLastCandles(
-                Mockito.eq(processBotConfig),
-                Mockito.anyInt(),
-                Mockito.any(CandleInterval.class),
-                Mockito.any(OffsetDateTime.class))
-        ).thenReturn(candles);
     }
 
     private static final class TestStrategyCache implements StrategyCache {

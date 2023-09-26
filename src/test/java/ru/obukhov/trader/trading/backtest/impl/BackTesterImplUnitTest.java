@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
@@ -60,13 +61,15 @@ class BackTesterImplUnitTest {
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
+    private ExtMarketDataService extMarketDataService;
+    @Mock
     private FakeBotFactory fakeBotFactory;
 
     private BackTesterImpl backTester;
 
     @BeforeEach
     void setUp() {
-        backTester = new BackTesterImpl(excelService, extInstrumentsService, fakeBotFactory, BACK_TEST_PROPERTIES);
+        backTester = new BackTesterImpl(excelService, extInstrumentsService, extMarketDataService, fakeBotFactory, BACK_TEST_PROPERTIES);
     }
 
     @Test
@@ -136,7 +139,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, from);
 
         final String exceptionMessage = "exception message";
-        Mockito.when(fakeBot.processBotConfig(botConfig, null))
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList(), Mockito.isNull()))
                 .thenThrow(new IllegalArgumentException(exceptionMessage));
 
         // act
@@ -571,7 +574,8 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Share share = TestShares.APPLE.share();
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -589,7 +593,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share,
+                share1,
                 0.003,
                 balanceConfig,
                 interval,
@@ -608,7 +612,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share,
+                share2,
                 0.001,
                 balanceConfig,
                 interval,
@@ -642,7 +646,7 @@ class BackTesterImplUnitTest {
         for (final Map.Entry<OffsetDateTime, Double> entry : prices.entrySet()) {
             final Candle candle = candlesIterator.next();
             Assertions.assertEquals(entry.getKey(), candle.getTime());
-            AssertUtils.assertEquals(entry.getValue(), candle.getClose());
+            AssertUtils.assertEquals(entry.getValue(), candle.getOpen());
         }
     }
 
@@ -1057,7 +1061,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
         Mockito.when(fakeBot.getShare(figi)).thenReturn(share);
-        mockBotCandles(botConfig, fakeBot, prices);
+        mockMarketCandles(figi, prices);
         mockPlusMinuteScheduled(fakeBot, interval.getFrom());
         mockInvestments(fakeBot, accountId, currency, interval.getFrom(), balanceConfig.getInitialBalance());
         Mockito.when(fakeBot.getCurrentBalance(accountId, currency)).thenReturn(currentBalance);
@@ -1084,17 +1088,25 @@ class BackTesterImplUnitTest {
     }
 
     private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList(), Mockito.nullable(OffsetDateTime.class)))
                 .thenAnswer(invocation -> {
                     final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
                     if (prices.containsKey(currentDateTime)) {
                         final double close = prices.get(currentDateTime);
-                        final Candle candle = new CandleBuilder().setClose(close).setTime(currentDateTime).build();
+                        final Candle candle = new CandleBuilder().setClose(close).setTime(currentDateTime.minusMinutes(1)).build();
                         return List.of(candle);
                     } else {
                         return Collections.emptyList();
                     }
                 });
+    }
+
+    private void mockMarketCandles(final String figi, final Map<OffsetDateTime, Double> prices) {
+        final List<Candle> candles = prices.entrySet().stream()
+                .map(entry -> new CandleBuilder().setOpen(entry.getValue()).setTime(entry.getKey()).build())
+                .toList();
+        Mockito.when(extMarketDataService.getMarketCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.nullable(CandleInterval.class)))
+                .thenReturn(candles);
     }
 
     private void mockPlusMinuteScheduled(final FakeBot fakeBot, final OffsetDateTime from) {

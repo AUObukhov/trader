@@ -4,9 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
+import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
+
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Slf4j
 public class RunnableBot extends Bot implements Runnable {
@@ -34,17 +38,20 @@ public class RunnableBot extends Bot implements Runnable {
             return;
         }
 
-        final SecurityTradingStatus tradingStatus = extMarketDataService.getTradingStatus(botConfig.figi());
+        final String figi = botConfig.figi();
+        final SecurityTradingStatus tradingStatus = extMarketDataService.getTradingStatus(figi);
         if (tradingStatus != SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING) {
             log.debug(
                     "Trading status fot FIGI {} is {}. Expected {}",
-                    botConfig.figi(), tradingStatus, SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING
+                    figi, tradingStatus, SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING
             );
             return;
         }
 
         try {
-            processBotConfig(botConfig, null);
+            final OffsetDateTime currentDateTime = OffsetDateTime.now();
+            final List<Candle> candles = extMarketDataService.getLastCandles(figi, LAST_CANDLES_COUNT, botConfig.candleInterval(), currentDateTime);
+            processBotConfig(botConfig, candles, null);
         } catch (final Exception exception) {
             log.error("Failed to process botConfig {}", botConfig, exception);
         }

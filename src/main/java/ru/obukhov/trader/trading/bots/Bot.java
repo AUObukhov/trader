@@ -3,6 +3,7 @@ package ru.obukhov.trader.trading.bots;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
@@ -18,7 +19,6 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -36,7 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class Bot {
 
-    private static final int LAST_CANDLES_COUNT = 1000;
+    protected static final int LAST_CANDLES_COUNT = 1000;
 
     protected final ExtMarketDataService extMarketDataService;
     protected final ExtInstrumentsService extInstrumentsService;
@@ -66,26 +66,25 @@ public abstract class Bot {
      * Perform one trading step
      *
      * @param botConfig         bot configuration
+     * @param candles           all candles for back testing interval ordered by time
      * @param previousStartTime timestamp of previous call of the method. Null for the first call.
      *                          Used to prevent repeated processing when no new candle
      * @return list of last candles
      */
-    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final List<Candle> candles, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 
         final String figi = botConfig.figi();
         final List<OrderState> orders = ordersService.getOrders(figi);
         if (orders.isEmpty()) {
-            final CandleInterval candleInterval = botConfig.candleInterval();
-            final OffsetDateTime currentDateTime = context.getCurrentDateTime();
-            final List<Candle> currentCandles = extMarketDataService.getLastCandles(figi, LAST_CANDLES_COUNT, candleInterval, currentDateTime);
-            decisionData.setCurrentCandles(currentCandles);
+            final List<Candle> currentCandles = getCurrentCandles(candles);
 
             if (currentCandles.isEmpty()) {
                 log.info("There are no candles by FIGI '{}'. Do nothing", figi);
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
                 log.debug("Candles scope already processed for FIGI '{}'. Do nothing", figi);
             } else {
+                decisionData.setCurrentCandles(currentCandles);
                 fillDecisionData(botConfig, decisionData, figi);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
                 performOperation(botConfig.accountId(), figi, decision);
@@ -95,6 +94,12 @@ public abstract class Bot {
             log.info("There are not completed orders by FIGI '{}'. Do nothing", figi);
             return Collections.emptyList();
         }
+    }
+
+    private List<Candle> getCurrentCandles(List<Candle> candles) {
+        final OffsetDateTime currentDateTime = context.getCurrentDateTime();
+        final Candle keyCandle = new Candle().setTime(currentDateTime);
+        return CollectionsUtils.filterOrderedList(candles, keyCandle, Candle::getTime);
     }
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String figi) {
