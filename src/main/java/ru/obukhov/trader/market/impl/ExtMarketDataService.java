@@ -195,12 +195,12 @@ public class ExtMarketDataService {
             final String figi,
             final int limit,
             final CandleInterval candleInterval,
-            final OffsetDateTime currentDateTIme
+            final OffsetDateTime currentDateTime
     ) {
         final Share share = extInstrumentsService.getShare(figi);
         return DateUtils.getPeriodByCandleInterval(candleInterval) == ChronoUnit.DAYS
-                ? getLastCandlesDaily(share, limit, candleInterval, currentDateTIme)
-                : getLastCandlesYearly(share, limit, candleInterval, currentDateTIme);
+                ? getLastCandlesDaily(share, limit, candleInterval, currentDateTime)
+                : getLastCandlesYearly(share, limit, candleInterval, currentDateTime);
     }
 
     /**
