@@ -158,50 +158,6 @@ class CollectionsUtilsUnitTest {
 
     // endregion
 
-    // region containsList tests
-
-    @Test
-    void containsList_throwsIllegalArgumentException_whenListIsNull() {
-        final List<String> searchedList = List.of("0", "1");
-
-        final Executable executable = () -> CollectionsUtils.containsList(null, searchedList);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "list must not be null");
-    }
-
-    @Test
-    void containsList_throwsIllegalArgumentException_whenSearchedListIsNull() {
-        final List<String> list = List.of("0", "1");
-
-        final Executable executable = () -> CollectionsUtils.containsList(list, null);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "searchedList must not be null");
-    }
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forContainsList() {
-        return Stream.of(
-                Arguments.of(List.of(), List.of(), true),
-                Arguments.of(List.of("0", "1"), List.of(), true),
-                Arguments.of(List.of("0", "1"), List.of("0", "1"), true),
-                Arguments.of(List.of("0", "1", "2", "3"), List.of("0", "1"), true),
-                Arguments.of(List.of("0", "1", "2", "3"), List.of("1", "2"), true),
-                Arguments.of(List.of("0", "1", "2", "3"), List.of("2", "3"), true),
-                Arguments.of(List.of(), List.of("0"), false),
-                Arguments.of(List.of("0", "1", "2", "3"), List.of("5", "6"), false),
-                Arguments.of(List.of("0", "1", "2", "3"), List.of("2", "3", "4"), false),
-                Arguments.of(List.of("0", "1", "2", "3"), List.of("2", "1"), false)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forContainsList")
-    void containsList(List<String> list, List<String> searchedList, boolean expectedResult) {
-        final boolean result = CollectionsUtils.containsList(list, searchedList);
-
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    // endregion
-
     // region binarySearch tests
 
     @SuppressWarnings("unused")
