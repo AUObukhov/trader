@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 @UtilityClass
 public class CollectionsUtils {
@@ -73,6 +74,28 @@ public class CollectionsUtils {
     public static <T> int binarySearch(final List<? extends T> list, final T key, final Comparator<? super T> comparator) {
         int searchResult = Collections.binarySearch(list, key, comparator);
         return searchResult < 0 ? -1 - searchResult : searchResult;
+    }
+
+    /**
+     * Filters naturally ordered list.<br/>
+     * Keeps items lower than given {@code keyItem}.<br/>
+     * Comparison is done by comparator based on given {@code keyExtractor}.
+     *
+     * @param list         ordered list
+     * @param keyItem      key greater than filtered items. Doesn't have to be present in the {@code list}
+     * @param keyExtractor key extractor for comparator. {@code list} must be ordered by that comparator
+     * @param <T>          list item type
+     * @param <U>          comparable key, retrieved by the comparator
+     * @return list of items lower than given {@code keyItem}
+     */
+    public static <T, U extends Comparable<U>> List<T> filterOrderedList(
+            final List<T> list,
+            final T keyItem,
+            final Function<? super T, ? extends U> keyExtractor
+    ) {
+        final Comparator<? super T> comparator = Comparator.comparing(keyExtractor);
+        final int index = CollectionsUtils.binarySearch(list, keyItem, comparator);
+        return list.subList(0, index);
     }
 
 }

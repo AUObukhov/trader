@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 class CollectionsUtilsUnitTest {
@@ -183,4 +184,33 @@ class CollectionsUtilsUnitTest {
     }
 
     // endregion
+
+    // region filterOrderedList tests
+
+    @SuppressWarnings("unused")
+    private static Stream<Arguments> getData_forFilterOrderedList() {
+        return Stream.of(
+                Arguments.of(List.of(), 1, List.of()),
+                Arguments.of(List.of(2, 3, 4, 5), 1, List.of()),
+                Arguments.of(List.of(1, 2, 3, 4, 5), 1, List.of()),
+                Arguments.of(List.of(1, 2, 3, 4, 5), 3, List.of(1, 2)),
+                Arguments.of(List.of(1, 2, 3, 4, 5), 5, List.of(1, 2, 3, 4)),
+                Arguments.of(List.of(1, 2, 4, 5), 3, List.of(1, 2)),
+                Arguments.of(List.of(1, 2, 3, 4, 5), 0, List.of()),
+                Arguments.of(List.of(1, 2, 3, 4, 5), 6, List.of(1, 2, 3, 4, 5))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forFilterOrderedList")
+    void filterOrderedList(final List<Integer> list, final Integer key, final List<Integer> expectedResult) {
+        final Function<Integer, Integer> keyExtractor = Function.identity();
+
+        final List<Integer> result = CollectionsUtils.filterOrderedList(list, key, keyExtractor);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
 }
