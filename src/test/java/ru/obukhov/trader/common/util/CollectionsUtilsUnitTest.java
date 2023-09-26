@@ -163,6 +163,8 @@ class CollectionsUtilsUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forBinarySearch() {
         return Stream.of(
+                Arguments.of(List.of(), 10, 0),
+                Arguments.of(List.of(2, 3, 4, 5), 1, 0),
                 Arguments.of(List.of(1, 2, 3, 4, 5), 1, 0),
                 Arguments.of(List.of(1, 2, 3, 4, 5), 3, 2),
                 Arguments.of(List.of(1, 2, 3, 4, 5), 5, 4),
