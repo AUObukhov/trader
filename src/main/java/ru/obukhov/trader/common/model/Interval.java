@@ -2,8 +2,6 @@ package ru.obukhov.trader.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -32,22 +30,18 @@ public class Interval {
     private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
 
     @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
-    @ApiModelProperty(value = "start of the interval", position = 1, example = "2021-08-01T00:00:00+03:00")
     private final OffsetDateTime from;
 
     @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
-    @ApiModelProperty(value = "end of the interval", position = 2, example = "2021-08-01T12:00:00+03:00")
     private final OffsetDateTime to;
 
     @ConstructorProperties({"from", "to"})
     public Interval(
             @Nullable
-            @ApiParam(example = "2023-09-01T00:00:00+0300")
             @JsonProperty("from")
             @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT) final OffsetDateTime from,
 
             @Nullable
-            @ApiParam(example = "2023-09-10T00:00:00+0300")
             @JsonProperty("to")
             @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT) final OffsetDateTime to
     ) {

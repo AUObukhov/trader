@@ -1,9 +1,5 @@
 package ru.obukhov.trader.web.controller;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,78 +29,36 @@ public class InstrumentsController {
     private final ExtInstrumentsService extInstrumentsService;
 
     @GetMapping("/instrument")
-    @ApiOperation("Get instrument info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public Instrument getInstrument(@RequestParam @ApiParam(example = "AAPBBG000B9XRY4L") final String figi) {
+    public Instrument getInstrument(@RequestParam final String figi) {
         return extInstrumentsService.getInstrument(figi);
     }
 
     @GetMapping("/share")
-    @ApiOperation("Get share info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public Share getShare(@RequestParam @ApiParam(example = "BBG000B9XRY4") final String figi) {
+    public Share getShare(@RequestParam final String figi) {
         return extInstrumentsService.getShare(figi);
     }
 
     @GetMapping("/etf")
-    @ApiOperation("Get ETF info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public Etf getEtf(@RequestParam @ApiParam(example = "BBG005HLSZ23") final String figi) {
+    public Etf getEtf(@RequestParam final String figi) {
         return extInstrumentsService.getEtf(figi);
     }
 
     @GetMapping("/bond")
-    @ApiOperation("Get bond info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public Bond getBond(@RequestParam @ApiParam(example = "RU000A0ZYG52") final String figi) {
+    public Bond getBond(@RequestParam final String figi) {
         return extInstrumentsService.getBond(figi);
     }
 
     @GetMapping("/currency")
-    @ApiOperation("Get currency info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public Currency getCurrency(@RequestParam @ApiParam(example = "BBG0013HGFT4") final String figi) {
+    public Currency getCurrency(@RequestParam final String figi) {
         return extInstrumentsService.getCurrencyByFigi(figi);
     }
 
     @GetMapping("/trading-schedule")
-    @ApiOperation("Get trading schedule for exchange")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public List<TradingDay> getTradingSchedule(@RequestParam @ApiParam(example = "SPB") final String exchange, @Valid final Interval interval) {
+    public List<TradingDay> getTradingSchedule(@RequestParam final String exchange, @Valid final Interval interval) {
         return extInstrumentsService.getTradingSchedule(exchange, interval);
     }
 
     @GetMapping("/trading-schedules")
-    @ApiOperation("Get trading schedules")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
     public List<TradingSchedule> getTradingSchedules(@Valid final Interval interval) {
         return extInstrumentsService.getTradingSchedules(interval);
     }

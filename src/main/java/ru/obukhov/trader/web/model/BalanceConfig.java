@@ -1,6 +1,5 @@
 package ru.obukhov.trader.web.model;
 
-import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,14 +21,11 @@ import java.util.Objects;
 public class BalanceConfig {
 
     @NotNull(message = "initial balance is mandatory")
-    @ApiModelProperty(value = "Initial balance before the back test", required = true, position = 1, example = "100000")
     private BigDecimal initialBalance;
 
     @Min(value = 1, message = "balanceIncrement must be positive")
-    @ApiModelProperty(value = "Sum to add to balance", allowableValues = "range[0, infinity]", position = 2, example = "1000")
     private BigDecimal balanceIncrement;
 
-    @ApiModelProperty(value = "Cron expression describing schedule of balance increments", position = 3, example = "0 0 0 1 * ?")
     private CronExpression balanceIncrementCron;
 
     @Override

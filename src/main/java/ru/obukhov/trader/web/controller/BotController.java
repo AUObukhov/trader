@@ -1,8 +1,5 @@
 package ru.obukhov.trader.web.controller;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,37 +28,19 @@ public class BotController {
     private final SchedulingProperties schedulingProperties;
 
     @PostMapping("/back-test")
-    @ApiOperation("Performs back test of bot trading on historical data and returns result of it")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
     public List<BackTestResult> backTest(@Valid @RequestBody final BackTestRequest request) {
-
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         final boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
         return backTester.test(request.getBotConfigs(), request.getBalanceConfig(), interval, saveToFiles);
-
     }
 
     @PostMapping("/enable-scheduling")
-    @ApiOperation("Enables real trade bot, working by schedule")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
     public void enableScheduling() {
         schedulingProperties.setEnabled(true);
     }
 
     @PostMapping("/disable-scheduling")
-    @ApiOperation("Disables real trade bot, working by schedule")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
     public void disableScheduling() {
         schedulingProperties.setEnabled(false);
     }
