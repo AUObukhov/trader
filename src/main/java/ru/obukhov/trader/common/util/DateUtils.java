@@ -125,9 +125,24 @@ public class DateUtils {
      * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
      */
     public static ChronoUnit getPeriodByCandleInterval(final CandleInterval candleInterval) {
-        return candleInterval == CandleInterval.CANDLE_INTERVAL_DAY
-                ? ChronoUnit.YEARS
-                : ChronoUnit.DAYS;
+        return switch (candleInterval) {
+            case CANDLE_INTERVAL_1_MIN,
+                    CANDLE_INTERVAL_2_MIN,
+                    CANDLE_INTERVAL_3_MIN,
+                    CANDLE_INTERVAL_5_MIN,
+                    CANDLE_INTERVAL_10_MIN,
+                    CANDLE_INTERVAL_15_MIN,
+                    CANDLE_INTERVAL_30_MIN,
+                    CANDLE_INTERVAL_HOUR,
+                    CANDLE_INTERVAL_2_HOUR,
+                    CANDLE_INTERVAL_4_HOUR -> ChronoUnit.DAYS;
+
+            case CANDLE_INTERVAL_DAY,
+                    CANDLE_INTERVAL_WEEK,
+                    CANDLE_INTERVAL_MONTH -> ChronoUnit.YEARS;
+
+            case UNRECOGNIZED, CANDLE_INTERVAL_UNSPECIFIED -> throw new IllegalArgumentException("Unsupported CandleInterval " + candleInterval);
+        };
     }
 
     /**

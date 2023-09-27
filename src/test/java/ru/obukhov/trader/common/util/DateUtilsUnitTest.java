@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
@@ -21,7 +22,6 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -277,18 +277,39 @@ class DateUtilsUnitTest {
 
     // region getPeriodUnitByCandleInterval tests
 
-    @Test
-    void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.CANDLE_INTERVAL_HOUR);
-
-        Assertions.assertEquals(ChronoUnit.DAYS, unit);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetPeriodUnitByCandleInterval() {
+        return Stream.of(
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_1_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_2_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_3_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_5_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_10_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_15_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_30_MIN, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_HOUR, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_2_HOUR, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_4_HOUR, ChronoUnit.DAYS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_DAY, ChronoUnit.YEARS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_WEEK, ChronoUnit.YEARS),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_MONTH, ChronoUnit.YEARS)
+        );
     }
 
-    @Test
-    void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.CANDLE_INTERVAL_DAY);
+    @ParameterizedTest
+    @MethodSource("getData_forGetPeriodUnitByCandleInterval")
+    void getPeriodUnitByCandleInterval(final CandleInterval candleInterval, final ChronoUnit expectedResult) {
+        final ChronoUnit actualResult = DateUtils.getPeriodByCandleInterval(candleInterval);
 
-        Assertions.assertEquals(ChronoUnit.YEARS, unit);
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = CandleInterval.class, names = {"UNRECOGNIZED", "CANDLE_INTERVAL_UNSPECIFIED"})
+    void getPeriodUnitByCandleInterval_throwIllegalArgumentException_whenCandleIntervalIsNotSupported(final CandleInterval candleInterval) {
+        final Executable executable = () -> System.out.println(DateUtils.getPeriodByCandleInterval(candleInterval));
+        final String expectedMessage = "Unsupported CandleInterval " + candleInterval;
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
