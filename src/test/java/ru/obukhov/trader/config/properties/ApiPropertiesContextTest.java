@@ -24,7 +24,7 @@ class ApiPropertiesContextTest {
 
                     Assertions.assertEquals("http://localhost", apiProperties.host());
                     Assertions.assertEquals(8081, apiProperties.port());
-                    Assertions.assertEquals(100, apiProperties.throttlingInterval());
+                    Assertions.assertEquals(1000, apiProperties.throttlingInterval());
                 });
     }
 
