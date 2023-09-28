@@ -17,6 +17,7 @@ import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.PositionUtils;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
@@ -32,6 +33,7 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -142,9 +144,10 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, interval.getFrom());
+        final Interval effectiveInterval = getEffectiveInterval(botConfig, interval);
+        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, effectiveInterval.getFrom());
 
-        final List<Candle> candles = extMarketDataService.getMarketCandles(botConfig.figi(), interval, botConfig.candleInterval());
+        final List<Candle> candles = extMarketDataService.getMarketCandles(botConfig.figi(), effectiveInterval, botConfig.candleInterval());
         OffsetDateTime previousStartTime = null;
 
         do {
@@ -155,10 +158,26 @@ public class BackTesterImpl implements BackTester {
                 previousStartTime = currentCandles.get(0).getTime();
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, interval.getTo());
-        } while (fakeBot.getCurrentDateTime() != null && fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
+            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, effectiveInterval.getTo());
+        } while (fakeBot.getCurrentDateTime() != null && fakeBot.getCurrentDateTime().isBefore(effectiveInterval.getTo()));
 
-        return createSucceedBackTestResult(botConfig, interval, candles, fakeBot);
+        return createSucceedBackTestResult(botConfig, effectiveInterval, candles, fakeBot);
+    }
+
+    private Interval getEffectiveInterval(final BotConfig botConfig, final Interval interval) {
+        final Instrument instrument = extInstrumentsService.getInstrument(botConfig.figi());
+        final ChronoUnit chronoUnit = DateUtils.getPeriodByCandleInterval(botConfig.candleInterval());
+        final OffsetDateTime firstCandleDate = chronoUnit == ChronoUnit.DAYS ? instrument.first1MinCandleDate() : instrument.first1DayCandleDate();
+        if (interval.getFrom().isBefore(firstCandleDate)) {
+            final Interval effectiveInterval = Interval.of(firstCandleDate, interval.getTo());
+
+            final String format = "First candle of instrument {} starts on {}. Effective interval for back test is {}";
+            log.info(format, botConfig.figi(), firstCandleDate, effectiveInterval);
+
+            return effectiveInterval;
+        } else {
+            return interval;
+        }
     }
 
     private void moveToNextMinuteAndApplyBalanceIncrement(

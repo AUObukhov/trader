@@ -16,6 +16,7 @@ import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -127,7 +128,11 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final String figi = TestShares.APPLE.share().figi();
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
+
+        Mocker.mockInstrument(extInstrumentsService, testShare.instrument());
+
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
@@ -177,6 +182,12 @@ class BackTesterImplUnitTest {
 
         // arrange
 
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
+
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -195,11 +206,10 @@ class BackTesterImplUnitTest {
         final double finalPrice1 = 1004.0;
         prices1.put(from.plusMinutes(50), finalPrice1);
 
-        final TestShare testShare1 = TestShares.APPLE;
-
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
                 testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
                 interval,
@@ -223,7 +233,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.SBER.share(),
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
                 interval,
@@ -293,7 +304,6 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_callsAddInvestment() {
-
         // arrange
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
@@ -307,6 +317,7 @@ class BackTesterImplUnitTest {
 
         final String accountId1 = TestAccounts.TINKOFF.account().id();
         final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
         final String figi1 = testShare1.share().figi();
         final String currency1 = testShare1.share().currency();
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
@@ -320,7 +331,11 @@ class BackTesterImplUnitTest {
 
         final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(2000);
 
-        final BotConfig botConfig1 = new BotConfig(accountId1, figi1, null, commission1, null, null);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+        final BotConfig botConfig1 = new BotConfig(accountId1, figi1, candleInterval, commission1, null, null);
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
         Mockito.when(fakeBot1.getShare(figi1)).thenReturn(testShare1.share());
@@ -334,7 +349,6 @@ class BackTesterImplUnitTest {
         mockPortfolioPosition(fakeBot1, accountId1, figi1, 500, 1);
 
         final String accountId2 = TestAccounts.IIS.account().id();
-        final TestShare testShare2 = TestShares.SBER;
         final String figi2 = testShare2.share().figi();
         final String currency2 = testShare2.share().currency();
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
@@ -348,7 +362,8 @@ class BackTesterImplUnitTest {
 
         final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(2000);
 
-        final BotConfig botConfig2 = new BotConfig(accountId2, figi2, null, commission2, null, null);
+
+        final BotConfig botConfig2 = new BotConfig(accountId2, figi2, candleInterval, commission2, null, null);
 
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
         Mockito.when(fakeBot2.getShare(figi2)).thenReturn(testShare2.share());
@@ -392,11 +407,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_fillsPositions() {
-
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -417,7 +434,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
                 interval,
@@ -432,7 +450,8 @@ class BackTesterImplUnitTest {
         final double currentPrice2 = 5000.0;
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share2,
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
                 interval,
@@ -452,8 +471,8 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertPosition(backTestResults.get(0), share2.figi(), currentPrice2, quantity2);
-        assertPosition(backTestResults.get(1), share1.figi(), currentPrice1, quantity1);
+        assertPosition(backTestResults.get(0), testShare2.share().figi(), currentPrice2, quantity2);
+        assertPosition(backTestResults.get(1), testShare1.share().figi(), currentPrice1, quantity1);
     }
 
     private void assertPosition(final BackTestResult backTestResult, final String figi, final double currentPrice, final int quantity) {
@@ -468,11 +487,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_fillsOperations() {
-
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -481,7 +502,7 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final String figi1 = share1.figi();
+        final String figi1 = testShare1.share().figi();
         final double commission1 = 0.003;
 
         final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(20000);
@@ -494,7 +515,7 @@ class BackTesterImplUnitTest {
         final int operationQuantity1 = 2;
         final Operation operation1 = TestData.newOperation(operationDateTime1, operationType1, operationPrice1, operationQuantity1, figi1);
 
-        final String figi2 = share2.figi();
+        final String figi2 = testShare2.share().figi();
         final double commission2 = 0.001;
 
         final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(10000);
@@ -509,7 +530,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
                 balanceConfig,
                 interval,
@@ -522,7 +544,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share2,
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission2,
                 balanceConfig,
                 interval,
@@ -571,11 +594,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_fillsCandles() {
-
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -593,7 +618,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
                 interval,
@@ -612,7 +638,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share2,
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
                 interval,
@@ -652,8 +679,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsAlwaysNullOrEmpty() {
-
         // arrange
+
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -664,7 +696,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share(),
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
                 interval,
@@ -677,7 +710,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.SBER.share(),
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
                 interval,
@@ -708,11 +742,121 @@ class BackTesterImplUnitTest {
     }
 
     @Test
+    void test_adjustsInterval_whenFirstCandleIsAfterFrom_andCandleIntervalIs1Min() {
+        // arrange
+
+        final TestShare testShare1 = TestShares.APPLE;
+        final Instrument instrument = testShare1.instrument();
+
+        Mocker.mockInstrument(extInstrumentsService, instrument);
+
+        final OffsetDateTime from = instrument.first1MinCandleDate().minusDays(1);
+        final OffsetDateTime to = instrument.first1MinCandleDate().plusDays(1);
+        final Interval interval = Interval.of(from, to);
+        final Interval effectiveInterval = Interval.of(instrument.first1MinCandleDate(), to);
+
+        final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(1), 100.0);
+        prices1.put(from.plusMinutes(2), 200.0);
+        prices1.put(from.plusMinutes(3), 300.0);
+        prices1.put(from.plusMinutes(4), 400.0);
+        prices1.put(from.plusMinutes(5), 500.0);
+
+        final BotConfig botConfig1 = arrangeBackTest(
+                TestAccounts.TINKOFF.account().id(),
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                balanceConfig,
+                effectiveInterval,
+                DecimalUtils.setDefaultScale(20000L),
+                1,
+                prices1,
+                500,
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1);
+
+        // act
+
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
+
+        // assert
+
+        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertNull(backTestResults.get(0).error());
+
+        final Interval expectedInterval = Interval.of(instrument.first1MinCandleDate(), to);
+        Assertions.assertEquals(expectedInterval, backTestResults.get(0).interval());
+    }
+
+    @Test
+    void test_adjustsInterval_whenFirstCandleIsAfterFrom_andCandleIntervalIs1Day() {
+        // arrange
+
+        final TestShare testShare1 = TestShares.APPLE;
+        final Instrument instrument = testShare1.instrument();
+
+        Mocker.mockInstrument(extInstrumentsService, instrument);
+
+        final OffsetDateTime from = instrument.first1DayCandleDate().minusDays(1);
+        final OffsetDateTime to = instrument.first1DayCandleDate().plusDays(1);
+        final Interval interval = Interval.of(from, to);
+        final Interval effectiveInterval = Interval.of(instrument.first1DayCandleDate(), to);
+
+        final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
+
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(1), 100.0);
+        prices1.put(from.plusMinutes(2), 200.0);
+        prices1.put(from.plusMinutes(3), 300.0);
+        prices1.put(from.plusMinutes(4), 400.0);
+        prices1.put(from.plusMinutes(5), 500.0);
+
+        final BotConfig botConfig1 = arrangeBackTest(
+                TestAccounts.TINKOFF.account().id(),
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_DAY,
+                0.003,
+                balanceConfig,
+                effectiveInterval,
+                DecimalUtils.setDefaultScale(20000L),
+                1,
+                prices1,
+                500,
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1);
+
+        // act
+
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
+
+        // assert
+
+        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertNull(backTestResults.get(0).error());
+
+        final Interval expectedInterval = Interval.of(instrument.first1DayCandleDate(), to);
+        Assertions.assertEquals(expectedInterval, backTestResults.get(0).interval());
+    }
+
+    @Test
     void test_callsSaveToFile_whenSaveToFilesIsTrue() {
 
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -728,12 +872,13 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                share1.figi()
+                testShare1.share().figi()
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
                 balanceConfig,
                 interval,
@@ -746,7 +891,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.SBER.share(),
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
                 interval,
@@ -778,7 +924,11 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -794,12 +944,13 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                share1.figi()
+                testShare1.share().figi()
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
                 balanceConfig,
                 interval,
@@ -812,7 +963,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.SBER.share(),
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
                 interval,
@@ -841,10 +993,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_returnsZeroInvestmentsAndProfits_whenNoInvestments() {
-
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -860,11 +1015,12 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                share1.figi()
+                testShare1.share().figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
                 balanceConfig,
                 interval,
@@ -877,7 +1033,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 null,
-                TestShares.SBER.share(),
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
                 interval,
@@ -912,8 +1069,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_catchesBackTestException() {
-
         // arrange
+
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -922,7 +1084,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(10000.0, 1000.0);
 
         final String accountId1 = TestAccounts.TINKOFF.account().id();
-        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi1 = testShare1.share().figi();
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
@@ -936,7 +1098,7 @@ class BackTesterImplUnitTest {
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
         final String accountId2 = TestAccounts.IIS.account().id();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi2 = testShare2.share().figi();
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
         final StrategyType strategyType2 = StrategyType.CROSS;
@@ -976,10 +1138,13 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_catchesSaveToFileException_andFinishesBackTestsSuccessfully() {
-
         // arrange
 
-        final Share share1 = TestShares.APPLE.share();
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+
+        Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
+        Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
@@ -995,11 +1160,12 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                share1.figi()
+                testShare1.share().figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                share1,
+                testShare1.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
                 balanceConfig,
                 interval,
@@ -1012,7 +1178,8 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.SBER.share(),
+                testShare2.share(),
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
                 interval,
@@ -1044,6 +1211,7 @@ class BackTesterImplUnitTest {
     private BotConfig arrangeBackTest(
             final String accountId,
             final Share share,
+            final CandleInterval candleInterval,
             final double commission,
             final BalanceConfig balanceConfig,
             final Interval interval,
@@ -1056,7 +1224,8 @@ class BackTesterImplUnitTest {
         final String figi = share.figi();
         final String currency = share.currency();
 
-        final BotConfig botConfig = new BotConfig(accountId, figi, null, DecimalUtils.setDefaultScale(commission), null, null);
+        final BigDecimal decimalCommission = DecimalUtils.setDefaultScale(commission);
+        final BotConfig botConfig = new BotConfig(accountId, figi, candleInterval, decimalCommission, null, null);
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 

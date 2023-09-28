@@ -8,6 +8,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
@@ -16,7 +17,6 @@ import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
-import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -77,7 +77,7 @@ public class Mocker {
     }
 
     public static void mockTickerByFigi(final InstrumentsService instrumentsService, final String ticker, final String figi) {
-        final Instrument instrument = Instrument.newBuilder().setTicker(ticker).build();
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = ru.tinkoff.piapi.contract.v1.Instrument.newBuilder().setTicker(ticker).build();
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(instrument);
     }
 
@@ -107,9 +107,16 @@ public class Mocker {
 
     public static void mockInstrument(
             final InstrumentsService instrumentsService,
-            final Instrument instrument
+            final ru.tinkoff.piapi.contract.v1.Instrument instrument
     ) {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument);
+    }
+
+    public static void mockInstrument(
+            final ExtInstrumentsService instrumentsService,
+            final Instrument instrument
+    ) {
+        Mockito.when(instrumentsService.getInstrument(instrument.figi())).thenReturn(instrument);
     }
 
     public static void mockShare(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Share share) {
