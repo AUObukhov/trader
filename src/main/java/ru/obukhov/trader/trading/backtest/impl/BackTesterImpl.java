@@ -147,7 +147,7 @@ public class BackTesterImpl implements BackTester {
         final Interval effectiveInterval = getEffectiveInterval(botConfig, interval);
         final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, effectiveInterval.getFrom());
 
-        final List<Candle> candles = extMarketDataService.getMarketCandles(botConfig.figi(), effectiveInterval, botConfig.candleInterval());
+        final List<Candle> candles = extMarketDataService.getCandles(botConfig.figi(), effectiveInterval, botConfig.candleInterval());
         OffsetDateTime previousStartTime = null;
 
         do {

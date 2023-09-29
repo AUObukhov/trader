@@ -1274,7 +1274,7 @@ class BackTesterImplUnitTest {
         final List<Candle> candles = prices.entrySet().stream()
                 .map(entry -> new CandleBuilder().setOpen(entry.getValue()).setTime(entry.getKey()).build())
                 .toList();
-        Mockito.when(extMarketDataService.getMarketCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.nullable(CandleInterval.class)))
+        Mockito.when(extMarketDataService.getCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.nullable(CandleInterval.class)))
                 .thenReturn(candles);
     }
 
