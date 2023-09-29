@@ -66,7 +66,7 @@ class BotUnitTest {
         final String figi = TestShares.APPLE.share().figi();
 
         final List<OrderState> orders = List.of(TestOrderStates.ORDER_STATE1.orderState());
-        Mockito.when(ordersService.getOrders(figi)).thenReturn(orders);
+        Mockito.when(ordersService.getOrders(accountId)).thenReturn(orders);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -92,7 +92,7 @@ class BotUnitTest {
 
         final String figi = TestShares.APPLE.share().figi();
 
-        Mocker.mockEmptyOrder(ordersService, figi);
+        Mocker.mockEmptyOrder(ordersService, accountId);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,

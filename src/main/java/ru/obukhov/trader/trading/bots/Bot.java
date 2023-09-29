@@ -75,7 +75,7 @@ public abstract class Bot {
         final DecisionData decisionData = new DecisionData();
 
         final String figi = botConfig.figi();
-        final List<OrderState> orders = ordersService.getOrders(figi);
+        final List<OrderState> orders = ordersService.getOrders(botConfig.accountId());
         if (orders.isEmpty()) {
             final List<Candle> currentCandles = getCurrentCandles(candles);
 
