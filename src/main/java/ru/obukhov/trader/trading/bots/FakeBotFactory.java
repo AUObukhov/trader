@@ -93,7 +93,7 @@ public class FakeBotFactory {
 
         // adding balance increments which were skipped by moving to ceiling work time above
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
-        if (balanceIncrementCron != null) {
+        if (balanceIncrementCron != null && !currentDateTime.isEqual(ceilingWorkDateTime)) {
             final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, ceilingWorkDateTime)
                     .size();
             if (incrementsCount > 0) {

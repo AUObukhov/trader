@@ -110,15 +110,32 @@ class FakeBotFactoryUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateBot_initializesBalance() {
         return Stream.of(
-                Arguments.of(TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"), 1001000.0),
-                Arguments.of(TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"), 1000000.0),
-                Arguments.of(TestData.newBalanceConfig(1000000.0), 1000000.0)
+                Arguments.of(
+                        TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"),
+                        DateTimeTestData.newDateTime(2023, 9, 1),
+                        1001000.0
+                ),
+                Arguments.of(
+                        TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"),
+                        DateTimeTestData.newDateTime(2023, 9, 1, 7),
+                        1000000.0
+                ),
+                Arguments.of(
+                        TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"),
+                        DateTimeTestData.newDateTime(2023, 9, 1),
+                        1000000.0
+                ),
+                Arguments.of(
+                        TestData.newBalanceConfig(1000000.0),
+                        DateTimeTestData.newDateTime(2023, 9, 1),
+                        1000000.0
+                )
         );
     }
 
     @ParameterizedTest
     @MethodSource(value = "getData_forCreateBot_initializesBalance")
-    void createBot_initializesBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
+    void createBot_initializesBalance(final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime, final double expectedBalance) {
         final Share share = TestShares.APPLE.share();
         final String figi = share.figi();
         final String currency = share.currency();
@@ -130,8 +147,6 @@ class FakeBotFactoryUnitTest {
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
-
-        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 10, 1);
 
         mockCurrency(figi, currency);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
