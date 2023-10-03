@@ -65,30 +65,21 @@ public abstract class Bot {
     /**
      * Perform one trading step
      *
-     * @param botConfig         bot configuration
-     * @param candles           all candles for back testing interval ordered by time
-     * @param previousStartTime timestamp of previous call of the method. Null for the first call.
-     *                          Used to prevent repeated processing when no new candle
+     * @param botConfig bot configuration
+     * @param candles   all candles for back testing interval ordered by time
      * @return list of last candles
      */
-    public List<Candle> processBotConfig(final BotConfig botConfig, final List<Candle> candles, final OffsetDateTime previousStartTime) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final List<Candle> candles) {
         final DecisionData decisionData = new DecisionData();
 
         final String figi = botConfig.figi();
         final List<OrderState> orders = ordersService.getOrders(botConfig.accountId());
         if (orders.isEmpty()) {
             final List<Candle> currentCandles = getCurrentCandles(candles);
-
-            if (currentCandles.isEmpty()) {
-                log.info("There are no candles by FIGI '{}'. Do nothing", figi);
-            } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
-                log.debug("Candles scope already processed for FIGI '{}'. Do nothing", figi);
-            } else {
-                decisionData.setCurrentCandles(currentCandles);
-                fillDecisionData(botConfig, decisionData, figi);
-                final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(botConfig.accountId(), figi, decision);
-            }
+            decisionData.setCurrentCandles(currentCandles);
+            fillDecisionData(botConfig, decisionData, figi);
+            final Decision decision = strategy.decide(decisionData, strategyCache);
+            performOperation(botConfig.accountId(), figi, decision);
             return currentCandles;
         } else {
             log.info("There are not completed orders by FIGI '{}'. Do nothing", figi);

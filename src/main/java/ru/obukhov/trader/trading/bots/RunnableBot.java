@@ -51,7 +51,7 @@ public class RunnableBot extends Bot implements Runnable {
         try {
             final OffsetDateTime currentDateTime = OffsetDateTime.now();
             final List<Candle> candles = extMarketDataService.getLastCandles(figi, LAST_CANDLES_COUNT, botConfig.candleInterval(), currentDateTime);
-            processBotConfig(botConfig, candles, null);
+            processBotConfig(botConfig, candles);
         } catch (final Exception exception) {
             log.error("Failed to process botConfig {}", botConfig, exception);
         }

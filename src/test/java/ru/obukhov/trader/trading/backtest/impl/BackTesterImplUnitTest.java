@@ -144,7 +144,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, from);
 
         final String exceptionMessage = "exception message";
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList(), Mockito.isNull()))
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList()))
                 .thenThrow(new IllegalArgumentException(exceptionMessage));
 
         // act
@@ -1257,7 +1257,7 @@ class BackTesterImplUnitTest {
     }
 
     private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList(), Mockito.nullable(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList()))
                 .thenAnswer(invocation -> {
                     final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
                     if (prices.containsKey(currentDateTime)) {

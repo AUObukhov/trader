@@ -38,7 +38,6 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,7 +77,7 @@ class BotUnitTest {
         );
 
         final List<Candle> allCandles = TestData.newCandles(List.of(1, 2, 3), OffsetDateTime.now());
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles);
 
         Assertions.assertTrue(candles.isEmpty());
 
@@ -104,55 +103,7 @@ class BotUnitTest {
         );
 
         final List<Candle> allCandles = TestData.newCandles(List.of(1, 2, 3), OffsetDateTime.now());
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
-
-        Assertions.assertNotNull(candles);
-
-        Mocker.verifyNoOrdersMade(ordersService);
-    }
-
-    @Test
-    void processBotConfig_doesNoOrder_whenCurrentCandlesIsEmpty() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
-        final String figi = TestShares.APPLE.share().figi();
-
-        final BotConfig botConfig = new BotConfig(
-                accountId,
-                figi,
-                CandleInterval.CANDLE_INTERVAL_1_MIN,
-                null,
-                null,
-                null
-        );
-
-        final List<Candle> allCandles = Collections.emptyList();
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
-
-        Assertions.assertNotNull(candles);
-
-        Mocker.verifyNoOrdersMade(ordersService);
-    }
-
-    @Test
-    void processBotConfig_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
-        final String figi = TestShares.APPLE.share().figi();
-
-        final OffsetDateTime previousStartTime = OffsetDateTime.now();
-        final Candle candle = new Candle().setTime(previousStartTime);
-        Mocker.mockCurrentDateTime(context);
-
-        final BotConfig botConfig = new BotConfig(
-                accountId,
-                figi,
-                CandleInterval.CANDLE_INTERVAL_1_MIN,
-                null,
-                null,
-                null
-        );
-
-        final List<Candle> allCandles = List.of(candle);
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, previousStartTime);
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles);
 
         Assertions.assertNotNull(candles);
 
@@ -187,7 +138,7 @@ class BotUnitTest {
                 new Candle().setTime(currentDateTime),
                 new Candle().setTime(currentDateTime.plusMinutes(1))
         );
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles, null);
+        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles);
 
         Assertions.assertNotNull(candles);
 
@@ -240,7 +191,7 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles, null);
+        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles);
 
         final List<Candle> expectedResult = List.of(candle);
         AssertUtils.assertEquals(expectedResult, actualCandles);
@@ -300,7 +251,7 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles, null);
+        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles);
 
         final List<Candle> expectedResult = List.of(candle);
         AssertUtils.assertEquals(expectedResult, actualCandles);
