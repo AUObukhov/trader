@@ -2,25 +2,20 @@ package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.market.model.Account;
 import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
-import ru.tinkoff.piapi.core.UsersService;
 
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
-class ExtUsersServiceUnitTest {
+@SpringBootTest
+class ExtUsersServiceIntegrationTest extends IntegrationTest {
 
-    @Mock
-    private UsersService usersService;
-
-    @InjectMocks
+    @Autowired
     private ExtUsersService extUsersService;
 
     @Test
