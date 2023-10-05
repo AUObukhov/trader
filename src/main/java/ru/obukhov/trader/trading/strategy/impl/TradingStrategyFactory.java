@@ -30,8 +30,8 @@ public class TradingStrategyFactory {
     public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
         final StrategyType strategyType = botConfig.strategyType();
         return switch (strategyType) {
-            case CONSERVATIVE -> new ConservativeStrategy(strategyType.getValue());
-            case CROSS -> createCrossStrategy(strategyType.getValue(), botConfig.strategyParams());
+            case CONSERVATIVE -> new ConservativeStrategy(strategyType.name());
+            case CROSS -> createCrossStrategy(strategyType.name(), botConfig.strategyParams());
         };
     }
 

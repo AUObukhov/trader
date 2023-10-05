@@ -54,7 +54,7 @@ public class TestData {
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
-    public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
+    public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.name());
 
     // region DecisionData creation
 
