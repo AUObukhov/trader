@@ -3,10 +3,8 @@ package ru.obukhov.trader.test.utils.model;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
@@ -320,15 +318,6 @@ public class TestData {
      */
     public static WorkSchedule newWorkSchedule(final int hour, final int durationHours) {
         return new WorkSchedule(DateTimeTestData.newTime(hour), Duration.ofHours(durationHours));
-    }
-
-    /**
-     * @return new Interval where {@code from} is start of given {@code dateTime} and {@code to} is end of given {@code dateTime}
-     */
-    public static Interval newIntervalOfDay(@NotNull final OffsetDateTime dateTime) {
-        final OffsetDateTime from = DateUtils.toStartOfDay(dateTime);
-        final OffsetDateTime to = DateUtils.toEndOfDay(from);
-        return Interval.of(from, to);
     }
 
     public static LastPrice newLastPrice(final String figi, final double price) {
