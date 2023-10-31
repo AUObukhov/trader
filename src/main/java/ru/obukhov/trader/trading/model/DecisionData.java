@@ -2,8 +2,6 @@ package ru.obukhov.trader.trading.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.springframework.util.CollectionUtils;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Share;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
@@ -17,7 +15,6 @@ public class DecisionData {
 
     private BigDecimal balance;
     private Position position;
-    private List<Candle> currentCandles;
     private List<Operation> lastOperations;
     private Share share;
     private BigDecimal commission;
@@ -28,16 +25,6 @@ public class DecisionData {
 
     public BigDecimal getAveragePositionPrice() {
         return position.getAveragePositionPrice().getValue();
-    }
-
-    public BigDecimal getCurrentPrice() {
-        return CollectionUtils.isEmpty(currentCandles)
-                ? null
-                : currentCandles.get(currentCandles.size() - 1).getOpen();
-    }
-
-    public int getLotSize() {
-        return share.lot();
     }
 
 }

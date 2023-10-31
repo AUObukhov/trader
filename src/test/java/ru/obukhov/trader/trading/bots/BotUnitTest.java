@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.bots;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,16 +9,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
@@ -60,7 +59,7 @@ class BotUnitTest {
     private TestBot bot;
 
     @Test
-    void processBotConfig_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
+    void processBotConfig_doesNothing_whenThereAreOrders() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
 
@@ -76,10 +75,9 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> allCandles = TestData.newCandles(List.of(1, 2, 3), OffsetDateTime.now());
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles);
-
-        Assertions.assertTrue(candles.isEmpty());
+        final OffsetDateTime now = OffsetDateTime.now();
+        final Interval interval = Interval.of(now.minusMinutes(3), now);
+        bot.processBotConfig(botConfig, interval);
 
         Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
         Mocker.verifyNoOrdersMade(ordersService);
@@ -102,10 +100,9 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> allCandles = TestData.newCandles(List.of(1, 2, 3), OffsetDateTime.now());
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles);
-
-        Assertions.assertNotNull(candles);
+        final OffsetDateTime now = OffsetDateTime.now();
+        final Interval interval = Interval.of(now.minusMinutes(3), now);
+        bot.processBotConfig(botConfig, interval);
 
         Mocker.verifyNoOrdersMade(ordersService);
     }
@@ -119,9 +116,13 @@ class BotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, share);
 
+        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
+                .thenReturn(balance);
+
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.anyLong(), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
         final BotConfig botConfig = new BotConfig(
@@ -133,22 +134,22 @@ class BotUnitTest {
                 null
         );
 
-        final List<Candle> allCandles = List.of(
-                new Candle().setTime(currentDateTime.minusMinutes(1)),
-                new Candle().setTime(currentDateTime),
-                new Candle().setTime(currentDateTime.plusMinutes(1))
-        );
-        final List<Candle> candles = bot.processBotConfig(botConfig, allCandles);
+        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
-        Assertions.assertNotNull(candles);
+        final Interval interval = Interval.of(
+                DateTimeTestData.newDateTime(2023, 9, 10),
+                DateTimeTestData.newDateTime(2023, 9, 11)
+        );
+
+        bot.processBotConfig(botConfig, interval);
 
         Mockito.verify(strategy, Mockito.times(1))
-                .decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class));
+                .decide(Mockito.any(DecisionData.class), Mockito.anyLong(), Mockito.nullable(StrategyCache.class));
         Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    void processBotConfig_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
+    void processBotConfig_placesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.APPLE.share();
         final String figi = share.figi();
@@ -171,16 +172,11 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final Candle candle = new Candle().setTime(currentDateTime.minusMinutes(1));
-        final List<Candle> allCandles = List.of(
-                candle,
-                new Candle().setTime(currentDateTime),
-                new Candle().setTime(currentDateTime.plusMinutes(1))
-        );
-
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.anyLong(), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
+
+        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -190,11 +186,12 @@ class BotUnitTest {
                 null,
                 null
         );
+        final Interval interval = Interval.of(
+                DateTimeTestData.newDateTime(2023, 9, 10),
+                DateTimeTestData.newDateTime(2023, 9, 11)
+        );
 
-        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles);
-
-        final List<Candle> expectedResult = List.of(candle);
-        AssertUtils.assertEquals(expectedResult, actualCandles);
+        bot.processBotConfig(botConfig, interval);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(
@@ -209,7 +206,7 @@ class BotUnitTest {
     }
 
     @Test
-    void processBotConfig_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
+    void processBotConfig_placesSellOrder_whenDecisionIsSell() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
@@ -229,18 +226,13 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
-        final Candle candle = new Candle().setTime(currentDateTime.minusMinutes(1));
-        final List<Candle> allCandles = List.of(
-                candle,
-                new Candle().setTime(currentDateTime),
-                new Candle().setTime(currentDateTime.plusMinutes(1))
-        );
-
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.anyLong(), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
+
+        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -250,11 +242,11 @@ class BotUnitTest {
                 null,
                 null
         );
-
-        final List<Candle> actualCandles = bot.processBotConfig(botConfig, allCandles);
-
-        final List<Candle> expectedResult = List.of(candle);
-        AssertUtils.assertEquals(expectedResult, actualCandles);
+        final Interval interval = Interval.of(
+                DateTimeTestData.newDateTime(2023, 9, 10),
+                DateTimeTestData.newDateTime(2023, 9, 11)
+        );
+        bot.processBotConfig(botConfig, interval);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(
@@ -268,15 +260,13 @@ class BotUnitTest {
                 );
     }
 
-    private static final class TestStrategyCache implements StrategyCache {
-    }
-
     private static class TestBot extends Bot {
         public TestBot(
                 final ExtMarketDataService extMarketDataService,
                 final ExtInstrumentsService extInstrumentsService,
                 final ExtOperationsService operationsService,
                 final ExtOrdersService ordersService,
+                final ExtUsersService usersService,
                 final Context context,
                 final TradingStrategy strategy
         ) {
@@ -285,9 +275,9 @@ class BotUnitTest {
                     extInstrumentsService,
                     operationsService,
                     ordersService,
+                    usersService,
                     context,
-                    strategy,
-                    new TestStrategyCache()
+                    strategy
             );
         }
     }

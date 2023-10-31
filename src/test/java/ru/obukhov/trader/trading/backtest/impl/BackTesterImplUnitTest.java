@@ -144,8 +144,8 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, from);
 
         final String exceptionMessage = "exception message";
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList()))
-                .thenThrow(new IllegalArgumentException(exceptionMessage));
+        Mockito.doThrow(new IllegalArgumentException(exceptionMessage))
+                .when(fakeBot).processBotConfig(Mockito.eq(botConfig), Mockito.any(Interval.class));
 
         // act
 
@@ -1257,17 +1257,16 @@ class BackTesterImplUnitTest {
     }
 
     private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.anyList()))
-                .thenAnswer(invocation -> {
-                    final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
-                    if (prices.containsKey(currentDateTime)) {
-                        final double close = prices.get(currentDateTime);
-                        final Candle candle = new CandleBuilder().setClose(close).setTime(currentDateTime.minusMinutes(1)).build();
-                        return List.of(candle);
-                    } else {
-                        return Collections.emptyList();
-                    }
-                });
+        Mockito.doAnswer(invocation -> {
+            final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
+            if (prices.containsKey(currentDateTime)) {
+                final double close = prices.get(currentDateTime);
+                final Candle candle = new CandleBuilder().setClose(close).setTime(currentDateTime.minusMinutes(1)).build();
+                return List.of(candle);
+            } else {
+                return Collections.emptyList();
+            }
+        }).when(fakeBot).processBotConfig(Mockito.eq(botConfig), Mockito.any(Interval.class));
     }
 
     private void mockMarketCandles(final String figi, final Map<OffsetDateTime, Double> prices) {

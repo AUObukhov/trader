@@ -3,14 +3,14 @@ package ru.obukhov.trader.trading.bots;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.CollectionsUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.trading.model.Decision;
@@ -24,8 +24,8 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,65 +42,56 @@ public abstract class Bot {
     protected final ExtInstrumentsService extInstrumentsService;
     protected final ExtOperationsService extOperationsService;
     protected final ExtOrdersService ordersService;
+    protected final ExtUsersService usersService;
     protected final Context context;
 
     protected final TradingStrategy strategy;
-    protected final StrategyCache strategyCache;
 
-    protected Bot(
-            final ServicesContainer services,
-            final Context context,
-            final TradingStrategy strategy,
-            final StrategyCache strategyCache
-    ) {
+    protected Bot(final ServicesContainer services, final Context context, final TradingStrategy strategy) {
         this.extMarketDataService = services.extMarketDataService();
         this.extInstrumentsService = services.extInstrumentsService();
         this.extOperationsService = services.extOperationsService();
         this.ordersService = services.extOrdersService();
+        this.usersService = services.extUsersService();
         this.context = context;
         this.strategy = strategy;
-        this.strategyCache = strategyCache;
     }
 
     /**
      * Perform one trading step
      *
      * @param botConfig bot configuration
-     * @param candles   all candles for back testing interval ordered by time
-     * @return list of last candles
+     * @param interval  interval of cached data for strategy
      */
-    public List<Candle> processBotConfig(final BotConfig botConfig, final List<Candle> candles) {
-        final DecisionData decisionData = new DecisionData();
-
+    public void processBotConfig(final BotConfig botConfig, final Interval interval) {
         final String figi = botConfig.figi();
         final List<OrderState> orders = ordersService.getOrders(botConfig.accountId());
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = getCurrentCandles(candles);
-            decisionData.setCurrentCandles(currentCandles);
-            fillDecisionData(botConfig, decisionData, figi);
-            final Decision decision = strategy.decide(decisionData, strategyCache);
+            final Share share = extInstrumentsService.getShare(figi);
+            final BigDecimal availableBalance = extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency());
+            final DecisionData decisionData = prepareDecisionData(botConfig, share, availableBalance);
+            final long availableLots = getAvailableLots(botConfig, availableBalance);
+            final StrategyCache strategyCache = strategy.initCache(botConfig, interval);
+            final Decision decision = strategy.decide(decisionData, availableLots, strategyCache);
             performOperation(botConfig.accountId(), figi, decision);
-            return currentCandles;
         } else {
             log.info("There are not completed orders by FIGI '{}'. Do nothing", figi);
-            return Collections.emptyList();
         }
     }
 
-    private List<Candle> getCurrentCandles(List<Candle> candles) {
-        final OffsetDateTime currentDateTime = context.getCurrentDateTime();
-        final Candle keyCandle = new Candle().setTime(currentDateTime);
-        return CollectionsUtils.filterOrderedList(candles, keyCandle, Candle::getTime);
-    }
-
-    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String figi) {
-        final Share share = extInstrumentsService.getShare(figi);
-
-        decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency()));
-        decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), figi));
-        decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), figi));
+    private DecisionData prepareDecisionData(final BotConfig botConfig, final Share share, final BigDecimal availableBalance) {
+        final DecisionData decisionData = new DecisionData();
+        decisionData.setBalance(availableBalance);
+        decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), share.figi()));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), share.figi()));
         decisionData.setShare(share);
         decisionData.setCommission(botConfig.commission());
+        return decisionData;
+    }
+
+    private long getAvailableLots(final BotConfig botConfig, final BigDecimal availableBalance) {
+        final BigDecimal currentPrice = extMarketDataService.getLastPrice(botConfig.figi(), context.getCurrentDateTime());
+        return DecimalUtils.divide(availableBalance, currentPrice).longValue();
     }
 
     private List<Operation> getLastWeekOperations(final String accountId, final String figi) {

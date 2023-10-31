@@ -12,7 +12,6 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * Abstract strategy with some common methods
@@ -32,9 +31,8 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return decision to buy all available lots or decision to wait if no lots available
      */
-    protected Decision getBuyOrWaitDecision(final DecisionData data, final StrategyCache strategyCache) {
+    protected Decision getBuyOrWaitDecision(final DecisionData data, final long availableLots, final StrategyCache strategyCache) {
         Decision decision;
-        final long availableLots = getAvailableLots(data);
         if (availableLots > 0) {
             decision = new Decision(DecisionAction.BUY, availableLots, strategyCache);
             log.debug(
@@ -54,24 +52,18 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         return decision;
     }
 
-    private long getAvailableLots(final DecisionData data) {
-        final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, data.getCommission());
-        return data.getBalance().divide(currentLotPriceWithCommission, RoundingMode.DOWN).longValue();
-    }
-
     /**
      * @return decision to sell all position if it is profitable with commission
      * or decision to wait otherwise
      */
-    protected Decision getSellOrWaitDecision(final DecisionData data, final Float minimumProfit, final StrategyCache strategyCache) {
+    protected Decision getSellOrWaitDecision(final DecisionData data, final BigDecimal currentPrice, final Float minimumProfit, final StrategyCache strategyCache) {
         Decision decision;
 
         if (minimumProfit < 0) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Minimum profit {} is negative. Decision is {}", minimumProfit, decision.toPrettyString());
         } else {
-            final double profit = getProfit(data);
+            final double profit = getProfit(data, currentPrice);
             if (profit < minimumProfit) {
                 decision = new Decision(DecisionAction.WAIT, null, strategyCache);
                 log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
@@ -87,7 +79,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
-    private double getProfit(final DecisionData data) {
+    private double getProfit(final DecisionData data, final BigDecimal currentPrice) {
         if (data.getPosition() == null) {
             log.debug("no position - no profit");
             return 0.0;
@@ -96,7 +88,6 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         final BigDecimal averagePositionPrice = DecimalUtils.setDefaultScale(data.getAveragePositionPrice());
         final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, data.getCommission());
 
-        final BigDecimal currentPrice = data.getCurrentPrice();
         final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, data.getCommission());
 
         final double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission).doubleValue();

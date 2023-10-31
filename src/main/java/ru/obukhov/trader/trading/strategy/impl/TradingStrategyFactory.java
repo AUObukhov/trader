@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.Asserter;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -26,11 +27,12 @@ import java.util.stream.Collectors;
 public class TradingStrategyFactory {
     private final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final ApplicationContext applicationContext;
+    private final ExtMarketDataService extMarketDataService;
 
     public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
         final StrategyType strategyType = botConfig.strategyType();
         return switch (strategyType) {
-            case CONSERVATIVE -> new ConservativeStrategy(strategyType.name());
+            case CONSERVATIVE -> new ConservativeStrategy(strategyType.name(), extMarketDataService);
             case CROSS -> createCrossStrategy(strategyType.name(), botConfig.strategyParams());
         };
     }
@@ -40,7 +42,7 @@ public class TradingStrategyFactory {
         final MovingAverageType movingAverageType = getMovingAverageType(strategyParams);
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final String fullName = name + " " + movingAverageType;
-        return new CrossStrategy(fullName, crossStrategyParams, averager);
+        return new CrossStrategy(fullName, crossStrategyParams, extMarketDataService, averager);
     }
 
     private MovingAverageType getMovingAverageType(final Map<String, Object> strategyParams) {

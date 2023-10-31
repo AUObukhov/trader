@@ -34,7 +34,7 @@ class BotConfigUnitTest {
                 "figi=BBG000B9XRY4, " +
                 "candleInterval=CANDLE_INTERVAL_1_MIN, " +
                 "commission=0.030000000, " +
-                "strategyType=conservative, " +
+                "strategyType=CONSERVATIVE, " +
                 "strategyParams={minimumProfit=0.01, indexCoefficient=0.5}}";
 
         Assertions.assertEquals(expectedResult, actualResult);

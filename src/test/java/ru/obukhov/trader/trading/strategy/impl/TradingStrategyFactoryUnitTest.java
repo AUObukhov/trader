@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -29,6 +30,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Mock
     private ApplicationContext applicationContext;
+    @Mock
+    private ExtMarketDataService extMarketDataService;
     @InjectMocks
     private TradingStrategyFactory factory;
 
@@ -38,7 +41,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         StrategyType.CONSERVATIVE,
                         Map.of("minimumProfit", 0.1),
-                        "conservative"
+                        "CONSERVATIVE"
                 ),
                 Arguments.of(
                         StrategyType.CROSS,
@@ -51,7 +54,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 100,
                                 "bigWindow", 200
                         ),
-                        "cross SMA [minimumProfit=0.1, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
+                        "CROSS SMA [minimumProfit=0.1, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
                 ),
                 Arguments.of(
                         StrategyType.CROSS,
@@ -64,7 +67,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 100,
                                 "bigWindow", 200
                         ),
-                        "cross LWMA [minimumProfit=0.1, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
+                        "CROSS LWMA [minimumProfit=0.1, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
                 ),
                 Arguments.of(
                         StrategyType.CROSS,
@@ -77,7 +80,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 10,
                                 "bigWindow", 20
                         ),
-                        "cross EWMA [minimumProfit=0.2, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
+                        "CROSS EWMA [minimumProfit=0.2, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
                 )
         );
     }
@@ -307,7 +310,7 @@ class TradingStrategyFactoryUnitTest {
         final String averagerName = MovingAverageType.SIMPLE.getAveragerName();
         Mockito.when(applicationContext.getBean(averagerName, MovingAverager.class))
                 .thenThrow(new NoSuchBeanDefinitionException(MovingAverager.class));
-        factory = new TradingStrategyFactory(applicationContext);
+        factory = new TradingStrategyFactory(applicationContext, extMarketDataService);
 
         final String expectedMessage = "No qualifying bean of type 'ru.obukhov.trader.common.service.impl.MovingAverager' available";
 

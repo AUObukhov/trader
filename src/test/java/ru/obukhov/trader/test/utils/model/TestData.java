@@ -10,15 +10,12 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -52,31 +49,27 @@ public class TestData {
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
-    public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.name());
-
     // region DecisionData creation
 
-    public static DecisionData newDecisionData(final double averagePositionPrice, final int quantity, final double currentPrice) {
+    public static DecisionData newDecisionData(final double balance, final int lotSize, final double commission) {
         final DecisionData decisionData = new DecisionData();
-        final Position portfolioPosition = new PositionBuilder()
-                .setAveragePositionPrice(averagePositionPrice)
-                .setQuantity(quantity)
-                .build();
-
-        decisionData.setPosition(portfolioPosition);
-        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
-        decisionData.setShare(Share.builder().build());
-        decisionData.setCommission(DecimalUtils.ZERO);
+        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
+        decisionData.setLastOperations(new ArrayList<>());
+        decisionData.setShare(Share.builder().lot(lotSize).build());
+        decisionData.setCommission(DecimalUtils.setDefaultScale(commission));
 
         return decisionData;
     }
 
-    public static DecisionData newDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
+    public static DecisionData newDecisionData(final double balance, final double averagePositionPrice, final int quantity, final double commission) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
-        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
+        final Position position = Position.builder()
+                .averagePositionPrice(TestData.newMoney(averagePositionPrice, null))
+                .quantity(BigDecimal.valueOf(quantity))
+                .build();
+        decisionData.setPosition(position);
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setShare(Share.builder().lot(lotSize).build());
         decisionData.setCommission(DecimalUtils.setDefaultScale(commission));
 
         return decisionData;
@@ -247,6 +240,10 @@ public class TestData {
     // endregion
 
     public static Money newMoney(final int value, final String currency) {
+        return DataStructsHelper.newMoney(DecimalUtils.setDefaultScale(value), currency);
+    }
+
+    public static Money newMoney(final double value, final String currency) {
         return DataStructsHelper.newMoney(DecimalUtils.setDefaultScale(value), currency);
     }
 

@@ -11,6 +11,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeExtOrdersService;
@@ -39,6 +40,7 @@ public class FakeBotFactory {
     private final TradingStrategyFactory strategyFactory;
     private final ExtMarketDataService extMarketDataService;
     private final ExtInstrumentsService extInstrumentsService;
+    private final ExtUsersService extUsersService;
     private final ApplicationContext applicationContext;
 
     public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
@@ -57,6 +59,7 @@ public class FakeBotFactory {
                 extInstrumentsService,
                 fakeOperationsService,
                 fakeOrdersService,
+                extUsersService,
                 fakeContext,
                 strategy
         );

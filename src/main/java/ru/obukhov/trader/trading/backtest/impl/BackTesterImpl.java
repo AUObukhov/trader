@@ -150,7 +150,7 @@ public class BackTesterImpl implements BackTester {
         final List<Candle> candles = extMarketDataService.getCandles(botConfig.figi(), effectiveInterval, botConfig.candleInterval());
 
         do {
-            fakeBot.processBotConfig(botConfig, candles);
+            fakeBot.processBotConfig(botConfig, effectiveInterval);
 
             moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, effectiveInterval.getTo());
         } while (fakeBot.getCurrentDateTime() != null && fakeBot.getCurrentDateTime().isBefore(effectiveInterval.getTo()));

@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Share;
@@ -24,6 +25,7 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
+import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -47,6 +49,8 @@ class FakeBotFactoryUnitTest {
     private ApplicationContext applicationContext;
     @Mock
     private ExtInstrumentsService extInstrumentsService;
+    @Mock
+    private ExtMarketDataService extMarketDataService;
 
     @InjectMocks
     private FakeBotFactory factory;
@@ -98,7 +102,7 @@ class FakeBotFactoryUnitTest {
         final BalanceConfig balanceConfig = new BalanceConfig();
 
         mockCurrency(figi, share.currency());
-        Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig);
         mockFakeContext();
         Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
 
@@ -149,7 +153,7 @@ class FakeBotFactoryUnitTest {
         );
 
         mockCurrency(figi, currency);
-        Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig);
         mockFakeContext();
         Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
 
@@ -181,6 +185,11 @@ class FakeBotFactoryUnitTest {
     private void mockCurrency(final String figi, final String currency) {
         final Share share = Share.builder().figi(figi).currency(currency).build();
         Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(share);
+    }
+
+    private void mockStrategy(final BotConfig botConfig) {
+        final ConservativeStrategy conservativeStrategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.name(), extMarketDataService);
+        Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(conservativeStrategy);
     }
 
     private void mockFakeContext() {

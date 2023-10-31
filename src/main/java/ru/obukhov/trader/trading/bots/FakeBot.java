@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
@@ -26,7 +27,8 @@ public class FakeBot extends Bot {
             final ExtMarketDataService extMarketDataService,
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService extOperationsService,
-            final ExtOrdersService ordersService,
+            final ExtOrdersService extOrdersService,
+            final ExtUsersService extUsersService,
             final FakeContext fakeContext,
             final TradingStrategy strategy
     ) {
@@ -34,10 +36,10 @@ public class FakeBot extends Bot {
                 extMarketDataService,
                 extInstrumentsService,
                 extOperationsService,
-                ordersService,
+                extOrdersService,
+                extUsersService,
                 fakeContext,
-                strategy,
-                strategy.initCache()
+                strategy
         );
     }
 

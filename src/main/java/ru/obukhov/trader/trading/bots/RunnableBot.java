@@ -1,16 +1,17 @@
 package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 public class RunnableBot extends Bot implements Runnable {
@@ -25,7 +26,7 @@ public class RunnableBot extends Bot implements Runnable {
             final SchedulingProperties schedulingProperties,
             final BotConfig botConfig
     ) {
-        super(services, context, strategy, strategy.initCache());
+        super(services, context, strategy);
 
         this.schedulingProperties = schedulingProperties;
         this.botConfig = botConfig;
@@ -48,13 +49,20 @@ public class RunnableBot extends Bot implements Runnable {
             return;
         }
 
+        final Interval interval = getInterval();
+
         try {
-            final OffsetDateTime currentDateTime = OffsetDateTime.now();
-            final List<Candle> candles = extMarketDataService.getLastCandles(figi, LAST_CANDLES_COUNT, botConfig.candleInterval(), currentDateTime);
-            processBotConfig(botConfig, candles);
+            processBotConfig(botConfig, interval);
         } catch (final Exception exception) {
             log.error("Failed to process botConfig {}", botConfig, exception);
         }
+    }
+
+    private Interval getInterval() {
+        final OffsetDateTime to = OffsetDateTime.now();
+        final ChronoUnit period = DateUtils.getPeriodByCandleInterval(botConfig.candleInterval());
+        final OffsetDateTime from = to.minus(period.getDuration());
+        return Interval.of(from, to);
     }
 
 }

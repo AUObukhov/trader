@@ -10,6 +10,7 @@ public record ServicesContainer(
         ExtMarketDataService extMarketDataService,
         ExtInstrumentsService extInstrumentsService,
         ExtOperationsService extOperationsService,
-        ExtOrdersService extOrdersService
+        ExtOrdersService extOrdersService,
+        ExtUsersService extUsersService
 ) {
 }
