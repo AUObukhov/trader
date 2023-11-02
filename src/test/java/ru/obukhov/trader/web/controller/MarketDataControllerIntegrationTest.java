@@ -4,19 +4,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
+import ru.obukhov.trader.web.model.exchange.FigiesListRequest;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -141,5 +147,49 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     // endregion
+
+    @Test
+    void getLastPrices_returnsPrices() throws Exception {
+        final Map<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
+        figiesToPrices.put(TestShares.APPLE.share().figi(), DecimalUtils.setDefaultScale(175.0));
+        figiesToPrices.put(TestShares.SBER.share().figi(), DecimalUtils.setDefaultScale(270.0));
+        figiesToPrices.put(TestShares.YANDEX.share().figi(), DecimalUtils.setDefaultScale(2600.0));
+
+        Mocker.mockLastPricesBigDecimal(marketDataService, figiesToPrices);
+
+        final FigiesListRequest request = new FigiesListRequest(figiesToPrices.keySet().stream().toList());
+        final String requestString = TestUtils.OBJECT_MAPPER.writeValueAsString(request);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/market/last-prices")
+                .content(requestString)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        assertResponse(requestBuilder, figiesToPrices);
+    }
+
+    @Test
+    void getLastPrices_returnsBadRequest_whenInstrumentNotFound() throws Exception {
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
+        final String figi3 = TestShares.YANDEX.share().figi();
+
+        final List<String> figies = List.of(figi1, figi2, figi3);
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(figi1, 175.0),
+                TestData.newLastPrice(figi3, 2600.0)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final FigiesListRequest request = new FigiesListRequest(figies);
+        final String requestString = TestUtils.OBJECT_MAPPER.writeValueAsString(request);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/market/last-prices")
+                .content(requestString)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        assertBadRequestResult(requestBuilder, "Instrument not found for id " + figi2);
+    }
 
 }

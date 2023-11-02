@@ -13,8 +13,8 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.web.model.exchange.FigiesListRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-import ru.obukhov.trader.web.model.exchange.GetWeightsRequest;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
@@ -68,8 +68,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/capitalization-weights")
-    public Map<String, BigDecimal> getCapitalizationWeights(@Valid @RequestBody final GetWeightsRequest getWeightsRequest) {
-        return statisticsService.getCapitalizationWeights(getWeightsRequest.getShareFigies());
+    public Map<String, BigDecimal> getCapitalizationWeights(@Valid @RequestBody final FigiesListRequest figiesListRequest) {
+        return statisticsService.getCapitalizationWeights(figiesListRequest.getFigies());
     }
 
 }

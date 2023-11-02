@@ -346,7 +346,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);
 
         final String figiesString = sharesLastPrices.keySet().stream().map(share -> '"' + share.getFigi() + '"').collect(Collectors.joining(","));
-        final String requestString = "{\"shareFigies\":[" + figiesString + "]}";
+        final String requestString = "{\"figies\":[" + figiesString + "]}";
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/capitalization-weights")
                         .content(requestString)

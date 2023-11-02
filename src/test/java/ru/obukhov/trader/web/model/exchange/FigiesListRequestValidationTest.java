@@ -6,23 +6,23 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 
 import java.util.List;
 
-class GetWeightsRequestValidationTest {
+class FigiesListRequestValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final List<String> shareFigies = List.of(TestShares.APPLE.share().figi());
-        final GetWeightsRequest request = new GetWeightsRequest();
-        request.setShareFigies(shareFigies);
+        final FigiesListRequest request = new FigiesListRequest();
+        request.setFigies(shareFigies);
 
         AssertUtils.assertNoViolations(request);
     }
 
     @Test
     void validationFails_whenFigiIsNull() {
-        final GetWeightsRequest request = new GetWeightsRequest();
-        request.setShareFigies(null);
+        final FigiesListRequest request = new FigiesListRequest();
+        request.setFigies(null);
 
-        AssertUtils.assertViolation(request, "shareFigies are mandatory");
+        AssertUtils.assertViolation(request, "figies are mandatory");
     }
 
 }
