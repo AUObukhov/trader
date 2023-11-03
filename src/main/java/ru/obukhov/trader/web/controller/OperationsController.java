@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,7 +28,7 @@ public class OperationsController {
     }
 
     @GetMapping("/balances")
-    public List<Money> getAvailableBalances(@RequestParam final String accountId) {
+    public Map<String, BigDecimal> getAvailableBalances(@RequestParam final String accountId) {
         return extOperationsService.getAvailableBalances(accountId);
     }
 

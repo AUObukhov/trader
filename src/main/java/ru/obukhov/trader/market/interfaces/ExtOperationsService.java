@@ -52,22 +52,21 @@ public interface ExtOperationsService {
     }
 
     /**
-     * @return list of currencies balances at given {@code accountId}.
+     * @return map currency FIGI to balance at given {@code accountId}.
      */
-    default List<Money> getAvailableBalances(final String accountId) {
+    default Map<String, BigDecimal> getAvailableBalances(final String accountId) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
         final Map<String, BigDecimal> blocked = getBalanceMap(withdrawLimits.getBlocked());
         final Map<String, BigDecimal> blockedGuarantee = getBalanceMap(withdrawLimits.getBlockedGuarantee());
         return withdrawLimits.getMoney().stream()
-                .map(money -> getAvailableMoney(money, blocked, blockedGuarantee))
-                .toList();
+                .collect(Collectors.toMap(Money::getCurrency, money -> getAvailableBalance(money, blocked, blockedGuarantee)));
     }
 
     private Map<String, BigDecimal> getBalanceMap(final List<Money> moneys) {
         return moneys.stream().collect(Collectors.toMap(Money::getCurrency, Money::getValue));
     }
 
-    private Money getAvailableMoney(
+    private BigDecimal getAvailableBalance(
             final Money money,
             final Map<String, BigDecimal> blocked,
             final Map<String, BigDecimal> blockedGuarantee
@@ -75,8 +74,7 @@ public interface ExtOperationsService {
         final String currency = money.getCurrency();
         final BigDecimal blockedValue = blocked.getOrDefault(currency, DecimalUtils.ZERO);
         final BigDecimal blockedGuaranteeValue = blockedGuarantee.getOrDefault(currency, DecimalUtils.ZERO);
-        final BigDecimal value = money.getValue().subtract(blockedValue).subtract(blockedGuaranteeValue);
-        return DataStructsHelper.newMoney(value, money.getCurrency());
+        return money.getValue().subtract(blockedValue).subtract(blockedGuaranteeValue);
     }
 
 }

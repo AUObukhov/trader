@@ -17,7 +17,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -25,6 +24,7 @@ import ru.tinkoff.piapi.core.models.WithdrawLimits;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
@@ -200,9 +200,10 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money money1 = DataStructsHelper.newMoney(value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1), currency1);
-        final Money money2 = DataStructsHelper.newMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
-        final List<Money> expectedBalances = List.of(money1, money2);
+        final Map<String, BigDecimal> expectedBalances = Map.of(
+                currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1),
+                currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2)
+        );
 
         assertResponse(requestBuilder, expectedBalances);
     }
@@ -232,9 +233,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money money1 = DataStructsHelper.newMoney(value1, currency1);
-        final Money money2 = DataStructsHelper.newMoney(value2, currency2);
-        final List<Money> expectedBalances = List.of(money1, money2);
+        final Map<String, BigDecimal> expectedBalances = Map.of(currency1, value1, currency2, value2);
 
         assertResponse(requestBuilder, expectedBalances);
     }

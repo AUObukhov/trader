@@ -20,7 +20,6 @@ import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
@@ -247,13 +246,14 @@ class ExtOperationsServiceUnitTest {
 
         // action
 
-        final List<Money> balances = extOperationsService.getAvailableBalances(accountId);
+        final Map<String, BigDecimal> balances = extOperationsService.getAvailableBalances(accountId);
 
         // assert
 
-        final Money money1 = DataStructsHelper.newMoney(value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1), currency1);
-        final Money money2 = DataStructsHelper.newMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
-        final List<Money> expectedBalances = List.of(money1, money2);
+        final Map<String, BigDecimal> expectedBalances = Map.of(
+                currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1),
+                currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2)
+        );
 
         AssertUtils.assertEquals(expectedBalances, balances);
     }
@@ -281,14 +281,11 @@ class ExtOperationsServiceUnitTest {
 
         // action
 
-        final List<Money> balances = extOperationsService.getAvailableBalances(accountId);
+        final Map<String, BigDecimal> balances = extOperationsService.getAvailableBalances(accountId);
 
         // assert
 
-        final Money money1 = DataStructsHelper.newMoney(value1, currency1);
-        final Money money2 = DataStructsHelper.newMoney(value2, currency2);
-        final List<Money> expectedBalances = List.of(money1, money2);
-
+        final Map<String, BigDecimal> expectedBalances = Map.of(currency1, value1, currency2, value2);
         AssertUtils.assertEquals(expectedBalances, balances);
     }
 
