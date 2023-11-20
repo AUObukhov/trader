@@ -9,7 +9,6 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -27,26 +26,5 @@ public class BalanceConfig {
     private BigDecimal balanceIncrement;
 
     private CronExpression balanceIncrementCron;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final BalanceConfig that = (BalanceConfig) o;
-        return Objects.equals(initialBalance, that.initialBalance)
-                && Objects.equals(balanceIncrement, that.balanceIncrement)
-                && (String.valueOf(balanceIncrementCron).equals(String.valueOf(that.balanceIncrementCron))
-        );
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(initialBalance, balanceIncrement, balanceIncrementCron.toString());
-    }
 
 }
