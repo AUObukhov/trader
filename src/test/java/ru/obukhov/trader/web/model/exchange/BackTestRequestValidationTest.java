@@ -1,9 +1,10 @@
 package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
-import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -11,7 +12,6 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -19,14 +19,14 @@ import java.util.List;
 class BackTestRequestValidationTest {
 
     @Test
-    void validationSucceeds_whenEverythingIsValid() throws ParseException {
+    void validationSucceeds_whenEverythingIsValid() {
         final BackTestRequest request = createValidBackTestRequest();
 
         AssertUtils.assertNoViolations(request);
     }
 
     @Test
-    void validationFails_whenFromIsNull() throws ParseException {
+    void validationFails_whenFromIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         request.setFrom(null);
 
@@ -34,7 +34,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenBalanceConfigIsNull() throws ParseException {
+    void validationFails_whenBalanceConfigIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         request.setBalanceConfig(null);
 
@@ -44,7 +44,7 @@ class BackTestRequestValidationTest {
     // region botConfigs validation tests
 
     @Test
-    void validationFails_whenBotsConfigsIsNull() throws ParseException {
+    void validationFails_whenBotsConfigsIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         request.setBotConfigs(null);
 
@@ -52,7 +52,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenBotsConfigsIsEmpty() throws ParseException {
+    void validationFails_whenBotsConfigsIsEmpty() {
         final BackTestRequest request = createValidBackTestRequest();
         request.setBotConfigs(Collections.emptyList());
 
@@ -60,7 +60,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenCandleAccountIdIsNull() throws ParseException {
+    void validationFails_whenCandleAccountIdIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 null,
@@ -76,7 +76,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenCandleIntervalIsNull() throws ParseException {
+    void validationFails_whenCandleIntervalIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -92,7 +92,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenCommissionIsNull() throws ParseException {
+    void validationFails_whenCommissionIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -108,7 +108,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenStrategyTypeIsNull() throws ParseException {
+    void validationFails_whenStrategyTypeIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -125,14 +125,10 @@ class BackTestRequestValidationTest {
 
     // endregion
 
-    private BackTestRequest createValidBackTestRequest() throws ParseException {
+    private BackTestRequest createValidBackTestRequest() {
         final BackTestRequest request = new BackTestRequest();
 
-        BalanceConfig balanceConfig = new BalanceConfig(
-                DecimalUtils.setDefaultScale(10),
-                DecimalUtils.ONE,
-                new CronExpression("0 0 0 1 * ?")
-        );
+        BalanceConfig balanceConfig = TestData.newBalanceConfig(Currencies.RUB, 10.0, 1.0, "0 0 0 1 * ?");
         request.setBalanceConfig(balanceConfig);
 
         request.setFrom(OffsetDateTime.now());

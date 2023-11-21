@@ -2,76 +2,51 @@ package ru.obukhov.trader.web.model;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Map;
 
 class BalanceConfigValidationTest {
 
     @Test
-    void validationSucceeds_whenEverythingIsValid() throws ParseException {
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                DecimalUtils.setDefaultScale(10),
-                DecimalUtils.ONE,
-                new CronExpression("0 0 0 1 * ?")
-        );
+    void validationSucceeds_whenEverythingIsValid() {
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(Currencies.RUB, 10.0, 1.0, "0 0 0 1 * ?");
 
         AssertUtils.assertNoViolations(balanceConfig);
     }
 
     @Test
-    void validationFails_whenInitialBalanceIsNull() throws ParseException {
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                null,
-                DecimalUtils.ONE,
-                new CronExpression("0 0 0 1 * ?")
-        );
+    void validationFails_whenInitialBalancesIsNull() {
+        final BalanceConfig balanceConfig = new BalanceConfig();
+        balanceConfig.setInitialBalances(null);
 
-        AssertUtils.assertViolation(balanceConfig, "initial balance is mandatory");
+        AssertUtils.assertViolation(balanceConfig, "initial balances are mandatory");
     }
 
     @Test
-    void validationFails_whenBalanceIncrementIsNegative() throws ParseException {
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                DecimalUtils.setDefaultScale(10),
-                DecimalUtils.setDefaultScale(-1),
-                new CronExpression("0 0 0 1 * ?")
-        );
+    void validationFails_whenInitialBalancesIsEmpty() {
+        final BalanceConfig balanceConfig = new BalanceConfig(Map.of(), null, null);
 
-        AssertUtils.assertViolation(balanceConfig, "balanceIncrement must be positive");
-    }
-
-    @Test
-    void validationFails_whenBalanceIncrementIsZero() throws ParseException {
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                DecimalUtils.setDefaultScale(10),
-                DecimalUtils.ZERO,
-                new CronExpression("0 0 0 1 * ?")
-        );
-
-        AssertUtils.assertViolation(balanceConfig, "balanceIncrement must be positive");
+        AssertUtils.assertViolation(balanceConfig, "initial balances are mandatory");
     }
 
     @Test
     void validationFails_whenBalanceIncrementIsNullAndBalanceIncrementCronIsNotNull() throws ParseException {
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                DecimalUtils.setDefaultScale(10),
-                null, new CronExpression("0 0 0 1 * ?")
-        );
+        final Map<String, BigDecimal> initialBalances = TestData.newDecimalMap(Currencies.RUB, 1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, null, new CronExpression("0 0 0 1 * ?"));
 
-        AssertUtils.assertViolation(balanceConfig, "balanceIncrement and balanceIncrementCron must be both null or not null");
+        AssertUtils.assertViolation(balanceConfig, "balanceIncrements and balanceIncrementCron must be both null or not null");
     }
 
     @Test
     void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() {
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                DecimalUtils.setDefaultScale(10),
-                DecimalUtils.ONE,
-                null
-        );
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(Currencies.RUB, 10.0, 1.0);
 
-        AssertUtils.assertViolation(balanceConfig, "balanceIncrement and balanceIncrementCron must be both null or not null");
+        AssertUtils.assertViolation(balanceConfig, "balanceIncrements and balanceIncrementCron must be both null or not null");
     }
 
 }

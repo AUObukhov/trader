@@ -17,6 +17,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -32,9 +33,11 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
@@ -99,7 +102,7 @@ class FakeBotFactoryUnitTest {
                 Collections.emptyMap()
         );
 
-        final BalanceConfig balanceConfig = new BalanceConfig();
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(share.currency(), 0.0);
 
         mockCurrency(figi, share.currency());
         mockStrategy(botConfig);
@@ -112,25 +115,28 @@ class FakeBotFactoryUnitTest {
     }
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forCreateBot_initializesBalance() {
+    static Stream<Arguments> getData_forCreateBot_initializesBalance() throws ParseException {
+        final Map<String, BigDecimal> initialBalances = TestData.newDecimalMap(Currencies.USD, 1000000, Currencies.RUB, 10000);
+        final Map<String, BigDecimal> balanceIncrements = TestData.newDecimalMap(Currencies.USD, 1000, Currencies.RUB, 5000);
+
         return Stream.of(
                 Arguments.of(
-                        TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"),
+                        TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1),
                         1001000.0
                 ),
                 Arguments.of(
-                        TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"),
+                        TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1, 7),
                         1000000.0
                 ),
                 Arguments.of(
-                        TestData.newBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"),
+                        TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 2 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1),
                         1000000.0
                 ),
                 Arguments.of(
-                        TestData.newBalanceConfig(1000000.0),
+                        TestData.newBalanceConfig(Currencies.USD, 1000000.0),
                         DateTimeTestData.newDateTime(2023, 9, 1),
                         1000000.0
                 )
@@ -164,7 +170,8 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_throwsIllegalArgumentException_whenShareNotFound() {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
                 figi,
@@ -173,7 +180,7 @@ class FakeBotFactoryUnitTest {
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
-        final BalanceConfig balanceConfig = TestData.newBalanceConfig(1000000.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(share.currency(), 1000000.0);
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
@@ -195,16 +202,14 @@ class FakeBotFactoryUnitTest {
     private void mockFakeContext() {
         Mockito.when(applicationContext.getBean(
                 Mockito.eq("fakeContext"),
+                Mockito.anyString(),
                 Mockito.any(OffsetDateTime.class),
-                Mockito.anyString(),
-                Mockito.anyString(),
-                Mockito.any(BigDecimal.class)
+                Mockito.any(Map.class)
         )).thenAnswer(invocation -> {
-            final OffsetDateTime currentDateTime = invocation.getArgument(1);
-            final String accountId = invocation.getArgument(2);
-            final String currency = invocation.getArgument(3);
-            final BigDecimal initialBalance = invocation.getArgument(4);
-            return new FakeContext(currentDateTime, accountId, currency, initialBalance);
+            final String accountId = invocation.getArgument(1);
+            final OffsetDateTime currentDateTime = invocation.getArgument(2);
+            final Map<String, BigDecimal> initialBalances = invocation.getArgument(3);
+            return new FakeContext(accountId, currentDateTime, initialBalances);
         });
     }
 

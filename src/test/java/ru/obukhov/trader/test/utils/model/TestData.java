@@ -33,11 +33,14 @@ import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -168,30 +171,40 @@ public class TestData {
 
     // region BalanceConfig creation
 
-    public static BalanceConfig newBalanceConfig(final Double initialBalance) {
-        return newBalanceConfig(initialBalance, null);
+    public static BalanceConfig newBalanceConfig(final String currency, final Double initialBalance) {
+        return newBalanceConfig(currency, initialBalance, null);
     }
 
-    public static BalanceConfig newBalanceConfig(final Double initialBalance, final Double balanceIncrement) {
-        return newBalanceConfig(initialBalance, balanceIncrement, null);
+    public static BalanceConfig newBalanceConfig(final String currency, final Double initialBalance, final Double balanceIncrement) {
+        return newBalanceConfig(currency, initialBalance, balanceIncrement, null);
     }
 
-    public static BalanceConfig newBalanceConfig(final Double initialBalance, final Double balanceIncrement, final String balanceIncrementCron) {
-        final BalanceConfig balanceConfig = new BalanceConfig();
+    public static BalanceConfig newBalanceConfig(
+            final String currency,
+            final Double initialBalance,
+            final Double balanceIncrement,
+            final String balanceIncrementCron
+    ) {
+        final Map<String, BigDecimal> initialBalances = new HashMap<>();
+        initialBalances.put(currency, DecimalUtils.setDefaultScale(initialBalance));
 
-        if (initialBalance != null) {
-            balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
-        }
-
+        final Map<String, BigDecimal> balanceIncrements = new HashMap<>();
         if (balanceIncrement != null) {
-            balanceConfig.setBalanceIncrement(DecimalUtils.setDefaultScale(balanceIncrement));
+            balanceIncrements.put(currency, DecimalUtils.setDefaultScale(balanceIncrement));
         }
 
-        if (balanceIncrementCron != null) {
-            balanceConfig.setBalanceIncrementCron(newCronExpression(balanceIncrementCron));
-        }
+        final CronExpression cronExpression = balanceIncrementCron == null ? null : newCronExpression(balanceIncrementCron);
 
-        return balanceConfig;
+        return new BalanceConfig(initialBalances, balanceIncrements, cronExpression);
+    }
+
+    public static BalanceConfig newBalanceConfig(
+            final Map<String, BigDecimal> initialBalances,
+            final Map<String, BigDecimal> balanceIncrements,
+            final String balanceIncrementCronExpression
+    ) throws ParseException {
+        final CronExpression balanceIncrementCron = new CronExpression(balanceIncrementCronExpression);
+        return new BalanceConfig(initialBalances, balanceIncrements, balanceIncrementCron);
     }
 
     // endregion
@@ -360,6 +373,29 @@ public class TestData {
         }
 
         return historicCandles;
+    }
+
+    public static BigDecimal newBigDecimal(final Object value) {
+        if (value instanceof Integer) {
+            return DecimalUtils.setDefaultScale((Integer) value);
+        } else if (value instanceof Long) {
+            return DecimalUtils.setDefaultScale((Long) value);
+        } else if (value instanceof Double) {
+            return DecimalUtils.setDefaultScale((Double) value);
+        } else if (value instanceof BigDecimal) {
+            return DecimalUtils.setDefaultScale((BigDecimal) value);
+        } else {
+            throw new IllegalArgumentException("Unexpected class: " + value.getClass());
+        }
+    }
+
+    public static Map<String, BigDecimal> newDecimalMap(final Object... keyValues) {
+        final Map<String, BigDecimal> decimalMap = new HashMap<>(keyValues.length / 2, 1);
+        for (int i = 0; i < keyValues.length; i += 2) {
+            final BigDecimal decimalValue = newBigDecimal(keyValues[i + 1]);
+            decimalMap.put((String) keyValues[i], decimalValue);
+        }
+        return decimalMap;
     }
 
 }

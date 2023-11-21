@@ -27,6 +27,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -65,20 +66,18 @@ public class FakeBotFactory {
         );
     }
 
-    private FakeContext createFakeContext(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+    private FakeContext createFakeContext(
+            final BotConfig botConfig,
+            final BalanceConfig balanceConfig,
+            final OffsetDateTime currentDateTime
+    ) {
         final String figi = botConfig.figi();
         final OffsetDateTime ceilingWorkDateTime = getCeilingWorkDateTime(figi, currentDateTime);
         final Share share = extInstrumentsService.getShare(figi);
         Asserter.notNull(share, () -> new InstrumentNotFoundException(figi));
-        final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkDateTime, balanceConfig);
+        final Map<String, BigDecimal> initialBalances = getInitialBalances(currentDateTime, ceilingWorkDateTime, balanceConfig);
 
-        return (FakeContext) applicationContext.getBean(
-                "fakeContext",
-                ceilingWorkDateTime,
-                botConfig.accountId(),
-                share.currency(),
-                initialBalance
-        );
+        return (FakeContext) applicationContext.getBean("fakeContext", botConfig.accountId(), ceilingWorkDateTime, initialBalances);
     }
 
     private OffsetDateTime getCeilingWorkDateTime(final String figi, final OffsetDateTime currentDateTime) {
@@ -87,24 +86,26 @@ public class FakeBotFactory {
         return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentDateTime);
     }
 
-    private BigDecimal getInitialBalance(
+    private Map<String, BigDecimal> getInitialBalances(
             final OffsetDateTime currentDateTime,
             final OffsetDateTime ceilingWorkDateTime,
             final BalanceConfig balanceConfig
     ) {
-        BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? DecimalUtils.ZERO : balanceConfig.getInitialBalance();
+        final Map<String, BigDecimal> initialBalances = balanceConfig.getInitialBalances();
 
         // adding balance increments which were skipped by moving to ceiling work time above
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
-        if (balanceIncrementCron != null && !currentDateTime.isEqual(ceilingWorkDateTime)) {
+        if (balanceConfig.getBalanceIncrements() != null && !currentDateTime.isEqual(ceilingWorkDateTime)) {
             final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, ceilingWorkDateTime)
                     .size();
-            if (incrementsCount > 0) {
-                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
-                initialBalance = initialBalance.add(totalBalanceIncrement);
+            for (final Map.Entry<String, BigDecimal> entry : balanceConfig.getBalanceIncrements().entrySet()) {
+                final String currency = entry.getKey();
+                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(entry.getValue(), incrementsCount);
+                final BigDecimal newBalanceValue = initialBalances.get(currency).add(totalBalanceIncrement);
+                initialBalances.put(currency, newBalanceValue);
             }
         }
-        return initialBalance;
+        return initialBalances;
     }
 
 }

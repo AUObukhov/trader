@@ -17,6 +17,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -219,14 +220,20 @@ public class DateUtils {
     }
 
     /**
-     * @return dates which match given {@code expression} and between given {@code from} inclusively and {@code to} exclusively
+     * @return dates which match given {@code expression} and between given {@code from} inclusively and {@code to} exclusively.
+     * If given {@code expression} is null, returns empty list.
+     * @throws IllegalArgumentException if given {@code from} is not before given {@code to}
      */
     public static List<OffsetDateTime> getCronHitsBetweenDates(
-            final CronExpression expression,
+            @Nullable final CronExpression expression,
             final OffsetDateTime from,
             final OffsetDateTime to
     ) {
         Assert.isTrue(from.isBefore(to), () -> "from [" + from + "] must be before to [" + to + "]");
+
+        if (expression == null) {
+            return Collections.emptyList();
+        }
 
         final Date dateFrom = DateUtils.toDate(from);
         final Date dateTo = DateUtils.toDate(to);
@@ -247,7 +254,7 @@ public class DateUtils {
 
     /**
      * @return true if given {@code timestamp} is in interval {@code [from; to)}
-     * @throws IllegalArgumentException if {@code from} is not before {@code to}
+     * @throws IllegalArgumentException if given {@code from} is not before given {@code to}
      */
     public static boolean timestampIsInInterval(final Timestamp timestamp, final Instant from, final Instant to) {
         Assert.isTrue(from.isBefore(to), "From must be before to");

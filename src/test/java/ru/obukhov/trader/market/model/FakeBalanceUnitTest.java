@@ -18,7 +18,7 @@ class FakeBalanceUnitTest {
         Assertions.assertTrue(fakeBalance.getInvestments().isEmpty());
     }
 
-    // region addInvestment tests
+    // region addInvestments tests
 
     @Test
     void addInvestment_changesInvestmentsAndCurrentBalance_whenAmountIsPositive() {

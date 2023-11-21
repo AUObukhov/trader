@@ -15,7 +15,9 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -37,7 +39,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -58,14 +59,18 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenFromIsNull() throws Exception {
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
+
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(null);
         request.setTo(null);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(false);
+
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                share.figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -101,7 +106,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(Currencies.RUB, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         request.setBotConfigs(null);
 
@@ -113,7 +118,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(Currencies.RUB, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         request.setBotConfigs(Collections.emptyList());
 
@@ -122,14 +127,17 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenCandleIntervalIsNull() throws Exception {
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
+
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                share.figi(),
                 null,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -142,14 +150,17 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenCommissionIsNull() throws Exception {
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
+
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                share.figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -162,14 +173,17 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
+        final Share share = TestShares.APPLE.share();
+        final String currency = share.currency();
+
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
         request.setTo(null);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                share.figi(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 null,
@@ -184,7 +198,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @DirtiesContext
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.APPLE.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 1, 1, 10);
@@ -198,7 +212,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         request.setFrom(from);
         request.setTo(to);
-        request.setBalanceConfig(TestData.newBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
+        request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(false);
 
         final Map<String, Object> strategyParams1 = Map.of("minimumProfit", 0.01);
@@ -263,6 +277,9 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(54.49544),
                 DecimalUtils.setDefaultScale(1061.21544)
         );
+        final Map<String, Balances> balancesMap1 = Map.of(currency, balances1);
+        final Profits profits1 = new Profits(DecimalUtils.setDefaultScale(61.215440), 0.06121544, 1.033135028);
+        final Map<String, Profits> profitsMap1 = Map.of(currency, profits1);
         final Operation operation = Operation.newBuilder()
                 .setFigi(figi)
                 .setDate(TimestampUtils.newTimestamp(from))
@@ -280,8 +297,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,
                 interval,
-                balances1,
-                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.06121544, 1.033135028),
+                balancesMap1,
+                profitsMap1,
                 Collections.emptyList(),
                 List.of(operation),
                 List.of(candle),
@@ -295,6 +312,9 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000),
                 DecimalUtils.setDefaultScale(1000)
         );
+        final Map<String, Balances> balancesMap2 = Map.of(currency, balances2);
+        final Profits profits2 = new Profits(DecimalUtils.ZERO, 0.0, 0.0);
+        final Map<String, Profits> profitsMap2 = Map.of(currency, profits2);
         final Position backTestPosition2 = Position.builder()
                 .figi(figi)
                 .currentPrice(TestData.newMoney(100000, currency))
@@ -303,8 +323,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestResult backTestResult2 = new BackTestResult(
                 botConfig2,
                 interval,
-                balances2,
-                new Profits(DecimalUtils.ZERO, 0.0, 0.0),
+                balancesMap2,
+                profitsMap2,
                 List.of(backTestPosition2),
                 Collections.emptyList(),
                 Collections.emptyList(),

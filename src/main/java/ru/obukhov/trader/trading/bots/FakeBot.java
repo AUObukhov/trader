@@ -18,6 +18,7 @@ import ru.tinkoff.piapi.core.models.Position;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 @Slf4j
@@ -65,8 +66,8 @@ public class FakeBot extends Bot {
         return getFakeContext().nextScheduleMinute(tradingSchedule);
     }
 
-    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {
-        getFakeContext().addInvestment(accountId, dateTime, currency, increment);
+    public void addInvestments(final String accountId, final OffsetDateTime dateTime, final Map<String, BigDecimal> investments) {
+        getFakeContext().addInvestments(accountId, dateTime, investments);
     }
 
     public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final String currency) {

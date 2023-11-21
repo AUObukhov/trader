@@ -44,15 +44,10 @@ public class FakeContext implements Context {
         this.portfolios = new ArrayList<>();
     }
 
-    public FakeContext(
-            final OffsetDateTime currentDateTime,
-            final String accountId,
-            final String currency,
-            final BigDecimal initialBalance
-    ) {
+    public FakeContext(final String accountId, final OffsetDateTime currentDateTime, final Map<String, BigDecimal> initialBalances) {
         this(currentDateTime);
 
-        addInvestment(accountId, currency, initialBalance);
+        addInvestments(accountId, currentDateTime, initialBalances);
     }
 
     /**
@@ -101,13 +96,6 @@ public class FakeContext implements Context {
     // region investments
 
     /**
-     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current timestamp
-     */
-    public void addInvestment(final String accountId, final String currency, final BigDecimal amount) {
-        computeIfAbsentBalance(accountId, currency).addInvestment(currentDateTime, amount);
-    }
-
-    /**
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with given {@code dateTime}
      */
     public void addInvestment(
@@ -117,6 +105,16 @@ public class FakeContext implements Context {
             final BigDecimal amount
     ) {
         computeIfAbsentBalance(accountId, currency).addInvestment(dateTime, amount);
+    }
+
+    /**
+     * Adds all given {@code investments} to balances and record to history of investments with given {@code dateTime}.<br/>
+     * Keys from investments - currencies, values - money amounts
+     */
+    public void addInvestments(final String accountId, final OffsetDateTime dateTime, final Map<String, BigDecimal> investments) {
+        for (final Map.Entry<String, BigDecimal> entry : investments.entrySet()) {
+            addInvestment(accountId, dateTime, entry.getKey(), entry.getValue());
+        }
     }
 
     /**

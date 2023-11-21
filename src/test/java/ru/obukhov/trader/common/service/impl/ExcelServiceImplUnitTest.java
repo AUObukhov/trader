@@ -24,6 +24,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -52,7 +53,7 @@ import java.util.Map;
 @ExtendWith(MockitoExtension.class)
 class ExcelServiceImplUnitTest {
 
-    private static final int MINIMUM_ROWS_COUNT = 22;
+    private static final int MINIMUM_ROWS_COUNT = 26;
 
     private final MovingAverager averager = new SimpleMovingAverager();
 
@@ -68,7 +69,8 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_savesMultipleResults() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
         final BotConfig botConfig1 = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -78,7 +80,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
-        final BackTestResult result1 = createBackTestResult(botConfig1);
+        final BackTestResult result1 = createBackTestResult(botConfig1, share.currency());
 
         final BotConfig botConfig2 = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -88,7 +90,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final BackTestResult result2 = createBackTestResult(botConfig2);
+        final BackTestResult result2 = createBackTestResult(botConfig2, share.currency());
 
         final BotConfig botConfig3 = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -98,7 +100,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5)
         );
-        final BackTestResult result3 = createBackTestResult(botConfig3);
+        final BackTestResult result3 = createBackTestResult(botConfig3, share.currency());
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         excelService.saveBackTestResults(results);
@@ -132,7 +134,8 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -142,7 +145,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final BackTestResult result = createBackTestResult(botConfig);
+        final BackTestResult result = createBackTestResult(botConfig, share.currency());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -168,7 +171,8 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -178,7 +182,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final BackTestResult result = createBackTestResult(botConfig, StringUtils.EMPTY);
+        final BackTestResult result = createBackTestResult(botConfig, share.currency());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -204,8 +208,9 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
-        final String error = "error";
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
+        final String error = "Test error";
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -215,7 +220,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final BackTestResult result = createBackTestResult(botConfig, error);
+        final BackTestResult result = createBackTestResult(botConfig, share.currency(), error);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -244,7 +249,8 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -254,7 +260,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final BackTestResult result = createBackTestResult(botConfig, (List<Candle>) null);
+        final BackTestResult result = createBackTestResult(botConfig, share.currency(), (List<Candle>) null);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -281,7 +287,8 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -291,7 +298,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final BackTestResult result = createBackTestResult(botConfig, Collections.emptyList());
+        final BackTestResult result = createBackTestResult(botConfig, share.currency(), Collections.emptyList());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -318,7 +325,8 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final Share share = TestShares.APPLE.share();
+        final String figi = share.figi();
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
@@ -328,9 +336,9 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Collections.emptyMap()
         );
-        final BackTestResult result1 = createBackTestResult(botConfig);
-        final BackTestResult result2 = createBackTestResult(botConfig);
-        final BackTestResult result3 = createBackTestResult(botConfig);
+        final BackTestResult result1 = createBackTestResult(botConfig, share.currency());
+        final BackTestResult result2 = createBackTestResult(botConfig, share.currency());
+        final BackTestResult result3 = createBackTestResult(botConfig, share.currency());
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         Mockito.doThrow(new IOException())
@@ -340,7 +348,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertDoesNotThrow(() -> excelService.saveBackTestResults(results));
     }
 
-    private void assertBotConfig(BotConfig botConfig, Iterator<Row> rowIterator) {
+    private void assertBotConfig(final BotConfig botConfig, final Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next(), "Конфигурация");
         AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", botConfig.candleInterval().toString());
         AssertUtils.assertRowValues(rowIterator.next(), "Стратегия", botConfig.strategyType().toString());
@@ -350,23 +358,41 @@ class ExcelServiceImplUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void assertCommonStatistics(String figi, BackTestResult result, Iterator<Row> rowIterator) {
+    private void assertCommonStatistics(final String figi, final BackTestResult result, final Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
         AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.botConfig().accountId());
         AssertUtils.assertRowValues(rowIterator.next(), "FIGI", figi);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.interval().toPrettyString());
-        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.balances().initialInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.balances().totalInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.balances().finalTotalSavings());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.balances().finalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.balances().weightedAverageInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.profits().absolute());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.profits().relative());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.profits().relativeAnnual());
+        assertBalances(result, rowIterator);
+        asserProfits(result, rowIterator);
     }
 
-    private void assertPositions(BackTestResult result, Iterator<Row> rowIterator) {
+    private static void assertBalances(final BackTestResult result, final Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next(), "Балансы");
+        for (final Map.Entry<String, Balances> entry : result.balances().entrySet()) {
+            AssertUtils.assertRowValues(rowIterator.next(), "Валюта", entry.getKey());
+            final Balances balances = entry.getValue();
+            AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", balances.initialInvestment());
+            AssertUtils.assertRowValues(rowIterator.next(), "Вложения", balances.totalInvestment());
+            AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", balances.finalTotalSavings());
+            AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", balances.finalBalance());
+            AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", balances.weightedAverageInvestment());
+        }
+    }
+
+    private static void asserProfits(final BackTestResult result, final Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next(), "Доходы");
+        for (final Map.Entry<String, Profits> entry : result.profits().entrySet()) {
+            AssertUtils.assertRowValues(rowIterator.next(), "Валюта", entry.getKey());
+            final Profits profits = entry.getValue();
+            AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", profits.absolute());
+            AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", profits.relative());
+            AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", profits.relativeAnnual());
+        }
+    }
+
+    private void assertPositions(final BackTestResult result, final Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
         AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
@@ -375,7 +401,7 @@ class ExcelServiceImplUnitTest {
         }
     }
 
-    private void assertOperations(BackTestResult result, Iterator<Row> rowIterator) {
+    private void assertOperations(final BackTestResult result, final Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
         AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество");
@@ -391,7 +417,7 @@ class ExcelServiceImplUnitTest {
         }
     }
 
-    private void assertMergedRegions(ExtendedSheet sheet) {
+    private void assertMergedRegions(final ExtendedSheet sheet) {
         final List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
         Assertions.assertEquals(4, mergedRegions.size());
     }
@@ -458,7 +484,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertDoesNotThrow(() -> excelService.saveCandles(figi, interval, response));
     }
 
-    private BackTestResult createBackTestResult(final BotConfig botConfig, final String error) {
+    private BackTestResult createBackTestResult(final BotConfig botConfig, final String currency, final String error) {
         final Balances balances = new Balances(
                 DecimalUtils.setDefaultScale(700L),
                 DecimalUtils.setDefaultScale(800L),
@@ -466,11 +492,16 @@ class ExcelServiceImplUnitTest {
                 DecimalUtils.setDefaultScale(200L),
                 DecimalUtils.setDefaultScale(1000L)
         );
+        final Map<String, Balances> balancesMap = Map.of(currency, balances);
+
+        final Profits profits = new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0);
+        final Map<String, Profits> profitsMap = Map.of(currency, profits);
+
         return new BackTestResult(
                 botConfig,
                 createInterval(),
-                balances,
-                new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0),
+                balancesMap,
+                profitsMap,
                 createPositions(botConfig.figi()),
                 createBackTestOperations(botConfig.figi()),
                 createCandles(),
@@ -478,7 +509,7 @@ class ExcelServiceImplUnitTest {
         );
     }
 
-    private BackTestResult createBackTestResult(final BotConfig botConfig, final List<Candle> candles) {
+    private BackTestResult createBackTestResult(final BotConfig botConfig, final String currency, final List<Candle> candles) {
         final Balances balances = new Balances(
                 DecimalUtils.setDefaultScale(700L),
                 DecimalUtils.setDefaultScale(800L),
@@ -486,11 +517,16 @@ class ExcelServiceImplUnitTest {
                 DecimalUtils.setDefaultScale(200L),
                 DecimalUtils.setDefaultScale(1000L)
         );
+        final Map<String, Balances> balancesMap = Map.of(currency, balances);
+
+        final Profits profits = new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0);
+        final Map<String, Profits> profitsMap = Map.of(currency, profits);
+
         return new BackTestResult(
                 botConfig,
                 createInterval(),
-                balances,
-                new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0),
+                balancesMap,
+                profitsMap,
                 createPositions(botConfig.figi()),
                 createBackTestOperations(botConfig.figi()),
                 candles,
@@ -498,7 +534,7 @@ class ExcelServiceImplUnitTest {
         );
     }
 
-    private BackTestResult createBackTestResult(final BotConfig botConfig) {
+    private BackTestResult createBackTestResult(final BotConfig botConfig, final String currency) {
         final Balances balances = new Balances(
                 DecimalUtils.setDefaultScale(700L),
                 DecimalUtils.setDefaultScale(800L),
@@ -506,11 +542,16 @@ class ExcelServiceImplUnitTest {
                 DecimalUtils.setDefaultScale(200L),
                 DecimalUtils.setDefaultScale(1000L)
         );
+        final Map<String, Balances> balancesMap = Map.of(currency, balances);
+
+        final Profits profits = new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0);
+        final Map<String, Profits> profitsMap = Map.of(currency, profits);
+
         return new BackTestResult(
                 botConfig,
                 createInterval(),
-                balances,
-                new Profits(DecimalUtils.setDefaultScale(300L), 0.25, 6.0),
+                balancesMap,
+                profitsMap,
                 createPositions(botConfig.figi()),
                 createBackTestOperations(botConfig.figi()),
                 createCandles(),

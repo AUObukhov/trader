@@ -29,6 +29,8 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.Balances;
+import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -180,15 +182,8 @@ public class ExcelServiceImpl implements ExcelService {
         putAccountId(sheet, result.botConfig().accountId());
         putFigi(sheet, result.botConfig().figi());
         putInterval(sheet, result.interval());
-        putInitialInvestment(sheet, result.balances().initialInvestment());
-        putTotalInvestment(sheet, result.balances().totalInvestment());
-        putFinalTotalSavings(sheet, result.balances().finalTotalSavings());
-        putFinalBalance(sheet, result.balances().finalBalance());
-
-        putWeightedAverageInvestment(sheet, result.balances().weightedAverageInvestment());
-        putAbsoluteProfit(sheet, result.profits().absolute());
-        putRelativeProfit(sheet, result.profits().relative());
-        putRelativeYearProfit(sheet, result.profits().relativeAnnual());
+        putBalances(sheet, result);
+        putProfits(sheet, result);
         putError(sheet, result.error());
     }
 
@@ -207,6 +202,21 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Интервал", interval.toPrettyString());
     }
 
+    private void putBalances(final ExtendedSheet sheet, final BackTestResult result) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Балансы");
+        for (final Map.Entry<String, Balances> entry : result.balances().entrySet()) {
+            row = sheet.addRow();
+            row.createCells("Валюта", entry.getKey());
+            final Balances balances = entry.getValue();
+            putInitialInvestment(sheet, balances.initialInvestment());
+            putTotalInvestment(sheet, balances.totalInvestment());
+            putFinalTotalSavings(sheet, balances.finalTotalSavings());
+            putFinalBalance(sheet, balances.finalBalance());
+            putWeightedAverageInvestment(sheet, balances.weightedAverageInvestment());
+        }
+    }
+
     private void putInitialInvestment(final ExtendedSheet sheet, final BigDecimal initialInvestment) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Начальный баланс", initialInvestment);
@@ -222,14 +232,27 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Итоговый общий баланс", totalBalance);
     }
 
+    private void putFinalBalance(final ExtendedSheet sheet, final BigDecimal currencyBalance) {
+        final ExtendedRow row = sheet.addRow();
+        row.createCells("Итоговый валютный баланс", currencyBalance);
+    }
+
     private void putWeightedAverageInvestment(final ExtendedSheet sheet, final BigDecimal weightedAverageInvestment) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Средневзвешенные вложения", weightedAverageInvestment);
     }
 
-    private void putFinalBalance(final ExtendedSheet sheet, final BigDecimal currencyBalance) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Итоговый валютный баланс", currencyBalance);
+    private void putProfits(final ExtendedSheet sheet, final BackTestResult result) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Доходы");
+        for (final Map.Entry<String, Profits> entry : result.profits().entrySet()) {
+            row = sheet.addRow();
+            row.createCells("Валюта", entry.getKey());
+            final Profits profits = entry.getValue();
+            putAbsoluteProfit(sheet, profits.absolute());
+            putRelativeProfit(sheet, profits.relative());
+            putRelativeYearProfit(sheet, profits.relativeAnnual());
+        }
     }
 
     private void putAbsoluteProfit(final ExtendedSheet sheet, final BigDecimal absoluteProfit) {

@@ -1,30 +1,43 @@
 package ru.obukhov.trader.web.model;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @NullabilityConsistent(
-        fields = {"balanceIncrement", "balanceIncrementCron"},
-        message = "balanceIncrement and balanceIncrementCron must be both null or not null"
+        fields = {"balanceIncrements", "balanceIncrementCron"},
+        message = "balanceIncrements and balanceIncrementCron must be both null or not null"
 )
 public class BalanceConfig {
 
-    @NotNull(message = "initial balance is mandatory")
-    private BigDecimal initialBalance;
+    @NotEmpty(message = "initial balances are mandatory")
+    private Map<String, BigDecimal> initialBalances;
 
-    @Min(value = 1, message = "balanceIncrement must be positive")
-    private BigDecimal balanceIncrement;
+    @Nullable
+    private Map<String, BigDecimal> balanceIncrements;
 
+    @Nullable
     private CronExpression balanceIncrementCron;
+
+    public BalanceConfig(
+            final Map<String, BigDecimal> initialBalances,
+            @Nullable final Map<String, BigDecimal> balanceIncrements,
+            @Nullable final CronExpression balanceIncrementCron
+    ) {
+        this.initialBalances = new HashMap<>(initialBalances);
+        this.balanceIncrements = balanceIncrements == null ? null : new HashMap<>(balanceIncrements);
+        this.balanceIncrementCron = balanceIncrementCron;
+    }
 
 }

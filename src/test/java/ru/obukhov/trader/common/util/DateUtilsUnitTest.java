@@ -591,6 +591,16 @@ class DateUtilsUnitTest {
         AssertUtils.assertEquals(expectedHits, hits);
     }
 
+    @Test
+    void getCronHitsBetweenDates_returnsEmptyList_whenCronExpressionIsNull() {
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 1, 1);
+
+        final List<OffsetDateTime> hits = DateUtils.getCronHitsBetweenDates(null, from, to);
+
+        Assertions.assertTrue(hits.isEmpty());
+    }
+
     // endregion
 
     // region timestampIsInInterval tests

@@ -1,6 +1,7 @@
 package ru.obukhov.trader.trading.backtest.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.quartz.CronExpression;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -43,6 +44,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * Back tests trading by bots
@@ -111,7 +113,6 @@ public class BackTesterImpl implements BackTester {
                 .map(botConfig -> startBackTest(botConfig, balanceConfig, finiteInterval))
                 .toList().stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().finalTotalSavings()).reversed())
                 .toList();
     }
 
@@ -139,7 +140,7 @@ public class BackTesterImpl implements BackTester {
                     botConfig, backTestDurationString, executionResult.exception().getMessage()
             );
             log.error(message, executionResult.exception());
-            return createFailedBackTestResult(botConfig, balanceConfig.getInitialBalance(), interval, message);
+            return createFailedBackTestResult(botConfig, balanceConfig.getInitialBalances(), interval, message);
         }
     }
 
@@ -181,7 +182,7 @@ public class BackTesterImpl implements BackTester {
             final FakeBot fakeBot,
             final OffsetDateTime to
     ) {
-        if (balanceConfig.getBalanceIncrement() == null) {
+        if (MapUtils.isEmpty(balanceConfig.getBalanceIncrements())) {
             final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
             final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
             fakeBot.nextScheduleMinute(tradingSchedule);
@@ -200,9 +201,8 @@ public class BackTesterImpl implements BackTester {
 
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
         final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, previousDate, nextDate);
-        final String currency = fakeBot.getShare(figi).currency();
         for (final OffsetDateTime investmentTime : investmentsTimes) {
-            fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
+            fakeBot.addInvestments(accountId, investmentTime, balanceConfig.getBalanceIncrements());
         }
     }
 
@@ -216,8 +216,8 @@ public class BackTesterImpl implements BackTester {
         final String figi = botConfig.figi();
 
         final List<Position> positions = getPositions(fakeBot, accountId, interval.getTo());
-        final Balances balances = getBalances(accountId, interval, fakeBot, positions, figi);
-        final Profits profits = getProfits(balances, interval);
+        final Map<String, Balances> balances = getBalances(accountId, interval, fakeBot, positions, figi);
+        final Map<String, Profits> profits = getProfits(balances, interval);
         final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
 
         return new BackTestResult(
@@ -234,22 +234,27 @@ public class BackTesterImpl implements BackTester {
 
     private BackTestResult createFailedBackTestResult(
             final BotConfig botConfig,
-            final BigDecimal initialInvestment,
+            final Map<String, BigDecimal> initialBalances,
             final Interval interval,
             final String message
     ) {
-        final Balances balances = new Balances(
-                initialInvestment,
-                initialInvestment,
-                initialInvestment,
-                DecimalUtils.ZERO,
-                DecimalUtils.ZERO
-        );
+        final Map<String, Balances> balances = new HashMap<>();
+        for (final Map.Entry<String, BigDecimal> entry : initialBalances.entrySet()) {
+            final Balances currentBalances = new Balances(
+                    entry.getValue(),
+                    entry.getValue(),
+                    entry.getValue(),
+                    DecimalUtils.ZERO,
+                    DecimalUtils.ZERO
+            );
+            balances.put(entry.getKey(), currentBalances);
+        }
+
         return new BackTestResult(
                 botConfig,
                 interval,
                 balances,
-                Profits.ZEROS,
+                Collections.emptyMap(),
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -269,7 +274,7 @@ public class BackTesterImpl implements BackTester {
         return PositionUtils.cloneWithNewCurrentPrice(portfolioPosition, currentPrice);
     }
 
-    private Balances getBalances(
+    private Map<String, Balances> getBalances(
             final String accountId,
             final Interval interval,
             final FakeBot fakeBot,
@@ -286,7 +291,8 @@ public class BackTesterImpl implements BackTester {
         final BigDecimal totalInvestment = investments.values().stream().reduce(DecimalUtils.ZERO, BigDecimal::add);
         final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
-        return new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
+        final Balances balances = new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
+        return Map.of(currency, balances);
     }
 
     private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<Position> positions) {
@@ -308,6 +314,11 @@ public class BackTesterImpl implements BackTester {
             balances.put(entry.getKey(), currentBalance);
         }
         return balances;
+    }
+
+    private Map<String, Profits> getProfits(final Map<String, Balances> balances, final Interval interval) {
+        return balances.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> getProfits(entry.getValue(), interval)));
     }
 
     private Profits getProfits(final Balances balances, final Interval interval) {
