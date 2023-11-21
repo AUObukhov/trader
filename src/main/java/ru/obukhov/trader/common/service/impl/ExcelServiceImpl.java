@@ -159,19 +159,16 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putCandleInterval(final ExtendedSheet sheet, final CandleInterval candleInterval) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Размер свечи", candleInterval.name());
+        sheet.addRow("Размер свечи", candleInterval.name());
     }
 
     private void putStrategyType(final ExtendedSheet sheet, final StrategyType strategyType) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Стратегия", strategyType.toString());
+        sheet.addRow("Стратегия", strategyType.toString());
     }
 
     private void putStrategyParams(final ExtendedSheet sheet, final Map<String, Object> strategyParams) {
         for (final Map.Entry<String, Object> entry : strategyParams.entrySet()) {
-            final ExtendedRow row = sheet.addRow();
-            row.createCells(entry.getKey(), entry.getValue());
+            sheet.addRow(entry.getKey(), entry.getValue());
         }
     }
 
@@ -188,26 +185,21 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putAccountId(final ExtendedSheet sheet, final String accountId) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Счёт", accountId);
+        sheet.addRow("Счёт", accountId);
     }
 
     private void putFigi(final ExtendedSheet sheet, final String figi) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("FIGI", figi);
+        sheet.addRow("FIGI", figi);
     }
 
     private void putInterval(final ExtendedSheet sheet, final Interval interval) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Интервал", interval.toPrettyString());
+        sheet.addRow("Интервал", interval.toPrettyString());
     }
 
     private void putBalances(final ExtendedSheet sheet, final BackTestResult result) {
-        ExtendedRow row = sheet.addRow();
-        row.createCells("Балансы");
+        sheet.addRow("Балансы");
         for (final Map.Entry<String, Balances> entry : result.balances().entrySet()) {
-            row = sheet.addRow();
-            row.createCells("Валюта", entry.getKey());
+            sheet.addRow("Валюта", entry.getKey());
             final Balances balances = entry.getValue();
             putInitialInvestment(sheet, balances.initialInvestment());
             putTotalInvestment(sheet, balances.totalInvestment());
@@ -218,36 +210,29 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putInitialInvestment(final ExtendedSheet sheet, final BigDecimal initialInvestment) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Начальный баланс", initialInvestment);
+        sheet.addRow("Начальный баланс", initialInvestment);
     }
 
     private void putTotalInvestment(final ExtendedSheet sheet, final BigDecimal totalInvestment) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Вложения", totalInvestment);
+        sheet.addRow("Вложения", totalInvestment);
     }
 
     private void putFinalTotalSavings(final ExtendedSheet sheet, final BigDecimal totalBalance) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Итоговый общий баланс", totalBalance);
+        sheet.addRow("Итоговый общий баланс", totalBalance);
     }
 
     private void putFinalBalance(final ExtendedSheet sheet, final BigDecimal currencyBalance) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Итоговый валютный баланс", currencyBalance);
+        sheet.addRow("Итоговый валютный баланс", currencyBalance);
     }
 
     private void putWeightedAverageInvestment(final ExtendedSheet sheet, final BigDecimal weightedAverageInvestment) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Средневзвешенные вложения", weightedAverageInvestment);
+        sheet.addRow("Средневзвешенные вложения", weightedAverageInvestment);
     }
 
     private void putProfits(final ExtendedSheet sheet, final BackTestResult result) {
-        ExtendedRow row = sheet.addRow();
-        row.createCells("Доходы");
+        sheet.addRow("Доходы");
         for (final Map.Entry<String, Profits> entry : result.profits().entrySet()) {
-            row = sheet.addRow();
-            row.createCells("Валюта", entry.getKey());
+            sheet.addRow("Валюта", entry.getKey());
             final Profits profits = entry.getValue();
             putAbsoluteProfit(sheet, profits.absolute());
             putRelativeProfit(sheet, profits.relative());
@@ -256,21 +241,18 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putAbsoluteProfit(final ExtendedSheet sheet, final BigDecimal absoluteProfit) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells("Абсолютный доход", absoluteProfit);
+        sheet.addRow("Абсолютный доход", absoluteProfit);
     }
 
     private void putRelativeProfit(final ExtendedSheet sheet, final double relativeProfit) {
-        final ExtendedRow row = sheet.addRow();
-        final List<ExtendedCell> cells = row.createCells("Относительный доход", relativeProfit);
+        final List<ExtendedCell> cells = sheet.addRow("Относительный доход", relativeProfit);
         final ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
         final CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         cells.get(1).setCellStyle(style);
     }
 
     private void putRelativeYearProfit(final ExtendedSheet sheet, final double relativeYearProfit) {
-        final ExtendedRow row = sheet.addRow();
-        final List<ExtendedCell> cells = row.createCells("Относительный годовой доход", relativeYearProfit);
+        final List<ExtendedCell> cells = sheet.addRow("Относительный годовой доход", relativeYearProfit);
         final ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
         final CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         cells.get(1).setCellStyle(style);
@@ -278,39 +260,34 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putError(final ExtendedSheet sheet, final String error) {
         if (StringUtils.hasLength(error)) {
-            final ExtendedRow row = sheet.addRow();
-            row.createCells("Текст ошибки", error);
+            sheet.addRow("Текст ошибки", error);
         }
     }
 
     private void putPositions(final ExtendedSheet sheet, final List<Position> positions) {
-        final ExtendedRow labelRow = sheet.addRow();
-
         if (CollectionUtils.isEmpty(positions)) {
-            labelRow.createCells("Позиции отсутствуют");
+            sheet.addRow("Позиции отсутствуют");
         } else {
+            final ExtendedRow labelRow = sheet.addRow();
             labelRow.createUnitedCell("Позиции", 3);
-            final ExtendedRow headersRow = sheet.addRow();
-            headersRow.createCells("Цена", "Количество");
+            sheet.addRow("Цена", "Количество");
             for (final Position position : positions) {
-                final ExtendedRow row = sheet.addRow();
-                row.createCells(position.getCurrentPrice(), position.getQuantity());
+                sheet.addRow(position.getCurrentPrice(), position.getQuantity());
             }
         }
     }
 
     private void putOperations(final ExtendedSheet sheet, final List<Operation> operations) {
-        final ExtendedRow labelRow = sheet.addRow();
+
 
         if (CollectionUtils.isEmpty(operations)) {
-            labelRow.createCells("Операции отсутствуют");
+            sheet.addRow("Операции отсутствуют");
         } else {
+            final ExtendedRow labelRow = sheet.addRow();
             labelRow.createUnitedCell("Операции", 6);
-            final ExtendedRow headersRow = sheet.addRow();
-            headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество");
+            sheet.addRow("Дата и время", "Тип операции", "Цена", "Количество");
             for (final Operation operation : operations) {
-                final ExtendedRow row = sheet.addRow();
-                row.createCells(
+                sheet.addRow(
                         operation.getDate(),
                         operation.getOperationType().name(),
                         operation.getPrice(),
@@ -323,7 +300,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void putCandles(final ExtendedSheet sheet, final List<Candle> candles) {
         sheet.addRow();
         sheet.addRow().createUnitedCell("Свечи", 6);
-        sheet.addRow().createCells("Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
+        sheet.addRow("Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
 
         for (final Candle candle : candles) {
             putCandle(sheet, candle);
@@ -331,8 +308,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putCandle(final ExtendedSheet sheet, final Candle candle) {
-        final ExtendedRow row = sheet.addRow();
-        row.createCells(candle.getTime(), candle.getOpen(), candle.getClose(), candle.getHigh(), candle.getLow());
+        sheet.addRow(candle.getTime(), candle.getOpen(), candle.getClose(), candle.getHigh(), candle.getLow());
     }
 
     private void putChartWithAverages(final ExtendedSheet sheet, final GetCandlesResponse response) {

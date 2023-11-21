@@ -141,7 +141,7 @@ class ExtendedSheetUnitTest {
     // endregion
 
     @Test
-    void addRow_addsRowAfterLastRow() throws IOException {
+    void addRow_withoutValues_addsRowAfterLastRow() throws IOException {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         extendedSheet.createRow(0);
         extendedSheet.createRow(1);
@@ -152,6 +152,36 @@ class ExtendedSheetUnitTest {
         Assertions.assertEquals(5, extendedRow.getRowNum());
         Assertions.assertEquals(5, extendedSheet.getLastRowNum());
         Assertions.assertEquals(4, extendedSheet.getRowsCount());
+    }
+
+    @Test
+    void addRow_withValues_addsRowAfterLastRow() throws IOException {
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
+        extendedSheet.createRow(0);
+        extendedSheet.createRow(1);
+        extendedSheet.createRow(4);
+
+        extendedSheet.addRow("value1", "value2");
+
+        Assertions.assertEquals(5, extendedSheet.getLastRowNum());
+        Assertions.assertEquals(4, extendedSheet.getRowsCount());
+    }
+
+    @Test
+    void addRow_withValues_returnsCells() throws IOException {
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
+        extendedSheet.createRow(0);
+        extendedSheet.createRow(1);
+        extendedSheet.createRow(4);
+
+        final String value1 = "value1";
+        final String value2 = "value2";
+
+        List<ExtendedCell> cells = extendedSheet.addRow(value1, value2);
+
+        Assertions.assertEquals(2, cells.size());
+        Assertions.assertEquals(value1, cells.get(0).getStringCellValue());
+        Assertions.assertEquals(value2, cells.get(1).getStringCellValue());
     }
 
     @Test

@@ -109,6 +109,10 @@ public class ExtendedSheet implements Sheet {
         return (ExtendedRow) createRow(getLastRowNum() + 1);
     }
 
+    public List<ExtendedCell> addRow(final Object... values) {
+        return addRow().createCells(values);
+    }
+
     public ExtendedChart createChart(final int column1, final int row1, final int column2, final int row2) {
         final XSSFDrawing drawing = (XSSFDrawing) createDrawingPatriarch();
         final ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, column1, row1, column2, row2);
