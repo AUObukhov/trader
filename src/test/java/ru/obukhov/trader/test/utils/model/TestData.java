@@ -276,7 +276,38 @@ public class TestData {
         return Portfolio.fromResponse(portfolioResponse);
     }
 
-    public static TradingDay newTradingDay(final boolean isTradingDay, OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
+    public static TradingDay newTradingDay(
+            final boolean isTradingDay,
+            final OffsetDateTime startDateTime,
+            final OffsetDateTime endDateTime,
+            final OffsetDateTime openingAuctionStartTime,
+            final OffsetDateTime closingAuctionEndTime,
+            final OffsetDateTime eveningOpeningAuctionStartTime,
+            final OffsetDateTime eveningStartTime,
+            final OffsetDateTime eveningEndTime,
+            final OffsetDateTime clearingStartTime,
+            final OffsetDateTime clearingEndTime,
+            final OffsetDateTime premarketStartTime,
+            final OffsetDateTime premarketEndTime
+    ) {
+        return new TradingDay(
+                DateUtils.toStartOfDay(startDateTime),
+                isTradingDay,
+                startDateTime,
+                endDateTime,
+                openingAuctionStartTime,
+                closingAuctionEndTime,
+                eveningOpeningAuctionStartTime,
+                eveningStartTime,
+                eveningEndTime,
+                clearingStartTime,
+                clearingEndTime,
+                premarketStartTime,
+                premarketEndTime
+        );
+    }
+
+    public static TradingDay newTradingDay(final boolean isTradingDay, final OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
         return new TradingDay(
                 DateUtils.toStartOfDay(startDateTime),
                 isTradingDay,
@@ -321,6 +352,19 @@ public class TestData {
         }
 
         return schedule;
+    }
+
+    public static ru.tinkoff.piapi.contract.v1.TradingDay newTinkoffTradingDay(
+            final boolean isTradingDay,
+            final OffsetDateTime startDateTime,
+            final OffsetDateTime endDateTime
+    ) {
+        return ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
+                .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(DateUtils.toStartOfDay(startDateTime)))
+                .setIsTradingDay(isTradingDay)
+                .setStartTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(startDateTime))
+                .setEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(endDateTime))
+                .build();
     }
 
     /**

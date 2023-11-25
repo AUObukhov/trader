@@ -1,9 +1,11 @@
 package ru.obukhov.trader.market.impl;
 
+import org.apache.commons.collections4.ListUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.Asserter;
@@ -28,9 +30,13 @@ import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RealExtInstrumentsService implements ExtInstrumentsService {
@@ -77,6 +83,14 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
         ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Asserter.notNull(instrument, () -> new InstrumentNotFoundException(figi));
         return instrument.getExchange();
+    }
+
+    /**
+     * @return exchange of instrument for given {@code figi}
+     */
+    @Override
+    public List<String> getExchanges(final List<String> figies) {
+        return figies.stream().map(self::getExchange).distinct().toList();
     }
 
     /**
@@ -189,6 +203,36 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     public List<TradingDay> getTradingScheduleByFigi(final String figi, final Interval interval) {
         final String exchange = self.getExchange(figi);
         return getTradingSchedule(exchange, interval);
+    }
+
+    /**
+     * @return intersection of trading schedules with given {@code interval} corresponding to given {@code figies}
+     * @throws InstrumentNotFoundException when instrument not found for any of given {@code figies}
+     * @throws IllegalArgumentException    when instruments with given {@code figies} are from different exchanges
+     */
+    @Override
+    public List<TradingDay> getTradingScheduleByFigies(final List<String> figies, final Interval interval) {
+        Assert.isTrue(!figies.isEmpty(), "figies must not be empty");
+
+        final List<String> exchanges = getExchanges(figies);
+        final Collection<List<TradingDay>> tradingDaysGroups = exchanges.stream()
+                .map(exchange -> getTradingSchedule(exchange, interval))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(TradingDay::date, Collections::singletonList, ListUtils::union))
+                .values();
+
+        final List<TradingDay> result = new ArrayList<>();
+        for (final List<TradingDay> tradingDaysGroup : tradingDaysGroups) {
+            if (tradingDaysGroup.size() == figies.size()) {
+                final TradingDay tradingDay = tradingDaysGroup.stream()
+                        .reduce(TradingDay::intersect)
+                        .orElseThrow();
+                result.add(tradingDay);
+            }
+        }
+        return result.stream()
+                .sorted(Comparator.comparing(TradingDay::date))
+                .toList();
     }
 
     /**

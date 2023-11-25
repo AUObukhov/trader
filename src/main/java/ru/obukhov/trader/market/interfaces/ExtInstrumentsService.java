@@ -18,6 +18,8 @@ public interface ExtInstrumentsService {
 
     String getExchange(final String ticker);
 
+    List<String> getExchanges(final List<String> figies);
+
     Instrument getInstrument(final String figi);
 
     Share getShare(final String figi);
@@ -39,6 +41,8 @@ public interface ExtInstrumentsService {
     List<TradingDay> getTradingSchedule(final String exchange, final Interval interval);
 
     List<TradingDay> getTradingScheduleByFigi(final String figi, final Interval interval);
+
+    List<TradingDay> getTradingScheduleByFigies(final List<String> figies, final Interval interval);
 
     List<TradingSchedule> getTradingSchedules(final Interval interval);
 

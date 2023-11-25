@@ -37,6 +37,7 @@ import ru.tinkoff.piapi.contract.v1.Instrument;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest
@@ -122,6 +123,62 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Executable executable = () -> realExtInstrumentsService.getExchange(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
+    // region getExchanges tests
+
+    @Test
+    @DirtiesContext
+    void getExchanges_returnsExchanges() {
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+        Mocker.mockInstrument(instrumentsService, instrument2);
+
+        final List<String> figies = List.of(instrument1.getFigi(), instrument2.getFigi());
+        final List<String> exchanges = realExtInstrumentsService.getExchanges(figies);
+
+        final List<String> expectedExchanges = List.of(instrument1.getExchange(), instrument2.getExchange());
+        Assertions.assertEquals(expectedExchanges, exchanges);
+    }
+
+    @Test
+    @DirtiesContext
+    void getExchanges_returnsCachedValues() {
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+        Mocker.mockInstrument(instrumentsService, instrument2);
+
+        final List<String> figies = List.of(instrument1.getFigi(), instrument2.getFigi());
+        realExtInstrumentsService.getExchanges(figies);
+
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument1.getFigi())).thenReturn(null);
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument2.getFigi())).thenReturn(null);
+        final List<String> exchanges = realExtInstrumentsService.getExchanges(figies);
+
+        final List<String> expectedExchanges = List.of(instrument1.getExchange(), instrument2.getExchange());
+        Assertions.assertEquals(expectedExchanges, exchanges);
+        Mockito.verify(instrumentsService, Mockito.times(1)).getInstrumentByFigiSync(instrument1.getFigi());
+        Mockito.verify(instrumentsService, Mockito.times(1)).getInstrumentByFigiSync(instrument2.getFigi());
+    }
+
+    @Test
+    void getExchanges_throwInstrumentNotFoundException_whenNoInstrument() {
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+
+        final List<String> figies = List.of(instrument1.getFigi(), instrument2.getFigi());
+        final Executable executable = () -> realExtInstrumentsService.getExchanges(figies);
+
+        final String expectedMessage = "Instrument not found for id " + instrument2.getFigi();
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
@@ -356,6 +413,31 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
+    void getTradingScheduleByFigi_forFuture() {
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(2023, 8, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 8, 27);
+        final Interval interval = Interval.of(from, to);
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+        mockTradingSchedule(instrument.getExchange(), from, to);
+
+        final OffsetDateTime mockedNow = from.minusNanos(1);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> mockedStatic = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigi(figi, interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestTradingDays.TRADING_DAY1.tradingDay(),
+                    TestTradingDays.TRADING_DAY2.tradingDay()
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
     void getTradingScheduleByFigi_forPast() {
         final int year = 2023;
         final int month = 8;
@@ -431,6 +513,280 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
         final String expectedMessage = "Instrument not found for id " + figi;
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
+    // region getTradingScheduleByFigies tests
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_singleFigi_forFuture() {
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(2023, 8, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 8, 27);
+        final Interval interval = Interval.of(from, to);
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+        mockTradingSchedule(instrument.getExchange(), from, to);
+
+        final OffsetDateTime mockedNow = from.minusNanos(1);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> mockedStatic = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestTradingDays.TRADING_DAY1.tradingDay(),
+                    TestTradingDays.TRADING_DAY2.tradingDay()
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_singleFigi_forPast() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 12;
+        final int durationHours = 8;
+
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
+        final Interval interval = Interval.of(from, to);
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 26, hour, durationHours)
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_singleFigi_usesCachedExchange() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 12;
+        final int durationHours = 8;
+
+        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final String figi = instrument.getFigi();
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 20);
+        final Interval interval = Interval.of(from, to);
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+        realExtInstrumentsService.getExchange(figi); // to cache exchange
+        Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
+
+        final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours)
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_singleFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
+        final String figi = TestInstruments.APPLE.instrument().figi();
+
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), Interval.of(from, to));
+        final String expectedMessage = "Instrument not found for id " + figi;
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingScheduleByFigies_throwsIllegalArgumentException_whenNoFigies() {
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigies(Collections.emptyList(), Interval.of(from, to));
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "figies must not be empty");
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_multipleFigies_forFuture() {
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+        Mocker.mockInstrument(instrumentsService, instrument2);
+
+        final String exchange1 = instrument1.getExchange();
+        final String exchange2 = instrument2.getExchange();
+
+        final String figi1 = instrument1.getFigi();
+        final String figi2 = instrument2.getFigi();
+        final List<String> figies = List.of(figi1, figi2);
+
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(2023, 8, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 8, 27);
+        final Interval interval = Interval.of(from, to);
+
+        final Instant fromInstant = from.toInstant();
+        final Instant toInstant = to.toInstant();
+
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+                .setExchange(exchange1)
+                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 18, 7), DateTimeTestData.newDateTime(2023, 8, 18, 19)))
+                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)))
+                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 20, 7), DateTimeTestData.newDateTime(2023, 8, 20, 19)))
+                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 7), DateTimeTestData.newDateTime(2023, 8, 21, 19)))
+                .build();
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+                .setExchange(exchange2)
+                .addDays(TestData.newTinkoffTradingDay(false, DateTimeTestData.newDateTime(2023, 8, 18, 10), DateTimeTestData.newDateTime(2023, 8, 19, 2)))
+                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)))
+                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 10), DateTimeTestData.newDateTime(2023, 8, 22, 2)))
+                .build();
+
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange1, fromInstant, toInstant)).thenReturn(tradingSchedule1);
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange2, fromInstant, toInstant)).thenReturn(tradingSchedule2);
+
+        final OffsetDateTime mockedNow = from.minusNanos(1);
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> mockedStatic = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(figies, interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.newTradingDay(false, DateTimeTestData.newDateTime(2023, 8, 18, 10), DateTimeTestData.newDateTime(2023, 8, 18, 19)),
+                    TestData.newTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)),
+                    TestData.newTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 10), DateTimeTestData.newDateTime(2023, 8, 21, 19))
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_multipleFigies_forPast() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 12;
+        final int durationHours = 8;
+
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+        Mocker.mockInstrument(instrumentsService, instrument2);
+
+        final String figi1 = instrument1.getFigi();
+        final String figi2 = instrument2.getFigi();
+        final List<String> figies = List.of(figi1, figi2);
+
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
+        final Interval interval = Interval.of(from, to);
+
+        final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(figies, interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 20, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 21, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 22, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 23, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 24, hour, durationHours),
+                    TestData.newTradingDay(true, year, month, 25, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 26, hour, durationHours)
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_multipleFigies_usesCachedExchange() {
+        final int year = 2023;
+        final int month = 8;
+        final int hour = 12;
+        final int durationHours = 8;
+
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+        Mocker.mockInstrument(instrumentsService, instrument2);
+
+        final String figi1 = instrument1.getFigi();
+        final String figi2 = instrument2.getFigi();
+
+        final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 20);
+        final Interval interval = Interval.of(from, to);
+
+        realExtInstrumentsService.getExchange(figi1); // to cache exchange
+        realExtInstrumentsService.getExchange(figi2); // to cache exchange
+
+        Mockito.when(instrumentsService.getShareByFigiSync(figi1)).thenReturn(null);
+        Mockito.when(instrumentsService.getShareByFigiSync(figi2)).thenReturn(null);
+
+        final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
+        try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi1, figi2), interval);
+
+            final List<TradingDay> expectedResult = List.of(
+                    TestData.newTradingDay(true, year, month, 18, hour, durationHours),
+                    TestData.newTradingDay(false, year, month, 19, hour, durationHours)
+            );
+
+            Assertions.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    void getTradingScheduleByFigies_multipleFigies_throwsIllegalArgumentException_whenInstrumentNotFound() {
+        final Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+
+        Mocker.mockInstrument(instrumentsService, instrument1);
+
+        final String figi1 = instrument1.getFigi();
+        final String figi2 = instrument2.getFigi();
+
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
+        final Interval interval = Interval.of(from, to);
+
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi1, figi2), interval);
+        final String expectedMessage = "Instrument not found for id " + figi2;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
