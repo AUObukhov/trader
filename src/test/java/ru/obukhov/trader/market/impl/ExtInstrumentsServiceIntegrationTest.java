@@ -41,10 +41,10 @@ import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest
-class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
+class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
-    private RealExtInstrumentsService realExtInstrumentsService;
+    private ExtInstrumentsService extInstrumentsService;
 
     // region getTickerByFigi tests
 
@@ -56,7 +56,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = share.figi();
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
-        final String result = realExtInstrumentsService.getTickerByFigi(figi);
+        final String result = extInstrumentsService.getTickerByFigi(figi);
 
         Assertions.assertEquals(ticker, result);
     }
@@ -69,10 +69,10 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = share.figi();
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
-        realExtInstrumentsService.getTickerByFigi(figi);
+        extInstrumentsService.getTickerByFigi(figi);
 
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(null);
-        final String result = realExtInstrumentsService.getTickerByFigi(figi);
+        final String result = extInstrumentsService.getTickerByFigi(figi);
 
         Assertions.assertEquals(ticker, result);
     }
@@ -81,7 +81,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTickerByFigi_throwsInstrumentNotFoundException_whenNoInstrument() {
         final String figi = TestShares.APPLE.share().figi();
 
-        final Executable executable = () -> realExtInstrumentsService.getTickerByFigi(figi);
+        final Executable executable = () -> extInstrumentsService.getTickerByFigi(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
@@ -96,7 +96,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
         Mocker.mockInstrument(instrumentsService, instrument);
 
-        final String result = realExtInstrumentsService.getExchange(instrument.getFigi());
+        final String result = extInstrumentsService.getExchange(instrument.getFigi());
 
         Assertions.assertEquals(instrument.getExchange(), result);
     }
@@ -108,10 +108,10 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = instrument.getFigi();
 
         Mocker.mockInstrument(instrumentsService, instrument);
-        realExtInstrumentsService.getExchange(figi);
+        extInstrumentsService.getExchange(figi);
 
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(null);
-        final String result = realExtInstrumentsService.getExchange(figi);
+        final String result = extInstrumentsService.getExchange(figi);
 
         Assertions.assertEquals(instrument.getExchange(), result);
         Mockito.verify(instrumentsService, Mockito.times(1)).getInstrumentByFigiSync(figi);
@@ -121,7 +121,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getExchange_throwInstrumentNotFoundException_whenNoInstrument() {
         final String figi = TestInstruments.APPLE.instrument().figi();
 
-        final Executable executable = () -> realExtInstrumentsService.getExchange(figi);
+        final Executable executable = () -> extInstrumentsService.getExchange(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
@@ -140,7 +140,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument2);
 
         final List<String> figies = List.of(instrument1.getFigi(), instrument2.getFigi());
-        final List<String> exchanges = realExtInstrumentsService.getExchanges(figies);
+        final List<String> exchanges = extInstrumentsService.getExchanges(figies);
 
         final List<String> expectedExchanges = List.of(instrument1.getExchange(), instrument2.getExchange());
         Assertions.assertEquals(expectedExchanges, exchanges);
@@ -156,11 +156,11 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument2);
 
         final List<String> figies = List.of(instrument1.getFigi(), instrument2.getFigi());
-        realExtInstrumentsService.getExchanges(figies);
+        extInstrumentsService.getExchanges(figies);
 
         Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument1.getFigi())).thenReturn(null);
         Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument2.getFigi())).thenReturn(null);
-        final List<String> exchanges = realExtInstrumentsService.getExchanges(figies);
+        final List<String> exchanges = extInstrumentsService.getExchanges(figies);
 
         final List<String> expectedExchanges = List.of(instrument1.getExchange(), instrument2.getExchange());
         Assertions.assertEquals(expectedExchanges, exchanges);
@@ -176,7 +176,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockInstrument(instrumentsService, instrument1);
 
         final List<String> figies = List.of(instrument1.getFigi(), instrument2.getFigi());
-        final Executable executable = () -> realExtInstrumentsService.getExchanges(figies);
+        final Executable executable = () -> extInstrumentsService.getExchanges(figies);
 
         final String expectedMessage = "Instrument not found for id " + instrument2.getFigi();
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
@@ -193,7 +193,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
-        final Share result = realExtInstrumentsService.getShare(testShare.share().figi());
+        final Share result = extInstrumentsService.getShare(testShare.share().figi());
 
         Assertions.assertEquals(testShare.share(), result);
     }
@@ -205,10 +205,10 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = testShare.share().figi();
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
-        realExtInstrumentsService.getShare(figi);
+        extInstrumentsService.getShare(figi);
 
         Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
-        final Share result = realExtInstrumentsService.getShare(figi);
+        final Share result = extInstrumentsService.getShare(figi);
 
         Assertions.assertEquals(testShare.share(), result);
     }
@@ -229,7 +229,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare2, tinkoffShare3, tinkoffShare4);
         final List<String> figies = List.of(tinkoffShare1.getFigi(), tinkoffShare2.getFigi(), tinkoffShare4.getFigi());
-        final List<Share> actualResult = realExtInstrumentsService.getShares(figies);
+        final List<Share> actualResult = extInstrumentsService.getShares(figies);
 
         final List<Share> expectedResult = List.of(testShare1.share(), testShare2.share(), testShare4.share());
         AssertUtils.assertEquals(expectedResult, actualResult);
@@ -241,7 +241,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockEtf(instrumentsService, testEtf.tinkoffEtf());
 
-        final Etf result = realExtInstrumentsService.getEtf(testEtf.tinkoffEtf().getFigi());
+        final Etf result = extInstrumentsService.getEtf(testEtf.tinkoffEtf().getFigi());
 
         Assertions.assertEquals(testEtf.etf(), result);
     }
@@ -251,7 +251,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final TestBond testBond = TestBonds.KAZAKHSTAN;
         Mocker.mockBond(instrumentsService, testBond.tinkoffBond());
 
-        final Bond result = realExtInstrumentsService.getBond(testBond.tinkoffBond().getFigi());
+        final Bond result = extInstrumentsService.getBond(testBond.tinkoffBond().getFigi());
 
         Assertions.assertEquals(testBond.bond(), result);
     }
@@ -261,7 +261,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final ru.tinkoff.piapi.contract.v1.Currency currency = TestCurrencies.RUB.tinkoffCurrency();
         Mocker.mockCurrency(instrumentsService, currency);
 
-        final Currency result = realExtInstrumentsService.getCurrencyByFigi(currency.getFigi());
+        final Currency result = extInstrumentsService.getCurrencyByFigi(currency.getFigi());
 
         Assertions.assertEquals(TestCurrencies.RUB.currency(), result);
     }
@@ -274,14 +274,14 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockAllCurrencies(instrumentsService, testCurrency1.tinkoffCurrency(), testCurrency2.tinkoffCurrency());
 
-        final List<Currency> actualResult1 = realExtInstrumentsService.getAllCurrencies();
+        final List<Currency> actualResult1 = extInstrumentsService.getAllCurrencies();
 
         final List<Currency> expectedResult = List.of(testCurrency1.currency(), testCurrency2.currency());
         Assertions.assertEquals(expectedResult, actualResult1);
 
         Mocker.mockAllCurrencies(instrumentsService);
 
-        final List<Currency> actualResult2 = realExtInstrumentsService.getAllCurrencies();
+        final List<Currency> actualResult2 = extInstrumentsService.getAllCurrencies();
         Assertions.assertEquals(expectedResult, actualResult2);
     }
 
@@ -297,7 +297,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final ru.tinkoff.piapi.contract.v1.Currency currency2 = testCurrency2.tinkoffCurrency();
         Mocker.mockAllCurrencies(instrumentsService, currency1, currency2);
 
-        final List<Currency> actualResult1 = realExtInstrumentsService.getCurrenciesByIsoNames(
+        final List<Currency> actualResult1 = extInstrumentsService.getCurrenciesByIsoNames(
                 currency1.getIsoCurrencyName(),
                 currency2.getIsoCurrencyName(),
                 currency1.getIsoCurrencyName(),
@@ -310,7 +310,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockAllCurrencies(instrumentsService);
 
-        final List<Currency> actualResult2 = realExtInstrumentsService.getCurrenciesByIsoNames(
+        final List<Currency> actualResult2 = extInstrumentsService.getCurrenciesByIsoNames(
                 currency1.getIsoCurrencyName(),
                 currency2.getIsoCurrencyName(),
                 currency1.getIsoCurrencyName(),
@@ -336,7 +336,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime mockedNow = DateUtils.toStartOfDay(dateTime);
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(instrument.getFigi(), dateTime);
+            final TradingDay tradingDay = extInstrumentsService.getTradingDay(instrument.getFigi(), dateTime);
 
             Assertions.assertEquals(TestTradingDays.TRADING_DAY1.tradingDay(), tradingDay);
         }
@@ -348,7 +348,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime timestamp = DateTimeTestData.newDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingDay(figi, timestamp);
+        final Executable executable = () -> extInstrumentsService.getTradingDay(figi, timestamp);
         final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
@@ -367,7 +367,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime mockedNow = DateUtils.toStartOfDay(from);
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
             final List<TradingDay> expectedResult = List.of(TestTradingDays.TRADING_DAY1.tradingDay(), TestTradingDays.TRADING_DAY2.tradingDay());
 
@@ -389,7 +389,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingSchedule(exchange, interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingSchedule(exchange, interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -425,7 +425,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime mockedNow = from.minusNanos(1);
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> mockedStatic = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigi(figi, interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestTradingDays.TRADING_DAY1.tradingDay(),
@@ -454,7 +454,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigi(figi, interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -487,12 +487,12 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         Mocker.mockInstrument(instrumentsService, instrument);
-        realExtInstrumentsService.getExchange(figi); // to cache exchange
+        extInstrumentsService.getExchange(figi); // to cache exchange
         Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigi(figi, interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -511,7 +511,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
+        final Executable executable = () -> extInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
         final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
@@ -534,7 +534,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime mockedNow = from.minusNanos(1);
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> mockedStatic = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestTradingDays.TRADING_DAY1.tradingDay(),
@@ -563,7 +563,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -596,12 +596,12 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         Mocker.mockInstrument(instrumentsService, instrument);
-        realExtInstrumentsService.getExchange(figi); // to cache exchange
+        extInstrumentsService.getExchange(figi); // to cache exchange
         Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigies(List.of(figi), interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -620,7 +620,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi), Interval.of(from, to));
+        final Executable executable = () -> extInstrumentsService.getTradingScheduleByFigies(List.of(figi), Interval.of(from, to));
         final String expectedMessage = "Instrument not found for id " + figi;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
@@ -630,7 +630,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigies(Collections.emptyList(), Interval.of(from, to));
+        final Executable executable = () -> extInstrumentsService.getTradingScheduleByFigies(Collections.emptyList(), Interval.of(from, to));
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "figies must not be empty");
     }
 
@@ -676,7 +676,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime mockedNow = from.minusNanos(1);
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> mockedStatic = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(figies, interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigies(figies, interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(false, DateTimeTestData.newDateTime(2023, 8, 18, 10), DateTimeTestData.newDateTime(2023, 8, 18, 19)),
@@ -712,7 +712,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(figies, interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigies(figies, interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -751,15 +751,15 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 20);
         final Interval interval = Interval.of(from, to);
 
-        realExtInstrumentsService.getExchange(figi1); // to cache exchange
-        realExtInstrumentsService.getExchange(figi2); // to cache exchange
+        extInstrumentsService.getExchange(figi1); // to cache exchange
+        extInstrumentsService.getExchange(figi2); // to cache exchange
 
         Mockito.when(instrumentsService.getShareByFigiSync(figi1)).thenReturn(null);
         Mockito.when(instrumentsService.getShareByFigiSync(figi2)).thenReturn(null);
 
         final Instant mockedNow = DateUtils.toSameDayInstant(from).plusMillis(1);
         try (@SuppressWarnings("unused") final MockedStatic<Instant> instantStaticMock = Mocker.mockNow(mockedNow)) {
-            final List<TradingDay> actualResult = realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi1, figi2), interval);
+            final List<TradingDay> actualResult = extInstrumentsService.getTradingScheduleByFigies(List.of(figi1, figi2), interval);
 
             final List<TradingDay> expectedResult = List.of(
                     TestData.newTradingDay(true, year, month, 18, hour, durationHours),
@@ -785,7 +785,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
         final Interval interval = Interval.of(from, to);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigies(List.of(figi1, figi2), interval);
+        final Executable executable = () -> extInstrumentsService.getTradingScheduleByFigies(List.of(figi1, figi2), interval);
         final String expectedMessage = "Instrument not found for id " + figi2;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
@@ -818,7 +818,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
 
-        final List<TradingSchedule> result = realExtInstrumentsService.getTradingSchedules(Interval.of(from, to));
+        final List<TradingSchedule> result = extInstrumentsService.getTradingSchedules(Interval.of(from, to));
 
         final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, testTradingDay1.tradingDay(), testTradingDay2.tradingDay());
         final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, testTradingDay3.tradingDay());
