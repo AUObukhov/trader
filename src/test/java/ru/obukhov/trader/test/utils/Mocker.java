@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
-import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.OrderState;
@@ -51,11 +50,6 @@ public class Mocker {
         final MockedStatic<Instant> instantStaticMock = Mockito.mockStatic(Instant.class, Mockito.CALLS_REAL_METHODS);
         instantStaticMock.when(Instant::now).thenReturn(mockedNow);
         return instantStaticMock;
-    }
-
-    public static void mockCurrentDateTime(final Context context) {
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
     }
 
     public static void mockTinkoffOperations(
