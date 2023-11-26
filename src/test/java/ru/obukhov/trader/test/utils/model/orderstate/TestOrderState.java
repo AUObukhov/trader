@@ -1,12 +1,12 @@
 package ru.obukhov.trader.test.utils.model.orderstate;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.OrderStage;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.OrderStageMapper;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 import java.util.stream.Collectors;
 
@@ -37,7 +37,7 @@ public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1
                 .setServiceCommission(moneyValueMapper.map(orderState.serviceCommission(), Currencies.RUB))
                 .setCurrency(orderState.currency())
                 .setOrderType(orderState.orderType())
-                .setOrderDate(TimestampUtils.newTimestamp(orderState.orderDate()))
+                .setOrderDate(DateTimeTestData.newTimestamp(orderState.orderDate()))
                 .setInstrumentUid(orderState.instrumentUid())
                 .setOrderRequestId(orderState.orderRequestId())
                 .build();

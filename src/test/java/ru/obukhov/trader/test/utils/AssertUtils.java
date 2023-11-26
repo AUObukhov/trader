@@ -394,7 +394,7 @@ public class AssertUtils {
     }
 
     public static void assertCellValue(final Cell cell, final Timestamp value) {
-        final Date expectedValue = TimestampUtils.toDate(value);
+        final Date expectedValue = Date.from(TimestampUtils.toInstant(value));
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 

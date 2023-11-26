@@ -21,7 +21,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
@@ -583,28 +582,28 @@ class ExcelServiceImplUnitTest {
     private List<Operation> createBackTestOperations(String figi) {
         Operation operation1 = Operation.newBuilder()
                 .setFigi(figi)
-                .setDate(TimestampUtils.newTimestamp(2020, 10, 1, 10))
+                .setDate(DateTimeTestData.newTimestamp(2020, 10, 1, 10))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
                 .setPrice(TestData.newMoneyValue(150, ""))
                 .setQuantity(1L)
                 .build();
         Operation operation2 = Operation.newBuilder()
                 .setFigi(figi)
-                .setDate(TimestampUtils.newTimestamp(2020, 10, 5, 10, 11))
+                .setDate(DateTimeTestData.newTimestamp(2020, 10, 5, 10, 11))
                 .setOperationType(OperationType.OPERATION_TYPE_SELL)
                 .setPrice(TestData.newMoneyValue(180, ""))
                 .setQuantity(1L)
                 .build();
         Operation operation3 = Operation.newBuilder()
                 .setFigi(figi)
-                .setDate(TimestampUtils.newTimestamp(2020, 10, 10, 10, 50))
+                .setDate(DateTimeTestData.newTimestamp(2020, 10, 10, 10, 50))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
                 .setPrice(TestData.newMoneyValue(160, ""))
                 .setQuantity(3L)
                 .build();
         Operation operation4 = Operation.newBuilder()
                 .setFigi(figi)
-                .setDate(TimestampUtils.newTimestamp(2020, 11, 1, 10))
+                .setDate(DateTimeTestData.newTimestamp(2020, 11, 1, 10))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
                 .setPrice(TestData.newMoneyValue(120, ""))
                 .setQuantity(2L)

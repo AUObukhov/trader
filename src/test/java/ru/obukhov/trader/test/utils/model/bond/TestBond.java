@@ -2,10 +2,10 @@ package ru.obukhov.trader.test.utils.model.bond;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond, String jsonString) {
 
@@ -33,11 +33,11 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 .setName(bond.name())
                 .setExchange(bond.exchange())
                 .setCouponQuantityPerYear(bond.couponQuantityPerYear())
-                .setMaturityDate(TimestampUtils.newTimestamp(bond.maturityDate()))
+                .setMaturityDate(DateTimeTestData.newTimestamp(bond.maturityDate()))
                 .setNominal(moneyValueMapper.map(bond.nominal(), bond.currency()))
                 .setInitialNominal(moneyValueMapper.map(bond.initialNominal(), bond.currency()))
-                .setStateRegDate(TimestampUtils.newTimestamp(bond.stateRegDate()))
-                .setPlacementDate(TimestampUtils.newTimestamp(bond.placementDate()))
+                .setStateRegDate(DateTimeTestData.newTimestamp(bond.stateRegDate()))
+                .setPlacementDate(DateTimeTestData.newTimestamp(bond.placementDate()))
                 .setPlacementPrice(moneyValueMapper.map(bond.placementPrice(), bond.currency()))
                 .setAciValue(moneyValueMapper.map(bond.aciValue(), bond.currency()))
                 .setCountryOfRisk(bond.countryOfRisk())
@@ -63,8 +63,8 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 .setWeekendFlag(bond.weekendFlag())
                 .setBlockedTcaFlag(bond.blockedTcaFlag())
                 .setSubordinatedFlag(bond.subordinatedFlag())
-                .setFirst1MinCandleDate(TimestampUtils.newTimestamp(bond.first1MinCandleDate()))
-                .setFirst1DayCandleDate(TimestampUtils.newTimestamp(bond.first1DayCandleDate()))
+                .setFirst1MinCandleDate(DateTimeTestData.newTimestamp(bond.first1MinCandleDate()))
+                .setFirst1DayCandleDate(DateTimeTestData.newTimestamp(bond.first1DayCandleDate()))
                 .setRiskLevel(bond.riskLevel())
                 .build();
     }

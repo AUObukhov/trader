@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.TradingDay;
@@ -403,7 +402,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final Operation operation = Operation.newBuilder()
-                .setDate(TimestampUtils.newTimestamp(2021, 1, 1, 10))
+                .setDate(DateTimeTestData.newTimestamp(2021, 1, 1, 10))
                 .build();
         fakeContext.addOperation(accountId, operation);
 

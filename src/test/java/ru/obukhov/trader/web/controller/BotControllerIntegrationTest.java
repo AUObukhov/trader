@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
@@ -282,7 +281,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final Map<String, Profits> profitsMap1 = Map.of(currency, profits1);
         final Operation operation = Operation.newBuilder()
                 .setFigi(figi)
-                .setDate(TimestampUtils.newTimestamp(from))
+                .setDate(DateTimeTestData.newTimestamp(from))
                 .setOperationType(OperationType.OPERATION_TYPE_BUY)
                 .setPrice(TestData.newMoneyValue(10000, currency))
                 .setQuantity(1L)
