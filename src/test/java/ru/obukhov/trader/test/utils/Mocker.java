@@ -5,10 +5,13 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
+import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.OrderState;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -59,8 +62,8 @@ public class Mocker {
             final Interval interval,
             final Operation... operations
     ) {
-        Mockito.when(fakeBot.getOperations(accountId, interval, figi))
-                .thenReturn(List.of(operations));
+        Mockito.when(fakeBot.getOperations(accountId, interval, List.of(figi)))
+                .thenReturn(Map.of(figi, List.of(operations)));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -90,6 +93,12 @@ public class Mocker {
 
     public static void mockShare(final ExtInstrumentsService extInstrumentsService, final Share share) {
         Mockito.when(extInstrumentsService.getShare(share.figi())).thenReturn(share);
+    }
+
+    public static void mockShares(final ExtInstrumentsService extInstrumentsService, final Share... shares) {
+        for (final Share share : shares) {
+            mockShare(extInstrumentsService, share);
+        }
     }
 
     public static void mockTradingStatus(final MarketDataService marketDataService, final String figi, final SecurityTradingStatus status) {
@@ -145,6 +154,17 @@ public class Mocker {
         Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond);
     }
 
+    public static void mockTradingSchedules(
+            final ExtInstrumentsService instrumentsService,
+            final List<String> figies,
+            final OffsetTime startTime,
+            final OffsetTime endTime
+    ) {
+        for (final String figi : figies) {
+            mockTradingSchedule(instrumentsService, figi, startTime, endTime);
+        }
+    }
+
     public static void mockTradingSchedule(
             final ExtInstrumentsService instrumentsService,
             final String figi,
@@ -160,6 +180,14 @@ public class Mocker {
                     .map(dayInterval -> intervalToTradingDay(dayInterval, startTime, endTime))
                     .toList();
         });
+    }
+
+    public static void mockSecurity(final ExtOperationsService extOperationsService, final String accountId) {
+        Mockito.when(extOperationsService.getSecurity(Mockito.eq(accountId), Mockito.anyString()))
+                .thenAnswer(invocationOnMock -> {
+                    final String figi = invocationOnMock.getArgument(1);
+                    return new PositionBuilder().setFigi(figi).build();
+                });
     }
 
     private static TradingDay intervalToTradingDay(final Interval interval, final OffsetTime startTime, final OffsetTime endTime) {
@@ -218,6 +246,19 @@ public class Mocker {
             lastPrices.put(entry.getKey().getFigi(), entry.getValue());
         }
         Mocker.mockLastPricesDouble(marketDataService, lastPrices);
+    }
+
+    public static void mockAvailableBalances(
+            final ExtOperationsService extOperationsService,
+            final String accountId,
+            final int balance,
+            final String... currencies
+    ) {
+        final BigDecimal decimalBalance = DecimalUtils.setDefaultScale(balance);
+        for (final String currency : currencies) {
+            Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
+                    .thenReturn(decimalBalance);
+        }
     }
 
 }

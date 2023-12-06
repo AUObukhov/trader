@@ -211,6 +211,12 @@ public class Interval {
         return result;
     }
 
+    public Interval unite(final Interval other) {
+        final OffsetDateTime resultFrom = DateUtils.getEarliestDateTime(this.from, other.from);
+        final OffsetDateTime resultTo = DateUtils.getLatestDateTime(this.to, other.to);
+        return Interval.of(resultFrom, resultTo);
+    }
+
     /**
      * @return duration of current interval
      */

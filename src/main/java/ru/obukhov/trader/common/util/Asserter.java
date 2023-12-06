@@ -13,4 +13,10 @@ public class Asserter {
         }
     }
 
+    public static void isTrue(final boolean value, Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (!value) {
+            throw exceptionSupplier.get();
+        }
+    }
+
 }

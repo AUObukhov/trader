@@ -702,50 +702,6 @@ class IntervalUnitTest {
 
     // endregion
 
-    // region withDefaultOffsetSameInstant tests
-
-//    @SuppressWarnings("unused")
-//    static Stream<Arguments> getData_forWithDefaultOffsetSameInstant() {
-//        return Stream.of(
-//                Arguments.of(null, null, null, null),
-//                Arguments.of(
-//                        null,
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
-//                        null,
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13)
-//                ),
-//                Arguments.of(
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
-//                        null,
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13),
-//                        null
-//                ),
-//                Arguments.of(
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13)
-//                ),
-//                Arguments.of(
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 13)
-//                )
-//        );
-//    }
-//
-//    @ParameterizedTest
-//    @MethodSource("getData_forWithDefaultOffsetSameInstant")
-//    void withDefaultOffsetSameInstant(Timestamp from, Timestamp to, Timestamp expectedFrom, Timestamp expectedTo) {
-//        final Interval result = Interval.of(from, to).withDefaultOffsetSameInstant();
-//
-//        Assertions.assertEquals(expectedFrom, result.getFrom());
-//        Assertions.assertEquals(expectedTo, result.getTo());
-//    }
-
-    // endregion
-
     // region equalDates tests
 
     @SuppressWarnings("unused")
@@ -1141,6 +1097,77 @@ class IntervalUnitTest {
         final OffsetDateTime expectedLeft2 = DateTimeTestData.newDateTime(2022, 1, 1);
         Assertions.assertEquals(expectedLeft2, intervals.get(2).getFrom());
         Assertions.assertEquals(to, intervals.get(2).getTo());
+    }
+
+    // endregion
+
+    // region unite tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forUnite() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 2)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 4),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 3),
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 4)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 3),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 4),
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 4)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 3),
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 3)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 2),
+                        DateTimeTestData.newDateTime(2020, 1, 3),
+                        DateTimeTestData.newDateTime(2020, 1, 4),
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 4)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forUnite")
+    void unite(
+            final OffsetDateTime from1,
+            final OffsetDateTime to1,
+            final OffsetDateTime from2,
+            final OffsetDateTime to2,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) {
+        final Interval interval1 = Interval.of(from1, to1);
+        final Interval interval2 = Interval.of(from2, to2);
+        final Interval expectedResult = Interval.of(expectedFrom, expectedTo);
+
+        final Interval actualResult1 = interval1.unite(interval2);
+        final Interval actualResult2 = interval2.unite(interval1);
+
+        Assertions.assertEquals(expectedResult, actualResult1);
+        Assertions.assertEquals(expectedResult, actualResult2);
     }
 
     // endregion

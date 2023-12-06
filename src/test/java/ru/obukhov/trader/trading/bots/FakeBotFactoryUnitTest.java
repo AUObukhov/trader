@@ -37,6 +37,7 @@ import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -91,23 +92,28 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime")
     void createBot_movesCurrentTimestampToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
-        final Share share = TestShares.APPLE.share();
-        final String figi = share.figi();
-        final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
-                figi,
-                CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0.003),
-                StrategyType.CONSERVATIVE,
-                Collections.emptyMap()
-        );
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
-        final BalanceConfig balanceConfig = TestData.newBalanceConfig(share.currency(), 0.0);
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
 
-        mockCurrency(figi, share.currency());
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
+        final List<String> figies = List.of(figi1, figi2);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+        final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
+        final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
+
+        final Map<String, BigDecimal> initialBalances = TestData.newDecimalMap(share1.currency(), 0.0, share2.currency(), 0.0);
+        final Map<String, BigDecimal> balanceIncrements = TestData.newDecimalMap(share1.currency(), 0.0, share2.currency(), 0.0);
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(initialBalances, balanceIncrements);
+
+        Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(List.of(share1, share2));
+
         mockStrategy(botConfig);
         mockFakeContext();
-        Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
+        Mocker.mockTradingSchedules(extInstrumentsService, figies, START_TIME, END_TIME);
 
         final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
@@ -116,82 +122,105 @@ class FakeBotFactoryUnitTest {
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateBot_initializesBalance() throws ParseException {
-        final Map<String, BigDecimal> initialBalances = TestData.newDecimalMap(Currencies.USD, 1000000, Currencies.RUB, 10000);
-        final Map<String, BigDecimal> balanceIncrements = TestData.newDecimalMap(Currencies.USD, 1000, Currencies.RUB, 5000);
+        final int initialBalanceUsd = 1000000;
+        final int initialBalanceRub = 10000;
+        final Map<String, BigDecimal> initialBalances = TestData.newDecimalMap(
+                Currencies.USD, initialBalanceUsd,
+                Currencies.RUB, initialBalanceRub
+        );
+
+        final int balanceIncrementUsd = 1000;
+        final int balanceIncrementRub = 5000;
+        final Map<String, BigDecimal> balanceIncrements = TestData.newDecimalMap(
+                Currencies.USD, balanceIncrementUsd,
+                Currencies.RUB, balanceIncrementRub
+        );
 
         return Stream.of(
                 Arguments.of(
                         TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1),
-                        1001000.0
+                        TestData.newDecimalMap(
+                                Currencies.USD, initialBalanceUsd + balanceIncrementUsd,
+                                Currencies.RUB, initialBalanceRub + balanceIncrementRub
+                        )
                 ),
                 Arguments.of(
                         TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1, 7),
-                        1000000.0
+                        TestData.newDecimalMap(Currencies.USD, initialBalanceUsd, Currencies.RUB, initialBalanceRub)
                 ),
                 Arguments.of(
                         TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 2 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1),
-                        1000000.0
+                        TestData.newDecimalMap(Currencies.USD, initialBalanceUsd, Currencies.RUB, initialBalanceRub)
                 ),
                 Arguments.of(
-                        TestData.newBalanceConfig(Currencies.USD, 1000000.0),
+                        TestData.newBalanceConfig(initialBalances, balanceIncrements),
                         DateTimeTestData.newDateTime(2023, 9, 1),
-                        1000000.0
+                        TestData.newDecimalMap(Currencies.USD, initialBalanceUsd, Currencies.RUB, initialBalanceRub)
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource(value = "getData_forCreateBot_initializesBalance")
-    void createBot_initializesBalance(final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime, final double expectedBalance) {
-        final Share share = TestShares.APPLE.share();
-        final String figi = share.figi();
-        final String currency = share.currency();
-        final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
-                figi,
-                CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0.003),
-                StrategyType.CONSERVATIVE,
-                Collections.emptyMap()
-        );
+    void createBot_initializesBalance(
+            final BalanceConfig balanceConfig,
+            final OffsetDateTime currentDateTime,
+            final Map<String, BigDecimal> expectedBalances
+    ) {
+        final String accountId = TestAccounts.TINKOFF.account().id();
 
-        mockCurrency(figi, currency);
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
+        final String currency1 = share1.currency();
+        final String currency2 = share2.currency();
+
+        final List<String> figies = List.of(figi1, figi2);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+        final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
+        final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
+
+        Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(List.of(share1, share2));
         mockStrategy(botConfig);
         mockFakeContext();
-        Mocker.mockTradingSchedule(extInstrumentsService, figi, START_TIME, END_TIME);
+        Mocker.mockTradingSchedules(extInstrumentsService, figies, START_TIME, END_TIME);
 
         final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
-        AssertUtils.assertEquals(expectedBalance, bot.getCurrentBalance(botConfig.accountId(), currency));
+        AssertUtils.assertEquals(expectedBalances.get(currency1), bot.getCurrentBalance(botConfig.accountId(), currency1));
+        AssertUtils.assertEquals(expectedBalances.get(currency2), bot.getCurrentBalance(botConfig.accountId(), currency2));
     }
 
     @Test
-    void createBot_throwsIllegalArgumentException_whenShareNotFound() {
-        final Share share = TestShares.APPLE.share();
-        final String figi = share.figi();
-        final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
-                figi,
-                CandleInterval.CANDLE_INTERVAL_1_MIN,
-                DecimalUtils.setDefaultScale(0.003),
-                StrategyType.CONSERVATIVE,
-                Collections.emptyMap()
-        );
-        final BalanceConfig balanceConfig = TestData.newBalanceConfig(share.currency(), 1000000.0);
+    void createBot_throwsInstrumentNotFoundException_whenShareNotFound() {
+        final String accountId = TestAccounts.TINKOFF.account().id();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
+        final List<String> figies = List.of(figi1, figi2);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+        final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
+        final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
+
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig();
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
-        final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
-        final String expectedMessage = "Instrument not found for id " + figi;
-        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
-    }
+        Mocker.mockTradingSchedules(extInstrumentsService, figies, START_TIME, END_TIME);
+        Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(List.of(share1));
 
-    @SuppressWarnings("SameParameterValue")
-    private void mockCurrency(final String figi, final String currency) {
-        final Share share = Share.builder().figi(figi).currency(currency).build();
-        Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(share);
+        final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
+        final String expectedMessage = "Instruments not found for ids [" + figi2 + "]";
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 
     private void mockStrategy(final BotConfig botConfig) {

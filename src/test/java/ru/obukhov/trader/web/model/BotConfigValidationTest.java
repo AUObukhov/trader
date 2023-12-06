@@ -12,6 +12,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -21,7 +22,7 @@ class BotConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -35,7 +36,7 @@ class BotConfigValidationTest {
         return Stream.of(
                 Arguments.of(
                         null,
-                        TestShares.APPLE.share().figi(),
+                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -49,11 +50,20 @@ class BotConfigValidationTest {
                         0.003,
                         StrategyType.CONSERVATIVE,
                         Collections.emptyMap(),
-                        "figi is mandatory"
+                        "figies are mandatory"
                 ),
                 Arguments.of(
                         TestAccounts.TINKOFF.account().id(),
-                        TestShares.APPLE.share().figi(),
+                        Collections.emptyList(),
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        0.003,
+                        StrategyType.CONSERVATIVE,
+                        Collections.emptyMap(),
+                        "figies are mandatory"
+                ),
+                Arguments.of(
+                        TestAccounts.TINKOFF.account().id(),
+                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         null,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -62,7 +72,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestAccounts.TINKOFF.account().id(),
-                        TestShares.APPLE.share().figi(),
+                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         null,
                         StrategyType.CONSERVATIVE,
@@ -71,7 +81,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestAccounts.TINKOFF.account().id(),
-                        TestShares.APPLE.share().figi(),
+                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         null,
@@ -85,7 +95,7 @@ class BotConfigValidationTest {
     @MethodSource("getData_forViolation")
     void testViolation(
             final String accountId,
-            final String figi,
+            final List<String> figies,
             final CandleInterval candleInterval,
             final Double commission,
             final StrategyType strategyType,
@@ -94,7 +104,7 @@ class BotConfigValidationTest {
     ) {
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                figi,
+                figies,
                 candleInterval,
                 DecimalUtils.setDefaultScale(commission),
                 strategyType,

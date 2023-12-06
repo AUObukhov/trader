@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -22,13 +23,15 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -115,19 +118,43 @@ class FakeBotUnitTest {
     void getOperations() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
-        final String figi = TestShares.APPLE.share().figi();
-        final List<Operation> expectedOperations = new ArrayList<>();
-        Mockito.when(extOperationsService.getOperations(accountId, interval, figi)).thenReturn(expectedOperations);
 
-        final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
+        final Operation operation1 = TestData.newOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
+        final Operation operation2 = TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED);
+        final Operation operation3 = TestData.newOperation(OperationState.OPERATION_STATE_CANCELED);
+
+        final List<Operation> operations1 = List.of(operation1);
+        final List<Operation> operations2 = List.of(operation2, operation3);
+
+        Mockito.when(extOperationsService.getOperations(accountId, interval, figi1)).thenReturn(operations1);
+        Mockito.when(extOperationsService.getOperations(accountId, interval, figi2)).thenReturn(operations2);
+
+        final Map<String, List<Operation>> operations = fakeBot.getOperations(accountId, interval, List.of(figi1, figi2));
+
+        final Map<String, List<Operation>> expectedOperations = Map.of(figi1, operations1, figi2, operations2);
         AssertUtils.assertEquals(expectedOperations, operations);
     }
 
     @Test
     void getPortfolioPositions() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final List<Position> expectedPositions = new ArrayList<>();
+
+        final Share share = TestShares.APPLE.share();
+        final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
+        final Position position = new PositionBuilder()
+                .setCurrency(share.currency())
+                .setFigi(share.figi())
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .setAveragePositionPrice(currentPrice)
+                .setExpectedYield(0)
+                .setCurrentPrice(currentPrice)
+                .setQuantity(10)
+                .build();
+        final List<Position> expectedPositions = List.of(position);
+
         Mockito.when(extOperationsService.getPositions(accountId)).thenReturn(expectedPositions);
 
         final List<Position> positions = fakeBot.getPortfolioPositions(accountId);

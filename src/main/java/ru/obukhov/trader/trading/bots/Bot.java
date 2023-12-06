@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.trading.model.DecisionsData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -26,7 +27,9 @@ import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains method for trading.
@@ -35,8 +38,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class Bot {
-
-    protected static final int LAST_CANDLES_COUNT = 1000;
 
     protected final ExtMarketDataService extMarketDataService;
     protected final ExtInstrumentsService extInstrumentsService;
@@ -64,34 +65,39 @@ public abstract class Bot {
      * @param interval  interval of cached data for strategy
      */
     public void processBotConfig(final BotConfig botConfig, final Interval interval) {
-        final String figi = botConfig.figi();
+        final List<String> figies = botConfig.figies();
         final List<OrderState> orders = ordersService.getOrders(botConfig.accountId());
         if (orders.isEmpty()) {
+            final DecisionsData decisionsData = prepareDecisionsData(botConfig, figies);
+            final StrategyCache strategyCache = strategy.initCache(botConfig, interval);
+            final Map<String, Decision> figiesToDecisions = strategy.decide(decisionsData, strategyCache);
+            performOperations(botConfig.accountId(), figiesToDecisions);
+        } else {
+            log.info("There are not completed orders by FIGIes '{}'. Do nothing", figies);
+        }
+    }
+
+    private DecisionsData prepareDecisionsData(final BotConfig botConfig, final List<String> figies) {
+        final DecisionsData decisionsData = new DecisionsData();
+        decisionsData.setCommission(botConfig.commission());
+        final List<DecisionData> decisionDataList = new ArrayList<>();
+        for (final String figi : figies) {
             final Share share = extInstrumentsService.getShare(figi);
             final BigDecimal availableBalance = extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency());
             final DecisionData decisionData = prepareDecisionData(botConfig, share, availableBalance);
-            final long availableLots = getAvailableLots(botConfig, availableBalance);
-            final StrategyCache strategyCache = strategy.initCache(botConfig, interval);
-            final Decision decision = strategy.decide(decisionData, availableLots, strategyCache);
-            performOperation(botConfig.accountId(), figi, decision);
-        } else {
-            log.info("There are not completed orders by FIGI '{}'. Do nothing", figi);
+            decisionDataList.add(decisionData);
         }
+        decisionsData.setDecisionDataList(decisionDataList);
+        return decisionsData;
     }
 
     private DecisionData prepareDecisionData(final BotConfig botConfig, final Share share, final BigDecimal availableBalance) {
         final DecisionData decisionData = new DecisionData();
-        decisionData.setBalance(availableBalance);
         decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), share.figi()));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), share.figi()));
         decisionData.setShare(share);
-        decisionData.setCommission(botConfig.commission());
+        decisionData.setAvailableLots(getAvailableLots(share.figi(), availableBalance));
         return decisionData;
-    }
-
-    private long getAvailableLots(final BotConfig botConfig, final BigDecimal availableBalance) {
-        final BigDecimal currentPrice = extMarketDataService.getLastPrice(botConfig.figi(), context.getCurrentDateTime());
-        return DecimalUtils.divide(availableBalance, currentPrice).longValue();
     }
 
     private List<Operation> getLastWeekOperations(final String accountId, final String figi) {
@@ -100,25 +106,28 @@ public abstract class Bot {
         return extOperationsService.getOperations(accountId, interval, figi);
     }
 
-    private void performOperation(final String accountId, final String figi, final Decision decision) {
-        if (decision.getAction() == DecisionAction.WAIT) {
-            log.debug("Decision is {}. Do nothing", decision.toPrettyString());
-            return;
-        }
+    private long getAvailableLots(final String figi, final BigDecimal availableBalance) {
+        final BigDecimal currentPrice = extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
+        return DecimalUtils.divide(availableBalance, currentPrice).longValue();
+    }
 
-        final OrderDirection direction = decision.getAction() == DecisionAction.BUY
-                ? OrderDirection.ORDER_DIRECTION_BUY
-                : OrderDirection.ORDER_DIRECTION_SELL;
-        final PostOrderResponse postOrderResponse = ordersService.postOrder(
-                accountId,
-                figi,
-                decision.getQuantity(),
-                null,
-                direction,
-                OrderType.ORDER_TYPE_MARKET,
-                null
-        );
-        log.info("Placed order:\n{}", postOrderResponse);
+    private void performOperations(final String accountId, final Map<String, Decision> figiesToDecisions) {
+        for (final Map.Entry<String, Decision> entry : figiesToDecisions.entrySet()) {
+            final Decision decision = entry.getValue();
+            if (decision.getAction() == DecisionAction.WAIT) {
+                log.debug("Decision is {}. Do nothing", decision.toPrettyString());
+                return;
+            }
+
+            final String figi = entry.getKey();
+            final Long quantity = decision.getQuantity();
+            final OrderDirection direction = decision.getAction() == DecisionAction.BUY
+                    ? OrderDirection.ORDER_DIRECTION_BUY
+                    : OrderDirection.ORDER_DIRECTION_SELL;
+            final OrderType orderType = OrderType.ORDER_TYPE_MARKET;
+            final PostOrderResponse postOrderResponse = ordersService.postOrder(accountId, figi, quantity, null, direction, orderType, null);
+            log.info("Placed order:\n{}", postOrderResponse);
+        }
     }
 
 }

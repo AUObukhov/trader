@@ -105,4 +105,32 @@ class MapUtilsUnitTest {
         AssertUtils.assertEquals(expectedResult, actualResult);
     }
 
+    @Test
+    void newMapValueCollector() {
+        final List<String> values = List.of("k1", "key2", "key 3");
+
+        final Map<String, Integer> actualResult = values.stream().collect(MapUtils.newMapValueCollector(String::length));
+
+        final Map<String, Integer> expectedResult = Map.of(
+                "k1", 2,
+                "key2", 4,
+                "key 3", 5
+        );
+
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void newMapEntryCollector() {
+        final Map<String, String> map = Map.of(
+                "key1", "value1",
+                "key2", "value2",
+                "key3", "value3"
+        );
+
+        final Map<String, String> result = map.entrySet().stream().collect(MapUtils.newMapEntryCollector());
+
+        AssertUtils.assertEquals(map, result);
+    }
+
 }

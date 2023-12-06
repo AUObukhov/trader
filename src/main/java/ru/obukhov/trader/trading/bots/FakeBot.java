@@ -20,6 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class FakeBot extends Bot {
@@ -48,8 +50,9 @@ public class FakeBot extends Bot {
         return extInstrumentsService.getShare(figi);
     }
 
-    public List<Operation> getOperations(final String accountId, final Interval interval, final String figi) {
-        return extOperationsService.getOperations(accountId, interval, figi);
+    public Map<String, List<Operation>> getOperations(final String accountId, final Interval interval, final List<String> figies) {
+        return figies.stream()
+                .collect(Collectors.toMap(Function.identity(), figi -> extOperationsService.getOperations(accountId, interval, figi)));
     }
 
     public List<Position> getPortfolioPositions(final String accountId) {

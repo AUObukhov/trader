@@ -29,6 +29,7 @@ import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -44,6 +45,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -148,26 +150,35 @@ public class BackTesterImpl implements BackTester {
         final Interval effectiveInterval = getEffectiveInterval(botConfig, interval);
         final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, effectiveInterval.getFrom());
 
-        final List<Candle> candles = extMarketDataService.getCandles(botConfig.figi(), effectiveInterval, botConfig.candleInterval());
+        final CandleInterval candleInterval = botConfig.candleInterval();
+        final Map<String, List<Candle>> candles = botConfig.figies().stream()
+                .collect(Collectors.toMap(Function.identity(), figi -> extMarketDataService.getCandles(figi, effectiveInterval, candleInterval)));
 
         do {
             fakeBot.processBotConfig(botConfig, effectiveInterval);
 
-            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, effectiveInterval.getTo());
+            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figies(), balanceConfig, fakeBot, effectiveInterval.getTo());
         } while (fakeBot.getCurrentDateTime() != null && fakeBot.getCurrentDateTime().isBefore(effectiveInterval.getTo()));
 
         return createSucceedBackTestResult(botConfig, effectiveInterval, candles, fakeBot);
     }
 
     private Interval getEffectiveInterval(final BotConfig botConfig, final Interval interval) {
-        final Instrument instrument = extInstrumentsService.getInstrument(botConfig.figi());
-        final ChronoUnit chronoUnit = DateUtils.getPeriodByCandleInterval(botConfig.candleInterval());
+        return botConfig.figies().stream()
+                .map(figi -> getEffectiveInterval(figi, botConfig.candleInterval(), interval))
+                .reduce(Interval::unite)
+                .orElseThrow();
+    }
+
+    private Interval getEffectiveInterval(final String figi, final CandleInterval candleInterval, final Interval interval) {
+        final Instrument instrument = extInstrumentsService.getInstrument(figi);
+        final ChronoUnit chronoUnit = DateUtils.getPeriodByCandleInterval(candleInterval);
         final OffsetDateTime firstCandleDate = chronoUnit == ChronoUnit.DAYS ? instrument.first1MinCandleDate() : instrument.first1DayCandleDate();
         if (interval.getFrom().isBefore(firstCandleDate)) {
             final Interval effectiveInterval = Interval.of(firstCandleDate, interval.getTo());
 
             final String format = "First candle of instrument {} starts on {}. Effective interval for back test is {}";
-            log.info(format, botConfig.figi(), firstCandleDate, effectiveInterval);
+            log.info(format, figi, firstCandleDate, effectiveInterval);
 
             return effectiveInterval;
         } else {
@@ -177,14 +188,14 @@ public class BackTesterImpl implements BackTester {
 
     private void moveToNextMinuteAndApplyBalanceIncrement(
             final String accountId,
-            final String figi,
+            final List<String> figies,
             final BalanceConfig balanceConfig,
             final FakeBot fakeBot,
             final OffsetDateTime to
     ) {
         if (MapUtils.isEmpty(balanceConfig.getBalanceIncrements())) {
             final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
-            final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+            final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigies(figies, interval);
             fakeBot.nextScheduleMinute(tradingSchedule);
             return;
         }
@@ -195,7 +206,7 @@ public class BackTesterImpl implements BackTester {
         }
 
         final Interval interval = Interval.of(previousDate, to);
-        final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+        final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigies(figies, interval);
         final OffsetDateTime nextScheduleMinute = fakeBot.nextScheduleMinute(tradingSchedule);
         final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(nextScheduleMinute, to);
 
@@ -209,16 +220,16 @@ public class BackTesterImpl implements BackTester {
     private BackTestResult createSucceedBackTestResult(
             final BotConfig botConfig,
             final Interval interval,
-            final List<Candle> candles,
+            final Map<String, List<Candle>> candles,
             final FakeBot fakeBot
     ) {
         final String accountId = botConfig.accountId();
-        final String figi = botConfig.figi();
+        final List<String> figies = botConfig.figies();
 
         final List<Position> positions = getPositions(fakeBot, accountId, interval.getTo());
-        final Map<String, Balances> balances = getBalances(accountId, interval, fakeBot, positions, figi);
+        final Map<String, Balances> balances = getBalances(accountId, interval, fakeBot, positions, figies);
         final Map<String, Profits> profits = getProfits(balances, interval);
-        final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
+        final Map<String, List<Operation>> operations = fakeBot.getOperations(accountId, interval, figies);
 
         return new BackTestResult(
                 botConfig,
@@ -249,6 +260,10 @@ public class BackTesterImpl implements BackTester {
             );
             balances.put(entry.getKey(), currentBalances);
         }
+        final Map<String, List<Operation>> operations = botConfig.figies().stream()
+                .collect(Collectors.toMap(Function.identity(), figi -> Collections.emptyList()));
+        final Map<String, List<Candle>> candles = botConfig.figies().stream()
+                .collect(Collectors.toMap(Function.identity(), figi -> Collections.emptyList()));
 
         return new BackTestResult(
                 botConfig,
@@ -256,8 +271,8 @@ public class BackTesterImpl implements BackTester {
                 balances,
                 Collections.emptyMap(),
                 Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
+                operations,
+                candles,
                 message
         );
     }
@@ -279,9 +294,21 @@ public class BackTesterImpl implements BackTester {
             final Interval interval,
             final FakeBot fakeBot,
             final List<Position> positions,
-            final String figi
+            final List<String> figies
     ) {
-        final String currency = fakeBot.getShare(figi).currency();
+        return figies.stream()
+                .map(figi -> fakeBot.getShare(figi).currency())
+                .distinct()
+                .collect(Collectors.toMap(Function.identity(), currency -> getBalances(accountId, interval, fakeBot, positions, currency)));
+    }
+
+    private Balances getBalances(
+            final String accountId,
+            final Interval interval,
+            final FakeBot fakeBot,
+            final List<Position> positions,
+            final String currency
+    ) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
@@ -291,8 +318,7 @@ public class BackTesterImpl implements BackTester {
         final BigDecimal totalInvestment = investments.values().stream().reduce(DecimalUtils.ZERO, BigDecimal::add);
         final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
-        final Balances balances = new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
-        return Map.of(currency, balances);
+        return new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
     }
 
     private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<Position> positions) {

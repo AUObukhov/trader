@@ -16,8 +16,8 @@ public record BackTestResult(
         Map<String, Balances> balances,
         Map<String, Profits> profits,
         @JsonIgnore List<Position> positions, // positions after back test
-        @JsonIgnore List<Operation> operations, // operations made during back test
-        @JsonIgnore List<Candle> candles, // all candles in back test interval
+        @JsonIgnore Map<String, List<Operation>> operations, // operations made during back test
+        @JsonIgnore Map<String, List<Candle>> candles, // all candles in back test interval
         String error
 ) {
 }

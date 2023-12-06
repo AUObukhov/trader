@@ -33,7 +33,7 @@ class ScheduledBotsPropertiesContextTest {
 
                     final BotConfig botConfig1 = botConfigs.get(0);
                     Assertions.assertEquals("2000124699", botConfig1.accountId());
-                    Assertions.assertEquals("BBG005HLTYH9", botConfig1.figi());
+                    Assertions.assertEquals(List.of("BBG000B9XRY4", "BBG004730N88"), botConfig1.figies());
                     Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig1.candleInterval());
                     AssertUtils.assertEquals(0.003, botConfig1.commission());
                     Assertions.assertEquals(StrategyType.CROSS, botConfig1.strategyType());
@@ -51,7 +51,7 @@ class ScheduledBotsPropertiesContextTest {
 
                     final BotConfig botConfig2 = botConfigs.get(1);
                     Assertions.assertEquals("2000124698", botConfig2.accountId());
-                    Assertions.assertEquals("BBG005HLTYH9", botConfig2.figi());
+                    Assertions.assertEquals(List.of("BBG005HLTYH9"), botConfig2.figies());
                     Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig2.candleInterval());
                     AssertUtils.assertEquals(0.003, botConfig2.commission());
                     Assertions.assertEquals(StrategyType.CONSERVATIVE, botConfig2.strategyType());
@@ -82,7 +82,7 @@ class ScheduledBotsPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenAccountIdIsNull() {
         contextRunner
-                .withPropertyValues("scheduled-bot.bot-configs[0].figi:BBG000B9XRY4")
+                .withPropertyValues("scheduled-bot.bot-configs[0].figies:BBG000B9XRY4")
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
@@ -98,7 +98,7 @@ class ScheduledBotsPropertiesContextTest {
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
-                .run(AssertUtils.createBindValidationExceptionAssertConsumer("figi is mandatory"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("figies are mandatory"));
     }
 
     @Test
@@ -107,7 +107,7 @@ class ScheduledBotsPropertiesContextTest {
     void beanCreationFails_whenCandleIntervalIsNull() {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
-                .withPropertyValues("scheduled-bot.bot-configs[0].figi:BBG000B9XRY4")
+                .withPropertyValues("scheduled-bot.bot-configs[0].figies:BBG000B9XRY4")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0.003")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("candleInterval is mandatory"));
@@ -119,7 +119,7 @@ class ScheduledBotsPropertiesContextTest {
     void beanCreationFails_whenCommissionIsNull() {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
-                .withPropertyValues("scheduled-bot.bot-configs[0].figi:BBG000B9XRY4")
+                .withPropertyValues("scheduled-bot.bot-configs[0].figies:BBG000B9XRY4")
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("commission is mandatory"));
@@ -131,7 +131,7 @@ class ScheduledBotsPropertiesContextTest {
     void beanCreationFails_whenStrategyTypeIsNull() {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
-                .withPropertyValues("scheduled-bot.bot-configs[0].figi:BBG000B9XRY4")
+                .withPropertyValues("scheduled-bot.bot-configs[0].figies:BBG000B9XRY4")
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("strategyType is mandatory"));

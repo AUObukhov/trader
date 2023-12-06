@@ -13,11 +13,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class DecisionData {
 
-    private BigDecimal balance;
     private Position position;
     private List<Operation> lastOperations;
     private Share share;
-    private BigDecimal commission;
+    private long availableLots;
 
     public Long getQuantity() {
         return position.getQuantity().longValueExact();

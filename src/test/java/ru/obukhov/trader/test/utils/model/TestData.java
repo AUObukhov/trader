@@ -38,6 +38,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,26 +55,32 @@ public class TestData {
 
     // region DecisionData creation
 
-    public static DecisionData newDecisionData(final double balance, final int lotSize, final double commission) {
+    public static DecisionData newDecisionData(final Share share, final long availableLots) {
         final DecisionData decisionData = new DecisionData();
-        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setShare(Share.builder().lot(lotSize).build());
-        decisionData.setCommission(DecimalUtils.setDefaultScale(commission));
+        decisionData.setShare(share);
+        decisionData.setAvailableLots(availableLots);
 
         return decisionData;
     }
 
-    public static DecisionData newDecisionData(final double balance, final double averagePositionPrice, final int quantity, final double commission) {
+    public static DecisionData newDecisionData(final int lotSize, final long availableLots) {
         final DecisionData decisionData = new DecisionData();
-        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
+        decisionData.setLastOperations(new ArrayList<>());
+        decisionData.setShare(Share.builder().lot(lotSize).build());
+        decisionData.setAvailableLots(availableLots);
+
+        return decisionData;
+    }
+
+    public static DecisionData newDecisionData(final double averagePositionPrice, final int quantity) {
+        final DecisionData decisionData = new DecisionData();
         final Position position = Position.builder()
                 .averagePositionPrice(TestData.newMoney(averagePositionPrice, null))
                 .quantity(BigDecimal.valueOf(quantity))
                 .build();
         decisionData.setPosition(position);
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setCommission(DecimalUtils.setDefaultScale(commission));
 
         return decisionData;
     }
@@ -171,8 +178,8 @@ public class TestData {
 
     // region BalanceConfig creation
 
-    public static BalanceConfig newBalanceConfig(final String currency, final Double initialBalance) {
-        return newBalanceConfig(currency, initialBalance, null);
+    public static BalanceConfig newBalanceConfig() {
+        return new BalanceConfig(Collections.emptyMap(), Collections.emptyMap(), null);
     }
 
     public static BalanceConfig newBalanceConfig(final String currency, final Double initialBalance, final Double balanceIncrement) {
@@ -196,6 +203,10 @@ public class TestData {
         final CronExpression cronExpression = balanceIncrementCron == null ? null : newCronExpression(balanceIncrementCron);
 
         return new BalanceConfig(initialBalances, balanceIncrements, cronExpression);
+    }
+
+    public static BalanceConfig newBalanceConfig(final Map<String, BigDecimal> initialBalances, final Map<String, BigDecimal> balanceIncrements) {
+        return new BalanceConfig(initialBalances, balanceIncrements, null);
     }
 
     public static BalanceConfig newBalanceConfig(
@@ -433,11 +444,11 @@ public class TestData {
         }
     }
 
-    public static Map<String, BigDecimal> newDecimalMap(final Object... keyValues) {
-        final Map<String, BigDecimal> decimalMap = new HashMap<>(keyValues.length / 2, 1);
-        for (int i = 0; i < keyValues.length; i += 2) {
-            final BigDecimal decimalValue = newBigDecimal(keyValues[i + 1]);
-            decimalMap.put((String) keyValues[i], decimalValue);
+    public static Map<String, BigDecimal> newDecimalMap(final Object... keysAndValues) {
+        final Map<String, BigDecimal> decimalMap = new HashMap<>(keysAndValues.length / 2, 1);
+        for (int i = 0; i < keysAndValues.length; i += 2) {
+            final BigDecimal decimalValue = newBigDecimal(keysAndValues[i + 1]);
+            decimalMap.put((String) keysAndValues[i], decimalValue);
         }
         return decimalMap;
     }

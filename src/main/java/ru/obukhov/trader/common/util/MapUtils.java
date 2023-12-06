@@ -39,4 +39,22 @@ public class MapUtils {
         return Collectors.toMap(keyMapper, Function.identity());
     }
 
+    /**
+     * @param <T> stream items type
+     * @param <V> result map value type
+     * @return collector, creating map with keys provided by given {@code valueMapper} and stream items as values
+     */
+    public static <T, V> Collector<T, ?, Map<T, V>> newMapValueCollector(final Function<? super T, ? extends V> valueMapper) {
+        return Collectors.toMap(Function.identity(), valueMapper);
+    }
+
+    /**
+     * @param <K> result map key type
+     * @param <V> result map value type
+     * @return collector, creating map from stream items of type {@link Map.Entry}
+     */
+    public static <K, V> java.util.stream.Collector<Map.Entry<K, V>, ?, java.util.Map<K, V>> newMapEntryCollector() {
+        return Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue);
+    }
+
 }

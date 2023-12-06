@@ -69,7 +69,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                share.figi(),
+                List.of(share.figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -89,7 +89,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -136,7 +136,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                share.figi(),
+                List.of(share.figi()),
                 null,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -159,7 +159,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                share.figi(),
+                List.of(share.figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -182,7 +182,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                share.figi(),
+                List.of(share.figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 null,
@@ -218,7 +218,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final BotConfig botConfig1 = new BotConfig(
                 accountId,
-                figi,
+                List.of(figi),
                 candleInterval,
                 DecimalUtils.setDefaultScale(0.001),
                 StrategyType.CONSERVATIVE,
@@ -236,7 +236,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final BotConfig botConfig2 = new BotConfig(
                 accountId,
-                figi,
+                List.of(figi),
                 candleInterval,
                 DecimalUtils.setDefaultScale(0.002),
                 StrategyType.CROSS,
@@ -252,6 +252,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
+        Mocker.mockAllShares(instrumentsService, share);
         Mocker.mockShare(instrumentsService, share);
         Mocker.mockInstrument(instrumentsService, TestInstruments.APPLE.tinkoffInstrument());
 
@@ -299,8 +300,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 balancesMap1,
                 profitsMap1,
                 Collections.emptyList(),
-                List.of(operation),
-                List.of(candle),
+                Map.of(currency, List.of(operation)),
+                Map.of(currency, List.of(candle)),
                 null
         );
 
@@ -325,8 +326,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 balancesMap2,
                 profitsMap2,
                 List.of(backTestPosition2),
-                Collections.emptyList(),
-                Collections.emptyList(),
+                Map.of(currency, Collections.emptyList()),
+                Map.of(currency, Collections.emptyList()),
                 null
         );
 

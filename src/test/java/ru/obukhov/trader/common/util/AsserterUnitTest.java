@@ -20,11 +20,27 @@ class AsserterUnitTest {
     }
 
     @Test
-    void notNull_DoesNotThrowException_whenObjectIsNotNull() {
+    void notNull_doesNotThrowException_whenObjectIsNotNull() {
         final String exceptionMessage = "test exception message";
         final Supplier<RuntimeException> exceptionSupplier = () -> new TestException(exceptionMessage);
         final Object object = "test object";
         Assertions.assertDoesNotThrow(() -> Asserter.notNull(object, exceptionSupplier));
+    }
+
+    @Test
+    void isTrue_throwsException_whenFalse() {
+        final String exceptionMessage = "test exception message";
+        final Supplier<RuntimeException> exceptionSupplier = () -> new TestException(exceptionMessage);
+        final Executable executable = () -> Asserter.isTrue(false, exceptionSupplier);
+        AssertUtils.assertThrowsWithMessage(TestException.class, executable, exceptionMessage);
+    }
+
+    @Test
+    void isTrue_doesNotThrowException_whenTrue() {
+        final String exceptionMessage = "test exception message";
+        final Supplier<RuntimeException> exceptionSupplier = () -> new TestException(exceptionMessage);
+        final Executable executable = () -> Asserter.isTrue(true, exceptionSupplier);
+        Assertions.assertDoesNotThrow(executable);
     }
 
 }

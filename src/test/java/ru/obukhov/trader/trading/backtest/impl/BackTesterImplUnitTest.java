@@ -140,7 +140,7 @@ class BackTesterImplUnitTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
-        final BotConfig botConfig = new BotConfig(accountId, figi, candleInterval, commission, strategyType, Collections.emptyMap());
+        final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, commission, strategyType, Collections.emptyMap());
 
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(currency, 10000.0, 1000.0);
         final List<BotConfig> botConfigs = List.of(botConfig);
@@ -178,7 +178,7 @@ class BackTesterImplUnitTest {
 
         final String expectedErrorPattern = String.format(
                 Locale.US,
-                "^Back test for 'BotConfig\\{accountId=%s, figi=%s, candleInterval=%s, commission=%s, strategyType=%s, " +
+                "^Back test for 'BotConfig\\{accountId=%s, figies=\\[%s\\], candleInterval=%s, commission=%s, strategyType=%s, " +
                         "strategyParams=\\{\\}\\}' failed within 00:00:00.\\d\\d\\d with error: %s$",
                 accountId, figi, candleInterval, commission, strategyType, exceptionMessage
         );
@@ -375,8 +375,8 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(2000);
         final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(2000);
 
-        final BotConfig botConfig1 = new BotConfig(accountId1, figi1, candleInterval, commission1, null, null);
-        final BotConfig botConfig2 = new BotConfig(accountId2, figi2, candleInterval, commission2, null, null);
+        final BotConfig botConfig1 = new BotConfig(accountId1, List.of(figi1), candleInterval, commission1, null, null);
+        final BotConfig botConfig2 = new BotConfig(accountId2, List.of(figi2), candleInterval, commission2, null, null);
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
@@ -603,13 +603,12 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(2, backTestResults.size());
 
         assertOperation(backTestResults.get(0), figi1, operationDateTime1, operationType1, operationPrice1, operationQuantity1);
-
         assertOperation(backTestResults.get(1), figi2, operationDateTime2, operationType2, operationPrice2, operationQuantity2);
     }
 
     private void assertOperation(
             final BackTestResult backTestResult,
-            final String expectedFigi,
+            final String figi,
             final OffsetDateTime expectedDateTime,
             final OperationType expectedOperationType,
             final double expectedOperationPrice,
@@ -617,11 +616,12 @@ class BackTesterImplUnitTest {
     ) {
         Assertions.assertNull(backTestResult.error());
 
-        final List<Operation> resultOperations = backTestResult.operations();
+        final Map<String, List<Operation>> resultOperations = backTestResult.operations();
         Assertions.assertEquals(1, resultOperations.size());
 
-        final Operation backTestOperation = resultOperations.get(0);
-        Assertions.assertEquals(expectedFigi, backTestOperation.getFigi());
+        final List<Operation> operations = resultOperations.get(figi);
+        final Operation backTestOperation = operations.get(0);
+        Assertions.assertEquals(figi, backTestOperation.getFigi());
         Assertions.assertEquals(expectedDateTime, TimestampUtils.toOffsetDateTime(backTestOperation.getDate()));
         Assertions.assertEquals(expectedOperationType, backTestOperation.getOperationType());
         AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.getPrice());
@@ -701,14 +701,15 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertCandles(backTestResults.get(0), prices1);
-        assertCandles(backTestResults.get(1), prices2);
+        assertCandles(backTestResults.get(0), testShare1.share().figi(), prices1);
+        assertCandles(backTestResults.get(1), testShare2.share().figi(), prices2);
     }
 
-    private void assertCandles(final BackTestResult backTestResult, final Map<OffsetDateTime, Double> prices) {
+    private void assertCandles(final BackTestResult backTestResult, final String figi, final Map<OffsetDateTime, Double> prices) {
         Assertions.assertNull(backTestResult.error());
 
-        final List<Candle> candles = backTestResult.candles();
+        final Map<String, List<Candle>> candlesMap = backTestResult.candles();
+        final List<Candle> candles = candlesMap.get(figi);
         Assertions.assertEquals(prices.size(), candles.size());
 
         final Iterator<Candle> candlesIterator = candles.iterator();
@@ -726,8 +727,11 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final Share share1 = testShare1.share();
+        final Share share2 = testShare2.share();
+
+        final String currency1 = share1.currency();
+        final String currency2 = share2.currency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -744,7 +748,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                testShare1.share(),
+                share1,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
@@ -758,7 +762,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.account().id(),
-                testShare2.share(),
+                share2,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
@@ -782,11 +786,11 @@ class BackTesterImplUnitTest {
 
         final BackTestResult backTestResult1 = backTestResults.get(0);
         Assertions.assertNull(backTestResult1.error());
-        Assertions.assertTrue(backTestResult1.candles().isEmpty());
+        Assertions.assertEquals(Map.of(share1.figi(), Collections.emptyList()), backTestResult1.candles());
 
         final BackTestResult backTestResult2 = backTestResults.get(1);
         Assertions.assertNull(backTestResult2.error());
-        Assertions.assertTrue(backTestResult2.candles().isEmpty());
+        Assertions.assertEquals(Map.of(share2.figi(), Collections.emptyList()), backTestResult2.candles());
     }
 
     @Test
@@ -1173,7 +1177,7 @@ class BackTesterImplUnitTest {
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
-        final BotConfig botConfig1 = new BotConfig(accountId1, figi1, candleInterval1, commission1, strategyType1, Collections.emptyMap());
+        final BotConfig botConfig1 = new BotConfig(accountId1, List.of(figi1), candleInterval1, commission1, strategyType1, Collections.emptyMap());
 
         mockFakeBot(botConfig1, balanceConfig, from);
 
@@ -1187,7 +1191,7 @@ class BackTesterImplUnitTest {
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
         final StrategyType strategyType2 = StrategyType.CROSS;
 
-        final BotConfig botConfig2 = new BotConfig(accountId2, figi2, candleInterval2, commission2, strategyType2, Collections.emptyMap());
+        final BotConfig botConfig2 = new BotConfig(accountId2, List.of(figi2), candleInterval2, commission2, strategyType2, Collections.emptyMap());
 
         mockFakeBot(botConfig2, balanceConfig, from);
 
@@ -1206,14 +1210,16 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(2, backTestResults.size());
 
         final String expectedErrorPattern1 = String.format(
-                "^Back test for 'BotConfig\\{accountId=%s, figi=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\}' " +
+                "^Back test for " +
+                        "'BotConfig\\{accountId=%s, figies=\\[%s\\], candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\}' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
                 accountId1, figi1, candleInterval1, commission1, strategyType1, mockedExceptionMessage1
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(0).error(), expectedErrorPattern1);
 
         final String expectedErrorPattern2 = String.format(
-                "^Back test for 'BotConfig\\{accountId=%s, figi=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\}' " +
+                "^Back test for " +
+                        "'BotConfig\\{accountId=%s, figies=\\[%s\\], candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\}' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
                 accountId2, figi2, candleInterval2, commission2, strategyType2, mockedExceptionMessage2
         );
@@ -1316,7 +1322,7 @@ class BackTesterImplUnitTest {
         final String currency = share.currency();
 
         final BigDecimal decimalCommission = DecimalUtils.setDefaultScale(commission);
-        final BotConfig botConfig = new BotConfig(accountId, figi, candleInterval, decimalCommission, null, null);
+        final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, decimalCommission, null, null);
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
@@ -1329,7 +1335,9 @@ class BackTesterImplUnitTest {
             mockPortfolioPosition(fakeBot, accountId, figi, currentPrice, quantity);
             mockCurrentPrice(fakeBot, figi, currentPrice);
         }
-        if (operation != null) {
+        if (operation == null) {
+            Mocker.mockTinkoffOperations(fakeBot, accountId, figi, interval);
+        } else {
             Mocker.mockTinkoffOperations(fakeBot, accountId, figi, interval, operation);
         }
 

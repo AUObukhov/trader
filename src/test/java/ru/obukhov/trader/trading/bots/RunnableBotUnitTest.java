@@ -3,6 +3,8 @@ package ru.obukhov.trader.trading.bots;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -18,7 +20,6 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.OrderState;
-import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -28,7 +29,7 @@ import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
-import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.trading.model.DecisionsData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -39,10 +40,11 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class RunnableBotUnitTest {
@@ -76,13 +78,36 @@ class RunnableBotUnitTest {
         Mocker.verifyNoOrdersMade(ordersService);
     }
 
-    @Test
-    void run_doesNothing_whenWrongTradingStatus() {
-        final String figi = TestShares.APPLE.share().figi();
+    @ParameterizedTest
+    @EnumSource(value = SecurityTradingStatus.class, names = {
+            "SECURITY_TRADING_STATUS_UNSPECIFIED",
+            "SECURITY_TRADING_STATUS_NOT_AVAILABLE_FOR_TRADING",
+            "SECURITY_TRADING_STATUS_OPENING_PERIOD",
+            "SECURITY_TRADING_STATUS_CLOSING_PERIOD",
+            "SECURITY_TRADING_STATUS_BREAK_IN_TRADING",
+            "SECURITY_TRADING_STATUS_CLOSING_AUCTION",
+            "SECURITY_TRADING_STATUS_DARK_POOL_AUCTION",
+            "SECURITY_TRADING_STATUS_DISCRETE_AUCTION",
+            "SECURITY_TRADING_STATUS_OPENING_AUCTION_PERIOD",
+            "SECURITY_TRADING_STATUS_TRADING_AT_CLOSING_AUCTION_PRICE",
+            "SECURITY_TRADING_STATUS_SESSION_ASSIGNED",
+            "SECURITY_TRADING_STATUS_SESSION_CLOSE",
+            "SECURITY_TRADING_STATUS_SESSION_OPEN",
+            "SECURITY_TRADING_STATUS_DEALER_NORMAL_TRADING",
+            "SECURITY_TRADING_STATUS_DEALER_BREAK_IN_TRADING",
+            "SECURITY_TRADING_STATUS_DEALER_NOT_AVAILABLE_FOR_TRADING",
+            "UNRECOGNIZED",
+    })
+    void run_doesNothing_whenWrongTradingStatus(final SecurityTradingStatus wrongTradingStatus) {
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
+        final String figi3 = TestShares.YANDEX.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_BREAK_IN_TRADING);
+        Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2, figi3));
+
+        mockNormalTradingStatus(figi1, figi3);
+        Mockito.when(extMarketDataService.getTradingStatus(figi2)).thenReturn(wrongTradingStatus);
 
         createRunnableBot().run();
 
@@ -91,120 +116,74 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNothing_whenThereAreOrders() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
+        final String figi3 = TestShares.YANDEX.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+        Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2, figi3));
         Mockito.when(botConfig.candleInterval()).thenReturn(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockNormalTradingStatus(figi1, figi2, figi3);
 
         final List<OrderState> orders = List.of(TestOrderStates.ORDER_STATE1.orderState());
-        Mockito.when(ordersService.getOrders(figi)).thenReturn(orders);
+        Mockito.when(ordersService.getOrders(figi1)).thenReturn(Collections.emptyList());
+        Mockito.when(ordersService.getOrders(figi2)).thenReturn(orders);
+        Mockito.when(ordersService.getOrders(figi3)).thenReturn(Collections.emptyList());
 
         final OffsetDateTime mockedNow = OffsetDateTime.now();
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(extMarketDataService.getLastCandles(figi, Bot.LAST_CANDLES_COUNT, botConfig.candleInterval(), mockedNow))
-                    .thenReturn(Collections.emptyList());
-
             createRunnableBot().run();
 
             Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
-            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.anyLong(), Mockito.nullable(StrategyCache.class));
+            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class));
             Mocker.verifyNoOrdersMade(ordersService);
         }
     }
 
     @Test
     void run_doesNothing_whenGetOrdersThrowsException() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+        Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2));
         Mockito.when(botConfig.candleInterval()).thenReturn(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mockito.when(ordersService.getOrders(figi)).thenThrow(new IllegalArgumentException());
+        mockNormalTradingStatus(figi1, figi2);
+
+        Mockito.when(ordersService.getOrders(figi1)).thenReturn(Collections.emptyList());
+        Mockito.when(ordersService.getOrders(figi2)).thenThrow(new IllegalArgumentException());
 
         final OffsetDateTime mockedNow = OffsetDateTime.now();
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(extMarketDataService.getLastCandles(figi, Bot.LAST_CANDLES_COUNT, botConfig.candleInterval(), mockedNow))
-                    .thenReturn(Collections.emptyList());
-
             createRunnableBot().run();
 
             Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
-            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.anyLong(), Mockito.any());
+            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class));
             Mocker.verifyNoOrdersMade(ordersService);
         }
     }
 
     @Test
     void run_doesNoOrder_whenGetInstrumentThrowsException() {
-        final String figi = TestShares.APPLE.share().figi();
-
-        Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-
-        Mockito.when(extInstrumentsService.getShare(figi)).thenThrow(new IllegalArgumentException());
-
-        createRunnableBot().run();
-
-        Mocker.verifyNoOrdersMade(ordersService);
-    }
-
-    @Test
-    void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
-
-        Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-
-        Mocker.mockShare(extInstrumentsService, share);
-
-        Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.anyString()))
-                .thenThrow(new IllegalArgumentException());
-
-        createRunnableBot().run();
-
-        Mocker.verifyNoOrdersMade(ordersService);
-    }
-
-    @Test
-    void run_doesNoOrder_whenGetPositionThrowsException() {
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
         final String accountId = TestAccounts.TINKOFF.account().id();
 
-        Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        final Share share1 = TestShares.APPLE.share();
 
-        Mocker.mockShare(extInstrumentsService, share);
+        final String figi1 = share1.figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
-        Mockito.when(extOperationsService.getSecurity(accountId, figi)).thenThrow(new IllegalArgumentException());
-
-        createRunnableBot().run();
-
-        Mocker.verifyNoOrdersMade(ordersService);
-    }
-
-    @Test
-    void run_doesNoOrder_whenGetOperationsThrowsException() {
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockBotConfig(CandleInterval.CANDLE_INTERVAL_1_MIN, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
 
-        Mocker.mockShare(extInstrumentsService, share);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency());
 
-        Mockito.when(extOperationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(figi)))
-                .thenThrow(new IllegalArgumentException());
+        Mockito.when(extInstrumentsService.getShare(figi1)).thenReturn(share1);
+        Mockito.when(extInstrumentsService.getShare(figi2)).thenThrow(new IllegalArgumentException());
+
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -214,23 +193,107 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetLastPriceThrowsException() {
+    void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockShares(extInstrumentsService, share1, share2);
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, share2.currency()))
+                .thenThrow(new IllegalArgumentException());
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
-                .thenReturn(balance);
+        createRunnableBot().run();
 
-        Mocker.mockShare(extInstrumentsService, share);
+        Mocker.verifyNoOrdersMade(ordersService);
+    }
 
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenThrow(new IllegalArgumentException());
+    @Test
+    void run_doesNoOrder_whenGetSecurityThrowsException() {
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
+        final String accountId = TestAccounts.TINKOFF.account().id();
+
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
+
+        Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency());
+        Mocker.mockShares(extInstrumentsService, share1, share2);
+
+        Mockito.when(extOperationsService.getSecurity(accountId, figi1)).thenReturn(Position.builder().build());
+        Mockito.when(extOperationsService.getSecurity(accountId, figi2)).thenThrow(new IllegalArgumentException());
+
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
+
+        createRunnableBot().run();
+
+        Mocker.verifyNoOrdersMade(ordersService);
+    }
+
+    @Test
+    void run_doesNoOrder_whenGetOperationsThrowsException() {
+        final String accountId = TestAccounts.TINKOFF.account().id();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
+        Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
+        mockBotConfig(CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockShares(extInstrumentsService, share1, share2);
+
+        mockOperations(accountId, figi1);
+        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi2)))
+                .thenThrow(new IllegalArgumentException());
+
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.newDateTime(2020, 9, 23, 6));
+
+        createRunnableBot().run();
+
+        Mocker.verifyNoOrdersMade(ordersService);
+    }
+
+    @Test
+    void run_doesNoOrder_whenGetLastPriceThrowsException() {
+        final String accountId = TestAccounts.TINKOFF.account().id();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
+        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
+
+        Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockShares(extInstrumentsService, share1, share2);
+
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenThrow(new IllegalArgumentException());
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -242,23 +305,25 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenDecideThrowsException() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockShares(extInstrumentsService, share1, share2);
 
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
-                .thenReturn(balance);
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
-        Mocker.mockShare(extInstrumentsService, share);
-
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
-
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(Long.class), Mockito.any(StrategyCache.class)))
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -271,50 +336,52 @@ class RunnableBotUnitTest {
     @Test
     void run_catchesException_whenPostOrderThrowsException() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
 
-        Mocker.mockShare(extInstrumentsService, share);
+        Mocker.mockShares(extInstrumentsService, share1, share2);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(Long.class), Mockito.any(StrategyCache.class)))
-                .thenReturn(decision);
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(Map.of(share1.figi(), decision, share2.figi(), decision));
 
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
-                .thenReturn(balance);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
 
-        Mockito.when(ordersService.postOrder(
-                accountId,
-                figi,
-                decision.getQuantity(),
-                null,
-                OrderDirection.ORDER_DIRECTION_BUY,
-                OrderType.ORDER_TYPE_MARKET,
-                null
-        )).thenThrow(new IllegalArgumentException());
+        final Long quantity = decision.getQuantity();
+        final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;
+        Mockito.when(ordersService.postOrder(accountId, figi2, quantity, null, orderDirection, OrderType.ORDER_TYPE_MARKET, null))
+                .thenThrow(new IllegalArgumentException());
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         Assertions.assertDoesNotThrow(() -> createRunnableBot().run());
     }
 
     @Test
     void run_doesNoOrder_whenThereAreOrders() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+        Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2));
         Mockito.when(botConfig.candleInterval()).thenReturn(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockEmptyOrder(ordersService, figi);
+        mockNormalTradingStatus(figi1, figi2);
+
+        Mocker.mockEmptyOrder(ordersService, figi1);
+        Mocker.mockEmptyOrder(ordersService, figi2);
 
         createRunnableBot().run();
 
@@ -323,12 +390,13 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenCurrentCandlesIsEmpty() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi1 = TestShares.APPLE.share().figi();
+        final String figi2 = TestShares.SBER.share().figi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+        Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2));
         Mockito.when(botConfig.candleInterval()).thenReturn(CandleInterval.CANDLE_INTERVAL_1_MIN);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockNormalTradingStatus(figi1, figi2);
 
         createRunnableBot().run();
 
@@ -337,24 +405,32 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenDecisionIsWait() {
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+        final String accountId = TestAccounts.TINKOFF.account().id();
+
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(null, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        mockBotConfig(null, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockShares(extInstrumentsService, share1, share2);
 
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(TestAccounts.TINKOFF.account().id(), share.currency()))
-                .thenReturn(balance);
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
-        Mocker.mockShare(extInstrumentsService, share);
-
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
-
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.anyLong(), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(new Decision(DecisionAction.WAIT));
+        final Map<String, Decision> decisions = Map.of(
+                figi1, new Decision(DecisionAction.WAIT),
+                figi2, new Decision(DecisionAction.WAIT)
+        );
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(decisions);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -366,81 +442,72 @@ class RunnableBotUnitTest {
     @Test
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockShare(extInstrumentsService, share);
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
-        mockData(accountId, figi, share.currency());
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockShares(extInstrumentsService, share1, share2);
+
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockSecurity(extOperationsService, accountId);
+        mockOperations(accountId, figi1, figi2);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(Long.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(decision);
-
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(Map.of(figi1, decision, figi2, decision));
 
         createRunnableBot().run();
 
+        final Long quantity = decision.getQuantity();
         Mockito.verify(ordersService, Mockito.times(1))
-                .postOrder(
-                        accountId,
-                        figi,
-                        decision.getQuantity(),
-                        null,
-                        OrderDirection.ORDER_DIRECTION_BUY,
-                        OrderType.ORDER_TYPE_MARKET,
-                        null
-                );
+                .postOrder(accountId, figi2, quantity, null, OrderDirection.ORDER_DIRECTION_BUY, OrderType.ORDER_TYPE_MARKET, null);
     }
 
     @Test
     void run_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+
+        final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
+
+        final String figi1 = share1.figi();
+        final String figi2 = share2.figi();
+
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, figi, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockShare(extInstrumentsService, share);
-
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, share.currency()))
-                .thenReturn(balance);
-
-        final Position position = new PositionBuilder().setFigi(figi).build();
-        Mockito.when(extOperationsService.getSecurity(accountId, figi))
-                .thenReturn(position);
-
-        final List<Operation> operations = List.of(TestData.newOperation());
-        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
-                .thenReturn(operations);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
+        mockNormalTradingStatus(figi1, figi2);
+        Mocker.mockShares(extInstrumentsService, share1, share2);
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockSecurity(extOperationsService, accountId);
+        mockOperations(accountId, figi1, figi2);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(Long.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(decision);
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(Map.of(figi1, decision, figi2, decision));
 
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         createRunnableBot().run();
 
+        final Long quantity = decision.getQuantity();
         Mockito.verify(ordersService, Mockito.times(1))
-                .postOrder(
-                        accountId,
-                        figi,
-                        decision.getQuantity(),
-                        null,
-                        OrderDirection.ORDER_DIRECTION_SELL,
-                        OrderType.ORDER_TYPE_MARKET,
-                        null
-                );
+                .postOrder(accountId, figi2, quantity, null, OrderDirection.ORDER_DIRECTION_SELL, OrderType.ORDER_TYPE_MARKET, null);
     }
 
     private RunnableBot createRunnableBot() {
@@ -448,46 +515,45 @@ class RunnableBotUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockBotConfig(final String accountId, final String figi, final CandleInterval candleInterval, final double commission) {
+    private void mockBotConfig(final String accountId, final CandleInterval candleInterval, final double commission, final String... figies) {
         Mockito.when(botConfig.accountId()).thenReturn(accountId);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+        Mockito.when(botConfig.figies()).thenReturn(Arrays.asList(figies));
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
         Mockito.when(botConfig.commission()).thenReturn(DecimalUtils.setDefaultScale(commission));
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockBotConfig(final String figi, final CandleInterval candleInterval, final double commission) {
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+    private void mockBotConfig(final CandleInterval candleInterval, final double commission, final String... figies) {
+        Mockito.when(botConfig.figies()).thenReturn(Arrays.asList(figies));
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
         Mockito.when(botConfig.commission()).thenReturn(DecimalUtils.setDefaultScale(commission));
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockBotConfig(final String accountId, final String figi, final CandleInterval candleInterval) {
+    private void mockBotConfig(final String accountId, final CandleInterval candleInterval, final String... figies) {
         Mockito.when(botConfig.accountId()).thenReturn(accountId);
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+        Mockito.when(botConfig.figies()).thenReturn(Arrays.asList(figies));
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockBotConfig(final String figi, final CandleInterval candleInterval) {
-        Mockito.when(botConfig.figi()).thenReturn(figi);
+    private void mockBotConfig(final CandleInterval candleInterval, final String... figies) {
+        Mockito.when(botConfig.figies()).thenReturn(Arrays.asList(figies));
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private void mockData(final String accountId, final String figi, final String currency) {
-        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
-                .thenReturn(balance);
+    private void mockNormalTradingStatus(final String... figies) {
+        for (final String figi : figies) {
+            Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
+        }
+    }
 
-        final Position position = new PositionBuilder().setFigi(figi).build();
-        Mockito.when(extOperationsService.getSecurity(accountId, figi))
-                .thenReturn(position);
-
+    private void mockOperations(final String accountId, final String... figies) {
         final List<Operation> operations = List.of(TestData.newOperation());
-        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
-                .thenReturn(operations);
+        for (final String figi : figies) {
+            Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
+                    .thenReturn(operations);
+        }
     }
 
 }

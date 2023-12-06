@@ -13,7 +13,7 @@ scheduling:
 scheduled-bot:
   bot-configs:
     - account-id: 2000124699
-      figi: BBG004730N88
+      figies: BBG004730N88
       candle-interval: CANDLE_INTERVAL_1_MIN
       commission: 0.003
       strategy-type: cross

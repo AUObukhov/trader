@@ -17,7 +17,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedChart;
 import ru.obukhov.trader.common.model.poi.ExtendedChartData;
-import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.model.poi.MarkerProperties;
@@ -150,8 +149,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putBotConfig(final ExtendedSheet sheet, final BotConfig botConfig) {
-        final ExtendedRow labelRow = sheet.addRow();
-        labelRow.createUnitedCell("Конфигурация", 2);
+        sheet.addRow().createUnitedCell("Конфигурация", 2);
 
         putCandleInterval(sheet, botConfig.candleInterval());
         putStrategyType(sheet, botConfig.strategyType());
@@ -167,17 +165,21 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putStrategyParams(final ExtendedSheet sheet, final Map<String, Object> strategyParams) {
+        if (strategyParams.isEmpty()) {
+            return;
+        }
+
+        sheet.addRow().createUnitedCell("Параметры стратегии", 2);
         for (final Map.Entry<String, Object> entry : strategyParams.entrySet()) {
             sheet.addRow(entry.getKey(), entry.getValue());
         }
     }
 
     private void putCommonStatistics(final ExtendedSheet sheet, final BackTestResult result) {
-        final ExtendedRow labelRow = sheet.addRow();
-        labelRow.createUnitedCell("Общая статистика", 2);
+        sheet.addRow().createUnitedCell("Общая статистика", 2);
 
         putAccountId(sheet, result.botConfig().accountId());
-        putFigi(sheet, result.botConfig().figi());
+        putFigies(sheet, result.botConfig().figies());
         putInterval(sheet, result.interval());
         putBalances(sheet, result);
         putProfits(sheet, result);
@@ -192,12 +194,17 @@ public class ExcelServiceImpl implements ExcelService {
         sheet.addRow("FIGI", figi);
     }
 
+    private void putFigies(final ExtendedSheet sheet, final List<String> figies) {
+        sheet.addRow("FIGIes", String.join(", ", figies));
+    }
+
     private void putInterval(final ExtendedSheet sheet, final Interval interval) {
         sheet.addRow("Интервал", interval.toPrettyString());
     }
 
     private void putBalances(final ExtendedSheet sheet, final BackTestResult result) {
-        sheet.addRow("Балансы");
+        sheet.addRow();
+        sheet.addRow().createUnitedCell("Балансы", 2);
         for (final Map.Entry<String, Balances> entry : result.balances().entrySet()) {
             sheet.addRow("Валюта", entry.getKey());
             final Balances balances = entry.getValue();
@@ -230,7 +237,8 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putProfits(final ExtendedSheet sheet, final BackTestResult result) {
-        sheet.addRow("Доходы");
+        sheet.addRow();
+        sheet.addRow().createUnitedCell("Доходы", 2);
         for (final Map.Entry<String, Profits> entry : result.profits().entrySet()) {
             sheet.addRow("Валюта", entry.getKey());
             final Profits profits = entry.getValue();
@@ -268,8 +276,7 @@ public class ExcelServiceImpl implements ExcelService {
         if (CollectionUtils.isEmpty(positions)) {
             sheet.addRow("Позиции отсутствуют");
         } else {
-            final ExtendedRow labelRow = sheet.addRow();
-            labelRow.createUnitedCell("Позиции", 3);
+            sheet.addRow().createUnitedCell("Позиции", 2);
             sheet.addRow("Цена", "Количество");
             for (final Position position : positions) {
                 sheet.addRow(position.getCurrentPrice(), position.getQuantity());
@@ -277,22 +284,22 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putOperations(final ExtendedSheet sheet, final List<Operation> operations) {
-
-
-        if (CollectionUtils.isEmpty(operations)) {
+    private void putOperations(final ExtendedSheet sheet, final Map<String, List<Operation>> operations) {
+        if (operations.isEmpty()) {
             sheet.addRow("Операции отсутствуют");
         } else {
-            final ExtendedRow labelRow = sheet.addRow();
-            labelRow.createUnitedCell("Операции", 6);
-            sheet.addRow("Дата и время", "Тип операции", "Цена", "Количество");
-            for (final Operation operation : operations) {
-                sheet.addRow(
-                        operation.getDate(),
-                        operation.getOperationType().name(),
-                        operation.getPrice(),
-                        operation.getQuantity()
-                );
+            for (final Map.Entry<String, List<Operation>> entry : operations.entrySet()) {
+                sheet.addRow().createUnitedCell("Операции с " + entry.getKey(), 4);
+                sheet.addRow("Дата и время", "Тип операции", "Цена", "Количество");
+                for (final Operation operation : entry.getValue()) {
+                    sheet.addRow(
+                            operation.getDate(),
+                            operation.getOperationType().name(),
+                            operation.getPrice(),
+                            operation.getQuantity()
+                    );
+                }
+                sheet.addRow();
             }
         }
     }
@@ -318,14 +325,30 @@ public class ExcelServiceImpl implements ExcelService {
         chart.plot(chartData);
     }
 
-    private void putChartWithOperations(final ExtendedSheet sheet, final List<Candle> candles, final List<Operation> operations) {
-        if (CollectionUtils.isNotEmpty(candles)) {
-            final ExtendedChart chart = createChart(sheet);
-            final ExtendedChartData chartData =
-                    chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
-            addCandlesAndPricesAndOperations(chartData, candles, operations);
-            chart.plot(chartData);
+    private void putChartWithOperations(
+            final ExtendedSheet sheet,
+            final Map<String, List<Candle>> candles,
+            final Map<String, List<Operation>> operations
+    ) {
+        if (candles.entrySet().stream().allMatch(entry -> entry.getValue().isEmpty())) {
+            log.debug("No candles found. Skipping chart");
+            return;
         }
+
+        final ExtendedChart chart = createChart(sheet);
+        final ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+        for (final Map.Entry<String, List<Candle>> entry : candles.entrySet()) {
+            final List<Candle> currentCandles = entry.getValue();
+            if (CollectionUtils.isEmpty(currentCandles)) {
+                log.debug("No candles found for FIGI {}", entry.getKey());
+            } else {
+                final List<Operation> currentOperations = operations.get(entry.getKey());
+                addCandlesAndPricesAndOperations(chartData, currentCandles, currentOperations);
+            }
+        }
+
+        chartData.stretchChart();
+        chart.plot(chartData);
     }
 
     private ExtendedChart createChart(final ExtendedSheet sheet) {
@@ -373,8 +396,6 @@ public class ExcelServiceImpl implements ExcelService {
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromCandles(innerCandles);
         addOpens(chartData, timesDataSource, innerCandles);
         addOperations(chartData, timesDataSource, operations, operationsIndices);
-
-        chartData.stretchChart();
     }
 
     private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<OffsetDateTime> times) {
@@ -455,6 +476,7 @@ public class ExcelServiceImpl implements ExcelService {
         addSeries(chartData, timesDataSource, bigDecimals, markerProperties, null);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void addSeries(
             final ExtendedChartData chartData,
             final XDDFCategoryDataSource timesDataSource,

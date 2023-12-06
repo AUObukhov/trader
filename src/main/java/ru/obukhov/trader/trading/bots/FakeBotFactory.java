@@ -26,6 +26,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -71,18 +72,24 @@ public class FakeBotFactory {
             final BalanceConfig balanceConfig,
             final OffsetDateTime currentDateTime
     ) {
-        final String figi = botConfig.figi();
-        final OffsetDateTime ceilingWorkDateTime = getCeilingWorkDateTime(figi, currentDateTime);
-        final Share share = extInstrumentsService.getShare(figi);
-        Asserter.notNull(share, () -> new InstrumentNotFoundException(figi));
+        final List<String> figies = botConfig.figies();
+        final OffsetDateTime ceilingWorkDateTime = getCeilingWorkDateTime(figies, currentDateTime);
+        final List<Share> shares = extInstrumentsService.getShares(figies);
+        final List<String> notFoundFigies = figies.stream()
+                .filter(figi -> shares.stream().noneMatch(share -> share.figi().equals(figi)))
+                .toList();
+        Asserter.isTrue(notFoundFigies.isEmpty(), () -> new InstrumentNotFoundException(notFoundFigies));
         final Map<String, BigDecimal> initialBalances = getInitialBalances(currentDateTime, ceilingWorkDateTime, balanceConfig);
 
         return (FakeContext) applicationContext.getBean("fakeContext", botConfig.accountId(), ceilingWorkDateTime, initialBalances);
     }
 
-    private OffsetDateTime getCeilingWorkDateTime(final String figi, final OffsetDateTime currentDateTime) {
+    private OffsetDateTime getCeilingWorkDateTime(final List<String> figies, final OffsetDateTime currentDateTime) {
         final Interval interval = Interval.of(currentDateTime, currentDateTime.plusDays(SCHEDULE_INTERVAL_DAYS));
-        final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+        final List<TradingDay> tradingSchedule = figies.stream()
+                .map(figi -> extInstrumentsService.getTradingScheduleByFigi(figi, interval))
+                .min(Comparator.comparing(schedule -> schedule.get(0).startTime()))
+                .orElseThrow();
         return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentDateTime);
     }
 

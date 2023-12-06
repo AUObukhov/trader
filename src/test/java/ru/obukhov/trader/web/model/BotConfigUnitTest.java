@@ -9,6 +9,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 class BotConfigUnitTest {
@@ -21,7 +22,7 @@ class BotConfigUnitTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),
-                TestShares.APPLE.share().figi(),
+                List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.03),
                 StrategyType.CONSERVATIVE,
@@ -31,7 +32,7 @@ class BotConfigUnitTest {
         final String actualResult = botConfig.toString();
         final String expectedResult = "BotConfig{" +
                 "accountId=2000124699, " +
-                "figi=BBG000B9XRY4, " +
+                "figies=[BBG000B9XRY4, BBG004730N88], " +
                 "candleInterval=CANDLE_INTERVAL_1_MIN, " +
                 "commission=0.030000000, " +
                 "strategyType=CONSERVATIVE, " +
