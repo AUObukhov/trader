@@ -236,6 +236,27 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
+    void getAllShares_returnsCachedValue() {
+        final TestShare testShare1 = TestShares.APPLE;
+        final TestShare testShare2 = TestShares.SBER;
+        final TestShare testShare3 = TestShares.YANDEX;
+        final TestShare testShare4 = TestShares.DIOD;
+
+        final List<TestShare> testShares = List.of(testShare1, testShare2, testShare3, testShare4);
+        final List<ru.tinkoff.piapi.contract.v1.Share> tinkoffShares = testShares.stream().map(TestShare::tinkoffShare).toList();
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
+        final List<Share> actualResult1 = extInstrumentsService.getAllShares();
+        Mocker.mockAllShares(instrumentsService);
+        final List<Share> actualResult2 = extInstrumentsService.getAllShares();
+
+        AssertUtils.assertEquals(shares, actualResult1);
+        AssertUtils.assertEquals(shares, actualResult2);
+    }
+
+    @Test
     void getEtf_returnsEtf() {
         final TestEtf testEtf = TestEtfs.EZA;
 

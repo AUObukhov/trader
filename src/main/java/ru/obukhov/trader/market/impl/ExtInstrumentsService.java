@@ -120,6 +120,17 @@ public class ExtInstrumentsService {
     }
 
     /**
+     * @return list of all shares
+     */
+    @Cacheable(value = "allShares", sync = true)
+    public List<Share> getAllShares() {
+        return instrumentsService.getAllSharesSync()
+                .stream()
+                .map(SHARE_MAPPER::map)
+                .toList();
+    }
+
+    /**
      * @return {@link Etf} corresponding to given {@code figi}
      */
     public Etf getEtf(final String figi) {
