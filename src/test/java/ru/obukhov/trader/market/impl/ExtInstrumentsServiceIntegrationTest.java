@@ -14,6 +14,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Dividend;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
@@ -26,6 +27,8 @@ import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.bond.TestBonds;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
+import ru.obukhov.trader.test.utils.model.dividend.TestDividend;
+import ru.obukhov.trader.test.utils.model.dividend.TestDividends;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
@@ -860,6 +863,24 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .addDays(TestTradingDays.TRADING_DAY2.tinkoffTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
+    }
+
+    @Test
+    void getDividends() {
+        final String figi = TestShares.SBER.share().figi();
+        final OffsetDateTime from = DateTimeTestData.newDateTime(2010, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 1, 1);
+
+        final TestDividend testDividend1 = TestDividends.TEST_DIVIDEND1;
+        final TestDividend testDividend2 = TestDividends.TEST_DIVIDEND2;
+        final List<ru.tinkoff.piapi.contract.v1.Dividend> tinkoffDividends =
+                List.of(testDividend1.tinkoffDividend(), testDividend2.tinkoffDividend());
+        Mockito.when(instrumentsService.getDividendsSync(figi, from.toInstant(), to.toInstant())).thenReturn(tinkoffDividends);
+
+        final List<Dividend> actualResult = extInstrumentsService.getDividends(figi, from, to);
+
+        final List<Dividend> expectedResult = List.of(testDividend1.dividend());
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
 }

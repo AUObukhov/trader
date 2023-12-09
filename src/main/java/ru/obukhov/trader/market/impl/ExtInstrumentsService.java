@@ -13,6 +13,7 @@ import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Dividend;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
@@ -20,6 +21,7 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.market.model.transform.BondMapper;
 import ru.obukhov.trader.market.model.transform.CurrencyMapper;
+import ru.obukhov.trader.market.model.transform.DividendMapper;
 import ru.obukhov.trader.market.model.transform.EtfMapper;
 import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
@@ -47,6 +49,7 @@ public class ExtInstrumentsService {
     private static final BondMapper BOND_MAPPER = Mappers.getMapper(BondMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
     private static final CurrencyMapper CURRENCY_MAPPER = Mappers.getMapper(CurrencyMapper.class);
+    private static final DividendMapper DIVIDEND_MAPPER = Mappers.getMapper(DividendMapper.class);
 
     private final WorkSchedule workSchedule;
     private final InstrumentsService instrumentsService;
@@ -240,6 +243,17 @@ public class ExtInstrumentsService {
         return instrumentsService.getTradingSchedulesSync(from, to)
                 .stream()
                 .map(TRADING_SCHEDULE_MAPPER::map)
+                .toList();
+    }
+
+    /**
+     * @return list of dividends with not "Canceled" type
+     */
+    public List<Dividend> getDividends(final String figi, final OffsetDateTime from, final OffsetDateTime to) {
+        return instrumentsService.getDividendsSync(figi, from.toInstant(), to.toInstant())
+                .stream()
+                .filter(dividend -> !"Cancelled".equals(dividend.getDividendType()))
+                .map(DIVIDEND_MAPPER::map)
                 .toList();
     }
 
