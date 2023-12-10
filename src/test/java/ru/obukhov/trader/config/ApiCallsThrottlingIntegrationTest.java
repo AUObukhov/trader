@@ -182,6 +182,8 @@ public class ApiCallsThrottlingIntegrationTest {
     // endregion
 
     private void testThrottling(final Runnable runnable, final int limit) throws InterruptedException {
+        System.gc(); // to reduce the chance of the GC start during test which can increase execution time
+
         long duration = ExecutionUtils.run(runnable, limit + 1).toMillis();
 
         final Integer interval = apiProperties.throttlingInterval();
