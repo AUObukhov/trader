@@ -219,7 +219,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // endregion
 
     @Test
-    void getShares() {
+    @DirtiesContext
+    void getShares_returnsCachedValue() {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
         final TestShare testShare3 = TestShares.YANDEX;
@@ -230,12 +231,16 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final ru.tinkoff.piapi.contract.v1.Share tinkoffShare3 = testShare3.tinkoffShare();
         final ru.tinkoff.piapi.contract.v1.Share tinkoffShare4 = testShare4.tinkoffShare();
 
-        Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare2, tinkoffShare3, tinkoffShare4);
         final List<String> figies = List.of(tinkoffShare1.getFigi(), tinkoffShare2.getFigi(), tinkoffShare4.getFigi());
-        final List<Share> actualResult = extInstrumentsService.getShares(figies);
+        Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare2, tinkoffShare3, tinkoffShare4);
+        final List<Share> actualResult1 = extInstrumentsService.getShares(figies);
+
+        Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare3);
+        final List<Share> actualResult2 = extInstrumentsService.getShares(figies);
 
         final List<Share> expectedResult = List.of(testShare1.share(), testShare2.share(), testShare4.share());
-        AssertUtils.assertEquals(expectedResult, actualResult);
+        AssertUtils.assertEquals(expectedResult, actualResult1);
+        AssertUtils.assertEquals(expectedResult, actualResult2);
     }
 
     @Test
@@ -252,7 +257,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
         final List<Share> actualResult1 = extInstrumentsService.getAllShares();
-        Mocker.mockAllShares(instrumentsService);
+        Mocker.mockAllShares(instrumentsService, testShare1.tinkoffShare(), testShare3.tinkoffShare());
         final List<Share> actualResult2 = extInstrumentsService.getAllShares();
 
         AssertUtils.assertEquals(shares, actualResult1);
