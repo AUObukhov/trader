@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.obukhov.trader.IntegrationTest;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
@@ -43,7 +44,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     @Test
     void getOrders_byAccountId_returnsEmptyList() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        initializeContextAndService(OffsetDateTime.now());
+        initializeContextAndService(DateUtils.now());
 
         List<OrderState> orders = fakeExtOrdersService.getOrders(accountId);
 
@@ -54,7 +55,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void getOrders_byAccountIdAndFigi_returnsEmptyList() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final String figi = TestShares.APPLE.share().figi();
-        initializeContextAndService(OffsetDateTime.now());
+        initializeContextAndService(DateUtils.now());
 
         List<OrderState> orders = fakeExtOrdersService.getOrders(accountId, figi);
 
@@ -563,7 +564,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void cancelOrder_throwsUnsupportedOperationException() {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final String orderId = "orderId";
-        initializeContextAndService(OffsetDateTime.now());
+        initializeContextAndService(DateUtils.now());
 
         final Executable executable = () -> fakeExtOrdersService.cancelOrder(accountId, orderId);
         final String expectedMessage = "Back test does not support cancelling of orders";

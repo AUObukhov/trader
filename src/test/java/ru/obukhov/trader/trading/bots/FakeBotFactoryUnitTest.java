@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -213,7 +214,7 @@ class FakeBotFactoryUnitTest {
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
 
         final BalanceConfig balanceConfig = TestData.newBalanceConfig();
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mocker.mockTradingSchedules(extInstrumentsService, figies, START_TIME, END_TIME);
         Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(List.of(share1));

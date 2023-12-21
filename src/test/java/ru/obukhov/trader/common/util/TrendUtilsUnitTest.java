@@ -120,7 +120,7 @@ class TrendUtilsUnitTest {
     @Test
     void getLocalExtremes() {
         final List<BigDecimal> values = TestData.newBigDecimalList(10, 20, 15, 30);
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         final List<OffsetDateTime> times = List.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
         final List<Integer> localExtremesIndices = List.of(0, 2);
 
@@ -235,7 +235,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenTimesIsLongerThanValues() {
-        final OffsetDateTime startTime = OffsetDateTime.now();
+        final OffsetDateTime startTime = DateUtils.now();
         final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
         final List<BigDecimal> values = TestData.newBigDecimalList(10.0);
         final List<Integer> localExtremes = List.of(0, 1);
@@ -246,7 +246,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenValuesIsLongerThanTimes() {
-        final List<OffsetDateTime> times = List.of(OffsetDateTime.now());
+        final List<OffsetDateTime> times = List.of(DateUtils.now());
         final List<BigDecimal> values = TestData.newBigDecimalList(10.0, 11.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
@@ -256,7 +256,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenLocalExtremesIsLongerThanTimes() {
-        final List<OffsetDateTime> times = List.of(OffsetDateTime.now());
+        final List<OffsetDateTime> times = List.of(DateUtils.now());
         final List<BigDecimal> values = TestData.newBigDecimalList(10.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
@@ -267,7 +267,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_returnsEmptyList_whenLocalExtremesIsEmpty() {
-        final OffsetDateTime startTime = OffsetDateTime.now();
+        final OffsetDateTime startTime = DateUtils.now();
         final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
         final List<BigDecimal> values = TestData.newBigDecimalList(10.0, 11.0);
         final List<Integer> localExtremes = List.of();
@@ -279,7 +279,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_returnsEmptyList_whenThereIsSingleLocalExtremum() {
-        final OffsetDateTime startTime = OffsetDateTime.now();
+        final OffsetDateTime startTime = DateUtils.now();
         final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
         final List<BigDecimal> values = TestData.newBigDecimalList(10.0, 11.0);
         final List<Integer> localExtremes = List.of(0);
@@ -291,7 +291,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_returnsLines() {
-        final OffsetDateTime startTime = OffsetDateTime.now();
+        final OffsetDateTime startTime = DateUtils.now();
         final List<OffsetDateTime> times = List.of(
                 startTime,
                 startTime.plusMinutes(1),

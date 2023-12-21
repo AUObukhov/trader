@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.Asserter;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Bond;
@@ -190,7 +191,7 @@ public class ExtInstrumentsService {
      * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code exchange}
      */
     public List<TradingDay> getTradingSchedule(final String exchange, final Interval interval) {
-        if (interval.getFrom().isBefore(OffsetDateTime.now())) {
+        if (interval.getFrom().isBefore(DateUtils.now())) {
             return interval.toTradingDays(workSchedule);
         } else {
             return instrumentsService.getTradingScheduleSync(exchange, interval.getFrom().toInstant(), interval.getTo().toInstant())

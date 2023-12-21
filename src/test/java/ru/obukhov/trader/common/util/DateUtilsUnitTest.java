@@ -9,10 +9,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
+import org.mockito.MockedStatic;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
@@ -31,6 +33,20 @@ import java.util.stream.Stream;
 class DateUtilsUnitTest {
 
     private final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
+
+    @Test
+    void now() {
+        final OffsetDateTime mockedNow = OffsetDateTime.of(
+                2023, 10, 11,
+                12, 13, 14, 15,
+                ZoneOffset.ofHours(16)
+        );
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            final OffsetDateTime result = DateUtils.now();
+            Assertions.assertEquals(DateUtils.DEFAULT_OFFSET, result.getOffset());
+            Assertions.assertTrue(mockedNow.isEqual(result));
+        }
+    }
 
     // region getIntervalWithDefaultOffsets tests
 

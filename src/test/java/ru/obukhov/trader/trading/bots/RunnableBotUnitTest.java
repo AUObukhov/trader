@@ -11,6 +11,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
@@ -130,7 +131,7 @@ class RunnableBotUnitTest {
         Mockito.when(ordersService.getOrders(figi2)).thenReturn(orders);
         Mockito.when(ordersService.getOrders(figi3)).thenReturn(Collections.emptyList());
 
-        final OffsetDateTime mockedNow = OffsetDateTime.now();
+        final OffsetDateTime mockedNow = DateUtils.now();
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             createRunnableBot().run();
 
@@ -153,7 +154,7 @@ class RunnableBotUnitTest {
         Mockito.when(ordersService.getOrders(figi1)).thenReturn(Collections.emptyList());
         Mockito.when(ordersService.getOrders(figi2)).thenThrow(new IllegalArgumentException());
 
-        final OffsetDateTime mockedNow = OffsetDateTime.now();
+        final OffsetDateTime mockedNow = DateUtils.now();
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             createRunnableBot().run();
 

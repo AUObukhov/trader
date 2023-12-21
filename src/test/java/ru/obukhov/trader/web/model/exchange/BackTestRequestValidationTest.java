@@ -1,6 +1,7 @@
 package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -12,7 +13,6 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -131,7 +131,7 @@ class BackTestRequestValidationTest {
         BalanceConfig balanceConfig = TestData.newBalanceConfig(Currencies.RUB, 10.0, 1.0, "0 0 0 1 * ?");
         request.setBalanceConfig(balanceConfig);
 
-        request.setFrom(OffsetDateTime.now());
+        request.setFrom(DateUtils.now());
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.account().id(),

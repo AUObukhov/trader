@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -159,7 +160,7 @@ class IntervalUnitTest {
 
     @Test
     void limitByNowIfNull_setToToNow_whenToIsNull() {
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
 
@@ -172,7 +173,7 @@ class IntervalUnitTest {
 
     @Test
     void limitByNowIfNull_notChangesTo_whenToIsNotNull() {
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 10);

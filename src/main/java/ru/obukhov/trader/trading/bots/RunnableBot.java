@@ -68,7 +68,7 @@ public class RunnableBot extends Bot implements Runnable {
     }
 
     private Interval getInterval() {
-        final OffsetDateTime to = OffsetDateTime.now();
+        final OffsetDateTime to = DateUtils.now();
         final ChronoUnit period = DateUtils.getPeriodByCandleInterval(botConfig.candleInterval());
         final OffsetDateTime from = to.minus(period.getDuration());
         return Interval.of(from, to);

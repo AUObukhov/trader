@@ -81,7 +81,7 @@ public class Interval {
     public Interval extendToDay() {
         Assert.isTrue(equalDates(), "'from' and 'to' must be at same day");
 
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         DateUtils.assertDateTimeNotFuture(from, now, "from");
         DateUtils.assertDateTimeNotFuture(to, now, "to");
 
@@ -100,7 +100,7 @@ public class Interval {
     public Interval extendToYear() {
         Assert.isTrue(equalYears(), "'from' and 'to' must be at same year");
 
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         DateUtils.assertDateTimeNotFuture(from, now, "from");
         DateUtils.assertDateTimeNotFuture(to, now, "to");
 

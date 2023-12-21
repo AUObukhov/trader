@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -66,7 +67,7 @@ class FakeBotUnitTest {
 
     @Test
     void getCurrentDateTime() {
-        final OffsetDateTime expectedCurrentDateTime = OffsetDateTime.now();
+        final OffsetDateTime expectedCurrentDateTime = DateUtils.now();
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(expectedCurrentDateTime);
 
         final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
@@ -76,7 +77,7 @@ class FakeBotUnitTest {
 
     @Test
     void nextScheduleMinute() {
-        final OffsetDateTime expectedNextMinute = OffsetDateTime.now();
+        final OffsetDateTime expectedNextMinute = DateUtils.now();
         final List<TradingDay> tradingSchedule = TestData.newTradingSchedule(
                 DateTimeTestData.newDateTime(2023, 7, 21, 7),
                 DateTimeTestData.newTime(19, 0, 0),
@@ -94,7 +95,7 @@ class FakeBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.account().id();
         final String currency = Currencies.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
-        expectedInvestments.put(OffsetDateTime.now(), DecimalUtils.setDefaultScale(10));
+        expectedInvestments.put(DateUtils.now(), DecimalUtils.setDefaultScale(10));
         Mockito.when(fakeContext.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
 
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
@@ -117,7 +118,7 @@ class FakeBotUnitTest {
     @Test
     void getOperations() {
         final String accountId = TestAccounts.TINKOFF.account().id();
-        final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
+        final Interval interval = Interval.of(DateUtils.now(), DateUtils.now());
 
         final String figi1 = TestShares.APPLE.share().figi();
         final String figi2 = TestShares.SBER.share().figi();
@@ -165,7 +166,7 @@ class FakeBotUnitTest {
     @Test
     void getCurrentPrice_usesCurrentDateTime_whenCurrentDateTimeIsNotNull() {
         final String figi = TestShares.APPLE.share().figi();
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -180,7 +181,7 @@ class FakeBotUnitTest {
     @Test
     void getCurrentPrice_usesTo_whenCurrentDateTimeIsNull() {
         final String figi = TestShares.APPLE.share().figi();
-        final OffsetDateTime to = OffsetDateTime.now();
+        final OffsetDateTime to = DateUtils.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(null);

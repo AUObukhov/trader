@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 
 import java.math.BigDecimal;
@@ -16,8 +17,8 @@ class PointUnitTest {
     static Stream<Arguments> getData_forOf_withBigDecimal() {
         return Stream.of(
                 Arguments.of(null, null, null),
-                Arguments.of(OffsetDateTime.now(), BigDecimal.valueOf(10.123123123), BigDecimal.valueOf(10.123123123)),
-                Arguments.of(OffsetDateTime.now(), BigDecimal.valueOf(10.123123125), BigDecimal.valueOf(10.123123125))
+                Arguments.of(DateUtils.now(), BigDecimal.valueOf(10.123123123), BigDecimal.valueOf(10.123123123)),
+                Arguments.of(DateUtils.now(), BigDecimal.valueOf(10.123123125), BigDecimal.valueOf(10.123123125))
         );
     }
 
@@ -34,9 +35,9 @@ class PointUnitTest {
     static Stream<Arguments> getData_forOf_withDouble() {
         return Stream.of(
                 Arguments.of(null, null, null),
-                Arguments.of(OffsetDateTime.now(), 10.12, DecimalUtils.setDefaultScale(10.12)),
-                Arguments.of(OffsetDateTime.now(), 10.123123123, BigDecimal.valueOf(10.123123123)),
-                Arguments.of(OffsetDateTime.now(), 10.123123125, BigDecimal.valueOf(10.123123125))
+                Arguments.of(DateUtils.now(), 10.12, DecimalUtils.setDefaultScale(10.12)),
+                Arguments.of(DateUtils.now(), 10.123123123, BigDecimal.valueOf(10.123123123)),
+                Arguments.of(DateUtils.now(), 10.123123125, BigDecimal.valueOf(10.123123125))
         );
     }
 
@@ -53,7 +54,7 @@ class PointUnitTest {
     static Stream<Arguments> getData_forOf_withInteger() {
         return Stream.of(
                 Arguments.of(null, null, null),
-                Arguments.of(OffsetDateTime.now(), 100, DecimalUtils.setDefaultScale(100))
+                Arguments.of(DateUtils.now(), 100, DecimalUtils.setDefaultScale(100))
         );
     }
 

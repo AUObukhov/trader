@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
@@ -33,7 +34,7 @@ class FakeContextUnitTest {
 
     @Test
     void constructor_withoutInitialBalances() {
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
 
@@ -44,7 +45,7 @@ class FakeContextUnitTest {
     void constructor_withInitialBalances() {
         final String accountId = TestAccounts.TINKOFF.account().id();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         final String currency1 = Currencies.RUB;
         final String currency2 = Currencies.USD;
@@ -242,7 +243,7 @@ class FakeContextUnitTest {
         final String accountId1 = TestAccounts.TINKOFF.account().id();
         final String accountId2 = TestAccounts.IIS.account().id();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         final String currency1 = Currencies.RUB;
         final BigDecimal balance1 = DecimalUtils.setDefaultScale(100);
@@ -310,7 +311,7 @@ class FakeContextUnitTest {
         final BigDecimal investment2 = DecimalUtils.setDefaultScale(-50);
         final BigDecimal investment3 = DecimalUtils.setDefaultScale(0);
 
-        final OffsetDateTime initialTimestamp = OffsetDateTime.now();
+        final OffsetDateTime initialTimestamp = DateUtils.now();
         final OffsetDateTime investment1Timestamp = initialTimestamp.plusHours(1);
         final OffsetDateTime investment2Timestamp = investment1Timestamp.plusHours(1);
 
@@ -353,7 +354,7 @@ class FakeContextUnitTest {
         final int investment22 = 500;
         final int investment23 = 300;
 
-        final OffsetDateTime initialTimestamp = OffsetDateTime.now();
+        final OffsetDateTime initialTimestamp = DateUtils.now();
         final OffsetDateTime investment1Timestamp = initialTimestamp.plusHours(1);
         final OffsetDateTime investment2Timestamp = investment1Timestamp.plusHours(1);
 
@@ -395,7 +396,7 @@ class FakeContextUnitTest {
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {
         final String accountId = TestAccounts.TINKOFF.account().id();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
         final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
 
@@ -415,7 +416,7 @@ class FakeContextUnitTest {
     void addPosition_addsPosition_and_getPosition_returnsPosition() {
         final String accountId = TestAccounts.TINKOFF.account().id();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
         final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
 
@@ -434,7 +435,7 @@ class FakeContextUnitTest {
     void getPositions_returnsAllPositions() {
         final String accountId = TestAccounts.TINKOFF.account().id();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
         final BigDecimal balance = DecimalUtils.setDefaultScale(100L);
 
@@ -458,7 +459,7 @@ class FakeContextUnitTest {
     void removePosition_removesPosition() {
         final String accountId = TestAccounts.TINKOFF.account().id();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
 

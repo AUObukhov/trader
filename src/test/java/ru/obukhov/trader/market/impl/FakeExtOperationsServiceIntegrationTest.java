@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -190,7 +191,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final Position position2 = Position.builder().figi(figi2).build();
         final Position position3 = Position.builder().figi(figi2).build();
 
-        final FakeContext fakeContext = new FakeContext(OffsetDateTime.now());
+        final FakeContext fakeContext = new FakeContext(DateUtils.now());
         fakeContext.addPosition(accountId1, figi1, position1);
         fakeContext.addPosition(accountId1, figi2, position2);
         fakeContext.addPosition(accountId2, figi3, position3);
@@ -216,7 +217,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String currency1 = Currencies.USD;
         final String currency2 = Currencies.EUR;
 
-        final FakeContext fakeContext = new FakeContext(OffsetDateTime.now());
+        final FakeContext fakeContext = new FakeContext(DateUtils.now());
         fakeContext.setBalance(accountId, currency1, DecimalUtils.setDefaultScale(2000L));
         fakeContext.setBalance(accountId, currency2, DecimalUtils.setDefaultScale(4000L));
 

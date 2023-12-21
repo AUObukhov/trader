@@ -36,6 +36,13 @@ public class DateUtils {
     public static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
 
     /**
+     * @return current dateTime with offset {@link DateUtils#DEFAULT_OFFSET}
+     */
+    public static OffsetDateTime now() {
+        return OffsetDateTime.now().withOffsetSameInstant(DEFAULT_OFFSET);
+    }
+
+    /**
      * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
      */
     public static Interval getIntervalWithDefaultOffsets(@Nullable final OffsetDateTime from, @Nullable final OffsetDateTime to) {

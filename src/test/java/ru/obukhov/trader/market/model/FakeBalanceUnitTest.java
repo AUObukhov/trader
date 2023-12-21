@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -25,7 +26,7 @@ class FakeBalanceUnitTest {
         final BigDecimal amount1 = DecimalUtils.setDefaultScale(20L);
         final BigDecimal amount2 = DecimalUtils.setDefaultScale(50L);
         final BigDecimal amount3 = DecimalUtils.setDefaultScale(40L);
-        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment1DateTime = DateUtils.now();
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
         final OffsetDateTime investment3DateTime = investment1DateTime.plusHours(1);
 
@@ -47,7 +48,7 @@ class FakeBalanceUnitTest {
         final BigDecimal amount1 = DecimalUtils.setDefaultScale(20L);
         final BigDecimal amount2 = DecimalUtils.setDefaultScale(-50L);
         final BigDecimal amount3 = DecimalUtils.setDefaultScale(10L);
-        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment1DateTime = DateUtils.now();
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
         final OffsetDateTime investment3DateTime = investment1DateTime.plusHours(1);
 
@@ -69,7 +70,7 @@ class FakeBalanceUnitTest {
         final BigDecimal amount1 = DecimalUtils.setDefaultScale(20L);
         final BigDecimal amount2 = DecimalUtils.ZERO;
         final BigDecimal amount3 = DecimalUtils.setDefaultScale(10L);
-        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment1DateTime = DateUtils.now();
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
         final OffsetDateTime investment3DateTime = investment1DateTime;
 

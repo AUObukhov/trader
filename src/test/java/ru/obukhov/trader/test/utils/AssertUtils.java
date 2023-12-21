@@ -30,6 +30,7 @@ import org.springframework.validation.ObjectError;
 import ru.obukhov.trader.common.model.poi.ColorMapper;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
@@ -383,7 +384,7 @@ public class AssertUtils {
     }
 
     private static void assetCellValue(final Cell cell, final LocalDateTime value) {
-        final ZoneOffset offset = OffsetDateTime.now().getOffset();
+        final ZoneOffset offset = DateUtils.now().getOffset();
         final Date expectedValue = Date.from(value.toInstant(offset));
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }

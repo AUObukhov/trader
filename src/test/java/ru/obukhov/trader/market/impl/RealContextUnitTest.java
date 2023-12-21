@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -13,7 +14,7 @@ class RealContextUnitTest {
 
     @Test
     void getCurrentDateTime_returnsCurrentDateTime() {
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         final OffsetDateTime currentTimestamp = new RealContext().getCurrentDateTime();
 
         final long delay = Duration.between(now, currentTimestamp).toMillis();

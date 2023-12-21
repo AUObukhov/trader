@@ -7,6 +7,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
@@ -74,8 +75,8 @@ class ExtendedRowUnitTest {
                 "value",
                 BigDecimal.TEN,
                 10,
-                OffsetDateTime.now(),
-                OffsetDateTime.now().toLocalDateTime()
+                DateUtils.now(),
+                DateUtils.now().toLocalDateTime()
         };
 
         final List<ExtendedCell> cells = extendedRow.createCells(values);
@@ -146,8 +147,8 @@ class ExtendedRowUnitTest {
                 "value",
                 BigDecimal.TEN,
                 10,
-                OffsetDateTime.now(),
-                OffsetDateTime.now().toLocalDateTime()
+                DateUtils.now(),
+                DateUtils.now().toLocalDateTime()
         };
 
         final List<ExtendedCell> cells = extendedRow.createCells(column, values);
@@ -311,7 +312,7 @@ class ExtendedRowUnitTest {
     void createCell_withObjectValue_whenValueIsLocalDateTime() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
-        final OffsetDateTime offsetDateTime = OffsetDateTime.now();
+        final OffsetDateTime offsetDateTime = DateUtils.now();
         final Object value = offsetDateTime.toLocalDateTime();
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
@@ -330,7 +331,7 @@ class ExtendedRowUnitTest {
     void createCell_withObjectValue_whenValueIsOffsetDateTime() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
-        final Object value = OffsetDateTime.now();
+        final Object value = DateUtils.now();
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
@@ -530,7 +531,7 @@ class ExtendedRowUnitTest {
     void createCell_withLocalDateTimeValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
-        final OffsetDateTime offsetDateTime = OffsetDateTime.now();
+        final OffsetDateTime offsetDateTime = DateUtils.now();
         final LocalDateTime value = offsetDateTime.toLocalDateTime();
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
@@ -571,7 +572,7 @@ class ExtendedRowUnitTest {
     void createCell_withOffsetDateTimeValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
-        final OffsetDateTime value = OffsetDateTime.now();
+        final OffsetDateTime value = DateUtils.now();
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
 

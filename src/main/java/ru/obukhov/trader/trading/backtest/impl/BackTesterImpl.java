@@ -104,7 +104,7 @@ public class BackTesterImpl implements BackTester {
     }
 
     private List<BackTestResult> test(final List<BotConfig> botConfigs, final BalanceConfig balanceConfig, final Interval interval) {
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
         DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
         Assert.isTrue(interval.toDays() >= 1, "interval can't be shorter than 1 day");

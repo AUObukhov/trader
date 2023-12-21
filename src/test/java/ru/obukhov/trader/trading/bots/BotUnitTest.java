@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -76,7 +77,7 @@ class BotUnitTest {
                 null
         );
 
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         final Interval interval = Interval.of(now.minusMinutes(3), now);
         bot.processBotConfig(botConfig, interval);
 
@@ -97,7 +98,7 @@ class BotUnitTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, null, null, null);
 
-        final OffsetDateTime now = OffsetDateTime.now();
+        final OffsetDateTime now = DateUtils.now();
         final Interval interval = Interval.of(now.minusMinutes(3), now);
         bot.processBotConfig(botConfig, interval);
 
@@ -114,7 +115,7 @@ class BotUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mocker.mockShares(extInstrumentsService, share1, share2);
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
@@ -158,7 +159,7 @@ class BotUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mocker.mockShares(extInstrumentsService, share1, share2);
@@ -207,7 +208,7 @@ class BotUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mocker.mockShares(extInstrumentsService, share1, share2);
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());

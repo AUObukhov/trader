@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
@@ -82,7 +83,7 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
-        final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
+        final OffsetDateTime from = DateUtils.now().plusDays(1);
         final OffsetDateTime to = from.plusDays(1);
         final Interval interval = Interval.of(from, to);
 
@@ -98,7 +99,7 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
-        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime from = DateUtils.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(2);
         final Interval interval = Interval.of(from, to);
 
@@ -114,7 +115,7 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
-        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime from = DateUtils.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(1).minusNanos(1);
         final Interval interval = Interval.of(from, to);
 
