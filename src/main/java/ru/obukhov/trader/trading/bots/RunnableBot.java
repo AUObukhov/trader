@@ -2,6 +2,7 @@ package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Periods;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.MapUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
@@ -12,7 +13,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.Period;
 import java.util.Map;
 
 @Slf4j
@@ -69,8 +70,8 @@ public class RunnableBot extends Bot implements Runnable {
 
     private Interval getInterval() {
         final OffsetDateTime to = DateUtils.now();
-        final ChronoUnit period = DateUtils.getPeriodByCandleInterval(botConfig.candleInterval());
-        final OffsetDateTime from = to.minus(period.getDuration());
+        final Period period = Periods.getPeriodByCandleInterval(botConfig.candleInterval());
+        final OffsetDateTime from = to.minus(period);
         return Interval.of(from, to);
     }
 

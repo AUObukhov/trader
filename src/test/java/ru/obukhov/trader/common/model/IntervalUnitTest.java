@@ -20,6 +20,7 @@ import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Stream;
@@ -187,20 +188,96 @@ class IntervalUnitTest {
 
     // endregion
 
-    // region extendToDay tests
+    // region extendTo tests
 
-    @Test
-    void extendToDay_throwsIllegalArgumentException_whenNotEqualDates() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 6, 11, 30, 40);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forExtendTo_throwsIllegalArgumentException_whenNotSamePeriod() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 11),
+                        Periods.DAY
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 0, 0, 0, 1),
+                        Periods.DAY
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 10),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 11),
+                        Periods.TWO_DAYS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 0, 0, 0, 1),
+                        Periods.TWO_DAYS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10),
+                        DateTimeTestData.newDateTime(2020, 10, 12, 11),
+                        Periods.WEEK
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 12, 0, 0, 0, 1),
+                        Periods.WEEK
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 1),
+                        DateTimeTestData.newDateTime(2020, 11, 2),
+                        Periods.MONTH
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 11, 1, 0, 0, 0, 1),
+                        Periods.MONTH
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2021, 10, 6),
+                        Periods.YEAR
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2021, 1, 1, 0, 0, 0, 1),
+                        Periods.YEAR
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 5, 1),
+                        DateTimeTestData.newDateTime(2022, 1, 2),
+                        Periods.TWO_YEARS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2022, 1, 1, 0, 0, 0, 1),
+                        Periods.TWO_YEARS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 5, 1),
+                        DateTimeTestData.newDateTime(2032, 1, 2),
+                        Periods.DECADE
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2030, 1, 1, 0, 0, 0, 1),
+                        Periods.DECADE
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forExtendTo_throwsIllegalArgumentException_whenNotSamePeriod")
+    void extendTo_throwsIllegalArgumentException_whenNotSamePeriod(final OffsetDateTime from, final OffsetDateTime to, final Period period) {
         final Interval interval = Interval.of(from, to);
 
-        final Executable executable = interval::extendToDay;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "'from' and 'to' must be at same day");
+        final Executable executable = () -> interval.extendTo(period);
+        final String expectedMessage = String.format("'from' (%s) and 'to' (%s) must be at the same period %s", from, to, period);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void extendToDay_throwsIllegalArgumentException_whenFromIsInFuture() {
+    void extendTo_throwsIllegalArgumentException_whenFromIsInFuture() {
         final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10, 11, 12);
 
         final OffsetDateTime from = mockedNow.plusHours(1);
@@ -208,14 +285,14 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Executable executable = interval::extendToDay;
+            final Executable executable = () -> interval.extendTo(Periods.DAY);
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
     @Test
-    void extendToDay_throwsIllegalArgumentException_whenToIsInFuture() {
+    void extendTo_throwsIllegalArgumentException_whenToIsInFuture() {
         final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10, 11, 12);
 
         final OffsetDateTime from = mockedNow.plusMinutes(-10);
@@ -223,124 +300,327 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> timestampStaticMock = Mocker.mockNow(mockedNow)) {
-            final Executable executable = interval::extendToDay;
+            final Executable executable = () -> interval.extendTo(Periods.DAY);
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
-    @Test
-    void extendToDay_extendsToWholeDay_whenEqualsDatesBeforeToday() {
-        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2021, 9, 23, 10, 11, 12);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forExtendTo_extendsToWholePeriod_whenFromAndToInSamePeriod_andBeforeCurrentPeriod() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40),
+                        Periods.DAY,
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 6)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40),
+                        Periods.TWO_DAYS,
+                        DateTimeTestData.newDateTime(2020, 10, 4),
+                        DateTimeTestData.newDateTime(2020, 10, 6)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 7, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 8, 11, 30, 40),
+                        Periods.WEEK,
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 12)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 2, 1, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 2, 25, 11, 30, 40),
+                        Periods.MONTH,
+                        DateTimeTestData.newDateTime(2020, 2, 1),
+                        DateTimeTestData.newDateTime(2020, 3, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 7, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 8, 11, 30, 40),
+                        Periods.MONTH,
+                        DateTimeTestData.newDateTime(2020, 10, 1),
+                        DateTimeTestData.newDateTime(2020, 11, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40),
+                        Periods.YEAR,
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2021, 10, 5, 11, 30, 40),
+                        Periods.TWO_YEARS,
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2023, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2012, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2014, 10, 5, 11, 30, 40),
+                        Periods.DECADE,
+                        DateTimeTestData.newDateTime(2011, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                )
+        );
+    }
 
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40);
+    @ParameterizedTest
+    @MethodSource("getData_forExtendTo_extendsToWholePeriod_whenFromAndToInSamePeriod_andBeforeCurrentPeriod")
+    void extendTo_extendsToWholePeriod_whenFromAndToInSamePeriod_andBeforeCurrentPeriod(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final Period period,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) {
+        final OffsetDateTime mockedNow = to.plus(period);
         final Interval interval = Interval.of(from, to);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToDay();
+            final Interval extendedInterval = interval.extendTo(period);
 
-            final OffsetDateTime expectedFrom = DateTimeTestData.newDateTime(2020, 10, 5);
-            final OffsetDateTime expectedTo = DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
             Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
             Assertions.assertEquals(expectedTo, extendedInterval.getTo());
         }
     }
 
-    @Test
-    void extendToDay_extendsToPartOfDayTillNow_whenDatesAreToday() {
-        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10, 11, 12);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forExtendTo_extendsToNow_whenFromAndToAreInCurrentPeriod() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23, 3, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 23, 6, 11, 12),
+                        Periods.DAY,
+                        DateTimeTestData.newDateTime(2020, 9, 23, 12, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 23)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 22, 3, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 23, 6, 11, 12),
+                        Periods.TWO_DAYS,
+                        DateTimeTestData.newDateTime(2020, 9, 23, 12, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 22)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23, 3, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 24, 6, 11, 12),
+                        Periods.WEEK,
+                        DateTimeTestData.newDateTime(2020, 9, 25, 12, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 21)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 13, 3, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 14, 6, 11, 12),
+                        Periods.MONTH,
+                        DateTimeTestData.newDateTime(2020, 9, 20, 6, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 6, 23, 3, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 6, 24, 6, 11, 12),
+                        Periods.YEAR,
+                        DateTimeTestData.newDateTime(2020, 9, 2, 6, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 2, 10, 6, 11, 12),
+                        DateTimeTestData.newDateTime(2020, 9, 10, 6, 11, 12),
+                        Periods.TWO_YEARS,
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2019, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 9, 23, 3, 11, 12),
+                        DateTimeTestData.newDateTime(2024, 9, 24, 6, 11, 12),
+                        Periods.DECADE,
+                        DateTimeTestData.newDateTime(2026, 4, 15, 6, 11, 12),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                )
+        );
+    }
 
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 9, 23, 3, 11, 12);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 9, 23, 6, 11, 12);
+    @ParameterizedTest
+    @MethodSource("getData_forExtendTo_extendsToNow_whenFromAndToAreInCurrentPeriod")
+    void extendTo_extendsToNow_whenFromAndToAreInCurrentPeriod(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final Period period,
+            final OffsetDateTime now,
+            final OffsetDateTime expectedFrom
+    ) {
         final Interval interval = Interval.of(from, to);
 
-        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToDay();
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(now)) {
+            final Interval extendedInterval = interval.extendTo(period);
 
-            final OffsetDateTime expectedFrom = DateTimeTestData.newDateTime(2020, 9, 23);
             Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
-            Assertions.assertEquals(mockedNow, extendedInterval.getTo());
+            Assertions.assertEquals(now, extendedInterval.getTo());
         }
     }
 
     // endregion
 
-    // region extendToYear tests
+    // region isAnyPeriod tests
 
-    @Test
-    void extendToYear_throwsIllegalArgumentException_whenNotEqualYears() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 10, 6, 11, 30, 40);
-        final Interval interval = Interval.of(from, to);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forIsAnyPeriod() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        null,
+                        false
+                ),
+                Arguments.of(
+                        null,
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        false
+                ),
 
-        final Executable executable = interval::extendToYear;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "'from' and 'to' must be at same year");
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        DateTimeTestData.newDateTime(2020, 9, 24),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        DateTimeTestData.newDateTime(2020, 9, 23, 23, 59, 59, 999_999_999),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        DateTimeTestData.newDateTime(2020, 9, 24, 0, 0, 0, 1),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23, 10),
+                        DateTimeTestData.newDateTime(2020, 9, 24, 10),
+                        false
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 22),
+                        DateTimeTestData.newDateTime(2020, 9, 24),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 22),
+                        DateTimeTestData.newDateTime(2020, 9, 23, 23, 59, 59, 999_999_999),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 22),
+                        DateTimeTestData.newDateTime(2020, 9, 24, 0, 0, 0, 1),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        DateTimeTestData.newDateTime(2020, 9, 25),
+                        false
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 21),
+                        DateTimeTestData.newDateTime(2020, 9, 28),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 21),
+                        DateTimeTestData.newDateTime(2020, 9, 27, 23, 59, 59, 999_999_999),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 21),
+                        DateTimeTestData.newDateTime(2020, 9, 28, 0, 0, 0, 1),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 23),
+                        DateTimeTestData.newDateTime(2020, 9, 30),
+                        false
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 1),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 1),
+                        DateTimeTestData.newDateTime(2020, 9, 30, 23, 59, 59, 999_999_999),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 1, 0, 0, 0, 1),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 9, 10),
+                        DateTimeTestData.newDateTime(2020, 10, 10),
+                        false
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1, 0, 0, 0, 1),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 4, 1),
+                        DateTimeTestData.newDateTime(2021, 4, 1),
+                        false
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2031, 1, 1),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2031, 1, 1, 0, 0, 0, 1),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2025, 1, 1),
+                        DateTimeTestData.newDateTime(2034, 1, 1),
+                        false
+                )
+        );
     }
 
-    @Test
-    void extendToYear_throwsIllegalArgumentException_whenFromIsInFuture() {
-        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10, 11, 12);
-
-        final OffsetDateTime from = mockedNow.plusHours(1);
-        final OffsetDateTime to = from.plusMinutes(10);
+    @ParameterizedTest
+    @MethodSource("getData_forIsAnyPeriod")
+    void isAnyPeriod(final OffsetDateTime from, final OffsetDateTime to, final boolean expectedResult) {
         final Interval interval = Interval.of(from, to);
 
-        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Executable executable = interval::extendToYear;
-            final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-        }
-    }
+        final boolean actualResult = interval.isAnyPeriod();
 
-    @Test
-    void extendToYear_throwsIllegalArgumentException_whenToIsInFuture() {
-        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10, 11, 12);
-
-        final OffsetDateTime from = mockedNow.plusHours(-1);
-        final OffsetDateTime to = mockedNow.plusMinutes(10);
-        final Interval interval = Interval.of(from, to);
-
-        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Executable executable = interval::extendToYear;
-            final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-        }
-    }
-
-    @Test
-    void extendToYear_extendsToWholeYear_whenEqualsYearsBeforeCurrentYear() {
-        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2021, 9, 23, 10, 11, 12);
-
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40);
-        final Interval interval = Interval.of(from, to);
-
-        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToYear();
-
-            final OffsetDateTime expectedFrom = DateTimeTestData.newDateTime(2020, 1, 1);
-            final OffsetDateTime expectedTo = DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999);
-            Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
-            Assertions.assertEquals(expectedTo, extendedInterval.getTo());
-        }
-    }
-
-    @Test
-    void extendToYear_extendsToPartOfDayTillNow_whenYearsAreCurrentYear() {
-        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10, 11, 12);
-
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 23, 10, 11, 12);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 4, 23, 10, 11, 12);
-        final Interval interval = Interval.of(from, to);
-
-        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToYear();
-
-            final OffsetDateTime expectedFrom = DateTimeTestData.newDateTime(2020, 1, 1);
-            Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
-            Assertions.assertEquals(mockedNow, extendedInterval.getTo());
-        }
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion
@@ -523,282 +803,6 @@ class IntervalUnitTest {
 
     // endregion
 
-    // region minusDays tests
-
-    @Test
-    void minusDays_throwNullPointerException_whenFromIsNull() {
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5);
-        final Interval interval = Interval.of(null, to);
-
-        Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
-    }
-
-    @Test
-    void minusDays_throwNullPointerException_whenToIsNull() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final Interval interval = Interval.of(from, null);
-
-        Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
-    }
-
-    @Test
-    void minusDays_throwNullPointerException_whenFromAndToAreNull() {
-        final Interval interval = Interval.of(null, null);
-
-        Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
-    }
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forMinusDays() {
-        return Stream.of(
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        -2,
-                        DateTimeTestData.newDateTime(2020, 10, 7, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 7, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        -1,
-                        DateTimeTestData.newDateTime(2020, 10, 6, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 6, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        0,
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        1,
-                        DateTimeTestData.newDateTime(2020, 10, 4, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 4, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        2,
-                        DateTimeTestData.newDateTime(2020, 10, 3, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 3, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        10,
-                        DateTimeTestData.newDateTime(2020, 9, 25, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 9, 25, 11, 30, 40, 50)
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forMinusDays")
-    void minusDays(
-            final OffsetDateTime from,
-            final OffsetDateTime to,
-            final int days,
-            final OffsetDateTime expectedFrom,
-            final OffsetDateTime expectedTo
-    ) {
-        final Interval interval = Interval.of(from, to).minusDays(days);
-
-        Assertions.assertEquals(expectedFrom, interval.getFrom());
-        Assertions.assertEquals(expectedTo, interval.getTo());
-    }
-
-    // endregion
-
-    // region minusYears tests
-
-    @Test
-    void minusYears_throwNullPointerException_whenFromIsNull() {
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5);
-        final Interval interval = Interval.of(null, to);
-
-        Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
-    }
-
-    @Test
-    void minusYears_throwNullPointerException_whenToIsNull() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final Interval interval = Interval.of(from, null);
-
-        Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
-    }
-
-    @Test
-    void minusYears_throwNullPointerException_whenFromAndToAreNull() {
-        final Interval interval = Interval.of(null, null);
-
-        Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
-    }
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forMinusYears() {
-        return Stream.of(
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        -2,
-                        DateTimeTestData.newDateTime(2022, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2022, 10, 5, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        -1,
-                        DateTimeTestData.newDateTime(2021, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2021, 10, 5, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        0,
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        1,
-                        DateTimeTestData.newDateTime(2019, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2019, 10, 5, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        2,
-                        DateTimeTestData.newDateTime(2018, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2018, 10, 5, 11, 30, 40, 50)
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        10,
-                        DateTimeTestData.newDateTime(2010, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2010, 10, 5, 11, 30, 40, 50)
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forMinusYears")
-    void minusYears(
-            final OffsetDateTime from,
-            final OffsetDateTime to,
-            final int years,
-            final OffsetDateTime expectedFrom,
-            final OffsetDateTime expectedTo
-    ) {
-        final Interval interval = Interval.of(from, to).minusYears(years);
-
-        Assertions.assertEquals(expectedFrom, interval.getFrom());
-        Assertions.assertEquals(expectedTo, interval.getTo());
-    }
-
-    // endregion
-
-    // region equalDates tests
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forEqualDates() {
-        return Stream.of(
-                Arguments.of(
-                        null,
-                        null,
-                        true
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        true
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
-                        true
-                ),
-                Arguments.of(
-                        null,
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        false
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        null,
-                        false
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 4, 23, 59, 59, 999_999_999),
-                        DateTimeTestData.newDateTime(2020, 10, 5),
-                        false
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forEqualDates")
-    void equalDates(final OffsetDateTime from, final OffsetDateTime to, boolean expected) {
-        final boolean result = Interval.of(from, to).equalDates();
-
-        Assertions.assertEquals(expected, result);
-    }
-
-    // endregion
-
-    // region equalYears tests
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forEqualYears() {
-        return Stream.of(
-                Arguments.of(
-                        null,
-                        null,
-                        true
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        true
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 1, 1),
-                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
-                        true
-                ),
-                Arguments.of(
-                        null,
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        false
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        null,
-                        false
-                ),
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2019, 12, 31, 23, 59, 59, 999_999_999),
-                        DateTimeTestData.newDateTime(2020, 1, 1),
-                        false
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forEqualYears")
-    void equalYears(final OffsetDateTime from, final OffsetDateTime to, boolean expected) {
-        final boolean result = Interval.of(from, to).equalYears();
-
-        Assertions.assertEquals(expected, result);
-    }
-
-    // endregion
-
     // region contains tests
 
     @SuppressWarnings("unused")
@@ -809,7 +813,7 @@ class IntervalUnitTest {
                                 DateTimeTestData.newDateTime(2020, 10, 1, 10, 5, 10),
                                 DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 10)
                         ),
-                        DateTimeTestData.newDateTime(2020, 10, 1, 10, 5, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 1, 10, 5, 9, 999_999_999),
                         false
                 ),
                 Arguments.of(
@@ -833,7 +837,7 @@ class IntervalUnitTest {
                                 DateTimeTestData.newDateTime(2020, 10, 1, 10, 5, 10),
                                 DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 10)
                         ),
-                        DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 10),
+                        DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 9, 999_999_999),
                         true
                 ),
                 Arguments.of(
@@ -841,7 +845,7 @@ class IntervalUnitTest {
                                 DateTimeTestData.newDateTime(2020, 10, 1, 10, 5, 10),
                                 DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 10)
                         ),
-                        DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 15),
+                        DateTimeTestData.newDateTime(2020, 10, 2, 10, 5, 10),
                         false
                 ),
                 Arguments.of(
@@ -871,24 +875,112 @@ class IntervalUnitTest {
 
     // endregion
 
-    // region splitIntoDailyIntervals tests
+    // region splitIntoIntervals tests
 
-    @Test
-    void splitIntoDailyIntervals_returnsEmptyList_whenFromAndToAreEqual() {
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSplitIntoIntervals_returnsEmptyList_whenFromAndToAreEqual() {
+        return Stream.of(
+                Arguments.of(Periods.DAY),
+                Arguments.of(Periods.TWO_DAYS),
+                Arguments.of(Periods.WEEK),
+                Arguments.of(Periods.MONTH),
+                Arguments.of(Periods.YEAR),
+                Arguments.of(Periods.TWO_YEARS),
+                Arguments.of(Periods.DECADE)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forSplitIntoIntervals_returnsEmptyList_whenFromAndToAreEqual")
+    void splitIntoIntervals_returnsEmptyList_whenFromAndToAreEqual(final Period period) {
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
 
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
 
         Assertions.assertTrue(intervals.isEmpty());
     }
 
-    @Test
-    void splitIntoDailyIntervals_returnsOnePair_whenFromAndToInOneDay() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5, 12, 20, 30);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSplitIntoIntervals_returnsOnePair_whenFromAndToInOnePeriod() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 12, 20, 30),
+                        Periods.DAY
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        Periods.DAY
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 12, 20, 30),
+                        Periods.TWO_DAYS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        Periods.TWO_DAYS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 10, 12, 20, 30),
+                        Periods.WEEK
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999),
+                        Periods.WEEK
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 21, 12, 20, 30),
+                        Periods.MONTH
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999),
+                        Periods.MONTH
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 21, 12, 20, 30),
+                        Periods.YEAR
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        Periods.YEAR
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2021, 10, 21, 12, 20, 30),
+                        Periods.TWO_YEARS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1, 1),
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999),
+                        Periods.TWO_YEARS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2026, 10, 21, 12, 20, 30),
+                        Periods.DECADE
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1, 1),
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999),
+                        Periods.DECADE
+                )
+        );
+    }
 
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+    @ParameterizedTest
+    @MethodSource("getData_forSplitIntoIntervals_returnsOnePair_whenFromAndToInOnePeriod")
+    void splitIntoIntervals_returnsOnePair_whenFromAndToInOnePeriod(final OffsetDateTime from, final OffsetDateTime to, final Period period) {
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
 
         Assertions.assertEquals(1, intervals.size());
 
@@ -896,12 +988,121 @@ class IntervalUnitTest {
         Assertions.assertEquals(to, intervals.get(0).getTo());
     }
 
-    @Test
-    void splitIntoDailyIntervals_returnsOnePair_whenFromAndToInOneWholeDay() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSplitIntoIntervals_returnsTwoPairs_whenFromAndToDiffersInOnePeriod() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 12, 20, 30),
+                        Periods.DAY,
+                        DateTimeTestData.newDateTime(2020, 10, 6)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 12, 20, 30),
+                        Periods.TWO_DAYS,
+                        DateTimeTestData.newDateTime(2020, 10, 6)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 12, 12, 20, 30),
+                        Periods.WEEK,
+                        DateTimeTestData.newDateTime(2020, 10, 12)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 11, 12, 12, 20, 30),
+                        Periods.MONTH,
+                        DateTimeTestData.newDateTime(2020, 11, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2021, 10, 5),
+                        Periods.YEAR,
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 10, 5),
+                        DateTimeTestData.newDateTime(2023, 10, 5),
+                        Periods.TWO_YEARS,
+                        DateTimeTestData.newDateTime(2023, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 10, 5),
+                        DateTimeTestData.newDateTime(2032, 10, 5),
+                        Periods.DECADE,
+                        DateTimeTestData.newDateTime(2031, 1, 1)
+                )
+        );
+    }
 
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+    @ParameterizedTest
+    @MethodSource("getData_forSplitIntoIntervals_returnsTwoPairs_whenFromAndToDiffersInOnePeriod")
+    void splitIntoIntervals_returnsTwoPairs_whenFromAndToDiffersInOnePeriod(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final Period period,
+            final OffsetDateTime expectedTo0AndFrom1
+    ) {
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
+
+        Assertions.assertEquals(2, intervals.size());
+
+        Assertions.assertEquals(from, intervals.get(0).getFrom());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(0).getTo());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(1).getFrom());
+        Assertions.assertEquals(to, intervals.get(1).getTo());
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSplitIntoIntervals_returnsOnePair_whenFromAndToAreAtStartOfNeighbourPeriods() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 6),
+                        Periods.DAY
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4),
+                        DateTimeTestData.newDateTime(2020, 10, 6),
+                        Periods.TWO_DAYS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 12),
+                        Periods.WEEK
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 1),
+                        DateTimeTestData.newDateTime(2020, 11, 1),
+                        Periods.MONTH
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        Periods.YEAR
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2023, 1, 1),
+                        Periods.TWO_YEARS
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2031, 1, 1),
+                        Periods.DECADE
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forSplitIntoIntervals_returnsOnePair_whenFromAndToAreAtStartOfNeighbourPeriods")
+    void splitIntoIntervals_returnsOnePair_whenFromAndToAreAtStartOfNeighbourPeriods(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final Period period
+    ) {
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
 
         Assertions.assertEquals(1, intervals.size());
 
@@ -909,194 +1110,148 @@ class IntervalUnitTest {
         Assertions.assertEquals(to, intervals.get(0).getTo());
     }
 
-    @Test
-    void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToDiffersInOneDay() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 6, 12, 20, 30);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSplitIntoIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourPeriods() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 6, 23, 59, 59, 999_999_999),
+                        Periods.DAY,
+                        DateTimeTestData.newDateTime(2020, 10, 6)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 7, 23, 59, 59, 999_999_999),
+                        Periods.TWO_DAYS,
+                        DateTimeTestData.newDateTime(2020, 10, 6)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 18, 23, 59, 59, 999_999_999),
+                        Periods.WEEK,
+                        DateTimeTestData.newDateTime(2020, 10, 12)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 11, 30, 23, 59, 59, 999_999_999),
+                        Periods.MONTH,
+                        DateTimeTestData.newDateTime(2020, 11, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2021, 12, 31, 23, 59, 59, 999_999_999),
+                        Periods.YEAR,
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2024, 12, 31, 23, 59, 59, 999_999_999),
+                        Periods.TWO_YEARS,
+                        DateTimeTestData.newDateTime(2023, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999),
+                        Periods.DECADE,
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                )
+        );
+    }
 
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+    @ParameterizedTest
+    @MethodSource("getData_forSplitIntoIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourPeriods")
+    void splitIntoIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourPeriods(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final Period period,
+            final OffsetDateTime expectedTo0AndFrom1
+    ) {
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
 
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(0).getTo());
 
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2020, 10, 6);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
-    @Test
-    void splitIntoDailyIntervals_returnsOnePair_whenFromAndToAreAtStartOfNeighbourDays() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 6);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
-
-        Assertions.assertEquals(1, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSplitIntoIntervals_returnsThreePairs_whenFromAndToDiffersByTwoPeriods() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 7, 12, 20, 30),
+                        Periods.DAY,
+                        DateTimeTestData.newDateTime(2020, 10, 6),
+                        DateTimeTestData.newDateTime(2020, 10, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 8, 12, 20, 30),
+                        Periods.TWO_DAYS,
+                        DateTimeTestData.newDateTime(2020, 10, 6),
+                        DateTimeTestData.newDateTime(2020, 10, 8)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 10, 19, 12, 20, 30),
+                        Periods.WEEK,
+                        DateTimeTestData.newDateTime(2020, 10, 12),
+                        DateTimeTestData.newDateTime(2020, 10, 19)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30),
+                        DateTimeTestData.newDateTime(2020, 12, 19, 12, 20, 30),
+                        Periods.MONTH,
+                        DateTimeTestData.newDateTime(2020, 11, 1),
+                        DateTimeTestData.newDateTime(2020, 12, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2022, 10, 5),
+                        Periods.YEAR,
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2022, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2023, 10, 5),
+                        Periods.TWO_YEARS,
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2023, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2001, 10, 5),
+                        DateTimeTestData.newDateTime(2023, 10, 5),
+                        Periods.DECADE,
+                        DateTimeTestData.newDateTime(2011, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                )
+        );
     }
 
-    @Test
-    void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourDays() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 6, 23, 59, 59, 999_999_999);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
-
-        Assertions.assertEquals(2, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(from, intervals.get(0).getTo());
-
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2020, 10, 6);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        Assertions.assertEquals(to, intervals.get(1).getTo());
-    }
-
-    @Test
-    void splitIntoDailyIntervals_returnsThreePairs_whenFromAndToDiffersInTwoDay() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 7, 12, 20, 30);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+    @ParameterizedTest
+    @MethodSource("getData_forSplitIntoIntervals_returnsThreePairs_whenFromAndToDiffersByTwoPeriods")
+    void splitIntoIntervals_returnsThreePairs_whenFromAndToDiffersByTwoPeriods(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final Period period,
+            final OffsetDateTime expectedTo0AndFrom1,
+            final OffsetDateTime expectedTo1AndFrom2
+    ) {
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
 
         Assertions.assertEquals(3, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(0).getTo());
 
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2020, 10, 6);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        final OffsetDateTime expectedRight1 = DateTimeTestData.newDateTime(2020, 10, 6, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight1, intervals.get(1).getTo());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(1).getFrom());
+        Assertions.assertEquals(expectedTo1AndFrom2, intervals.get(1).getTo());
 
-        final OffsetDateTime expectedLeft2 = DateTimeTestData.newDateTime(2020, 10, 7);
-        Assertions.assertEquals(expectedLeft2, intervals.get(2).getFrom());
-        Assertions.assertEquals(to, intervals.get(2).getTo());
-    }
-
-    // endregion
-
-    // region splitIntoYearlyIntervals tests
-
-    @Test
-    void splitIntoYearlyIntervals_returnsOnePair_whenFromAndToAreEqual() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(1, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(to, intervals.get(0).getTo());
-    }
-
-    @Test
-    void splitIntoYearlyIntervals_returnsOnePair_whenFromAndToInOneYear() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 2, 5);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 10, 5);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(1, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(to, intervals.get(0).getTo());
-    }
-
-    @Test
-    void splitIntoYearlyIntervals_returnsOnePair_whenFromAndToInOneWholeYear() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(1, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(to, intervals.get(0).getTo());
-    }
-
-    @Test
-    void splitIntoYearlyIntervals_returnsTwoPairs_whenFromAndToDiffersInOneYear() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 10, 5);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(2, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
-
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2021, 1, 1);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        Assertions.assertEquals(to, intervals.get(1).getTo());
-    }
-
-    @Test
-    void splitIntoYearlyIntervals_returnsTwoPairs_whenFromAndToAreAtStartOfNeighbourYears() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 1);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(2, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
-
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2021, 1, 1);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        Assertions.assertEquals(to, intervals.get(1).getTo());
-    }
-
-    @Test
-    void splitIntoYearlyIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourYears() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 12, 31, 23, 59, 59, 999_999_999);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(2, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(from, intervals.get(0).getTo());
-
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2021, 1, 1);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        Assertions.assertEquals(to, intervals.get(1).getTo());
-    }
-
-    @Test
-    void splitIntoYearlyIntervals_returnsThreePairs_whenFromAndToDiffersInTwoYear() {
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 10, 5);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 5);
-
-        final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
-
-        Assertions.assertEquals(3, intervals.size());
-
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
-
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.newDateTime(2021, 1, 1);
-        Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        final OffsetDateTime expectedRight1 = DateTimeTestData.newDateTime(2021, 12, 31, 23, 59, 59, 999_999_999);
-        Assertions.assertEquals(expectedRight1, intervals.get(1).getTo());
-
-        final OffsetDateTime expectedLeft2 = DateTimeTestData.newDateTime(2022, 1, 1);
-        Assertions.assertEquals(expectedLeft2, intervals.get(2).getFrom());
+        Assertions.assertEquals(expectedTo1AndFrom2, intervals.get(2).getFrom());
         Assertions.assertEquals(to, intervals.get(2).getTo());
     }
 

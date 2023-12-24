@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -50,137 +51,589 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     // region getCandles tests
 
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetCandles_filtersCandles() {
+        return Stream.of(
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 59), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 9, 59), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 6, 23, 59), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 59), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 9, 59), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 8, 16), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 9) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_2_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 58), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 9, 58), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 6, 23, 58), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 58), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 9, 58), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 8, 16), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 9) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_3_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 57), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 9, 57), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 6, 23, 57), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 57), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 9, 57), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 8, 16), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 9) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_5_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 55), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 9, 55), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 6, 23, 55), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 55), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 9, 55), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 8, 16), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 9) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_10_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 50), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 9, 50), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 6, 23, 50), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 50), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 9, 50), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 8, 16), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 9) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_15_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 8, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 45), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 9, 45), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 6, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 6, 23, 45), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 45), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 9, 45), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 8, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 8, 16), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 9) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_30_MIN,
+                        DateTimeTestData.newDateTime(2020, 1, 7, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 1, 12, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 6), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 1, 13, 0, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 1, 13, 15), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 5, 23, 30), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 7, 9, 30), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 7, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 7, 23, 30), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 8), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 9, 23, 30), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 12), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 12, 9, 30), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 1, 12, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 13), // candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 14) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_HOUR,
+                        // weeks: 6-12, 13-19, 20-26, 27-2
+                        DateTimeTestData.newDateTime(2020, 1, 15, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 2, 2, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 1, 13), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 2, 2, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 2, 2, 20), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 12, 23), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 15, 9), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 1, 15, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 1, 19, 23), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 1, 20), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 26, 23), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 1, 27), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 2, 2, 9), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 2, 2, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 2, 2, 16), // some candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 2, 3) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_2_HOUR,
+                        DateTimeTestData.newDateTime(2020, 2, 5, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 4, 22, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 2, 1), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 4, 25, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 4, 28), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 31, 22), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 2, 5, 8), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 2, 5, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 2, 29, 22), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 3, 1), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 3, 31, 22), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 4, 1), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 4, 22, 8), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 4, 22, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 4, 25, 16), // some candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 5, 1) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_4_HOUR,
+                        DateTimeTestData.newDateTime(2020, 2, 5, 10), // from1
+                        DateTimeTestData.newDateTime(2020, 4, 22, 10), // to1
+                        DateTimeTestData.newDateTime(2020, 2, 1), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2020, 4, 25, 16, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2020, 4, 28), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2020, 1, 31, 20), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2020, 2, 5, 8), // last candle before from1
+                                DateTimeTestData.newDateTime(2020, 2, 5, 10), // from1 exactly
+                                DateTimeTestData.newDateTime(2020, 2, 29, 20), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2020, 3, 1), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 3, 31, 20), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 4, 1), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2020, 4, 22, 8), // last candle before to1
+                                DateTimeTestData.newDateTime(2020, 4, 22, 10), // to1 exactly
+                                DateTimeTestData.newDateTime(2020, 4, 25, 16), // some candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 5, 1) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_DAY,
+                        DateTimeTestData.newDateTime(2017, 3, 1), // from1
+                        DateTimeTestData.newDateTime(2019, 7, 1), // to1
+                        DateTimeTestData.newDateTime(2017, 1, 1), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2019, 10, 1, 0, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2019, 11, 28), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2016, 12, 31), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2017, 2, 28), // last candle before from1
+                                DateTimeTestData.newDateTime(2017, 3, 1), // from1 exactly
+                                DateTimeTestData.newDateTime(2017, 12, 1), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2018, 1, 1), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2018, 12, 1), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2019, 1, 1), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2019, 6, 1), // last candle before to1
+                                DateTimeTestData.newDateTime(2019, 7, 1), // to1 exactly
+                                DateTimeTestData.newDateTime(2019, 9, 1), // some candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2020, 1, 1) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_WEEK,
+                        // couple of years: 2017-2018, 2019-2020, 2021-2022, 2023-2024
+                        DateTimeTestData.newDateTime(2017, 8, 1), // from1
+                        DateTimeTestData.newDateTime(2021, 10, 1), // to1
+                        DateTimeTestData.newDateTime(2017, 1, 1), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2022, 2, 14, 10, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2022, 6, 10), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(2016, 12, 26), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(2017, 8, 31), // last candle before from1
+                                DateTimeTestData.newDateTime(2017, 8, 1), // from1 exactly
+                                DateTimeTestData.newDateTime(2018, 12, 31), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2019, 1, 7), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2020, 12, 28), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2021, 1, 4), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2021, 9, 27), // last candle before to1
+                                DateTimeTestData.newDateTime(2021, 10, 1), // to1 exactly
+                                DateTimeTestData.newDateTime(2022, 2, 14), // some candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2023, 1, 2) // first candle from interval after interval with to1
+                        }
+                ),
+                Arguments.of(
+                        CandleInterval.CANDLE_INTERVAL_MONTH,
+                        DateTimeTestData.newDateTime(1994, 1, 1), // from1
+                        DateTimeTestData.newDateTime(2018, 1, 1), // to1
+                        DateTimeTestData.newDateTime(1991, 1, 1), // from2 - start of interval with from1
+                        DateTimeTestData.newDateTime(2018, 6, 1, 10, 0, 0, 1), // to2 - first nanosecond after last candle in interval with to1
+                        DateTimeTestData.newDateTime(2019, 3, 10), // now - any time in interval with to1 after to2
+                        new OffsetDateTime[]{
+                                DateTimeTestData.newDateTime(1990, 12, 1), // last candle of interval before interval with from1
+                                DateTimeTestData.newDateTime(1993, 12, 1), // last candle before from1
+                                DateTimeTestData.newDateTime(1994, 1, 1), // from1 exactly
+                                DateTimeTestData.newDateTime(2000, 12, 1), // last candle of interval with from1
+                                DateTimeTestData.newDateTime(2001, 1, 1), // first candle of middle interval
+                                DateTimeTestData.newDateTime(2010, 12, 1), // last candle of middle interval
+                                DateTimeTestData.newDateTime(2011, 1, 1), // first candle of interval with to1
+                                DateTimeTestData.newDateTime(2017, 12, 1), // last candle before to1
+                                DateTimeTestData.newDateTime(2018, 1, 1), // to1 exactly
+                                DateTimeTestData.newDateTime(2018, 6, 1), // some candle after to1 from interval with to1
+                                DateTimeTestData.newDateTime(2023, 1, 1) // first candle from interval after interval with to1
+                        }
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetCandles_filtersCandles")
+    @DirtiesContext
+    void getCandles_filtersCandles(
+            final CandleInterval candleInterval,
+            final OffsetDateTime from1, final OffsetDateTime to1,
+            final OffsetDateTime from2, final OffsetDateTime to2,
+            final OffsetDateTime now,
+            final OffsetDateTime[] candlesTimes
+    ) {
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
+
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+
+        final CandleMocker candleMocker = new CandleMocker(marketDataService, figi, candleInterval);
+        for (final OffsetDateTime candleTime : candlesTimes) {
+            candleMocker.add(candleTime);
+        }
+        candleMocker.mock();
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(now)) {
+            final List<Candle> candles = extMarketDataService.getCandles(figi, Interval.of(from1, to1), candleInterval);
+
+            Assertions.assertEquals(6, candles.size());
+            Assertions.assertEquals(candlesTimes[2], candles.get(0).getTime());
+            Assertions.assertEquals(candlesTimes[3], candles.get(1).getTime());
+            Assertions.assertEquals(candlesTimes[4], candles.get(2).getTime());
+            Assertions.assertEquals(candlesTimes[5], candles.get(3).getTime());
+            Assertions.assertEquals(candlesTimes[6], candles.get(4).getTime());
+            Assertions.assertEquals(candlesTimes[7], candles.get(5).getTime());
+
+            // caching test
+            Mocker.mockEmptyCandles(marketDataService, figi, candleInterval);
+            final List<Candle> cachedCandles = extMarketDataService.getCandles(figi, Interval.of(from2, to2), candleInterval);
+
+            Assertions.assertEquals(5, cachedCandles.size());
+            Assertions.assertEquals(candlesTimes[1], cachedCandles.get(0).getTime());
+            Assertions.assertEquals(candlesTimes[2], cachedCandles.get(1).getTime());
+            Assertions.assertEquals(candlesTimes[3], cachedCandles.get(2).getTime());
+            Assertions.assertEquals(candlesTimes[4], cachedCandles.get(3).getTime());
+            Assertions.assertEquals(candlesTimes[5], cachedCandles.get(4).getTime());
+        }
+    }
+
     @Test
     @DirtiesContext
-    void getCandles_skipsCandlesByDays_whenFromIsReached() {
+    void getCandles_adjustsFromByFirst1MinCandle_whenFromIsNull() {
         final TestShare testShare = TestShares.APPLE;
         final String figi = testShare.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
+        final OffsetDateTime first1MinCandleDate = testShare.share().first1MinCandleDate();
+        final OffsetDateTime to = first1MinCandleDate.plusMinutes(1);
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.newDateTime(2020, 1, 5))
-                .add(0, DateTimeTestData.newDateTime(2020, 1, 7))
-                .add(1, DateTimeTestData.newDateTime(2020, 1, 8))
-                .add(2, DateTimeTestData.newDateTime(2020, 1, 9))
-                .add(3, DateTimeTestData.newDateTime(2020, 1, 11))
-                .add(4, DateTimeTestData.newDateTime(2020, 1, 11))
-                .add(5, DateTimeTestData.newDateTime(2020, 1, 12))
+                .add(1, first1MinCandleDate.minusNanos(1))
+                .add(2, first1MinCandleDate)
+                .add(3, to.minusNanos(1))
+                .add(4, to)
                 .mock();
 
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 6);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 1, 13);
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
-        final List<Candle> candles = extMarketDataService.getCandles(figi, Interval.of(from, to), candleInterval);
-
-        Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClose());
-        AssertUtils.assertEquals(1, candles.get(1).getClose());
-        AssertUtils.assertEquals(2, candles.get(2).getClose());
-        AssertUtils.assertEquals(3, candles.get(3).getClose());
-        AssertUtils.assertEquals(4, candles.get(4).getClose());
-        AssertUtils.assertEquals(5, candles.get(5).getClose());
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
-    @Test
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetCandles_adjustsFrom_whenFromIsNull() {
+        return Stream.of(
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_2_MIN, 1),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_3_MIN, 2),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_5_MIN, 4),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_10_MIN, 9),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_30_MIN, 29),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_HOUR, 59),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_2_HOUR, 299),
+                Arguments.of(CandleInterval.CANDLE_INTERVAL_4_HOUR, 299)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetCandles_adjustsFrom_whenFromIsNull")
     @DirtiesContext
-    void getCandles_filterCandlesByYears() {
+    void getCandles_adjustsFrom_whenFromIsNull(final CandleInterval candleInterval, final int adjustmentInMinutes) {
         final TestShare testShare = TestShares.APPLE;
         final String figi = testShare.share().figi();
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
+        final OffsetDateTime first1MinCandleDate = testShare.share().first1MinCandleDate();
+        final OffsetDateTime to = first1MinCandleDate.plusMinutes(adjustmentInMinutes);
         new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.newDateTime(2016, 1, 1))
-                .add(0, DateTimeTestData.newDateTime(2016, 2, 2))
-                .add(1, DateTimeTestData.newDateTime(2016, 2, 2))
-                .add(2, DateTimeTestData.newDateTime(2016, 2, 2))
-                .add(3, DateTimeTestData.newDateTime(2016, 2, 3))
-                .add(4, DateTimeTestData.newDateTime(2016, 2, 3))
-                .add(5, DateTimeTestData.newDateTime(2016, 3, 1))
+                .add(1, first1MinCandleDate.minusMinutes(adjustmentInMinutes).minusNanos(1))
+                .add(2, first1MinCandleDate.minusMinutes(adjustmentInMinutes))
+                .add(3, first1MinCandleDate)
+                .add(4, to.minusNanos(1))
+                .add(5, to)
                 .mock();
 
-        final Interval interval = Interval.of(
-                DateTimeTestData.newDateTime(2016, 2, 1),
-                DateTimeTestData.newDateTime(2016, 2, 29)
-        );
-
-        final List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
-
-        Assertions.assertEquals(5, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClose());
-        AssertUtils.assertEquals(1, candles.get(1).getClose());
-        AssertUtils.assertEquals(2, candles.get(2).getClose());
-        AssertUtils.assertEquals(3, candles.get(3).getClose());
-        AssertUtils.assertEquals(4, candles.get(4).getClose());
-    }
-
-    @Test
-    @DirtiesContext
-    void getCandles_skipsCandlesByYears_whenFromIsReached() {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
-
-        new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.newDateTime(2016, 1, 1, 1))
-                .add(0, DateTimeTestData.newDateTime(2017, 1, 1, 1))
-                .add(1, DateTimeTestData.newDateTime(2017, 1, 1, 1))
-                .add(2, DateTimeTestData.newDateTime(2017, 1, 1, 1))
-                .add(3, DateTimeTestData.newDateTime(2018, 1, 1, 1))
-                .add(4, DateTimeTestData.newDateTime(2018, 1, 1, 1))
-                .add(5, DateTimeTestData.newDateTime(2019, 1, 1, 1))
-                .mock();
-
-        final Interval interval = Interval.of(
-                DateTimeTestData.newDateTime(2017, 1, 1),
-                DateTimeTestData.newDateTime(2020, 1, 1)
-        );
-
-        final List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
-
-        Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClose());
-        AssertUtils.assertEquals(1, candles.get(1).getClose());
-        AssertUtils.assertEquals(2, candles.get(2).getClose());
-        AssertUtils.assertEquals(3, candles.get(3).getClose());
-        AssertUtils.assertEquals(4, candles.get(4).getClose());
-        AssertUtils.assertEquals(5, candles.get(5).getClose());
-    }
-
-    @Test
-    @DirtiesContext
-    void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
-
-        new CandleMocker(marketDataService, figi, candleInterval)
-                .add(0, DateTimeTestData.newDateTime(2017, 1, 1, 1))
-                .add(1, DateTimeTestData.newDateTime(2017, 1, 1, 1))
-                .add(2, DateTimeTestData.newDateTime(2017, 1, 1, 1))
-                .add(3, DateTimeTestData.newDateTime(2018, 1, 1, 1))
-                .add(4, DateTimeTestData.newDateTime(2018, 1, 1, 1))
-                .add(5, DateTimeTestData.newDateTime(2019, 1, 1, 1))
-                .mock();
-
-        final Interval interval = Interval.of(
-                DateTimeTestData.newDateTime(2017, 1, 4),
-                DateTimeTestData.newDateTime(2020, 1, 1)
-        );
-
-        final List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(3, candles.get(0).getClose());
-        AssertUtils.assertEquals(4, candles.get(1).getClose());
-        AssertUtils.assertEquals(5, candles.get(2).getClose());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+        AssertUtils.assertEquals(4, candles.get(2).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirst1DayCandle_whenFromIsNull() {
+        final TestShare testShare = TestShares.APPLE;
+        final String figi = testShare.share().figi();
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
+
+        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+
+        final OffsetDateTime first1DayCandleDate = testShare.share().first1DayCandleDate();
+        final OffsetDateTime to = first1DayCandleDate.plusDays(1);
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, first1DayCandleDate.minusHours(3).minusNanos(1))
+                .add(2, first1DayCandleDate.minusHours(3))
+                .add(3, first1DayCandleDate)
+                .add(4, to.minusNanos(1))
+                .add(5, to)
+                .mock();
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(3, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+        AssertUtils.assertEquals(4, candles.get(2).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfWeek() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 13, 10);
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
+
+        Mocker.mockShare(instrumentsService, tinkoffShare);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
+                .add(2, DateTimeTestData.newDateTime(2020, 7, 13, 10))
+                .add(3, DateTimeTestData.newDateTime(2020, 7, 20, 10))
+                .add(4, DateTimeTestData.newDateTime(2020, 7, 27, 10))
+                .mock();
+
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 7, 27, 10);
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfWeek() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 17, 10);
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
+
+        Mocker.mockShare(instrumentsService, tinkoffShare);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
+                .add(2, DateTimeTestData.newDateTime(2020, 7, 13, 10))
+                .add(3, DateTimeTestData.newDateTime(2020, 7, 20, 10))
+                .add(4, DateTimeTestData.newDateTime(2020, 7, 27, 10))
+                .mock();
+
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 7, 27, 10);
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfWeek() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 20, 2, 59, 59, 999_999_999);
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
+
+        Mocker.mockShare(instrumentsService, tinkoffShare);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
+                .add(2, DateTimeTestData.newDateTime(2020, 7, 13, 10))
+                .add(3, DateTimeTestData.newDateTime(2020, 7, 20, 10))
+                .add(4, DateTimeTestData.newDateTime(2020, 7, 27, 10))
+                .mock();
+
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 7, 27, 10);
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfMonth() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 1, 3);
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
+
+        Mocker.mockShare(instrumentsService, tinkoffShare);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
+                .add(2, DateTimeTestData.newDateTime(2010, 2, 1, 10))
+                .add(3, DateTimeTestData.newDateTime(2010, 3, 1, 10))
+                .add(4, DateTimeTestData.newDateTime(2010, 4, 1, 10))
+                .mock();
+
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2010, 4, 1, 10);
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfMonth() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 10, 10);
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
+
+        Mocker.mockShare(instrumentsService, tinkoffShare);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
+                .add(2, DateTimeTestData.newDateTime(2010, 2, 1, 10))
+                .add(3, DateTimeTestData.newDateTime(2010, 3, 1, 10))
+                .add(4, DateTimeTestData.newDateTime(2010, 4, 1, 10))
+                .mock();
+
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2010, 4, 1, 10);
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+    }
+
+    @Test
+    @DirtiesContext
+    void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfMonth() {
+        final String figi = TestShares.APPLE.share().figi();
+        final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 3, 1, 2, 59, 59, 999_999_999);
+        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
+
+        Mocker.mockShare(instrumentsService, tinkoffShare);
+
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
+                .add(2, DateTimeTestData.newDateTime(2010, 2, 1, 10))
+                .add(3, DateTimeTestData.newDateTime(2010, 3, 1, 10))
+                .add(4, DateTimeTestData.newDateTime(2010, 4, 1, 10))
+                .mock();
+
+        final OffsetDateTime to = DateTimeTestData.newDateTime(2010, 4, 1, 10);
+
+        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+
+        Assertions.assertEquals(2, candles.size());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+    }
+
+    private List<Candle> getCandlesAndTestCaching(final String figi, final Interval interval, final CandleInterval candleInterval) {
+        List<Candle> candles = extMarketDataService.getCandles(figi, interval, candleInterval);
+
+        Mocker.mockEmptyCandles(marketDataService, figi, candleInterval);
+        List<Candle> cachedCandles = extMarketDataService.getCandles(figi, interval, candleInterval);
+
+        Assertions.assertEquals(candles, cachedCandles);
+        return candles;
     }
 
     // endregion

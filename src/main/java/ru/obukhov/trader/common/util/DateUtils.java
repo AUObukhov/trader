@@ -2,17 +2,18 @@ package ru.obukhov.trader.common.util;
 
 import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -130,30 +131,6 @@ public class DateUtils {
     }
 
     /**
-     * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
-     */
-    public static ChronoUnit getPeriodByCandleInterval(final CandleInterval candleInterval) {
-        return switch (candleInterval) {
-            case CANDLE_INTERVAL_1_MIN,
-                    CANDLE_INTERVAL_2_MIN,
-                    CANDLE_INTERVAL_3_MIN,
-                    CANDLE_INTERVAL_5_MIN,
-                    CANDLE_INTERVAL_10_MIN,
-                    CANDLE_INTERVAL_15_MIN,
-                    CANDLE_INTERVAL_30_MIN,
-                    CANDLE_INTERVAL_HOUR,
-                    CANDLE_INTERVAL_2_HOUR,
-                    CANDLE_INTERVAL_4_HOUR -> ChronoUnit.DAYS;
-
-            case CANDLE_INTERVAL_DAY,
-                    CANDLE_INTERVAL_WEEK,
-                    CANDLE_INTERVAL_MONTH -> ChronoUnit.YEARS;
-
-            case UNRECOGNIZED, CANDLE_INTERVAL_UNSPECIFIED -> throw new IllegalArgumentException("Unsupported CandleInterval " + candleInterval);
-        };
-    }
-
-    /**
      * Null safe extension of {@link OffsetDateTime#isAfter}
      *
      * @return true, if {@code dateTime2} is null, or else result of {@link OffsetDateTime#isAfter}
@@ -163,18 +140,7 @@ public class DateUtils {
     }
 
     /**
-     * @return value of given {@code dateTime} with maximum hours, minutes, seconds and nanos of this date
-     */
-    public static OffsetDateTime toEndOfDay(final OffsetDateTime dateTime) {
-        return OffsetDateTime.of(
-                dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
-                OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
-                OffsetTime.MAX.getNano(), dateTime.getOffset()
-        );
-    }
-
-    /**
-     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this date
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of it's day
      */
     public static OffsetDateTime toStartOfDay(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(
@@ -185,20 +151,154 @@ public class DateUtils {
     }
 
     /**
-     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this date
+     * @return value of given {@code dateTime} with maximum hours, minutes, seconds and nanos of this date
      */
-    public static OffsetDateTime atStartOfYear(final OffsetDateTime dateTime) {
-        return OffsetDateTime.of(dateTime.getYear(), 1, 1, 0, 0, 0, 0, dateTime.getOffset());
+    public static OffsetDateTime toEndOfDay(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(
+                dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+                23, 59, 59,
+                999_999_999, dateTime.getOffset()
+        );
     }
 
     /**
-     * @return value of given {@code dateTime} with maximum month, day, hours, minutes, seconds and nanos of this date
+     * @param dateTime must be positive year, otherwise the result will be wrong.
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of it's 2 days.
+     * Couple of days are starting since day of 0001-01-01T00:00:00.000000000 with {@link DateUtils#DEFAULT_OFFSET} offset.
      */
-    public static OffsetDateTime atEndOfYear(final OffsetDateTime dateTime) {
+    public static OffsetDateTime toStartOf2Days(final OffsetDateTime dateTime) {
+        final OffsetDateTime start = OffsetDateTime.of(1, 1, 1, 0, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
+        final long daysCount = Duration.between(start, dateTime).toDays();
+        final OffsetDateTime startOfDay = toStartOfDay(dateTime);
+        return (daysCount & 1) == 1 ? startOfDay : startOfDay.minusDays(1);
+    }
+
+    /**
+     * @param dateTime must be positive year, otherwise the result will be wrong.
+     * @return value of given {@code dateTime} with maximum month, day, hours, minutes, seconds and nanos of it's 2 days.
+     * Couples of days are starting since 0001-01-01T00:00:00.000000000 with {@link DateUtils#DEFAULT_OFFSET} offset.
+     */
+    public static OffsetDateTime toEndOf2Days(final OffsetDateTime dateTime) {
+        final OffsetDateTime start = OffsetDateTime.of(1, 1, 1, 0, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
+        final long daysCount = Duration.between(start, dateTime).toDays();
+        final OffsetDateTime endOfDay = toEndOfDay(dateTime);
+        return (daysCount & 1) == 1 ? endOfDay.plusDays(1) : endOfDay;
+    }
+
+    /**
+     * @return dateTime in the beginning of Monday of week of given {@code dateTime}
+     */
+    public static OffsetDateTime toStartOfWeek(@NotNull final OffsetDateTime dateTime) {
+        return toStartOfDay(dateTime).minusDays(dateTime.getDayOfWeek().getValue() - 1L);
+    }
+
+    /**
+     * @return dateTime in the end of week of given {@code dateTime}
+     */
+    public static OffsetDateTime toEndOfWeek(final OffsetDateTime dateTime) {
+        return toEndOfDay(dateTime).plusDays(7L - dateTime.getDayOfWeek().getValue());
+    }
+
+    /**
+     * @return dateTime in the beginning of month of given {@code dateTime}
+     */
+    public static OffsetDateTime toStartOfMonth(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(
+                dateTime.getYear(), dateTime.getMonthValue(), 1,
+                0, 0, 0,
+                0, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @return dateTime in the end of month of {@code dateTime}
+     */
+    public static OffsetDateTime toEndOfMonth(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(
+                dateTime.getYear(), dateTime.getMonthValue(), YearMonth.from(dateTime).lengthOfMonth(),
+                23, 59, 59,
+                999_999_999, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this year
+     */
+    public static OffsetDateTime toStartOfYear(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(
+                dateTime.getYear(), 1, 1,
+                0, 0, 0,
+                0, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @return value of given {@code dateTime} with maximum month, day, hours, minutes, seconds and nanos of this year
+     */
+    public static OffsetDateTime toEndOfYear(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(
                 dateTime.getYear(), 12, 31,
                 23, 59, 59,
-                999999999, dateTime.getOffset()
+                999_999_999, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @param dateTime must be positive, otherwise the result will be wrong.
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this 2 years.
+     * Couple of years is odd year and next even year.
+     */
+    public static OffsetDateTime toStartOf2Years(final OffsetDateTime dateTime) {
+        final int year = dateTime.getYear() - 1 + dateTime.getYear() % 2;
+        return OffsetDateTime.of(
+                year, 1, 1,
+                0, 0, 0,
+                0, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @param dateTime must be positive, otherwise the result will be wrong.
+     * @return value of given {@code dateTime} with maximum month, day, hours, minutes, seconds and nanos of this 2 years.
+     * Couple of years is odd year and next even year.
+     */
+    public static OffsetDateTime toEndOf2Years(final OffsetDateTime dateTime) {
+        final int year = dateTime.getYear() + dateTime.getYear() % 2;
+        return OffsetDateTime.of(
+                year, 12, 31,
+                23, 59, 59,
+                999_999_999, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @param dateTime must be positive, otherwise the result will be wrong.
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this decade.
+     * Decade starts with year ###1.
+     */
+    public static OffsetDateTime toStartOfDecade(final OffsetDateTime dateTime) {
+        final int year = dateTime.getYear() % 10 == 0
+                ? dateTime.getYear() - 9
+                : (dateTime.getYear() / 10) * 10 + 1;
+        return OffsetDateTime.of(
+                year, 1, 1,
+                0, 0, 0,
+                0, dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @param dateTime must be positive, otherwise the result will be wrong.
+     * @return value of given {@code dateTime} with maximum month, day, hours, minutes, seconds and nanos of this decade.
+     * Decade starts with year ###1.
+     */
+    public static OffsetDateTime toEndOfDecade(final OffsetDateTime dateTime) {
+        final int lastDigit = dateTime.getYear() % 10;
+        final int year = dateTime.getYear() + (lastDigit == 0 ? 0 : 10 - lastDigit);
+        return OffsetDateTime.of(
+                year, 12, 31,
+                23, 59, 59,
+                999_999_999, dateTime.getOffset()
         );
     }
 

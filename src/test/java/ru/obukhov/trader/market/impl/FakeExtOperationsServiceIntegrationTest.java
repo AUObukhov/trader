@@ -41,6 +41,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
+        final OffsetDateTime dateTime4 = dateTime3.plusNanos(1);
 
         final int price1 = 100;
         final int price2 = 200;
@@ -63,8 +64,8 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
 
         final FakeExtOperationsService fakeExtOperationsService = new FakeExtOperationsService(fakeContext);
 
-        final Interval wholeInterval = Interval.of(dateTime1, dateTime3);
-        final Interval localInterval = Interval.of(dateTime1.plusMinutes(1), dateTime1.plusMinutes(1));
+        final Interval wholeInterval = Interval.of(dateTime1, dateTime4);
+        final Interval localInterval = Interval.of(dateTime1.plusMinutes(1), dateTime1.plusMinutes(1).plusNanos(1));
 
         // act
 
@@ -90,30 +91,35 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
+        final OffsetDateTime dateTime4 = dateTime1.plusMinutes(3);
 
         final int price1 = 100;
         final int price2 = 200;
         final int price3 = 300;
+        final int price4 = 400;
 
         final long quantity1 = 1L;
         final long quantity2 = 2L;
         final long quantity3 = 3L;
+        final long quantity4 = 4L;
 
         final Operation operation1 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi1);
         final Operation operation2 = TestData.newOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi2);
         final Operation operation3 = TestData.newOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi2);
-        final Operation operation4 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi2);
+        final Operation operation4 = TestData.newOperation(dateTime4, OperationType.OPERATION_TYPE_BUY, price4, quantity4, figi2);
+        final Operation operation5 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi2);
 
         final FakeContext fakeContext = new FakeContext(dateTime1);
         fakeContext.addOperation(accountId1, operation1);
         fakeContext.addOperation(accountId1, operation2);
         fakeContext.addOperation(accountId1, operation3);
-        fakeContext.addOperation(accountId2, operation4);
+        fakeContext.addOperation(accountId1, operation4);
+        fakeContext.addOperation(accountId2, operation5);
 
         final FakeExtOperationsService fakeExtOperationsService = new FakeExtOperationsService(fakeContext);
 
 
-        final Interval interval = Interval.of(dateTime1, dateTime1.plusMinutes(2));
+        final Interval interval = Interval.of(dateTime1, dateTime1.plusMinutes(3));
 
         // act
 
@@ -139,26 +145,31 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
-        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
+        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2).minusNanos(1);
+        final OffsetDateTime dateTime4 = dateTime1.plusMinutes(2);
 
         final int price1 = 100;
         final int price2 = 200;
         final int price3 = 300;
+        final int price4 = 400;
 
         final long quantity1 = 1L;
         final long quantity2 = 2L;
         final long quantity3 = 3L;
+        final long quantity4 = 4L;
 
         final Operation operation1 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi1);
         final Operation operation2 = TestData.newOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi2);
         final Operation operation3 = TestData.newOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi2);
-        final Operation operation4 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi3);
+        final Operation operation4 = TestData.newOperation(dateTime4, OperationType.OPERATION_TYPE_BUY, price4, quantity4, figi2);
+        final Operation operation5 = TestData.newOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi3);
 
         final FakeContext fakeContext = new FakeContext(dateTime1);
         fakeContext.addOperation(accountId1, operation1);
         fakeContext.addOperation(accountId1, operation2);
         fakeContext.addOperation(accountId1, operation3);
-        fakeContext.addOperation(accountId2, operation4);
+        fakeContext.addOperation(accountId1, operation4);
+        fakeContext.addOperation(accountId2, operation5);
 
         final FakeExtOperationsService fakeExtOperationsService = new FakeExtOperationsService(fakeContext);
 

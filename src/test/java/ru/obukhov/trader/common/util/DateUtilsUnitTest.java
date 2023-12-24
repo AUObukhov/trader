@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
@@ -16,14 +15,12 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -291,45 +288,6 @@ class DateUtilsUnitTest {
         Assertions.assertEquals(expected, result);
     }
 
-    // region getPeriodUnitByCandleInterval tests
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forGetPeriodUnitByCandleInterval() {
-        return Stream.of(
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_1_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_2_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_3_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_5_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_10_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_15_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_30_MIN, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_HOUR, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_2_HOUR, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_4_HOUR, ChronoUnit.DAYS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_DAY, ChronoUnit.YEARS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_WEEK, ChronoUnit.YEARS),
-                Arguments.of(CandleInterval.CANDLE_INTERVAL_MONTH, ChronoUnit.YEARS)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetPeriodUnitByCandleInterval")
-    void getPeriodUnitByCandleInterval(final CandleInterval candleInterval, final ChronoUnit expectedResult) {
-        final ChronoUnit actualResult = DateUtils.getPeriodByCandleInterval(candleInterval);
-
-        Assertions.assertEquals(expectedResult, actualResult);
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = CandleInterval.class, names = {"UNRECOGNIZED", "CANDLE_INTERVAL_UNSPECIFIED"})
-    void getPeriodUnitByCandleInterval_throwIllegalArgumentException_whenCandleIntervalIsNotSupported(final CandleInterval candleInterval) {
-        final Executable executable = () -> System.out.println(DateUtils.getPeriodByCandleInterval(candleInterval));
-        final String expectedMessage = "Unsupported CandleInterval " + candleInterval;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    // endregion
-
     // region isAfter tests
 
     @Test
@@ -372,49 +330,447 @@ class DateUtilsUnitTest {
         Assertions.assertFalse(result);
     }
 
+    // region toStartOfDay tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOfDay() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 5)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 5)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 5)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOfDay")
+    void toStartOfDay(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOfDay(dateTime);
+
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
     // endregion
 
     // region toEndOfDay tests
 
-    @Test
-    void atEndOfDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOfDay() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
 
-        final OffsetDateTime endOfDay = DateUtils.toEndOfDay(dateTime);
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOfDay")
+    void toEndOfDay(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOfDay(dateTime);
 
-        final OffsetDateTime expected = DateTimeTestData.newEndOfDay(2020, 10, 5);
-
-        Assertions.assertEquals(expected, endOfDay);
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion
 
-    // region atStartOfYear tests
+    // region toStartOf2Days tests
 
-    @Test
-    void atStartOfYear() {
-        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOf2Days() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 4)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 4)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 4)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 4)
+                )
+        );
+    }
 
-        final OffsetDateTime startOfDay = DateUtils.atStartOfYear(dateTime);
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOf2Days")
+    void toStartOf2Days(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOf2Days(dateTime);
 
-        final OffsetDateTime expected = DateTimeTestData.newDateTime(2020, 1, 1);
-
-        Assertions.assertEquals(expected, startOfDay);
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion
 
-    // region atEndOfYear tests
+    // region toEndOf2Days tests
 
-    @Test
-    void atEndOfYear() {
-        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOf2Days() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 4, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
 
-        final OffsetDateTime startOfDay = DateUtils.atEndOfYear(dateTime);
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOf2Days")
+    void toEndOf2Days(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOf2Days(dateTime);
 
-        final OffsetDateTime expected = DateTimeTestData.newEndOfDay(2020, 12, 31);
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
 
-        Assertions.assertEquals(expected, startOfDay);
+    // endregion
+
+    // region toStartOfWeek tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOfWeek() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 5)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 5)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 5)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOfWeek")
+    void toStartOfWeek(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOfWeek(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toEndOfWeek tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOfWeek() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5),
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 11, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOfWeek")
+    void toEndOfWeek(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOfWeek(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toStartOfMonth tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOfMonth() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 1)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOfMonth")
+    void toStartOfMonth(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOfMonth(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toEndOfMonth tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOfMonth() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 1),
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 10, 31, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOfMonth")
+    void toEndOfMonth(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOfMonth(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toStartOfYear tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOfYear() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 1, 1)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOfYear")
+    void toStartOfYear(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOfYear(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toEndOfYear tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOfYear() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 1, 1),
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2020, 12, 31, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOfYear")
+    void toEndOfYear(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOfYear(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toStartOf2Years tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOf2Years() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2022, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOf2Years")
+    void toStartOf2Years(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOf2Years(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toEndOf2Years tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOf2Years() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2022, 1, 1),
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2022, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2022, 12, 31, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOf2Years")
+    void toEndOf2Years(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOf2Years(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toStartOfDecade tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToStartOfDecade() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2025, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2029, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2021, 1, 1)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToStartOfDecade")
+    void toStartOfDecade(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toStartOfDecade(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region toEndOfDecade tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToEndOfDecade() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2021, 1, 1),
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2025, 7, 8, 10, 11, 12, 13),
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999),
+                        DateTimeTestData.newDateTime(2030, 12, 31, 23, 59, 59, 999_999_999)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToEndOfDecade")
+    void toEndOfDecade(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.toEndOfDecade(dateTime);
+
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion

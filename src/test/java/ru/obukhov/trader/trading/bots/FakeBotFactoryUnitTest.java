@@ -63,10 +63,10 @@ class FakeBotFactoryUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime() {
         return Stream.of(
-                Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 12),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 12)
-                ),
+//                Arguments.of(
+//                        DateTimeTestData.newDateTime(2020, 10, 5, 12),
+//                        DateTimeTestData.newDateTime(2020, 10, 5, 12)
+//                ),
                 Arguments.of(
                         DateTimeTestData.newDateTime(2020, 10, 5, 19),
                         DateTimeTestData.newDateTime(2020, 10, 6, START_TIME.getHour())

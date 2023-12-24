@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Periods;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
@@ -17,6 +18,7 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
@@ -31,6 +33,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,7 +179,7 @@ public class Mocker {
                 Mockito.any(Interval.class)
         )).thenAnswer(invocation -> {
             final Interval interval = invocation.getArgument(1);
-            return interval.splitIntoDailyIntervals().stream()
+            return interval.splitIntoIntervals(Periods.DAY).stream()
                     .map(dayInterval -> intervalToTradingDay(dayInterval, startTime, endTime))
                     .toList();
         });
@@ -192,7 +195,9 @@ public class Mocker {
 
     private static TradingDay intervalToTradingDay(final Interval interval, final OffsetTime startTime, final OffsetTime endTime) {
         final OffsetDateTime startDateTime = DateUtils.setTime(interval.getFrom(), startTime);
-        final OffsetDateTime endDateTime = DateUtils.setTime(interval.getTo(), endTime);
+        OffsetDateTime to = interval.getTo();
+        to = to.equals(DateUtils.toStartOfDay(to)) ? to.minusDays(1) : to;
+        final OffsetDateTime endDateTime = DateUtils.setTime(to, endTime);
         final boolean isTradingDay = DateUtils.isWorkDay(startDateTime);
         return TestData.newTradingDay(isTradingDay, startDateTime, endDateTime);
     }
@@ -259,6 +264,19 @@ public class Mocker {
             Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                     .thenReturn(decimalBalance);
         }
+    }
+
+    public static void mockEmptyCandles(
+            final MarketDataService marketDataService,
+            final String figi,
+            final CandleInterval candleInterval
+    ) {
+        Mockito.when(marketDataService.getCandlesSync(
+                Mockito.eq(figi),
+                Mockito.any(Instant.class),
+                Mockito.any(Instant.class),
+                Mockito.eq(candleInterval)
+        )).thenReturn(Collections.emptyList());
     }
 
 }

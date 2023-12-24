@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
+import ru.obukhov.trader.common.util.FirstCandleUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
@@ -35,7 +36,6 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -172,8 +172,7 @@ public class BackTesterImpl implements BackTester {
 
     private Interval getEffectiveInterval(final String figi, final CandleInterval candleInterval, final Interval interval) {
         final Instrument instrument = extInstrumentsService.getInstrument(figi);
-        final ChronoUnit chronoUnit = DateUtils.getPeriodByCandleInterval(candleInterval);
-        final OffsetDateTime firstCandleDate = chronoUnit == ChronoUnit.DAYS ? instrument.first1MinCandleDate() : instrument.first1DayCandleDate();
+        final OffsetDateTime firstCandleDate = getFirstCandleDate(candleInterval, instrument);
         if (interval.getFrom().isBefore(firstCandleDate)) {
             final Interval effectiveInterval = Interval.of(firstCandleDate, interval.getTo());
 
@@ -184,6 +183,12 @@ public class BackTesterImpl implements BackTester {
         } else {
             return interval;
         }
+    }
+
+    private static OffsetDateTime getFirstCandleDate(CandleInterval candleInterval, Instrument instrument) {
+        final OffsetDateTime first1MinCandleDate = instrument.first1MinCandleDate();
+        final OffsetDateTime first1DayCandleDate = instrument.first1DayCandleDate();
+        return FirstCandleUtils.getFirstCandleDate(first1MinCandleDate, first1DayCandleDate, candleInterval);
     }
 
     private void moveToNextMinuteAndApplyBalanceIncrement(

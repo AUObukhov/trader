@@ -860,10 +860,11 @@ class BackTesterImplUnitTest {
 
         Mocker.mockInstrument(extInstrumentsService, instrument);
 
-        final OffsetDateTime from = instrument.first1DayCandleDate().minusDays(1);
-        final OffsetDateTime to = instrument.first1DayCandleDate().plusDays(1);
+        final OffsetDateTime first1DayCandleMinimumDate = instrument.first1DayCandleDate().minusHours(3);
+        final OffsetDateTime from = first1DayCandleMinimumDate.minusDays(1);
+        final OffsetDateTime to = first1DayCandleMinimumDate.plusDays(1);
         final Interval interval = Interval.of(from, to);
-        final Interval effectiveInterval = Interval.of(instrument.first1DayCandleDate(), to);
+        final Interval effectiveInterval = Interval.of(first1DayCandleMinimumDate, to);
 
         final double initialInvestment = 10000;
 
@@ -901,7 +902,7 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(1, backTestResults.size());
         Assertions.assertNull(backTestResults.get(0).error());
 
-        final Interval expectedInterval = Interval.of(instrument.first1DayCandleDate(), to);
+        final Interval expectedInterval = Interval.of(first1DayCandleMinimumDate, to);
         Assertions.assertEquals(expectedInterval, backTestResults.get(0).interval());
     }
 
