@@ -38,7 +38,7 @@ public class TradingDayUtils {
      * @Terms: tradingDay – item of {@code tradingSchedule} with {@code isTradingDay=true}<br/>
      */
     public static OffsetDateTime ceilingScheduleMinute(final List<TradingDay> tradingSchedule, final OffsetDateTime dateTime) {
-        for (TradingDay tradingDay : tradingSchedule) {
+        for (final TradingDay tradingDay : tradingSchedule) {
             if (tradingDay.isTradingDay()) {
                 if (tradingDay.startTime().isAfter(dateTime)) {
                     return tradingDay.startTime();
