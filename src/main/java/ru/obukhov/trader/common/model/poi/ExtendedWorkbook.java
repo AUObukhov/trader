@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -439,6 +440,16 @@ public class ExtendedWorkbook implements Workbook {
     @Override
     public EvaluationWorkbook createEvaluationWorkbook() {
         return delegate.createEvaluationWorkbook();
+    }
+
+    @Override
+    public CellReferenceType getCellReferenceType() {
+        return delegate.getCellReferenceType();
+    }
+
+    @Override
+    public void setCellReferenceType(CellReferenceType cellReferenceType) {
+        delegate.setCellReferenceType(cellReferenceType);
     }
 
     // endregion

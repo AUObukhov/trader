@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.PageMargin;
+import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -412,7 +414,17 @@ public class ExtendedSheet implements Sheet {
     }
 
     @Override
+    public double getMargin(PageMargin margin) {
+        return delegate.getMargin(margin);
+    }
+
+    @Override
     public void setMargin(short margin, double size) {
+        delegate.setMargin(margin, size);
+    }
+
+    @Override
+    public void setMargin(PageMargin margin, double size) {
         delegate.setMargin(margin, size);
     }
 
@@ -478,6 +490,11 @@ public class ExtendedSheet implements Sheet {
 
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
+        delegate.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
+    }
+
+    @Override
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
         delegate.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
     }
 
