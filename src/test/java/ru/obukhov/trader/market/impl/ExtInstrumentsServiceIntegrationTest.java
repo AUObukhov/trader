@@ -882,7 +882,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 List.of(testDividend1.tinkoffDividend(), testDividend2.tinkoffDividend());
         Mockito.when(instrumentsService.getDividendsSync(figi, from.toInstant(), to.toInstant())).thenReturn(tinkoffDividends);
 
-        final List<Dividend> actualResult = extInstrumentsService.getDividends(figi, from, to);
+        final List<Dividend> actualResult = extInstrumentsService.getDividends(figi, Interval.of(from, to));
 
         final List<Dividend> expectedResult = List.of(testDividend1.dividend());
         Assertions.assertEquals(expectedResult, actualResult);

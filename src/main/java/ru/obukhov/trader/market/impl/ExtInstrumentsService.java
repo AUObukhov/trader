@@ -254,8 +254,8 @@ public class ExtInstrumentsService {
     /**
      * @return list of dividends with not "Canceled" type
      */
-    public List<Dividend> getDividends(final String figi, final OffsetDateTime from, final OffsetDateTime to) {
-        return instrumentsService.getDividendsSync(figi, from.toInstant(), to.toInstant())
+    public List<Dividend> getDividends(final String figi, final Interval interval) {
+        return instrumentsService.getDividendsSync(figi, interval.getFrom().toInstant(), interval.getTo().toInstant())
                 .stream()
                 .filter(dividend -> !"Cancelled".equals(dividend.getDividendType()))
                 .map(DIVIDEND_MAPPER::map)
