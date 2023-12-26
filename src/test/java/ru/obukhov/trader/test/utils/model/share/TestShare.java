@@ -9,10 +9,16 @@ import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
-public record TestShare(Share share, ru.tinkoff.piapi.contract.v1.Share tinkoffShare, Instrument instrument, String jsonString) {
+public record TestShare(
+        Share share,
+        ru.tinkoff.piapi.contract.v1.Share tinkoffShare,
+        Instrument instrument,
+        ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument,
+        String jsonString
+) {
 
     TestShare(final Share share) {
-        this(share, buildTinkoffShare(share), buildInstrument(share), buildJsonString(share));
+        this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), buildJsonString(share));
     }
 
     private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
@@ -98,6 +104,48 @@ public record TestShare(Share share, ru.tinkoff.piapi.contract.v1.Share tinkoffS
                 .instrumentKind(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .first1MinCandleDate(share.first1MinCandleDate())
                 .first1DayCandleDate(share.first1DayCandleDate())
+                .build();
+    }
+
+    private static ru.tinkoff.piapi.contract.v1.Instrument buildTinkoffInstrument(final Share share) {
+        final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
+        final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
+
+        return ru.tinkoff.piapi.contract.v1.Instrument.newBuilder()
+                .setFigi(share.figi())
+                .setTicker(share.ticker())
+                .setClassCode(share.classCode())
+                .setIsin(share.isin())
+                .setLot(share.lot())
+                .setCurrency(share.currency())
+                .setKlong(quotationMapper.fromBigDecimal(share.klong()))
+                .setKshort(quotationMapper.fromBigDecimal(share.kshort()))
+                .setDlong(quotationMapper.fromBigDecimal(share.dlong()))
+                .setDshort(quotationMapper.fromBigDecimal(share.dshort()))
+                .setDlongMin(quotationMapper.fromBigDecimal(share.dlongMin()))
+                .setDshortMin(quotationMapper.fromBigDecimal(share.dshortMin()))
+                .setShortEnabledFlag(share.shortEnabledFlag())
+                .setName(share.name())
+                .setExchange(share.exchange())
+                .setCountryOfRisk(share.countryOfRisk())
+                .setCountryOfRiskName(share.countryOfRiskName())
+                .setInstrumentType("share")
+                .setTradingStatus(share.tradingStatus())
+                .setOtcFlag(share.otcFlag())
+                .setBuyAvailableFlag(share.buyAvailableFlag())
+                .setSellAvailableFlag(share.sellAvailableFlag())
+                .setMinPriceIncrement(quotationMapper.fromBigDecimal(share.minPriceIncrement()))
+                .setApiTradeAvailableFlag(share.apiTradeAvailableFlag())
+                .setUid(share.uid())
+                .setRealExchange(share.realExchange())
+                .setPositionUid(share.positionUid())
+                .setForIisFlag(share.forIisFlag())
+                .setForQualInvestorFlag(share.forQualInvestorFlag())
+                .setWeekendFlag(share.weekendFlag())
+                .setBlockedTcaFlag(share.blockedTcaFlag())
+                .setInstrumentKind(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
+                .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
                 .build();
     }
 

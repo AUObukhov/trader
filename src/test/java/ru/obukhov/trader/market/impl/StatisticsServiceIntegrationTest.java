@@ -17,6 +17,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -40,11 +41,11 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_simpleMovingAverage() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
 
-        Mocker.mockShare(instrumentsService, share);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final String figi = share.getFigi();
+        final String figi = instrument.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 2, 1);
@@ -92,11 +93,11 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_simpleMovingAverage_whenToIsNull() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
 
-        Mocker.mockShare(instrumentsService, share);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final String figi = share.getFigi();
+        final String figi = instrument.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
         final Interval interval = Interval.of(from, null);
@@ -146,11 +147,11 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_linearWeightedMovingAverage() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
 
-        Mocker.mockShare(instrumentsService, share);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final String figi = share.getFigi();
+        final String figi = instrument.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 2, 1);
@@ -198,11 +199,11 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_exponentialWeightedMovingAverage() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
 
-        Mocker.mockShare(instrumentsService, share);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final String figi = share.getFigi();
+        final String figi = instrument.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 2, 1);

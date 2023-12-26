@@ -17,7 +17,7 @@ import ru.obukhov.trader.common.util.SingleItemCollector;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -67,14 +67,14 @@ public class ExtMarketDataService {
      * @return sorted by time list of loaded candles
      */
     public List<Candle> getCandles(final String figi, final Interval interval, final CandleInterval candleInterval) {
-        final Share share = extInstrumentsService.getShare(figi);
+        final Instrument instrument = extInstrumentsService.getInstrument(figi);
         final Period period = Periods.getPeriodByCandleInterval(candleInterval);
-        final OffsetDateTime adjustedFrom = adjustFrom(interval.getFrom(), share, candleInterval);
+        final OffsetDateTime adjustedFrom = adjustFrom(interval.getFrom(), instrument, candleInterval);
         final List<Interval> subIntervals = Interval.of(adjustedFrom, interval.getTo()).splitIntoIntervals(period);
 
         final List<Candle> candles = new ArrayList<>();
         for (final Interval subInterval : subIntervals) {
-            final List<Candle> currentCandles = loadCandlesBetterCacheable(share.figi(), subInterval.extendTo(period), subInterval, candleInterval);
+            final List<Candle> currentCandles = loadCandlesBetterCacheable(instrument.figi(), subInterval.extendTo(period), subInterval, candleInterval);
             candles.addAll(currentCandles);
         }
         log.info("Loaded {} candles of {} size for FIGI '{}' in interval [{}]", candles.size(), candleInterval, figi, interval.toPrettyString());
@@ -82,9 +82,9 @@ public class ExtMarketDataService {
         return candles;
     }
 
-    private OffsetDateTime adjustFrom(final OffsetDateTime from, final Share share, final CandleInterval candleInterval) {
+    private OffsetDateTime adjustFrom(final OffsetDateTime from, final Instrument instrument, final CandleInterval candleInterval) {
         return from == null
-                ? FirstCandleUtils.getFirstCandleDate(share.first1MinCandleDate(), share.first1DayCandleDate(), candleInterval)
+                ? FirstCandleUtils.getFirstCandleDate(instrument.first1MinCandleDate(), instrument.first1DayCandleDate(), candleInterval)
                 : from;
     }
 
@@ -126,10 +126,10 @@ public class ExtMarketDataService {
      * @throws IllegalArgumentException if candle not found
      */
     public BigDecimal getLastPrice(final String figi, final OffsetDateTime to) {
-        final Share share = extInstrumentsService.getShare(figi);
+        final Instrument instrument = extInstrumentsService.getInstrument(figi);
         final Period period = Periods.DAY;
 
-        final List<Interval> intervals = Interval.of(share.first1MinCandleDate(), to).splitIntoIntervals(period);
+        final List<Interval> intervals = Interval.of(instrument.first1MinCandleDate(), to).splitIntoIntervals(period);
         for (int i = intervals.size() - 1; i >= 0; i--) {
             final Interval interval = intervals.get(i);
             final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendTo(period), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);

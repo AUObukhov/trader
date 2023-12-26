@@ -453,8 +453,8 @@ public class TestData {
         return decimalMap;
     }
 
-    public static ru.tinkoff.piapi.contract.v1.Share newTinkoffShare(final String figi, final OffsetDateTime first1DayCandleDate) {
-        return ru.tinkoff.piapi.contract.v1.Share.newBuilder()
+    public static ru.tinkoff.piapi.contract.v1.Instrument newTinkoffInstrument(final String figi, final OffsetDateTime first1DayCandleDate) {
+        return ru.tinkoff.piapi.contract.v1.Instrument.newBuilder()
                 .setFigi(figi)
                 .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate))
                 .build();

@@ -28,7 +28,8 @@ import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
-import ru.obukhov.trader.test.utils.model.share.TestShare;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -342,10 +343,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
             final OffsetDateTime now,
             final OffsetDateTime[] candlesTimes
     ) {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final String figi = testInstrument.instrument().figi();
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
         final CandleMocker candleMocker = new CandleMocker(marketDataService, figi, candleInterval);
         for (final OffsetDateTime candleTime : candlesTimes) {
@@ -380,13 +381,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirst1MinCandle_whenFromIsNull() {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final String figi = testInstrument.instrument().figi();
+
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
-        final OffsetDateTime first1MinCandleDate = testShare.share().first1MinCandleDate();
+        final OffsetDateTime first1MinCandleDate = testInstrument.instrument().first1MinCandleDate();
         final OffsetDateTime to = first1MinCandleDate.plusMinutes(1);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1MinCandleDate.minusNanos(1))
@@ -420,12 +422,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @MethodSource("getData_forGetCandles_adjustsFrom_whenFromIsNull")
     @DirtiesContext
     void getCandles_adjustsFrom_whenFromIsNull(final CandleInterval candleInterval, final int adjustmentInMinutes) {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final String figi = testInstrument.instrument().figi();
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
-        final OffsetDateTime first1MinCandleDate = testShare.share().first1MinCandleDate();
+        final OffsetDateTime first1MinCandleDate = testInstrument.instrument().first1MinCandleDate();
         final OffsetDateTime to = first1MinCandleDate.plusMinutes(adjustmentInMinutes);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1MinCandleDate.minusMinutes(adjustmentInMinutes).minusNanos(1))
@@ -446,13 +448,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirst1DayCandle_whenFromIsNull() {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final String figi = testInstrument.instrument().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
-        final OffsetDateTime first1DayCandleDate = testShare.share().first1DayCandleDate();
+        final OffsetDateTime first1DayCandleDate = testInstrument.instrument().first1DayCandleDate();
         final OffsetDateTime to = first1DayCandleDate.plusDays(1);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1DayCandleDate.minusHours(3).minusNanos(1))
@@ -475,10 +477,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfWeek() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 13, 10);
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
 
-        Mocker.mockShare(instrumentsService, tinkoffShare);
+        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
@@ -501,10 +503,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfWeek() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 17, 10);
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
 
-        Mocker.mockShare(instrumentsService, tinkoffShare);
+        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
@@ -527,10 +529,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfWeek() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 20, 2, 59, 59, 999_999_999);
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
 
-        Mocker.mockShare(instrumentsService, tinkoffShare);
+        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
@@ -553,10 +555,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfMonth() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 1, 3);
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
 
-        Mocker.mockShare(instrumentsService, tinkoffShare);
+        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
@@ -579,10 +581,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfMonth() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 10, 10);
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
 
-        Mocker.mockShare(instrumentsService, tinkoffShare);
+        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
@@ -605,10 +607,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfMonth() {
         final String figi = TestShares.APPLE.share().figi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 3, 1, 2, 59, 59, 999_999_999);
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare = TestData.newTinkoffShare(figi, first1DayCandleDate);
+        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
 
-        Mocker.mockShare(instrumentsService, tinkoffShare);
+        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
@@ -641,14 +643,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastPrice_returnsPrice_whenCandleExists() {
-        final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
+        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final String figi = testInstrument.instrument().figi();
         final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
-        final OffsetDateTime candlesTo = testShare.share().first1MinCandleDate().plusDays(1);
+        final OffsetDateTime candlesTo = testInstrument.instrument().first1MinCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(close, candlesFrom)
