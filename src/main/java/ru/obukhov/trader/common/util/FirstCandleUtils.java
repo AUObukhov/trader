@@ -20,7 +20,7 @@ public class FirstCandleUtils {
     /**
      * According to statistics the oldest candles smaller than 1 day exists 6 years ago
      */
-    static final Period SHORT_CANDLES_PERIOD = Period.ofYears(6);
+    public static final Period SHORT_CANDLES_PERIOD = Period.ofYears(6);
 
     public static OffsetDateTime getFirstCandleDate(
             final OffsetDateTime first1MinCandleDate,

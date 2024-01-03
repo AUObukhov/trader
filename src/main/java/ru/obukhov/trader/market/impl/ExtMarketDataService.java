@@ -127,19 +127,33 @@ public class ExtMarketDataService {
      */
     public BigDecimal getLastPrice(final String figi, final OffsetDateTime to) {
         final Instrument instrument = extInstrumentsService.getInstrument(figi);
-        final Period period = Periods.DAY;
 
-        final List<Interval> intervals = Interval.of(instrument.first1MinCandleDate(), to).splitIntoIntervals(period);
+        OffsetDateTime from;
+        CandleInterval candleInterval;
+        Period period;
+        if (instrument.first1MinCandleDate().isBefore(to)) {
+            from = instrument.first1MinCandleDate();
+            candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+            period = Periods.DAY;
+        } else if (instrument.first1DayCandleDate().isBefore(to)) {
+            from = instrument.first1DayCandleDate();
+            candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
+            period = Periods.YEAR;
+        } else {
+            throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + to);
+        }
+
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
         for (int i = intervals.size() - 1; i >= 0; i--) {
             final Interval interval = intervals.get(i);
-            final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendTo(period), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
+            final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendTo(period), interval, candleInterval);
             final Candle lastCandle = CollectionUtils.lastElement(candles);
             if (lastCandle != null) {
                 return lastCandle.getClose();
             }
         }
 
-        throw new IllegalArgumentException("Not found last candle for FIGI '" + figi + "'");
+        throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + to);
     }
 
     /**
