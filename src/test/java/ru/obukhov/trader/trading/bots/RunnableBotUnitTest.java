@@ -232,7 +232,7 @@ class RunnableBotUnitTest {
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
-        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, figi1, figi2);
+        mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.003, figi1, figi2);
         mockNormalTradingStatus(figi1, figi2);
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency());
         Mocker.mockShares(extInstrumentsService, share1, share2);

@@ -96,7 +96,7 @@ public abstract class Bot {
         decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), share.figi()));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), share.figi()));
         decisionData.setShare(share);
-        decisionData.setAvailableLots(getAvailableLots(share.figi(), availableBalance));
+        decisionData.setAvailableLots(getAvailableLots(share.figi(), availableBalance, botConfig.commission()));
         return decisionData;
     }
 
@@ -106,9 +106,10 @@ public abstract class Bot {
         return extOperationsService.getOperations(accountId, interval, figi);
     }
 
-    private long getAvailableLots(final String figi, final BigDecimal availableBalance) {
-        final BigDecimal currentPrice = extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
-        return DecimalUtils.divide(availableBalance, currentPrice).longValue();
+    private long getAvailableLots(final String figi, final BigDecimal availableBalance, final BigDecimal commission) {
+        final BigDecimal lastPrice = extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
+        final BigDecimal lastPriceWithCommission = DecimalUtils.addFraction(lastPrice, commission);
+        return DecimalUtils.divide(availableBalance, lastPriceWithCommission).longValue();
     }
 
     private void performOperations(final String accountId, final Map<String, Decision> figiesToDecisions) {
