@@ -97,6 +97,7 @@ public class ExtInstrumentsService {
      * @return {@link Instrument} corresponding to given {@code figi}
      * @throws IllegalArgumentException when given {@code figi} has no corresponding share or has more than one corresponding share
      */
+    @Cacheable(value = "instrument", sync = true)
     public Instrument getInstrument(final String figi) {
         return INSTRUMENT_MAPPER.map(instrumentsService.getInstrumentByFigiSync(figi));
     }

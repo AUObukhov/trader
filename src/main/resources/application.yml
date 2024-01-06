@@ -34,6 +34,7 @@ spring:
   cache:
     cache-names:
       exchange,
+      instrument,
       share,
       allShares,
       allCurrencies,
@@ -41,6 +42,5 @@ spring:
       marketEtfs,
       marketCurrencies,
       marketCandles,
-      marketInstrument,
       tickerByFigi
     scaffeine.spec: maximumSize=3000,expireAfterAccess=3h
