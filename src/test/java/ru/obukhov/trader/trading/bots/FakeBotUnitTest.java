@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
@@ -42,8 +41,6 @@ class FakeBotUnitTest {
     @Mock
     private ExtMarketDataService extMarketDataService;
     @Mock
-    private ExtInstrumentsService extInstrumentsService;
-    @Mock
     private ExtOperationsService extOperationsService;
     @Mock
     @SuppressWarnings("unused")
@@ -53,17 +50,6 @@ class FakeBotUnitTest {
 
     @InjectMocks
     private FakeBot fakeBot;
-
-    @Test
-    void getShare() {
-        final String figi = TestShares.APPLE.share().figi();
-        final Share expectedShare = Share.builder().figi(figi).lot(10).build();
-        Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(expectedShare);
-
-        final Share share = fakeBot.getShare(figi);
-
-        Assertions.assertEquals(expectedShare, share);
-    }
 
     @Test
     void getCurrentDateTime() {

@@ -383,7 +383,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
-        Mockito.when(fakeBot1.getShare(figi1)).thenReturn(testShare1.share());
+        Mockito.when(extInstrumentsService.getShare(figi1)).thenReturn(testShare1.share());
         mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, figi1, currentPrice1);
         mockPlusMinuteScheduled(fakeBot1, from);
@@ -392,7 +392,7 @@ class BackTesterImplUnitTest {
         mockPortfolioPosition(fakeBot1, accountId1, figi1, currentPrice1, quantity1);
 
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
-        Mockito.when(fakeBot2.getShare(figi2)).thenReturn(testShare2.share());
+        Mockito.when(extInstrumentsService.getShare(figi2)).thenReturn(testShare2.share());
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, figi2, currentPrice2);
         mockPlusMinuteScheduled(fakeBot2, from);
@@ -1328,7 +1328,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
-        Mockito.when(fakeBot.getShare(figi)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(share);
         mockMarketCandles(figi, prices);
         mockPlusMinuteScheduled(fakeBot, interval.getFrom());
         mockInvestments(fakeBot, accountId, interval.getFrom(), currency, balanceConfig.getInitialBalances().get(currency));

@@ -9,7 +9,6 @@ import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -44,10 +43,6 @@ public class FakeBot extends Bot {
                 fakeContext,
                 strategy
         );
-    }
-
-    public Share getShare(final String figi) {
-        return extInstrumentsService.getShare(figi);
     }
 
     public Map<String, List<Operation>> getOperations(final String accountId, final Interval interval, final List<String> figies) {

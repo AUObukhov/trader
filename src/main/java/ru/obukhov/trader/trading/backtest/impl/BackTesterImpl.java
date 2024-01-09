@@ -302,7 +302,7 @@ public class BackTesterImpl implements BackTester {
             final List<String> figies
     ) {
         return figies.stream()
-                .map(figi -> fakeBot.getShare(figi).currency())
+                .map(figi -> extInstrumentsService.getShare(figi).currency())
                 .distinct()
                 .collect(Collectors.toMap(Function.identity(), currency -> getBalances(accountId, interval, fakeBot, positions, currency)));
     }
