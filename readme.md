@@ -14,7 +14,3 @@ API to launch and test them.
 ```
 --trading.token=<token>
 ```
-
-## Documentation
-
-Swagger UI available at host:port/swagger-ui/index.html#/
