@@ -243,34 +243,26 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final List<Money> money = withdrawLimits.getMoney();
         Assertions.assertEquals(2, money.size());
         for (final Money currentMoney : money) {
-            if (currentMoney.getCurrency().equals(Currencies.USD)) {
-                AssertUtils.assertEquals(2000, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currencies.EUR)) {
-                AssertUtils.assertEquals(4000, currentMoney.getValue());
-            } else {
-                Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
+            switch (currentMoney.getCurrency()) {
+                case Currencies.USD -> AssertUtils.assertEquals(2000, currentMoney.getValue());
+                case Currencies.EUR -> AssertUtils.assertEquals(4000, currentMoney.getValue());
+                default -> Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
             }
         }
 
         final List<Money> blocked = withdrawLimits.getBlocked();
         for (final Money currentMoney : blocked) {
-            if (currentMoney.getCurrency().equals(Currencies.USD)) {
-                AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currencies.EUR)) {
-                AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else {
-                Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
+            switch (currentMoney.getCurrency()) {
+                case Currencies.USD, Currencies.EUR -> AssertUtils.assertEquals(0, currentMoney.getValue());
+                default -> Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
             }
         }
 
         final List<Money> blockedGuarantee = withdrawLimits.getBlockedGuarantee();
         for (final Money currentMoney : blockedGuarantee) {
-            if (currentMoney.getCurrency().equals(Currencies.USD)) {
-                AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currencies.EUR)) {
-                AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else {
-                Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
+            switch (currentMoney.getCurrency()) {
+                case Currencies.USD, Currencies.EUR -> AssertUtils.assertEquals(0, currentMoney.getValue());
+                default -> Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
             }
         }
     }

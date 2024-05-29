@@ -431,17 +431,13 @@ public class TestData {
     }
 
     public static BigDecimal newBigDecimal(final Object value) {
-        if (value instanceof Integer) {
-            return DecimalUtils.setDefaultScale((Integer) value);
-        } else if (value instanceof Long) {
-            return DecimalUtils.setDefaultScale((Long) value);
-        } else if (value instanceof Double) {
-            return DecimalUtils.setDefaultScale((Double) value);
-        } else if (value instanceof BigDecimal) {
-            return DecimalUtils.setDefaultScale((BigDecimal) value);
-        } else {
-            throw new IllegalArgumentException("Unexpected class: " + value.getClass());
-        }
+        return switch (value) {
+            case Integer i -> DecimalUtils.setDefaultScale(i);
+            case Long l -> DecimalUtils.setDefaultScale(l);
+            case Double v -> DecimalUtils.setDefaultScale(v);
+            case BigDecimal bigDecimal -> DecimalUtils.setDefaultScale(bigDecimal);
+            default -> throw new IllegalArgumentException("Unexpected class: " + value.getClass());
+        };
     }
 
     public static Map<String, BigDecimal> newDecimalMap(final Object... keysAndValues) {

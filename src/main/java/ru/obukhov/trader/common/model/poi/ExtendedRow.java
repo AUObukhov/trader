@@ -142,35 +142,22 @@ public class ExtendedRow implements Row {
      * @throws IllegalArgumentException {@code value} have invalid type
      */
     public ExtendedCell createCell(final int column, @Nullable final Object value) {
-        if (value == null) {
-            return (ExtendedCell) createCell(column);
-        } else if (value instanceof String stringValue) {
-            return createCell(column, stringValue);
-        } else if (value instanceof Money money) {
-            return createCell(column, money);
-        } else if (value instanceof MoneyValue moneyValue) {
-            return createCell(column, moneyValue);
-        } else if (value instanceof BigDecimal bigDecimalValue) {
-            return createCell(column, bigDecimalValue);
-        } else if (value instanceof Quotation quotationValue) {
-            return createCell(column, quotationValue);
-        } else if (value instanceof Double doubleValue) {
-            return createCell(column, doubleValue);
-        } else if (value instanceof Integer integerValue) {
-            return createCell(column, integerValue);
-        } else if (value instanceof Long longValue) {
-            return createCell(column, longValue);
-        } else if (value instanceof LocalDateTime localDateTimeValue) {
-            return createCell(column, localDateTimeValue);
-        } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
-            return createCell(column, offsetDateTimeValue);
-        } else if (value instanceof Boolean booleanValue) {
-            return createCell(column, booleanValue);
-        } else if (value instanceof Timestamp timestamp) {
-            return createCell(column, TimestampUtils.toOffsetDateTime(timestamp));
-        } else {
-            throw new IllegalArgumentException("Unexpected type of value: " + value.getClass());
-        }
+        return switch (value) {
+            case null -> (ExtendedCell) createCell(column);
+            case String stringValue -> createCell(column, stringValue);
+            case Money money -> createCell(column, money);
+            case MoneyValue moneyValue -> createCell(column, moneyValue);
+            case BigDecimal bigDecimalValue -> createCell(column, bigDecimalValue);
+            case Quotation quotationValue -> createCell(column, quotationValue);
+            case Double doubleValue -> createCell(column, doubleValue);
+            case Integer integerValue -> createCell(column, integerValue);
+            case Long longValue -> createCell(column, longValue);
+            case LocalDateTime localDateTimeValue -> createCell(column, localDateTimeValue);
+            case OffsetDateTime offsetDateTimeValue -> createCell(column, offsetDateTimeValue);
+            case Boolean booleanValue -> createCell(column, booleanValue);
+            case Timestamp timestamp -> createCell(column, TimestampUtils.toOffsetDateTime(timestamp));
+            default -> throw new IllegalArgumentException("Unexpected type of value: " + value.getClass());
+        };
     }
 
     /**

@@ -323,24 +323,16 @@ public class AssertUtils {
                 break;
 
             case NUMERIC:
-                if (value == null) {
-                    AssertUtils.assertEquals(NumberUtils.DOUBLE_ZERO, cell.getNumericCellValue());
-                } else if (value instanceof BigDecimal bigDecimalValue) {
-                    assertCellValue(cell, bigDecimalValue);
-                } else if (value instanceof Double doubleValue) {
-                    assertCellValue(cell, doubleValue);
-                } else if (value instanceof Integer integerValue) {
-                    assertCellValue(cell, integerValue);
-                } else if (value instanceof Long longValue) {
-                    assertCellValue(cell, longValue);
-                } else if (value instanceof LocalDateTime localDateTimeValue) {
-                    assetCellValue(cell, localDateTimeValue);
-                } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
-                    assertCellValue(cell, offsetDateTimeValue);
-                } else if (value instanceof Timestamp timestamp) {
-                    assertCellValue(cell, timestamp);
-                } else {
-                    throw new IllegalArgumentException("Unexpected value " + value);
+                switch (value) {
+                    case null -> AssertUtils.assertEquals(NumberUtils.DOUBLE_ZERO, cell.getNumericCellValue());
+                    case BigDecimal bigDecimalValue -> assertCellValue(cell, bigDecimalValue);
+                    case Double doubleValue -> assertCellValue(cell, doubleValue);
+                    case Integer integerValue -> assertCellValue(cell, integerValue);
+                    case Long longValue -> assertCellValue(cell, longValue);
+                    case LocalDateTime localDateTimeValue -> assetCellValue(cell, localDateTimeValue);
+                    case OffsetDateTime offsetDateTimeValue -> assertCellValue(cell, offsetDateTimeValue);
+                    case Timestamp timestamp -> assertCellValue(cell, timestamp);
+                    default -> throw new IllegalArgumentException("Unexpected value " + value);
                 }
                 break;
 
