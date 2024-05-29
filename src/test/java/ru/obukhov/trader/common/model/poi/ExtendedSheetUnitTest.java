@@ -180,7 +180,7 @@ class ExtendedSheetUnitTest {
         List<ExtendedCell> cells = extendedSheet.addRow(value1, value2);
 
         Assertions.assertEquals(2, cells.size());
-        Assertions.assertEquals(value1, cells.get(0).getStringCellValue());
+        Assertions.assertEquals(value1, cells.getFirst().getStringCellValue());
         Assertions.assertEquals(value2, cells.get(1).getStringCellValue());
     }
 
@@ -199,7 +199,7 @@ class ExtendedSheetUnitTest {
         final Drawing<?> drawing = extendedSheet.getDrawingPatriarch();
         final List<?> frames = IteratorUtils.toList(drawing.iterator());
         Assertions.assertEquals(1, frames.size());
-        final XSSFGraphicFrame frame = (XSSFGraphicFrame) frames.get(0);
+        final XSSFGraphicFrame frame = (XSSFGraphicFrame) frames.getFirst();
 
         final ClientAnchor anchor = frame.getAnchor();
         Assertions.assertEquals(column1, anchor.getCol1());
@@ -209,7 +209,7 @@ class ExtendedSheetUnitTest {
 
         final List<XSSFChart> charts = ((XSSFDrawing) drawing).getCharts();
         Assertions.assertEquals(1, charts.size());
-        Assertions.assertEquals(chart.getDelegate(), charts.get(0));
+        Assertions.assertEquals(chart.getDelegate(), charts.getFirst());
     }
 
 }

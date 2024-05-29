@@ -922,7 +922,7 @@ class ExcelServiceImplUnitTest {
         final List<XSSFChart> charts = frame.getDrawing().getCharts();
         Assertions.assertEquals(1, charts.size());
 
-        final XSSFChart chart = charts.get(0);
+        final XSSFChart chart = charts.getFirst();
         final List<? extends XDDFChartAxis> axes = chart.getAxes();
         Assertions.assertEquals(2, axes.size());
         AssertUtils.assertEquals(120, axes.get(1).getMinimum());

@@ -44,7 +44,7 @@ class ExtendedWorkbookUnitTest {
 
         final ExtendedSheet extendedSheet0 = (ExtendedSheet) extendedWorkbook.getSheet(sheetName0);
         final ExtendedSheet extendedSheet1 = (ExtendedSheet) extendedWorkbook.getSheet(sheetName1);
-        Assertions.assertEquals(sheets.get(0), extendedSheet0.getDelegate());
+        Assertions.assertEquals(sheets.getFirst(), extendedSheet0.getDelegate());
         Assertions.assertEquals(sheets.get(1), extendedSheet1.getDelegate());
     }
 

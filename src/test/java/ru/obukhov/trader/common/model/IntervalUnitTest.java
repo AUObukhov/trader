@@ -984,8 +984,8 @@ class IntervalUnitTest {
 
         Assertions.assertEquals(1, intervals.size());
 
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(to, intervals.get(0).getTo());
+        Assertions.assertEquals(from, intervals.getFirst().getFrom());
+        Assertions.assertEquals(to, intervals.getFirst().getTo());
     }
 
     @SuppressWarnings("unused")
@@ -1048,8 +1048,8 @@ class IntervalUnitTest {
 
         Assertions.assertEquals(2, intervals.size());
 
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(0).getTo());
+        Assertions.assertEquals(from, intervals.getFirst().getFrom());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.getFirst().getTo());
         Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
@@ -1106,8 +1106,8 @@ class IntervalUnitTest {
 
         Assertions.assertEquals(1, intervals.size());
 
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(to, intervals.get(0).getTo());
+        Assertions.assertEquals(from, intervals.getFirst().getFrom());
+        Assertions.assertEquals(to, intervals.getFirst().getTo());
     }
 
     @SuppressWarnings("unused")
@@ -1170,8 +1170,8 @@ class IntervalUnitTest {
 
         Assertions.assertEquals(2, intervals.size());
 
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(0).getTo());
+        Assertions.assertEquals(from, intervals.getFirst().getFrom());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.getFirst().getTo());
 
         Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
@@ -1245,8 +1245,8 @@ class IntervalUnitTest {
 
         Assertions.assertEquals(3, intervals.size());
 
-        Assertions.assertEquals(from, intervals.get(0).getFrom());
-        Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(0).getTo());
+        Assertions.assertEquals(from, intervals.getFirst().getFrom());
+        Assertions.assertEquals(expectedTo0AndFrom1, intervals.getFirst().getTo());
 
         Assertions.assertEquals(expectedTo0AndFrom1, intervals.get(1).getFrom());
         Assertions.assertEquals(expectedTo1AndFrom2, intervals.get(1).getTo());

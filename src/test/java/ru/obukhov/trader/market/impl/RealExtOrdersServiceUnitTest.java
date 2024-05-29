@@ -72,7 +72,7 @@ class RealExtOrdersServiceUnitTest {
         final List<OrderState> orders = realExtOrdersService.getOrders(accountId, figi);
 
         Assertions.assertEquals(3, orders.size());
-        Assertions.assertEquals("order0", orders.get(0).orderId());
+        Assertions.assertEquals("order0", orders.getFirst().orderId());
         Assertions.assertEquals("order1", orders.get(1).orderId());
         Assertions.assertEquals("order4", orders.get(2).orderId());
     }

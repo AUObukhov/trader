@@ -127,7 +127,7 @@ class TrendUtilsUnitTest {
         final List<Point> localExtremes = TrendUtils.getLocalExtremes(values, times, localExtremesIndices);
 
         final List<Point> expectedLocalExtremes = List.of(
-                Point.of(times.get(0), values.get(0)),
+                Point.of(times.getFirst(), values.getFirst()),
                 Point.of(times.get(2), values.get(2))
         );
 
@@ -311,7 +311,7 @@ class TrendUtilsUnitTest {
 
         Assertions.assertEquals(2, restraintLines.size());
         final List<Point> expectedRestraintLine1 = List.of(
-                Point.of(times.get(0), 10.000000),
+                Point.of(times.getFirst(), 10.000000),
                 Point.of(times.get(1), 10.333333333),
                 Point.of(times.get(2), 10.666666667),
                 Point.of(times.get(3), 11.000000),
@@ -319,7 +319,7 @@ class TrendUtilsUnitTest {
                 Point.of(times.get(5), 11.666666667),
                 Point.of(times.get(6), 12.000000)
         );
-        AssertUtils.assertEquals(expectedRestraintLine1, restraintLines.get(0));
+        AssertUtils.assertEquals(expectedRestraintLine1, restraintLines.getFirst());
 
         final List<Point> expectedRestraintLine2 = List.of(
                 Point.of(times.get(3), 11.0),
@@ -403,10 +403,10 @@ class TrendUtilsUnitTest {
         final List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
 
         if (!crossovers.isEmpty()) {
-            if (crossovers.get(0) <= 0) {
+            if (crossovers.getFirst() <= 0) {
                 final String message = String.format(
                         "First crossover is %s for [%s] and [%s]",
-                        crossovers.get(0),
+                        crossovers.getFirst(),
                         StringUtils.join(values1, ", "),
                         StringUtils.join(values2, ", ")
                 );

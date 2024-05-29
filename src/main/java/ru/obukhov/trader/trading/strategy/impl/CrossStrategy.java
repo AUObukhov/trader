@@ -62,7 +62,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
             return data.getDecisionDataList().stream()
                     .collect(Collectors.toMap(decisionData -> decisionData.getShare().figi(), decisionData -> decision));
         } else {
-            final DecisionData decisionData = data.getDecisionDataList().get(0);
+            final DecisionData decisionData = data.getDecisionDataList().getFirst();
             final String figi = decisionData.getShare().figi();
 
             if (decisionData.getAvailableLots() == 0) {

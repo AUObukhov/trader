@@ -43,7 +43,7 @@ public class TrendUtils {
         }
 
         boolean isGrowing = true;
-        BigDecimal previousValue = values.get(0);
+        BigDecimal previousValue = values.getFirst();
         for (int i = 0; i < size; i++) {
             final BigDecimal currentValue = values.get(i);
             if (comparator.compare(currentValue, previousValue) >= 0) {
@@ -89,7 +89,7 @@ public class TrendUtils {
         final List<Pair<Integer, BigDecimal>> extremes = new ArrayList<>(size);
 
         boolean isGrowing = true;
-        BigDecimal previousValue = values.get(0);
+        BigDecimal previousValue = values.getFirst();
         for (int i = 0; i < size; i++) {
             final BigDecimal currentValue = values.get(i);
             if (comparator.compare(currentValue, previousValue) >= 0) {
@@ -139,7 +139,7 @@ public class TrendUtils {
         }
 
         Integer currentExtremum;
-        Integer nextExtremum = localExtremes.get(0);
+        Integer nextExtremum = localExtremes.getFirst();
         final int count = localExtremes.size() - 1;
         for (int i = 0; i < count; i++) {
             currentExtremum = nextExtremum;

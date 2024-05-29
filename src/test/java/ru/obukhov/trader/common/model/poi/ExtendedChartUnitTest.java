@@ -23,7 +23,7 @@ class ExtendedChartUnitTest {
         Assertions.assertNotNull(chartData.getDelegate());
         Assertions.assertEquals(categoryAxisPosition, chartData.getCategoryAxis().getPosition());
         Assertions.assertEquals(1, chartData.getValueAxes().size());
-        Assertions.assertEquals(valueAxisPosition, chartData.getValueAxes().get(0).getPosition());
+        Assertions.assertEquals(valueAxisPosition, chartData.getValueAxes().getFirst().getPosition());
         Assertions.assertEquals(XDDFLineChartData.class, chartData.getDelegate().getClass());
     }
 

@@ -36,7 +36,7 @@ class CollectionsUtilsUnitTest {
         final List<Integer> result = CollectionsUtils.getTail(list, size);
 
         Assertions.assertEquals(size, result.size());
-        Assertions.assertEquals(Integer.valueOf(2), result.get(0));
+        Assertions.assertEquals(Integer.valueOf(2), result.getFirst());
         Assertions.assertEquals(Integer.valueOf(3), result.get(1));
         Assertions.assertEquals(Integer.valueOf(4), result.get(2));
     }
@@ -49,7 +49,7 @@ class CollectionsUtilsUnitTest {
 
         Assertions.assertEquals(list.size(), result.size());
         for (int i = 0; i < list.size(); i++) {
-            Assertions.assertEquals(list.get(0), result.get(0));
+            Assertions.assertEquals(list.getFirst(), result.getFirst());
         }
     }
 
@@ -61,7 +61,7 @@ class CollectionsUtilsUnitTest {
 
         Assertions.assertEquals(list.size(), result.size());
         for (int i = 0; i < list.size(); i++) {
-            Assertions.assertEquals(list.get(0), result.get(0));
+            Assertions.assertEquals(list.getFirst(), result.getFirst());
         }
     }
 
@@ -125,7 +125,7 @@ class CollectionsUtilsUnitTest {
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
         Assertions.assertEquals(3, list.size());
-        AssertUtils.assertEquals(5, list.get(0));
+        AssertUtils.assertEquals(5, list.getFirst());
         AssertUtils.assertEquals(5, list.get(1));
         AssertUtils.assertEquals(10, list.get(2));
     }
@@ -138,7 +138,7 @@ class CollectionsUtilsUnitTest {
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
         Assertions.assertEquals(3, list.size());
-        AssertUtils.assertEquals(5, list.get(0));
+        AssertUtils.assertEquals(5, list.getFirst());
         AssertUtils.assertEquals(10, list.get(1));
         AssertUtils.assertEquals(10, list.get(2));
     }
@@ -151,7 +151,7 @@ class CollectionsUtilsUnitTest {
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
         Assertions.assertEquals(4, list.size());
-        AssertUtils.assertEquals(5, list.get(0));
+        AssertUtils.assertEquals(5, list.getFirst());
         AssertUtils.assertEquals(7.5, list.get(1));
         AssertUtils.assertEquals(10, list.get(2));
         AssertUtils.assertEquals(0, list.get(3));

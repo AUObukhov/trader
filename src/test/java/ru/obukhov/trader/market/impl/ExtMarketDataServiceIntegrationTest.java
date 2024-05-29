@@ -358,7 +358,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
             final List<Candle> candles = extMarketDataService.getCandles(figi, Interval.of(from1, to1), candleInterval);
 
             Assertions.assertEquals(6, candles.size());
-            Assertions.assertEquals(candlesTimes[2], candles.get(0).getTime());
+            Assertions.assertEquals(candlesTimes[2], candles.getFirst().getTime());
             Assertions.assertEquals(candlesTimes[3], candles.get(1).getTime());
             Assertions.assertEquals(candlesTimes[4], candles.get(2).getTime());
             Assertions.assertEquals(candlesTimes[5], candles.get(3).getTime());
@@ -370,7 +370,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
             final List<Candle> cachedCandles = extMarketDataService.getCandles(figi, Interval.of(from2, to2), candleInterval);
 
             Assertions.assertEquals(5, cachedCandles.size());
-            Assertions.assertEquals(candlesTimes[1], cachedCandles.get(0).getTime());
+            Assertions.assertEquals(candlesTimes[1], cachedCandles.getFirst().getTime());
             Assertions.assertEquals(candlesTimes[2], cachedCandles.get(1).getTime());
             Assertions.assertEquals(candlesTimes[3], cachedCandles.get(2).getTime());
             Assertions.assertEquals(candlesTimes[4], cachedCandles.get(3).getTime());
@@ -400,7 +400,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -440,7 +440,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
         AssertUtils.assertEquals(4, candles.get(2).getClose());
     }
@@ -467,7 +467,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
         AssertUtils.assertEquals(4, candles.get(2).getClose());
     }
@@ -494,7 +494,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -520,7 +520,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -546,7 +546,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -572,7 +572,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -598,7 +598,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -624,7 +624,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.getFirst().getClose());
         AssertUtils.assertEquals(3, candles.get(1).getClose());
     }
 
@@ -877,7 +877,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .setTime(time2)
                 .build();
 
-        Assertions.assertEquals(expectedCandle1, candles.get(0));
+        Assertions.assertEquals(expectedCandle1, candles.getFirst());
         Assertions.assertEquals(expectedCandle2, candles.get(1));
     }
 

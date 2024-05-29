@@ -88,7 +88,7 @@ public class FakeBotFactory {
         final Interval interval = Interval.of(currentDateTime, currentDateTime.plusDays(SCHEDULE_INTERVAL_DAYS));
         final List<TradingDay> tradingSchedule = figies.stream()
                 .map(figi -> extInstrumentsService.getTradingScheduleByFigi(figi, interval))
-                .min(Comparator.comparing(schedule -> schedule.get(0).startTime()))
+                .min(Comparator.comparing(schedule -> schedule.getFirst().startTime()))
                 .orElseThrow();
         return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentDateTime);
     }

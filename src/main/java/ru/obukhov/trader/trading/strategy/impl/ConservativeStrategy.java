@@ -44,7 +44,7 @@ public class ConservativeStrategy extends AbstractTradingStrategy {
             return data.getDecisionDataList().stream()
                     .collect(Collectors.toMap(decisionData -> decisionData.getShare().figi(), decisionData -> decision));
         } else {
-            final DecisionData decisionData = data.getDecisionDataList().get(0);
+            final DecisionData decisionData = data.getDecisionDataList().getFirst();
 
             if (decisionData.getAvailableLots() == 0) {
                 final Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);

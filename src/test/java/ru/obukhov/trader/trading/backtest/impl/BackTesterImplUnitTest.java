@@ -160,9 +160,9 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(1, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
+        final BackTestResult backTestResult = backTestResults.getFirst();
 
-        Assertions.assertEquals(botConfigs.get(0), backTestResult.botConfig());
+        Assertions.assertEquals(botConfigs.getFirst(), backTestResult.botConfig());
         Assertions.assertEquals(interval, backTestResult.interval());
 
         AssertUtils.assertEquals(1, backTestResult.balances().size());
@@ -272,7 +272,7 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(2, backTestResults.size());
 
         assertCommonStatistics(
-                backTestResults.get(0), botConfigs.get(0), currency1,
+                backTestResults.getFirst(), botConfigs.getFirst(), currency1,
                 interval, initialInvestment,
                 finalPrice1, finalQuantity1 * testShare1.share().lot(), finalBalance1,
                 0.0032, 2.212128816
@@ -410,7 +410,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        Assertions.assertNull(backTestResults.get(0).error());
+        Assertions.assertNull(backTestResults.getFirst().error());
         Assertions.assertNull(backTestResults.get(1).error());
 
         final Map<String, BigDecimal> investments = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
@@ -502,7 +502,7 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertPosition(backTestResults.get(0), testShare1.share().figi(), currentPrice1, quantity1);
+        assertPosition(backTestResults.getFirst(), testShare1.share().figi(), currentPrice1, quantity1);
         assertPosition(backTestResults.get(1), testShare2.share().figi(), currentPrice2, quantity2);
     }
 
@@ -510,7 +510,7 @@ class BackTesterImplUnitTest {
         Assertions.assertNull(backTestResult.error());
         final List<Position> positions = backTestResult.positions();
         Assertions.assertEquals(1, positions.size());
-        final Position backTestPosition = positions.get(0);
+        final Position backTestPosition = positions.getFirst();
         Assertions.assertEquals(figi, backTestPosition.getFigi());
         AssertUtils.assertEquals(currentPrice, backTestPosition.getCurrentPrice().getValue());
         AssertUtils.assertEquals(quantity, backTestPosition.getQuantity());
@@ -603,7 +603,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        assertOperation(backTestResults.get(0), figi1, operationDateTime1, operationType1, operationPrice1, operationQuantity1);
+        assertOperation(backTestResults.getFirst(), figi1, operationDateTime1, operationType1, operationPrice1, operationQuantity1);
         assertOperation(backTestResults.get(1), figi2, operationDateTime2, operationType2, operationPrice2, operationQuantity2);
     }
 
@@ -621,7 +621,7 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(1, resultOperations.size());
 
         final List<Operation> operations = resultOperations.get(figi);
-        final Operation backTestOperation = operations.get(0);
+        final Operation backTestOperation = operations.getFirst();
         Assertions.assertEquals(figi, backTestOperation.getFigi());
         Assertions.assertEquals(expectedDateTime, TimestampUtils.toOffsetDateTime(backTestOperation.getDate()));
         Assertions.assertEquals(expectedOperationType, backTestOperation.getOperationType());
@@ -702,7 +702,7 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertCandles(backTestResults.get(0), testShare1.share().figi(), prices1);
+        assertCandles(backTestResults.getFirst(), testShare1.share().figi(), prices1);
         assertCandles(backTestResults.get(1), testShare2.share().figi(), prices2);
     }
 
@@ -785,7 +785,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult1 = backTestResults.get(0);
+        final BackTestResult backTestResult1 = backTestResults.getFirst();
         Assertions.assertNull(backTestResult1.error());
         Assertions.assertEquals(Map.of(share1.figi(), Collections.emptyList()), backTestResult1.candles());
 
@@ -844,10 +844,10 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(1, backTestResults.size());
-        Assertions.assertNull(backTestResults.get(0).error());
+        Assertions.assertNull(backTestResults.getFirst().error());
 
         final Interval expectedInterval = Interval.of(instrument.first1MinCandleDate(), to);
-        Assertions.assertEquals(expectedInterval, backTestResults.get(0).interval());
+        Assertions.assertEquals(expectedInterval, backTestResults.getFirst().interval());
     }
 
     @Test
@@ -900,10 +900,10 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(1, backTestResults.size());
-        Assertions.assertNull(backTestResults.get(0).error());
+        Assertions.assertNull(backTestResults.getFirst().error());
 
         final Interval expectedInterval = Interval.of(first1DayCandleMinimumDate, to);
-        Assertions.assertEquals(expectedInterval, backTestResults.get(0).interval());
+        Assertions.assertEquals(expectedInterval, backTestResults.getFirst().interval());
     }
 
     @Test
@@ -979,7 +979,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        Assertions.assertNull(backTestResults.get(0).error());
+        Assertions.assertNull(backTestResults.getFirst().error());
         Assertions.assertNull(backTestResults.get(1).error());
 
         Mockito.verify(excelService, Mockito.only()).saveBackTestResults(Mockito.anyCollection());
@@ -1058,7 +1058,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        Assertions.assertNull(backTestResults.get(0).error());
+        Assertions.assertNull(backTestResults.getFirst().error());
         Assertions.assertNull(backTestResults.get(1).error());
 
         Mockito.verify(excelService, Mockito.never()).saveBackTestResults(Mockito.any());
@@ -1133,7 +1133,7 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertNoInvestmentsAndProfits(backTestResults.get(0));
+        assertNoInvestmentsAndProfits(backTestResults.getFirst());
         assertNoInvestmentsAndProfits(backTestResults.get(1));
     }
 
@@ -1217,7 +1217,7 @@ class BackTesterImplUnitTest {
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
                 accountId1, figi1, candleInterval1, commission1, strategyType1, mockedExceptionMessage1
         );
-        AssertUtils.assertMatchesRegex(backTestResults.get(0).error(), expectedErrorPattern1);
+        AssertUtils.assertMatchesRegex(backTestResults.getFirst().error(), expectedErrorPattern1);
 
         final String expectedErrorPattern2 = String.format(
                 "^Back test for " +
@@ -1303,7 +1303,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertEquals(2, backTestResults.size());
 
-        Assertions.assertNull(backTestResults.get(0).error());
+        Assertions.assertNull(backTestResults.getFirst().error());
         Assertions.assertNull(backTestResults.get(1).error());
     }
 

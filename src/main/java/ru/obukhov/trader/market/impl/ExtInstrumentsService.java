@@ -185,7 +185,7 @@ public class ExtInstrumentsService {
      */
     public TradingDay getTradingDay(final String figi, final OffsetDateTime dateTime) {
         final Interval interval = Interval.of(dateTime, dateTime);
-        return getTradingScheduleByFigi(figi, interval).get(0);
+        return getTradingScheduleByFigi(figi, interval).getFirst();
     }
 
     /**

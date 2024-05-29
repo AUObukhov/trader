@@ -31,7 +31,7 @@ class ScheduledBotsPropertiesContextTest {
                     final List<BotConfig> botConfigs = scheduledBotsProperties.getBotConfigs();
                     Assertions.assertEquals(2, botConfigs.size());
 
-                    final BotConfig botConfig1 = botConfigs.get(0);
+                    final BotConfig botConfig1 = botConfigs.getFirst();
                     Assertions.assertEquals("2000124699", botConfig1.accountId());
                     Assertions.assertEquals(List.of("BBG000B9XRY4", "BBG004730N88"), botConfig1.figies());
                     Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig1.candleInterval());

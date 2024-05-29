@@ -77,7 +77,7 @@ public class SingleItemCollector<T> implements Collector<T, List<T>, T> {
                         ? new IllegalArgumentException("Expected single item. No items found.")
                         : noItemsExceptionSupplier.get();
             } else {
-                return accumulator.get(0);
+                return accumulator.getFirst();
             }
         };
     }

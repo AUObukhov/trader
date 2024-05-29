@@ -35,7 +35,7 @@ public class ExponentialMovingAverager implements MovingAverager {
     }
 
     private void updateAverages(final List<BigDecimal> averages, final double weightDecrease, final double revertedWeightDecrease) {
-        BigDecimal average = averages.get(0);
+        BigDecimal average = averages.getFirst();
         final int size = averages.size();
         for (int i = 1; i < size; i++) {
             average = updateAverage(averages, average, i, weightDecrease, revertedWeightDecrease);

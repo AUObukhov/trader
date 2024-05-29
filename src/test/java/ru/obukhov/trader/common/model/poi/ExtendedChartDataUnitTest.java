@@ -49,7 +49,7 @@ class ExtendedChartDataUnitTest {
         final List<XDDFChartData.Series> seriesList = chartData.getSeries();
         Assertions.assertEquals(2, seriesList.size());
 
-        final XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.get(0);
+        final XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.getFirst();
         Assertions.assertSame(categoryDataSource1, series1.getCategoryData());
         Assertions.assertSame(numericalDataSource1, series1.getValuesData());
         AssertUtils.assertSeriesColor(series1, seriesColor1);
@@ -83,7 +83,7 @@ class ExtendedChartDataUnitTest {
         final List<XDDFChartData.Series> seriesList = chartData.getSeries();
         Assertions.assertEquals(2, seriesList.size());
 
-        final XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.get(0);
+        final XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.getFirst();
         Assertions.assertSame(categoryDataSource1, series1.getCategoryData());
         Assertions.assertSame(numericalDataSource1, series1.getValuesData());
         Assertions.assertNull(series1.getShapeProperties());
@@ -108,7 +108,7 @@ class ExtendedChartDataUnitTest {
 
         chartData.stretchChart();
 
-        final XDDFValueAxis valueAxis = chartData.getValueAxes().get(0);
+        final XDDFValueAxis valueAxis = chartData.getValueAxes().getFirst();
         AssertUtils.assertEquals(Double.NaN, valueAxis.getMinimum());
         AssertUtils.assertEquals(Double.NaN, valueAxis.getMaximum());
     }
@@ -125,7 +125,7 @@ class ExtendedChartDataUnitTest {
 
         chartData.stretchChart();
 
-        final XDDFValueAxis valueAxis = chartData.getValueAxes().get(0);
+        final XDDFValueAxis valueAxis = chartData.getValueAxes().getFirst();
         AssertUtils.assertEquals(Double.NaN, valueAxis.getMinimum());
         AssertUtils.assertEquals(Double.NaN, valueAxis.getMaximum());
     }
@@ -142,7 +142,7 @@ class ExtendedChartDataUnitTest {
 
         chartData.stretchChart();
 
-        final XDDFValueAxis valueAxis = chartData.getValueAxes().get(0);
+        final XDDFValueAxis valueAxis = chartData.getValueAxes().getFirst();
         AssertUtils.assertEquals(0, valueAxis.getMinimum());
         AssertUtils.assertEquals(3, valueAxis.getMaximum());
     }

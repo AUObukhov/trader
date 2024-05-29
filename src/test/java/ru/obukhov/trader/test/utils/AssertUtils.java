@@ -428,7 +428,7 @@ public class AssertUtils {
         final List<ObjectError> errors = bindValidationException.getValidationErrors().getAllErrors();
 
         Assertions.assertEquals(1, errors.size());
-        Assertions.assertEquals(message, errors.get(0).getDefaultMessage());
+        Assertions.assertEquals(message, errors.getFirst().getDefaultMessage());
     }
 
     // region exceptions assertions

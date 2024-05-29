@@ -84,7 +84,7 @@ class ExtendedRowUnitTest {
         Assertions.assertEquals(values.length, cells.size());
 
         AssertUtils.assertCellAttributes(
-                cells.get(0),
+                cells.getFirst(),
                 extendedRow,
                 0,
                 CellType.BLANK,
@@ -156,7 +156,7 @@ class ExtendedRowUnitTest {
         Assertions.assertEquals(values.length, cells.size());
 
         AssertUtils.assertCellAttributes(
-                cells.get(0),
+                cells.getFirst(),
                 extendedRow,
                 column,
                 CellType.BLANK,
@@ -225,7 +225,7 @@ class ExtendedRowUnitTest {
 
         final List<CellRangeAddress> mergedRegions = extendedRow.getSheet().getMergedRegions();
         Assertions.assertEquals(1, mergedRegions.size());
-        final CellRangeAddress mergedRegion = mergedRegions.get(0);
+        final CellRangeAddress mergedRegion = mergedRegions.getFirst();
         Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getFirstRow());
         Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getLastRow());
         Assertions.assertEquals(column, mergedRegion.getFirstColumn());
