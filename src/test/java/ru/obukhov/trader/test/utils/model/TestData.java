@@ -141,14 +141,17 @@ public class TestData {
 
     // region BigDecimals list creation
 
+    @SuppressWarnings("java:S6204")
     public static List<BigDecimal> newBigDecimalList(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("java:S6204")
     public static List<BigDecimal> newBigDecimalList(final Double... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("java:S6204")
     public static List<BigDecimal> newBigDecimalList(final Integer... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
