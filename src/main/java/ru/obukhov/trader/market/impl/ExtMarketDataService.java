@@ -144,8 +144,7 @@ public class ExtMarketDataService {
         }
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
-        for (int i = intervals.size() - 1; i >= 0; i--) {
-            final Interval interval = intervals.get(i);
+        for (final Interval interval : intervals.reversed()) {
             final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendTo(period), interval, candleInterval);
             final Candle lastCandle = CollectionUtils.lastElement(candles);
             if (lastCandle != null) {
