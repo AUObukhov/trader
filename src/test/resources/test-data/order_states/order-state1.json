@@ -1,0 +1,33 @@
+{
+  "orderId": "582899921200",
+  "executionReportStatus": "EXECUTION_REPORT_STATUS_NEW",
+  "lotsRequested": 1,
+  "lotsExecuted": 0,
+  "initialOrderPrice": 30.000000000,
+  "executedOrderPrice": 0E-9,
+  "totalOrderAmount": 30.000000000,
+  "averagePositionPrice": 0E-9,
+  "initialCommission": 0.090000000,
+  "executedCommission": 0E-9,
+  "figi": "BBG00K7T3037",
+  "direction": "ORDER_DIRECTION_SELL",
+  "initialSecurityPrice": 30.000000000,
+  "stages": [
+    {
+      "price": 30.000000000,
+      "quantity": 2,
+      "tradeId": "7653265991"
+    },
+    {
+      "price": 10.000000000,
+      "quantity": 1,
+      "tradeId": "498456613"
+    }
+  ],
+  "serviceCommission": 0E-9,
+  "currency": "usd",
+  "orderType": "ORDER_TYPE_LIMIT",
+  "orderDate": "2023-08-10T08:20:27.000513541+03:00",
+  "instrumentUid": "46fef208-a525-4471-85e5-8fe4cee5f8ec",
+  "orderRequestId": "5627319091032181721"
+}

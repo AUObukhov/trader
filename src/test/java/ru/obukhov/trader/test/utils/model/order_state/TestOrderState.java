@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils.model.orderstate;
+package ru.obukhov.trader.test.utils.model.order_state;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Currencies;

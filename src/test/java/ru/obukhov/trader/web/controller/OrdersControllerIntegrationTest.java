@@ -6,8 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
+import ru.obukhov.trader.test.utils.model.order_state.TestOrderState;
+import ru.obukhov.trader.test.utils.model.order_state.TestOrderStates;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 
 import java.util.List;

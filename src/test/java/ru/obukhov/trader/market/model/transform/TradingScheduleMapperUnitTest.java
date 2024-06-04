@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
+import ru.obukhov.trader.test.utils.model.trading_day.TestTradingDay;
+import ru.obukhov.trader.test.utils.model.trading_day.TestTradingDays;
 
 import java.util.List;
 

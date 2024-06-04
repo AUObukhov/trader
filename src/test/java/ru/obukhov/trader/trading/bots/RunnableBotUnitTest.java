@@ -26,7 +26,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
+import ru.obukhov.trader.test.utils.model.order_state.TestOrderStates;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;

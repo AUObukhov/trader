@@ -15,7 +15,7 @@ import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
-import ru.obukhov.trader.test.utils.model.orderstate.TestOrderStates;
+import ru.obukhov.trader.test.utils.model.order_state.TestOrderStates;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;

@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils.model.orderstage;
+package ru.obukhov.trader.test.utils.model.order_stage;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.OrderStage;

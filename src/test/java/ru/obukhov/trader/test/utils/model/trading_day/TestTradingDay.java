@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils.model.schedule;
+package ru.obukhov.trader.test.utils.model.trading_day;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.TradingDay;

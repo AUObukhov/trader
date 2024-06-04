@@ -1,0 +1,12 @@
+{
+  "dividendNet": 0.100000000,
+  "paymentDate": "2011-08-29T03:00:00+03:00",
+  "declaredDate": "2011-06-30T03:00:00+03:00",
+  "lastBuyDate": "2011-05-23T03:00:00+03:00",
+  "dividendType": "Regular Cash",
+  "recordDate": "2011-05-25T03:00:00+03:00",
+  "regularity": "Quarter",
+  "closePrice": 317.090000000,
+  "yieldValue": 0.030000000,
+  "createdAt": "2020-12-08T14:05:33.006257739+03:00"
+}

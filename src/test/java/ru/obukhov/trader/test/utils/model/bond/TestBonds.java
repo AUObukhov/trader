@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils.model.bond;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.RiskLevel;
@@ -114,7 +115,12 @@ public class TestBonds {
             .riskLevel(RiskLevel.RISK_LEVEL_UNSPECIFIED)
             .build();
 
-    public static final TestBond ROSTELECOM = new TestBond(ROSTELECOM_BOND);
-    public static final TestBond KAZAKHSTAN = new TestBond(KAZAKHSTAN_BOND);
+    public static final TestBond ROSTELECOM = readBond("RU000A0ZYG52.json");
+    public static final TestBond KAZAKHSTAN = readBond("RU000A1050H0.json");
+
+    private static TestBond readBond(final String fileName) {
+        final Bond bond = ResourceUtils.getResourceAsObject("bonds/" + fileName, Bond.class);
+        return new TestBond(bond);
+    }
 
 }

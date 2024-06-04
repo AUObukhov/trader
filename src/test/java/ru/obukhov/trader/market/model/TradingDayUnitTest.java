@@ -10,7 +10,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
+import ru.obukhov.trader.test.utils.model.trading_day.TestTradingDays;
 
 import java.time.OffsetDateTime;
 import java.util.stream.Stream;

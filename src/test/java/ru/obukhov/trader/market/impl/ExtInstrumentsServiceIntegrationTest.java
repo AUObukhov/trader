@@ -34,10 +34,10 @@ import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.etf.TestEtfs;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay;
-import ru.obukhov.trader.test.utils.model.schedule.TestTradingDays;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
+import ru.obukhov.trader.test.utils.model.trading_day.TestTradingDay;
+import ru.obukhov.trader.test.utils.model.trading_day.TestTradingDays;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;

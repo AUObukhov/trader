@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.OrderStage;
-import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStage;
-import ru.obukhov.trader.test.utils.model.orderstage.TestOrderStages;
+import ru.obukhov.trader.test.utils.model.order_stage.TestOrderStage;
+import ru.obukhov.trader.test.utils.model.order_stage.TestOrderStages;
 
 class OrderStageMapperUnitTest {
 
