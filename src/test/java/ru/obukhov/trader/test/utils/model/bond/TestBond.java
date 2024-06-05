@@ -121,4 +121,8 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 "\"riskLevel\":\"" + bond.riskLevel() + "\"}";
     }
 
+    public String getFigi() {
+        return bond.figi();
+    }
+
 }

@@ -129,7 +129,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
-                .param("figi", testBond.tinkoffBond().getFigi())
+                .param("figi", testBond.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
         assertResponse(requestBuilder, testBond.jsonString());
