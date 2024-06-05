@@ -287,7 +287,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockEtf(instrumentsService, testEtf.tinkoffEtf());
 
-        final Etf result = extInstrumentsService.getEtf(testEtf.tinkoffEtf().getFigi());
+        final Etf result = extInstrumentsService.getEtf(testEtf.getFigi());
 
         Assertions.assertEquals(testEtf.etf(), result);
     }

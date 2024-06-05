@@ -99,7 +99,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
-                .param("figi", testEtf.etf().figi())
+                .param("figi", testEtf.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
         assertResponse(requestBuilder, testEtf.jsonString());

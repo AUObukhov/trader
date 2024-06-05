@@ -99,4 +99,8 @@ public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tinkoffEtf, Stri
                 "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(etf.first1DayCandleDate()) + "\"}";
     }
 
+    public String getFigi() {
+        return etf.figi();
+    }
+
 }
