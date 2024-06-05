@@ -16,7 +16,6 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -27,6 +26,7 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -58,8 +58,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenFromIsNull() throws Exception {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
+        final String currency = share.getCurrency();
 
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(null);
@@ -69,7 +69,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(share.figi()),
+                List.of(share.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -89,7 +89,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -126,8 +126,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenCandleIntervalIsNull() throws Exception {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
+        final String currency = share.getCurrency();
 
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
@@ -136,7 +136,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(share.figi()),
+                List.of(share.getFigi()),
                 null,
                 DecimalUtils.ZERO,
                 StrategyType.CONSERVATIVE,
@@ -149,8 +149,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenCommissionIsNull() throws Exception {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
+        final String currency = share.getCurrency();
 
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
@@ -159,7 +159,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(share.figi()),
+                List.of(share.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -172,8 +172,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void backTest_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
+        final String currency = share.getCurrency();
 
         final BackTestRequest request = new BackTestRequest();
         request.setFrom(DateTimeTestData.newDateTime(2021, 1, 1, 10));
@@ -182,7 +182,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(share.figi()),
+                List.of(share.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
                 null,

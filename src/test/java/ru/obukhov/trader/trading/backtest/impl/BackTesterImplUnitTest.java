@@ -18,7 +18,6 @@ import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -133,8 +132,8 @@ class BackTesterImplUnitTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
         final TestShare testShare = TestShares.APPLE;
-        final String figi = testShare.share().figi();
-        final String currency = testShare.share().currency();
+        final String figi = testShare.getFigi();
+        final String currency = testShare.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare.instrument());
 
@@ -194,8 +193,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -274,7 +273,7 @@ class BackTesterImplUnitTest {
         assertCommonStatistics(
                 backTestResults.getFirst(), botConfigs.getFirst(), currency1,
                 interval, initialInvestment,
-                finalPrice1, finalQuantity1 * testShare1.share().lot(), finalBalance1,
+                finalPrice1, finalQuantity1 * testShare1.getLot(), finalBalance1,
                 0.0032, 2.212128816
         );
 
@@ -335,14 +334,14 @@ class BackTesterImplUnitTest {
 
         final String accountId1 = TestAccounts.TINKOFF.getId();
         final TestShare testShare1 = TestShares.APPLE;
-        final String figi1 = testShare1.share().figi();
-        final String currency1 = testShare1.share().currency();
+        final String figi1 = testShare1.getFigi();
+        final String currency1 = testShare1.getCurrency();
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
 
         final String accountId2 = TestAccounts.IIS.getId();
         final TestShare testShare2 = TestShares.SBER;
-        final String figi2 = testShare2.share().figi();
-        final String currency2 = testShare2.share().currency();
+        final String figi2 = testShare2.getFigi();
+        final String currency2 = testShare2.getCurrency();
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
 
         final BigDecimal initialInvestment = DecimalUtils.setDefaultScale(10000);
@@ -436,8 +435,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -502,8 +501,8 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertPosition(backTestResults.getFirst(), testShare1.share().figi(), currentPrice1, quantity1);
-        assertPosition(backTestResults.get(1), testShare2.share().figi(), currentPrice2, quantity2);
+        assertPosition(backTestResults.getFirst(), testShare1.getFigi(), currentPrice1, quantity1);
+        assertPosition(backTestResults.get(1), testShare2.getFigi(), currentPrice2, quantity2);
     }
 
     private void assertPosition(final BackTestResult backTestResult, final String figi, final double currentPrice, final int quantity) {
@@ -523,8 +522,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -539,7 +538,7 @@ class BackTesterImplUnitTest {
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
         final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
 
-        final String figi1 = testShare1.share().figi();
+        final String figi1 = testShare1.getFigi();
         final double commission1 = 0.003;
 
         final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(20000);
@@ -552,7 +551,7 @@ class BackTesterImplUnitTest {
         final int operationQuantity1 = 2;
         final Operation operation1 = TestData.newOperation(operationDateTime1, operationType1, operationPrice1, operationQuantity1, figi1);
 
-        final String figi2 = testShare2.share().figi();
+        final String figi2 = testShare2.getFigi();
         final double commission2 = 0.001;
 
         final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(10000);
@@ -636,8 +635,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -702,8 +701,8 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(2, backTestResults.size());
-        assertCandles(backTestResults.getFirst(), testShare1.share().figi(), prices1);
-        assertCandles(backTestResults.get(1), testShare2.share().figi(), prices2);
+        assertCandles(backTestResults.getFirst(), testShare1.getFigi(), prices1);
+        assertCandles(backTestResults.get(1), testShare2.getFigi(), prices2);
     }
 
     private void assertCandles(final BackTestResult backTestResult, final String figi, final Map<OffsetDateTime, Double> prices) {
@@ -728,11 +727,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final Share share1 = testShare1.share();
-        final Share share2 = testShare2.share();
-
-        final String currency1 = share1.currency();
-        final String currency2 = share2.currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -749,7 +745,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.getId(),
-                share1,
+                testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
@@ -763,7 +759,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestAccounts.TINKOFF.getId(),
-                share2,
+                testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
                 balanceConfig,
@@ -787,32 +783,30 @@ class BackTesterImplUnitTest {
 
         final BackTestResult backTestResult1 = backTestResults.getFirst();
         Assertions.assertNull(backTestResult1.error());
-        Assertions.assertEquals(Map.of(share1.figi(), Collections.emptyList()), backTestResult1.candles());
+        Assertions.assertEquals(Map.of(testShare1.share().figi(), Collections.emptyList()), backTestResult1.candles());
 
         final BackTestResult backTestResult2 = backTestResults.get(1);
         Assertions.assertNull(backTestResult2.error());
-        Assertions.assertEquals(Map.of(share2.figi(), Collections.emptyList()), backTestResult2.candles());
+        Assertions.assertEquals(Map.of(testShare2.share().figi(), Collections.emptyList()), backTestResult2.candles());
     }
 
     @Test
     void test_adjustsInterval_whenFirstCandleIsAfterFrom_andCandleIntervalIs1Min() {
         // arrange
 
-        final TestShare testShare1 = TestShares.APPLE;
-        final Instrument instrument = testShare1.instrument();
+        final TestShare testShare = TestShares.APPLE;
 
-        final String currency1 = testShare1.share().currency();
+        Mocker.mockInstrument(extInstrumentsService, testShare.instrument());
 
-        Mocker.mockInstrument(extInstrumentsService, instrument);
-
-        final OffsetDateTime from = instrument.first1MinCandleDate().minusDays(1);
-        final OffsetDateTime to = instrument.first1MinCandleDate().plusDays(1);
+        final OffsetDateTime from = testShare.getFirst1MinCandleDate().minusDays(1);
+        final OffsetDateTime to = testShare.getFirst1MinCandleDate().plusDays(1);
         final Interval interval = Interval.of(from, to);
-        final Interval effectiveInterval = Interval.of(instrument.first1MinCandleDate(), to);
+        final Interval effectiveInterval = Interval.of(testShare.getFirst1MinCandleDate(), to);
 
         final double initialInvestment = 10000;
         final double balanceIncrement = 1000;
-        final BalanceConfig balanceConfig = TestData.newBalanceConfig(currency1, initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
+        final String currency = testShare.getCurrency();
+        final BalanceConfig balanceConfig = TestData.newBalanceConfig(currency, initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(1), 100.0);
@@ -823,7 +817,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.getId(),
-                testShare1.share(),
+                testShare.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 balanceConfig,
@@ -846,7 +840,7 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(1, backTestResults.size());
         Assertions.assertNull(backTestResults.getFirst().error());
 
-        final Interval expectedInterval = Interval.of(instrument.first1MinCandleDate(), to);
+        final Interval expectedInterval = Interval.of(testShare.getFirst1MinCandleDate(), to);
         Assertions.assertEquals(expectedInterval, backTestResults.getFirst().interval());
     }
 
@@ -855,12 +849,10 @@ class BackTesterImplUnitTest {
         // arrange
 
         final TestShare testShare = TestShares.APPLE;
-        final Instrument instrument = testShare.instrument();
-        final String currency = instrument.currency();
 
-        Mocker.mockInstrument(extInstrumentsService, instrument);
+        Mocker.mockInstrument(extInstrumentsService, testShare.instrument());
 
-        final OffsetDateTime first1DayCandleMinimumDate = instrument.first1DayCandleDate().minusHours(3);
+        final OffsetDateTime first1DayCandleMinimumDate = testShare.getFirst1MinCandleDate().minusHours(3);
         final OffsetDateTime from = first1DayCandleMinimumDate.minusDays(1);
         final OffsetDateTime to = first1DayCandleMinimumDate.plusDays(1);
         final Interval interval = Interval.of(from, to);
@@ -868,6 +860,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
 
+        final String currency = testShare.getCurrency();
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(currency, initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
@@ -914,8 +907,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -938,7 +931,7 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                testShare1.share().figi()
+                testShare1.getFigi()
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
@@ -993,8 +986,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -1017,7 +1010,7 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                testShare1.share().figi()
+                testShare1.getFigi()
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
@@ -1071,8 +1064,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -1094,7 +1087,7 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                testShare1.share().figi()
+                testShare1.getFigi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.getId(),
@@ -1157,8 +1150,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -1174,7 +1167,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
 
         final String accountId1 = TestAccounts.TINKOFF.getId();
-        final String figi1 = testShare1.share().figi();
+        final String figi1 = testShare1.getFigi();
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
@@ -1188,7 +1181,7 @@ class BackTesterImplUnitTest {
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
         final String accountId2 = TestAccounts.IIS.getId();
-        final String figi2 = testShare2.share().figi();
+        final String figi2 = testShare2.getFigi();
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
         final StrategyType strategyType2 = StrategyType.CROSS;
@@ -1235,8 +1228,8 @@ class BackTesterImplUnitTest {
         final TestShare testShare1 = TestShares.APPLE;
         final TestShare testShare2 = TestShares.SBER;
 
-        final String currency1 = testShare1.share().currency();
-        final String currency2 = testShare2.share().currency();
+        final String currency1 = testShare1.getCurrency();
+        final String currency2 = testShare2.getCurrency();
 
         Mocker.mockInstrument(extInstrumentsService, testShare1.instrument());
         Mocker.mockInstrument(extInstrumentsService, testShare2.instrument());
@@ -1259,7 +1252,7 @@ class BackTesterImplUnitTest {
                 OperationType.OPERATION_TYPE_BUY,
                 100,
                 2,
-                testShare1.share().figi()
+                testShare1.getFigi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.getId(),

@@ -64,15 +64,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getShare_returnsShare() throws Exception {
-        final TestShare testShare = TestShares.SBER;
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        final TestShare share = TestShares.SBER;
+        Mocker.mockShare(instrumentsService, share.tinkoffShare());
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")
-                .param("figi", testShare.share().figi())
+                .param("figi", share.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, testShare.share());
+        assertResponse(requestBuilder, share.share());
     }
 
     @Test

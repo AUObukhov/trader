@@ -66,7 +66,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void getCandles_returnsBadRequest_whenIntervalIsMissing() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("figi", TestShares.APPLE.share().figi())
+                .param("figi", TestShares.APPLE.getFigi())
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
                 .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
                 .param("smallWindow", "50")
@@ -81,7 +81,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("figi", TestShares.APPLE.share().figi())
+                .param("figi", TestShares.APPLE.getFigi())
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue())
@@ -97,7 +97,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("figi", TestShares.APPLE.share().figi())
+                .param("figi", TestShares.APPLE.getFigi())
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
@@ -113,7 +113,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("figi", TestShares.APPLE.share().figi())
+                .param("figi", TestShares.APPLE.getFigi())
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())
@@ -129,7 +129,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("figi", TestShares.APPLE.share().figi())
+                .param("figi", TestShares.APPLE.getFigi())
                 .param("from", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(from))
                 .param("to", DateUtils.OFFSET_DATE_TIME_FORMATTER.format(to))
                 .param("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name())

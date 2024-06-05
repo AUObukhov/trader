@@ -10,7 +10,7 @@ class SetPositionBalanceRequestValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
+        request.setFigi(TestShares.APPLE.getFigi());
         request.setBalance(DecimalUtils.setDefaultScale(10));
 
         AssertUtils.assertNoViolations(request);
@@ -37,7 +37,7 @@ class SetPositionBalanceRequestValidationTest {
     @Test
     void validationFails_whenBalanceIsNull() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setFigi(TestShares.APPLE.share().figi());
+        request.setFigi(TestShares.APPLE.getFigi());
         request.setBalance(null);
 
         AssertUtils.assertViolation(request, "balance is mandatory");

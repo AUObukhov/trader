@@ -422,7 +422,7 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final Position position = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi, position);
@@ -441,8 +441,8 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
         final Position position1 = new PositionBuilder().build();
         final Position position2 = new PositionBuilder().build();
 
@@ -465,7 +465,7 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final Position position = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi, position);

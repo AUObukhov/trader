@@ -3,8 +3,8 @@ package ru.obukhov.trader.market.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
@@ -17,24 +17,22 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsSet() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
         final long lots = 10;
-        final String figi = share.figi();
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
-                .setCurrency(currency)
+                .setCurrency(share.getCurrency())
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
                 .setLots(lots)
-                .setFigi(figi)
+                .setFigi(share.getFigi())
                 .setDirection(direction)
                 .setType(type)
                 .setOrderId(orderId)
@@ -48,7 +46,7 @@ class PostOrderResponseBuilderUnitTest {
         AssertUtils.assertEquals(totalPrice, response.getTotalOrderAmount());
         AssertUtils.assertEquals(totalCommissionAmount, response.getInitialCommission());
         AssertUtils.assertEquals(totalCommissionAmount, response.getExecutedCommission());
-        Assertions.assertEquals(figi, response.getFigi());
+        Assertions.assertEquals(share.getFigi(), response.getFigi());
         Assertions.assertEquals(direction, response.getDirection());
         AssertUtils.assertEquals(currentPrice, response.getInitialSecurityPrice());
         Assertions.assertEquals(type, response.getOrderType());
@@ -57,23 +55,21 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsNotSet() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
         final long lots = 10;
-        final String figi = share.figi();
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
-                .setCurrency(currency)
+                .setCurrency(share.getCurrency())
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
                 .setLots(lots)
-                .setFigi(figi)
+                .setFigi(share.getFigi())
                 .setDirection(direction)
                 .setType(type)
                 .setOrderId(null)
@@ -87,7 +83,7 @@ class PostOrderResponseBuilderUnitTest {
         AssertUtils.assertEquals(totalPrice, response.getTotalOrderAmount());
         AssertUtils.assertEquals(totalCommissionAmount, response.getInitialCommission());
         AssertUtils.assertEquals(totalCommissionAmount, response.getExecutedCommission());
-        Assertions.assertEquals(figi, response.getFigi());
+        Assertions.assertEquals(share.getFigi(), response.getFigi());
         Assertions.assertEquals(direction, response.getDirection());
         AssertUtils.assertEquals(currentPrice, response.getInitialSecurityPrice());
         Assertions.assertEquals(type, response.getOrderType());
@@ -96,24 +92,22 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreComplex() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final BigDecimal totalPrice = DecimalUtils.setDefaultScale(1000);
         final BigDecimal totalCommissionAmount = DecimalUtils.setDefaultScale(5);
         final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
         final long lots = 10;
-        final String figi = share.figi();
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
-                .setCurrency(currency)
+                .setCurrency(share.getCurrency())
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
                 .setLots(lots)
-                .setFigi(figi)
+                .setFigi(share.getFigi())
                 .setDirection(direction)
                 .setType(type)
                 .setOrderId(orderId)
@@ -127,7 +121,7 @@ class PostOrderResponseBuilderUnitTest {
         AssertUtils.assertEquals(totalPrice, response.getTotalOrderAmount());
         AssertUtils.assertEquals(totalCommissionAmount, response.getInitialCommission());
         AssertUtils.assertEquals(totalCommissionAmount, response.getExecutedCommission());
-        Assertions.assertEquals(figi, response.getFigi());
+        Assertions.assertEquals(share.getFigi(), response.getFigi());
         Assertions.assertEquals(direction, response.getDirection());
         AssertUtils.assertEquals(currentPrice, response.getInitialSecurityPrice());
         Assertions.assertEquals(type, response.getOrderType());

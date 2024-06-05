@@ -15,12 +15,12 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -106,8 +106,8 @@ class FakeBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.getId();
         final Interval interval = Interval.of(DateUtils.now(), DateUtils.now());
 
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         final Operation operation1 = TestData.newOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
         final Operation operation2 = TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED);
@@ -129,11 +129,11 @@ class FakeBotUnitTest {
     void getPortfolioPositions() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share = TestShares.APPLE.share();
+        final TestShare share = TestShares.APPLE;
         final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
         final Position position = new PositionBuilder()
-                .setCurrency(share.currency())
-                .setFigi(share.figi())
+                .setCurrency(share.getCurrency())
+                .setFigi(share.getFigi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(currentPrice)
                 .setExpectedYield(0)
@@ -151,7 +151,7 @@ class FakeBotUnitTest {
 
     @Test
     void getCurrentPrice_usesCurrentDateTime_whenCurrentDateTimeIsNotNull() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime currentDateTime = DateUtils.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 
@@ -166,7 +166,7 @@ class FakeBotUnitTest {
 
     @Test
     void getCurrentPrice_usesTo_whenCurrentDateTimeIsNull() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime to = DateUtils.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 

@@ -22,7 +22,7 @@ class BotConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -36,7 +36,7 @@ class BotConfigValidationTest {
         return Stream.of(
                 Arguments.of(
                         null,
-                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
+                        List.of(TestShares.APPLE.getFigi(), TestShares.SBER.getFigi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -63,7 +63,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestAccounts.TINKOFF.getId(),
-                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
+                        List.of(TestShares.APPLE.getFigi(), TestShares.SBER.getFigi()),
                         null,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -72,7 +72,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestAccounts.TINKOFF.getId(),
-                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
+                        List.of(TestShares.APPLE.getFigi(), TestShares.SBER.getFigi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         null,
                         StrategyType.CONSERVATIVE,
@@ -81,7 +81,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestAccounts.TINKOFF.getId(),
-                        List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
+                        List.of(TestShares.APPLE.getFigi(), TestShares.SBER.getFigi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         null,

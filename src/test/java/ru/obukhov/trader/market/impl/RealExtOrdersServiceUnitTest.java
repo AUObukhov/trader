@@ -58,7 +58,7 @@ class RealExtOrdersServiceUnitTest {
     void getOrders_filtersOrdersByFigi() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         mockOrders(
                 accountId,
@@ -80,7 +80,7 @@ class RealExtOrdersServiceUnitTest {
     @Test
     void postOrder() {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         final String currency = Currencies.USD;
         final int totalOrderAmount = 2000;

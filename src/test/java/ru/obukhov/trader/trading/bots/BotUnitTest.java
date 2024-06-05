@@ -62,8 +62,8 @@ class BotUnitTest {
     void processBotConfig_doesNothing_whenThereAreOrders() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         final List<OrderState> orders = List.of(TestOrderStates.ORDER_STATE1.orderState());
         Mockito.when(ordersService.getOrders(accountId)).thenReturn(orders);
@@ -89,8 +89,8 @@ class BotUnitTest {
     void processBotConfig_doesNoOrder_whenThereAreUncompletedOrders() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         Mocker.mockEmptyOrder(ordersService, accountId);
 

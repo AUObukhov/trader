@@ -15,8 +15,8 @@ class PositionBuilderUnitTest {
 
     @Test
     void testPrimitives() {
-        final String currency = TestShares.APPLE.share().currency();
-        final String figi = TestShares.APPLE.share().figi();
+        final String currency = TestShares.APPLE.getCurrency();
+        final String figi = TestShares.APPLE.getFigi();
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final long quantity = 20;
         final double averagePositionPrice = 500;
@@ -60,8 +60,8 @@ class PositionBuilderUnitTest {
 
     @Test
     void testBigDecimals() {
-        final String currency = TestShares.APPLE.share().currency();
-        final String figi = TestShares.APPLE.share().figi();
+        final String currency = TestShares.APPLE.getCurrency();
+        final String figi = TestShares.APPLE.getFigi();
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final BigDecimal quantity = BigDecimal.valueOf(20);
         final BigDecimal averagePositionPrice = BigDecimal.valueOf(500);
@@ -105,8 +105,8 @@ class PositionBuilderUnitTest {
 
     @Test
     void testMoney() {
-        final String currency = TestShares.APPLE.share().currency();
-        final String figi = TestShares.APPLE.share().figi();
+        final String currency = TestShares.APPLE.getCurrency();
+        final String figi = TestShares.APPLE.getFigi();
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity = 20;
         final Money averagePositionPrice = TestData.newMoney(500, currency);

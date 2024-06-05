@@ -475,7 +475,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfWeek() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 13, 10);
         final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
@@ -501,7 +501,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfWeek() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 17, 10);
         final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
@@ -527,7 +527,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfWeek() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 20, 2, 59, 59, 999_999_999);
         final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
@@ -553,7 +553,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfMonth() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 1, 3);
         final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
@@ -579,7 +579,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfMonth() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 10, 10);
         final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
@@ -605,7 +605,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfMonth() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 3, 1, 2, 59, 59, 999_999_999);
         final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
@@ -730,9 +730,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrices_returnsPricesInProperOrder() {
-        final String figi1 = TestShares.SBER.share().figi();
-        final String figi2 = TestShares.APPLE.share().figi();
-        final String figi3 = TestShares.YANDEX.share().figi();
+        final String figi1 = TestShares.SBER.getFigi();
+        final String figi2 = TestShares.APPLE.getFigi();
+        final String figi3 = TestShares.YANDEX.getFigi();
 
         final BigDecimal price1 = DecimalUtils.setDefaultScale(111.111);
         final BigDecimal price2 = DecimalUtils.setDefaultScale(222.222);
@@ -753,10 +753,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrices_throwsInstrumentNotFoundException_whenPriceNotFound() {
-        final String figi1 = TestShares.SBER.share().figi();
-        final String figi2 = TestShares.APPLE.share().figi();
-        final String figi3 = TestShares.YANDEX.share().figi();
-        final String figi4 = TestShares.DIOD.share().figi();
+        final String figi1 = TestShares.SBER.getFigi();
+        final String figi2 = TestShares.APPLE.getFigi();
+        final String figi3 = TestShares.YANDEX.getFigi();
+        final String figi4 = TestShares.DIOD.getFigi();
 
         final double price1 = 111.111;
         final double price2 = 222.222;
@@ -777,9 +777,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrices_throwsMultipleInstrumentsFoundException_whenMultiplePricesForSingleFigi() {
-        final String figi1 = TestShares.SBER.share().figi();
-        final String figi2 = TestShares.APPLE.share().figi();
-        final String figi3 = TestShares.YANDEX.share().figi();
+        final String figi1 = TestShares.SBER.getFigi();
+        final String figi2 = TestShares.APPLE.getFigi();
+        final String figi3 = TestShares.YANDEX.getFigi();
 
         final double price1 = 111.111;
         final double price2 = 222.222;
@@ -806,7 +806,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getMarketCandles_returnsMappedCandles() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -884,7 +884,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -902,7 +902,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingStatus_returnsTradingStatus_whenInstrumentExists() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         final SecurityTradingStatus status = SecurityTradingStatus.SECURITY_TRADING_STATUS_OPENING_PERIOD;
         Mocker.mockTradingStatus(marketDataService, figi, status);

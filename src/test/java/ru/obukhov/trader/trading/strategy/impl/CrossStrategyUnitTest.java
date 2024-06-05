@@ -22,6 +22,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
@@ -54,7 +55,7 @@ class CrossStrategyUnitTest {
 
     @Test
     void decide_throwsIllegalArgumentException_whenNoDecisionData() {
-        final Share share = TestShares.SBER.share();
+        final TestShare share = TestShares.SBER;
 
         final DecisionsData data = new DecisionsData();
         data.setDecisionDataList(Collections.emptyList());
@@ -70,7 +71,7 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(share.figi());
+        final List<String> figies = List.of(share.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
         final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
@@ -83,7 +84,7 @@ class CrossStrategyUnitTest {
 
     @Test
     void decide_throwsIllegalArgumentException_whenMultipleDecisionData() {
-        final Share share = TestShares.SBER.share();
+        final TestShare share = TestShares.SBER;
 
         final DecisionsData data = new DecisionsData();
         data.setDecisionDataList(List.of(new DecisionData(), new DecisionData()));
@@ -99,7 +100,7 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(share.figi());
+        final List<String> figies = List.of(share.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
         final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
@@ -508,9 +509,9 @@ class CrossStrategyUnitTest {
 
     @Test
     void initCache_returnsNotNull() {
-        final Share share = TestShares.SBER.share();
+        final String figi = TestShares.SBER.getFigi();
 
-        final List<String> figies = List.of(share.figi());
+        final List<String> figies = List.of(figi);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
@@ -526,7 +527,7 @@ class CrossStrategyUnitTest {
 
         final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
         final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(share.figi(), interval, candleInterval)).thenReturn(candles);
+        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams();
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, new SimpleMovingAverager());

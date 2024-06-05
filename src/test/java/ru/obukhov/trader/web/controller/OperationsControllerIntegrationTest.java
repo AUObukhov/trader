@@ -8,11 +8,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -42,36 +42,36 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     void getPositions() throws Exception {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-        final Share share3 = TestShares.YANDEX.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
+        final TestShare share3 = TestShares.YANDEX;
 
-        final String ticker1 = share1.ticker();
-        final String figi1 = share1.figi();
+        final String ticker1 = share1.getTicker();
+        final String figi1 = share1.getFigi();
         final InstrumentType instrumentType1 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity1 = 10;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
-        final String currency1 = share1.currency();
+        final String currency1 = share1.getCurrency();
 
-        final String ticker2 = share2.ticker();
-        final String figi2 = share2.figi();
+        final String ticker2 = share2.getTicker();
+        final String figi2 = share2.getFigi();
         final InstrumentType instrumentType2 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int quantity2 = 20;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
-        final String currency2 = share2.currency();
+        final String currency2 = share2.getCurrency();
 
-        final String ticker3 = share3.ticker();
-        final String figi3 = share3.figi();
+        final String ticker3 = share3.getTicker();
+        final String figi3 = share3.getFigi();
         final InstrumentType instrumentType3 = InstrumentType.INSTRUMENT_TYPE_ETF;
         final int quantity3 = 5;
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;
-        final String currency3 = share3.currency();
+        final String currency3 = share3.getCurrency();
 
         Mocker.mockTickerByFigi(instrumentsService, ticker1, figi1);
         Mocker.mockTickerByFigi(instrumentsService, ticker2, figi2);

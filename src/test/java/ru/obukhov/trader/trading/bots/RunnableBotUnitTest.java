@@ -100,9 +100,9 @@ class RunnableBotUnitTest {
             "UNRECOGNIZED",
     })
     void run_doesNothing_whenWrongTradingStatus(final SecurityTradingStatus wrongTradingStatus) {
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
-        final String figi3 = TestShares.YANDEX.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
+        final String figi3 = TestShares.YANDEX.getFigi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2, figi3));
@@ -117,9 +117,9 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNothing_whenThereAreOrders() {
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
-        final String figi3 = TestShares.YANDEX.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
+        final String figi3 = TestShares.YANDEX.getFigi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2, figi3));
@@ -143,8 +143,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNothing_whenGetOrdersThrowsException() {
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2));
@@ -169,9 +169,10 @@ class RunnableBotUnitTest {
         final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
+        final Share share2 = TestShares.SBER.share();
 
         final String figi1 = share1.figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi2 = share2.figi();
 
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
@@ -373,8 +374,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenThereAreOrders() {
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2));
@@ -391,8 +392,8 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenCurrentCandlesIsEmpty() {
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         Mockito.when(botConfig.figies()).thenReturn(List.of(figi1, figi2));
@@ -407,7 +408,6 @@ class RunnableBotUnitTest {
     @Test
     void run_doesNoOrder_whenDecisionIsWait() {
         final String accountId = TestAccounts.TINKOFF.getId();
-
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();

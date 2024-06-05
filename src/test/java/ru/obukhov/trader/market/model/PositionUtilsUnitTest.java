@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.models.Position;
@@ -14,26 +15,25 @@ class PositionUtilsUnitTest {
 
     @Test
     void getCurrency() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final Position position = new PositionBuilder()
-                .setCurrency(currency)
-                .setFigi(share.figi())
+                .setCurrency(share.getCurrency())
+                .setFigi(share.getFigi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(1)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(5)
                 .setCurrentPrice(15)
                 .build();
-        Assertions.assertEquals(currency, PositionUtils.getCurrency(position));
+        Assertions.assertEquals(share.getCurrency(), PositionUtils.getCurrency(position));
     }
 
     @Test
     void getTotalPrice() {
-        final Share share = TestShares.APPLE.share();
+        final TestShare share = TestShares.APPLE;
         final Position position = new PositionBuilder()
-                .setCurrency(share.currency())
-                .setFigi(share.figi())
+                .setCurrency(share.getCurrency())
+                .setFigi(share.getFigi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -45,11 +45,10 @@ class PositionUtilsUnitTest {
 
     @Test
     void addQuantities() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final Position position = new PositionBuilder()
-                .setCurrency(currency)
-                .setFigi(share.figi())
+                .setCurrency(share.getCurrency())
+                .setFigi(share.getFigi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -68,18 +67,18 @@ class PositionUtilsUnitTest {
         AssertUtils.assertEquals(5, newPosition.getQuantity());
 
         AssertUtils.assertEquals(12, newPosition.getAveragePositionPrice().getValue());
-        Assertions.assertEquals(currency, newPosition.getAveragePositionPrice().getCurrency());
+        Assertions.assertEquals(share.getCurrency(), newPosition.getAveragePositionPrice().getCurrency());
 
         AssertUtils.assertEquals(15, newPosition.getExpectedYield());
 
         AssertUtils.assertEquals(123.123, newPosition.getCurrentNkd().getValue());
-        Assertions.assertEquals(currency, newPosition.getCurrentNkd().getCurrency());
+        Assertions.assertEquals(share.getCurrency(), newPosition.getCurrentNkd().getCurrency());
 
         AssertUtils.assertEquals(15, newPosition.getCurrentPrice().getValue());
-        Assertions.assertEquals(currency, newPosition.getCurrentPrice().getCurrency());
+        Assertions.assertEquals(share.getCurrency(), newPosition.getCurrentPrice().getCurrency());
 
         AssertUtils.assertEquals(789.789, newPosition.getAveragePositionPriceFifo().getValue());
-        Assertions.assertEquals(currency, newPosition.getAveragePositionPriceFifo().getCurrency());
+        Assertions.assertEquals(share.getCurrency(), newPosition.getAveragePositionPriceFifo().getCurrency());
 
         AssertUtils.assertEquals(5, newPosition.getQuantity());
         AssertUtils.assertEquals(60, PositionUtils.getTotalPrice(newPosition));
@@ -87,11 +86,10 @@ class PositionUtilsUnitTest {
 
     @Test
     void cloneWithNewCurrentPrice() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final Position position = new PositionBuilder()
-                .setCurrency(currency)
-                .setFigi(share.figi())
+                .setCurrency(share.getCurrency())
+                .setFigi(share.getFigi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -106,7 +104,7 @@ class PositionUtilsUnitTest {
         final Position newPosition = PositionUtils.cloneWithNewCurrentPrice(position, newCurrentPrice);
 
         final Position expectedPosition = new PositionBuilder()
-                .setCurrency(currency)
+                .setCurrency(share.getCurrency())
                 .setFigi(position.getFigi())
                 .setInstrumentType(position.getInstrumentType())
                 .setQuantity(position.getQuantity())
@@ -122,11 +120,10 @@ class PositionUtilsUnitTest {
 
     @Test
     void cloneWithNewValues() {
-        final Share share = TestShares.APPLE.share();
-        final String currency = share.currency();
+        final TestShare share = TestShares.APPLE;
         final Position position = new PositionBuilder()
-                .setCurrency(currency)
-                .setFigi(share.figi())
+                .setCurrency(share.getCurrency())
+                .setFigi(share.getFigi())
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setQuantity(3)
                 .setAveragePositionPrice(10)
@@ -143,7 +140,7 @@ class PositionUtilsUnitTest {
         final Position newPosition = PositionUtils.cloneWithNewValues(position, newQuantity, newExpectedYield, newCurrentPrice);
 
         final Position expectedPosition = new PositionBuilder()
-                .setCurrency(currency)
+                .setCurrency(share.getCurrency())
                 .setFigi(position.getFigi())
                 .setInstrumentType(position.getInstrumentType())
                 .setQuantity(newQuantity)

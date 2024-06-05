@@ -24,12 +24,12 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MapUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PositionBuilder;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -71,28 +71,25 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResults_savesResults_whenFullData() throws IOException {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
-
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
 
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_HOUR;
         final Map<String, Object> strategyParams1 = Collections.emptyMap();
         final BotConfig botConfig1 = new BotConfig(accountId, figies, candleInterval1, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, strategyParams1);
-        final BackTestResult result1 = createBackTestResult(botConfig1, share2.currency());
+        final BackTestResult result1 = createBackTestResult(botConfig1, share2.getCurrency());
 
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams2 = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig2 = new BotConfig(accountId, figies, candleInterval2, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams2);
-        final BackTestResult result2 = createBackTestResult(botConfig2, share2.currency());
+        final BackTestResult result2 = createBackTestResult(botConfig2, share2.getCurrency());
 
         final CandleInterval candleInterval3 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams3 = Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5);
         final BotConfig botConfig3 = new BotConfig(accountId, figies, candleInterval3, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams3);
-        final BackTestResult result3 = createBackTestResult(botConfig3, share2.currency());
+        final BackTestResult result3 = createBackTestResult(botConfig3, share2.getCurrency());
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         excelService.saveBackTestResults(results);
@@ -128,28 +125,25 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResults_savesResults_whenNoPositions() throws IOException {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
-
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
 
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_HOUR;
         final Map<String, Object> strategyParams1 = Collections.emptyMap();
         final BotConfig botConfig1 = new BotConfig(accountId, figies, candleInterval1, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, strategyParams1);
-        final BackTestResult result1 = createBackTestResultWithoutPositions(botConfig1, share2.currency());
+        final BackTestResult result1 = createBackTestResultWithoutPositions(botConfig1, share2.getCurrency());
 
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams2 = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig2 = new BotConfig(accountId, figies, candleInterval2, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams2);
-        final BackTestResult result2 = createBackTestResultWithoutPositions(botConfig2, share2.currency());
+        final BackTestResult result2 = createBackTestResultWithoutPositions(botConfig2, share2.getCurrency());
 
         final CandleInterval candleInterval3 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams3 = Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5);
         final BotConfig botConfig3 = new BotConfig(accountId, figies, candleInterval3, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams3);
-        final BackTestResult result3 = createBackTestResultWithoutPositions(botConfig3, share2.currency());
+        final BackTestResult result3 = createBackTestResultWithoutPositions(botConfig3, share2.getCurrency());
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         excelService.saveBackTestResults(results);
@@ -185,28 +179,25 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResults_savesResults_whenNoOperations() throws IOException {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
-
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
 
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_HOUR;
         final Map<String, Object> strategyParams1 = Collections.emptyMap();
         final BotConfig botConfig1 = new BotConfig(accountId, figies, candleInterval1, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, strategyParams1);
-        final BackTestResult result1 = createBackTestResultWithoutOperations(botConfig1, share2.currency());
+        final BackTestResult result1 = createBackTestResultWithoutOperations(botConfig1, share2.getCurrency());
 
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams2 = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig2 = new BotConfig(accountId, figies, candleInterval2, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams2);
-        final BackTestResult result2 = createBackTestResultWithoutOperations(botConfig2, share2.currency());
+        final BackTestResult result2 = createBackTestResultWithoutOperations(botConfig2, share2.getCurrency());
 
         final CandleInterval candleInterval3 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams3 = Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5);
         final BotConfig botConfig3 = new BotConfig(accountId, figies, candleInterval3, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams3);
-        final BackTestResult result3 = createBackTestResultWithoutOperations(botConfig3, share2.currency());
+        final BackTestResult result3 = createBackTestResultWithoutOperations(botConfig3, share2.getCurrency());
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         excelService.saveBackTestResults(results);
@@ -240,18 +231,15 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_skipsErrorMessage_whenErrorIsNull() throws IOException {
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams);
-        final BackTestResult result = createBackTestResult(botConfig, share1.currency());
+        final BackTestResult result = createBackTestResult(botConfig, share1.getCurrency());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -277,18 +265,15 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams);
-        final BackTestResult result = createBackTestResult(botConfig, share1.currency());
+        final BackTestResult result = createBackTestResult(botConfig, share1.getCurrency());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -314,20 +299,17 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
         final String error = "Test error";
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams);
-        final BackTestResult result = createBackTestResult(botConfig, share1.currency(), error);
+        final BackTestResult result = createBackTestResult(botConfig, share1.getCurrency(), error);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -355,18 +337,15 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_skipsChart_whenNoCandles() throws IOException {
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams);
-        final BackTestResult result = createBackTestResult(botConfig, share1.currency(), Collections.emptyMap());
+        final BackTestResult result = createBackTestResult(botConfig, share1.getCurrency(), Collections.emptyMap());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -393,19 +372,16 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_skipsChart_whenCandlesAreEmpty() throws IOException {
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, strategyParams);
 
-        final BackTestResult result = createBackTestResult(botConfig, share1.currency(), Map.of(share1.currency(), Collections.emptyList()));
+        final BackTestResult result = createBackTestResult(botConfig, share1.getCurrency(), Map.of(share1.getCurrency(), Collections.emptyList()));
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -432,20 +408,17 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_catchesIOExceptionOfFileSaving() throws IOException {
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
-
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Collections.emptyMap());
 
-        final BackTestResult result1 = createBackTestResult(botConfig, share1.currency());
-        final BackTestResult result2 = createBackTestResult(botConfig, share1.currency());
-        final BackTestResult result3 = createBackTestResult(botConfig, share1.currency());
+        final BackTestResult result1 = createBackTestResult(botConfig, share1.getCurrency());
+        final BackTestResult result2 = createBackTestResult(botConfig, share1.getCurrency());
+        final BackTestResult result3 = createBackTestResult(botConfig, share1.getCurrency());
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         Mockito.doThrow(new IOException())
@@ -845,7 +818,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveCandles_createsAndSaveWorkbook() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 2, 1);
@@ -887,7 +860,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 2, 1);

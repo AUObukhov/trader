@@ -9,6 +9,8 @@ import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
+import java.time.OffsetDateTime;
+
 public record TestShare(
         Share share,
         ru.tinkoff.piapi.contract.v1.Share tinkoffShare,
@@ -189,6 +191,26 @@ public record TestShare(
                 "\"blockedTcaFlag\":" + share.blockedTcaFlag() + "," +
                 "\"first1MinCandleDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.first1MinCandleDate()) + "," +
                 "\"first1DayCandleDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.first1DayCandleDate()) + "}";
+    }
+
+    public String getFigi() {
+        return share.figi();
+    }
+
+    public String getTicker() {
+        return share.ticker();
+    }
+
+    public Integer getLot() {
+        return share.lot();
+    }
+
+    public String getCurrency() {
+        return share.currency();
+    }
+
+    public OffsetDateTime getFirst1MinCandleDate() {
+        return share.first1MinCandleDate();
     }
 
 }

@@ -22,7 +22,7 @@ class BotConfigUnitTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
+                List.of(TestShares.APPLE.getFigi(), TestShares.SBER.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.03),
                 StrategyType.CONSERVATIVE,

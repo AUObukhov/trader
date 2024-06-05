@@ -39,8 +39,8 @@ class ExtOperationsServiceUnitTest {
         final String accountId1 = TestAccounts.TINKOFF.getId();
         final String accountId2 = TestAccounts.IIS.getId();
 
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
 
         final Position portfolioPosition1 = new PositionBuilder().setFigi(figi1).setQuantity(1).build();
         final Position portfolioPosition2 = new PositionBuilder().setFigi(figi2).setQuantity(20).build();

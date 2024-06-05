@@ -36,7 +36,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String accountId1 = TestAccounts.IIS.getId();
         final String accountId2 = TestAccounts.TINKOFF.getId();
 
-        final String figi = TestShares.SBER.share().figi();
+        final String figi = TestShares.SBER.getFigi();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -85,8 +85,8 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String accountId1 = TestAccounts.IIS.getId();
         final String accountId2 = TestAccounts.TINKOFF.getId();
 
-        final String figi1 = TestShares.SBER.share().figi();
-        final String figi2 = TestShares.YANDEX.share().figi();
+        final String figi1 = TestShares.SBER.getFigi();
+        final String figi2 = TestShares.YANDEX.getFigi();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -139,9 +139,9 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String accountId1 = TestAccounts.IIS.getId();
         final String accountId2 = TestAccounts.TINKOFF.getId();
 
-        final String figi1 = TestShares.SBER.share().figi();
-        final String figi2 = TestShares.YANDEX.share().figi();
-        final String figi3 = TestShares.APPLE.share().figi();
+        final String figi1 = TestShares.SBER.getFigi();
+        final String figi2 = TestShares.YANDEX.getFigi();
+        final String figi3 = TestShares.APPLE.getFigi();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -194,9 +194,9 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
         final String accountId1 = TestAccounts.IIS.getId();
         final String accountId2 = TestAccounts.TINKOFF.getId();
 
-        final String figi1 = TestShares.SBER.share().figi();
-        final String figi2 = TestShares.YANDEX.share().figi();
-        final String figi3 = TestShares.APPLE.share().figi();
+        final String figi1 = TestShares.SBER.getFigi();
+        final String figi2 = TestShares.YANDEX.getFigi();
+        final String figi3 = TestShares.APPLE.getFigi();
 
         final Position position1 = Position.builder().figi(figi1).build();
         final Position position2 = Position.builder().figi(figi2).build();

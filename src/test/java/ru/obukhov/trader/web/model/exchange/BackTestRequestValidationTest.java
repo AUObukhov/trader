@@ -64,7 +64,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 null,
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -80,7 +80,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 null,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
@@ -96,7 +96,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -112,7 +112,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 null,
@@ -135,7 +135,7 @@ class BackTestRequestValidationTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestAccounts.TINKOFF.getId(),
-                List.of(TestShares.APPLE.share().figi()),
+                List.of(TestShares.APPLE.getFigi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,

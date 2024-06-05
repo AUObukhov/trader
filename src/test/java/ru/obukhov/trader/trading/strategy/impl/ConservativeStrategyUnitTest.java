@@ -17,6 +17,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -56,8 +57,7 @@ class ConservativeStrategyUnitTest {
     @Test
     void decide_throwsIllegalArgumentException_whenNoDecisionData() {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+        final String figi = TestShares.SBER.getFigi();
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setDecisionDataList(Collections.emptyList());
@@ -80,8 +80,7 @@ class ConservativeStrategyUnitTest {
     @Test
     void decide_throwsIllegalArgumentException_whenMultipleDecisionData() {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+        final String figi = TestShares.SBER.getFigi();
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setDecisionDataList(List.of(new DecisionData(), new DecisionData()));
@@ -104,15 +103,15 @@ class ConservativeStrategyUnitTest {
     @Test
     void decide_returnsWait_whenExistsOperationStateInUnspecified() {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final Share share = TestShares.SBER.share();
-        final String figi = share.figi();
+        final TestShare share = TestShares.SBER;
+        final String figi = share.getFigi();
 
         final Operation operation1 = TestData.newOperation(OperationState.OPERATION_STATE_EXECUTED);
         final Operation operation2 = TestData.newOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
         final Operation operation3 = TestData.newOperation(OperationState.OPERATION_STATE_CANCELED);
 
         final DecisionData decisionData = new DecisionData();
-        decisionData.setShare(share);
+        decisionData.setShare(share.share());
         decisionData.setLastOperations(List.of(operation1, operation2, operation3));
 
         final DecisionsData decisionsData = new DecisionsData();
@@ -131,8 +130,8 @@ class ConservativeStrategyUnitTest {
         final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
 
         Assertions.assertEquals(1, decisions.size());
-        Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
-        Assertions.assertNull(decisions.get(share.figi()).getQuantity());
+        Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.getFigi()).getAction());
+        Assertions.assertNull(decisions.get(share.getFigi()).getQuantity());
     }
 
     @Test
@@ -197,7 +196,7 @@ class ConservativeStrategyUnitTest {
     @Test
     void initCache_returnsNotNull() {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final String figi = TestShares.SBER.share().figi();
+        final String figi = TestShares.SBER.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
         final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);

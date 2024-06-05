@@ -10,7 +10,7 @@ class FigiesListRequestValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final List<String> shareFigies = List.of(TestShares.APPLE.share().figi());
+        final List<String> shareFigies = List.of(TestShares.APPLE.getFigi());
         final FigiesListRequest request = new FigiesListRequest();
         request.setFigies(shareFigies);
 

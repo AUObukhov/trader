@@ -98,10 +98,7 @@ class FakeBotFactoryUnitTest {
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
-
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.figi(), share2.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
@@ -176,13 +173,10 @@ class FakeBotFactoryUnitTest {
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
-
         final String currency1 = share1.currency();
         final String currency2 = share2.currency();
 
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.figi(), share2.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
@@ -205,10 +199,7 @@ class FakeBotFactoryUnitTest {
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
-
-        final List<String> figies = List.of(figi1, figi2);
+        final List<String> figies = List.of(share1.figi(), share2.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, StrategyType.CONSERVATIVE, Collections.emptyMap());
@@ -220,7 +211,7 @@ class FakeBotFactoryUnitTest {
         Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(List.of(share1));
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
-        final String expectedMessage = "Instruments not found for ids [" + figi2 + "]";
+        final String expectedMessage = "Instruments not found for ids [" + share2.figi() + "]";
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
     }
 

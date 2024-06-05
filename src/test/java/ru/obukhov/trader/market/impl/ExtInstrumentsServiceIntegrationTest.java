@@ -55,35 +55,31 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTickerByFigi_returnsTicker_whenInstrumentFound() {
-        final Share share = TestShares.APPLE.share();
-        final String ticker = share.ticker();
-        final String figi = share.figi();
+        final TestShare share = TestShares.APPLE;
 
-        Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
-        final String result = extInstrumentsService.getTickerByFigi(figi);
+        Mocker.mockTickerByFigi(instrumentsService, share.getTicker(), share.getFigi());
+        final String result = extInstrumentsService.getTickerByFigi(share.getFigi());
 
-        Assertions.assertEquals(ticker, result);
+        Assertions.assertEquals(share.getTicker(), result);
     }
 
     @Test
     @DirtiesContext
     void getTickerByFigi_returnsCachedValue() {
-        final Share share = TestShares.APPLE.share();
-        final String ticker = share.ticker();
-        final String figi = share.figi();
+        final TestShare share = TestShares.APPLE;
 
-        Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
-        extInstrumentsService.getTickerByFigi(figi);
+        Mocker.mockTickerByFigi(instrumentsService, share.getTicker(), share.getFigi());
+        extInstrumentsService.getTickerByFigi(share.getFigi());
 
-        Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(null);
-        final String result = extInstrumentsService.getTickerByFigi(figi);
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(share.getFigi())).thenReturn(null);
+        final String result = extInstrumentsService.getTickerByFigi(share.getFigi());
 
-        Assertions.assertEquals(ticker, result);
+        Assertions.assertEquals(share.getTicker(), result);
     }
 
     @Test
     void getTickerByFigi_throwsInstrumentNotFoundException_whenNoInstrument() {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         final Executable executable = () -> extInstrumentsService.getTickerByFigi(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
@@ -213,7 +209,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
 
-        final Share result = extInstrumentsService.getShare(testShare.share().figi());
+        final Share result = extInstrumentsService.getShare(testShare.getFigi());
 
         Assertions.assertEquals(testShare.share(), result);
     }
@@ -222,7 +218,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getShare_returnsCachedShare() {
         final TestShare testShare = TestShares.SBER;
-        final String figi = testShare.share().figi();
+        final String figi = testShare.getFigi();
 
         Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
         extInstrumentsService.getShare(figi);
@@ -889,7 +885,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getDividends() {
-        final String figi = TestShares.SBER.share().figi();
+        final String figi = TestShares.SBER.getFigi();
         final OffsetDateTime from = DateTimeTestData.newDateTime(2010, 1, 1);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 1, 1);
 

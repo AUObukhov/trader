@@ -43,7 +43,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getTradingStatus_returnsStatus() throws Exception {
-        final String figi = TestShares.APPLE.share().figi();
+        final String figi = TestShares.APPLE.getFigi();
 
         final SecurityTradingStatus status = SecurityTradingStatus.SECURITY_TRADING_STATUS_OPENING_PERIOD;
         Mocker.mockTradingStatus(marketDataService, figi, status);
@@ -151,9 +151,9 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void getLastPrices_returnsPrices() throws Exception {
         final Map<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
-        figiesToPrices.put(TestShares.APPLE.share().figi(), DecimalUtils.setDefaultScale(175.0));
-        figiesToPrices.put(TestShares.SBER.share().figi(), DecimalUtils.setDefaultScale(270.0));
-        figiesToPrices.put(TestShares.YANDEX.share().figi(), DecimalUtils.setDefaultScale(2600.0));
+        figiesToPrices.put(TestShares.APPLE.getFigi(), DecimalUtils.setDefaultScale(175.0));
+        figiesToPrices.put(TestShares.SBER.getFigi(), DecimalUtils.setDefaultScale(270.0));
+        figiesToPrices.put(TestShares.YANDEX.getFigi(), DecimalUtils.setDefaultScale(2600.0));
 
         Mocker.mockLastPricesBigDecimal(marketDataService, figiesToPrices);
 
@@ -170,9 +170,9 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getLastPrices_returnsBadRequest_whenInstrumentNotFound() throws Exception {
-        final String figi1 = TestShares.APPLE.share().figi();
-        final String figi2 = TestShares.SBER.share().figi();
-        final String figi3 = TestShares.YANDEX.share().figi();
+        final String figi1 = TestShares.APPLE.getFigi();
+        final String figi2 = TestShares.SBER.getFigi();
+        final String figi3 = TestShares.YANDEX.getFigi();
 
         final List<String> figies = List.of(figi1, figi2, figi3);
         final List<LastPrice> lastPrices = List.of(
