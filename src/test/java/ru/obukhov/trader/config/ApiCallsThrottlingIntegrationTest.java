@@ -107,7 +107,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
     @Test
     void marketDataService() throws InterruptedException {
-        final String instrumentId = TestInstruments.APPLE.instrument().figi();
+        final String instrumentId = TestInstruments.APPLE.getFigi();
 
         Mockito.doReturn(null).when(marketDataService).getTradingStatusSync(instrumentId);
 
@@ -149,7 +149,7 @@ public class ApiCallsThrottlingIntegrationTest {
     void ordersService_postOrders() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
         final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
-        final String figi = TestInstruments.APPLE.instrument().figi();
+        final String figi = TestInstruments.APPLE.getFigi();
         final int quantity = 1;
         final Quotation price = Quotation.newBuilder().build();
         final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;

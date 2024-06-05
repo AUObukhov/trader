@@ -344,7 +344,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
             final OffsetDateTime[] candlesTimes
     ) {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
 
         Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
@@ -382,13 +382,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getCandles_adjustsFromByFirst1MinCandle_whenFromIsNull() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
-        final OffsetDateTime first1MinCandleDate = testInstrument.instrument().first1MinCandleDate();
+        final OffsetDateTime first1MinCandleDate = testInstrument.getFirst1MinCandleDate();
         final OffsetDateTime to = first1MinCandleDate.plusMinutes(1);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1MinCandleDate.minusNanos(1))
@@ -423,11 +423,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getCandles_adjustsFrom_whenFromIsNull(final CandleInterval candleInterval, final int adjustmentInMinutes) {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
 
         Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
-        final OffsetDateTime first1MinCandleDate = testInstrument.instrument().first1MinCandleDate();
+        final OffsetDateTime first1MinCandleDate = testInstrument.getFirst1MinCandleDate();
         final OffsetDateTime to = first1MinCandleDate.plusMinutes(adjustmentInMinutes);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1MinCandleDate.minusMinutes(adjustmentInMinutes).minusNanos(1))
@@ -449,12 +449,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getCandles_adjustsFromByFirst1DayCandle_whenFromIsNull() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
-        final OffsetDateTime first1DayCandleDate = testInstrument.instrument().first1DayCandleDate();
+        final OffsetDateTime first1DayCandleDate = testInstrument.getFirst1DayCandleDate();
         final OffsetDateTime to = first1DayCandleDate.plusDays(1);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1DayCandleDate.minusHours(3).minusNanos(1))
@@ -646,9 +646,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getLastPrice_returnsPrice_whenToAfterFirst1MinCandle() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
-        final OffsetDateTime candlesTo = testInstrument.instrument().first1MinCandleDate().plusDays(1);
+        final OffsetDateTime candlesTo = testInstrument.getFirst1MinCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
@@ -668,9 +668,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getLastPrice_returnsPrice_whenToAfterFirst1DayCandle() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newDateTime(1988, 9, 15);
-        final OffsetDateTime candlesTo = testInstrument.instrument().first1DayCandleDate().plusDays(1);
+        final OffsetDateTime candlesTo = testInstrument.getFirst1DayCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
@@ -690,9 +690,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getLastPrice_throwsIllegalArgumentException_whenToBeforeAllCandles() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
-        final OffsetDateTime to = testInstrument.instrument().first1DayCandleDate().minusDays(1);
-        final OffsetDateTime candlesTo = testInstrument.instrument().first1DayCandleDate().plusDays(1);
+        final String figi = testInstrument.getFigi();
+        final OffsetDateTime to = testInstrument.getFirst1DayCandleDate().minusDays(1);
+        final OffsetDateTime candlesTo = testInstrument.getFirst1DayCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
@@ -710,7 +710,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @DirtiesContext
     void getLastPrice_throwsIllegalArgumentException_whenNoCandlesFound() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
         final int close = 10;
 

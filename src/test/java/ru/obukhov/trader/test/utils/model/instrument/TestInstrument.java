@@ -6,6 +6,8 @@ import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 
+import java.time.OffsetDateTime;
+
 public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument, String jsonString) {
 
     TestInstrument(final Instrument instrument) {
@@ -89,6 +91,18 @@ public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1
                 "\"instrumentKind\":\"" + instrument.instrumentKind() + "\"," +
                 "\"first1MinCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(instrument.first1MinCandleDate()) + "\"," +
                 "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(instrument.first1DayCandleDate()) + "\"}";
+    }
+
+    public String getFigi() {
+        return instrument.figi();
+    }
+
+    public OffsetDateTime getFirst1MinCandleDate() {
+        return instrument.first1MinCandleDate();
+    }
+
+    public OffsetDateTime getFirst1DayCandleDate() {
+        return instrument.first1DayCandleDate();
     }
 
 }

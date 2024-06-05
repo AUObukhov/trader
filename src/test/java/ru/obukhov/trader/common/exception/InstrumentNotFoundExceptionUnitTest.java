@@ -10,7 +10,7 @@ class InstrumentNotFoundExceptionUnitTest {
 
     @Test
     void constructorSetsMessage_whenSingleInstrumentId() {
-        final String instrumentId = TestInstruments.APPLE.instrument().figi();
+        final String instrumentId = TestInstruments.APPLE.getFigi();
         final InstrumentNotFoundException exception = new InstrumentNotFoundException(instrumentId);
 
         final String expectedMessage = "Instrument not found for id " + instrumentId;
@@ -19,8 +19,8 @@ class InstrumentNotFoundExceptionUnitTest {
 
     @Test
     void constructorSetsMessage_whenMultipleInstrumentIds() {
-        final String instrumentId1 = TestInstruments.APPLE.instrument().figi();
-        final String instrumentId2 = TestInstruments.SBER.instrument().figi();
+        final String instrumentId1 = TestInstruments.APPLE.getFigi();
+        final String instrumentId2 = TestInstruments.SBER.getFigi();
         final InstrumentNotFoundException exception = new InstrumentNotFoundException(List.of(instrumentId1, instrumentId2));
 
         final String expectedMessage = "Instruments not found for ids [" + instrumentId1 + ", " + instrumentId2 + "]";

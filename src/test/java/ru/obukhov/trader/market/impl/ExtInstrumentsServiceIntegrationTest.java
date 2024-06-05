@@ -123,7 +123,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_throwInstrumentNotFoundException_whenNoInstrument() {
-        final String figi = TestInstruments.APPLE.instrument().figi();
+        final String figi = TestInstruments.APPLE.getFigi();
 
         final Executable executable = () -> extInstrumentsService.getExchange(figi);
         final String expectedMessage = "Instrument not found for id " + figi;
@@ -191,7 +191,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getInstrument() {
         final TestInstrument testInstrument = TestInstruments.SBER;
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
         Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
 
         final Instrument actualResult1 = extInstrumentsService.getInstrument(figi);
@@ -390,7 +390,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingDay_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String figi = TestInstruments.APPLE.instrument().figi();
+        final String figi = TestInstruments.APPLE.getFigi();
 
         final OffsetDateTime timestamp = DateTimeTestData.newDateTime(2022, 10, 3, 3);
 
@@ -552,7 +552,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingScheduleByFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String figi = TestInstruments.APPLE.instrument().figi();
+        final String figi = TestInstruments.APPLE.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);
@@ -661,7 +661,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingScheduleByFigies_singleFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String figi = TestInstruments.APPLE.instrument().figi();
+        final String figi = TestInstruments.APPLE.getFigi();
 
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2022, 10, 7, 3);

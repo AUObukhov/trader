@@ -207,7 +207,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final TestInstrument testInstrument = TestInstruments.APPLE;
 
-        final String figi = testInstrument.instrument().figi();
+        final String figi = testInstrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);

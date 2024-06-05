@@ -8,7 +8,7 @@ class MultipleInstrumentsFoundExceptionUnitTest {
 
     @Test
     void constructorSetsMessage() {
-        final String instrumentId = TestInstruments.APPLE.instrument().figi();
+        final String instrumentId = TestInstruments.APPLE.getFigi();
         final MultipleInstrumentsFoundException exception = new MultipleInstrumentsFoundException(instrumentId);
 
         final String expectedMessage = "Multiple instruments found for id " + instrumentId;
