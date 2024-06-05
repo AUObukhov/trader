@@ -80,4 +80,8 @@ public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1
                 "\"tradeId\":\"" + orderStage.tradeId() + "\"}";
     }
 
+    public String getOrderId() {
+        return orderState.orderId();
+    }
+
 }

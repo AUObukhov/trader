@@ -121,7 +121,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
-        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
+        final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
 
@@ -133,7 +133,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService_getOrders() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
-        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
+        final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
         Mockito.doReturn(null).when(ordersService).getOrdersSync(accountId);
@@ -148,7 +148,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService_postOrders() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
-        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
+        final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
         final String figi = TestInstruments.APPLE.getFigi();
         final int quantity = 1;
         final Quotation price = Quotation.newBuilder().build();
@@ -168,7 +168,7 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void ordersService_cancelOrder() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
-        final String orderId = TestOrderStates.ORDER_STATE1.orderState().orderId();
+        final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
 
         Mockito.doReturn(null).when(ordersService).cancelOrderSync(accountId, orderId);
 
