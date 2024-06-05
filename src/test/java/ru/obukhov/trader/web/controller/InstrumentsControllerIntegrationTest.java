@@ -159,7 +159,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
-                .param("figi", testCurrency.currency().figi())
+                .param("figi", testCurrency.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
         assertResponse(requestBuilder, testCurrency.jsonString());

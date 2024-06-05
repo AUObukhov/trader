@@ -93,4 +93,8 @@ public record TestCurrency(Currency currency, ru.tinkoff.piapi.contract.v1.Curre
                 "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(currency.first1DayCandleDate()) + "\"}";
     }
 
+    public String getFigi() {
+        return currency.figi();
+    }
+
 }
