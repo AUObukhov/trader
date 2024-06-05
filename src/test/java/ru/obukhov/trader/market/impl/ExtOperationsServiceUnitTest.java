@@ -36,8 +36,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getSecurity() {
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
+        final String accountId2 = TestAccounts.IIS.getId();
 
         final String figi1 = TestShares.APPLE.share().figi();
         final String figi2 = TestShares.SBER.share().figi();
@@ -66,8 +66,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalance_whenNoBlocked() {
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
+        final String accountId2 = TestAccounts.IIS.getId();
 
         final int usdBalance1 = 11;
         final int rubBalance1 = 12;
@@ -107,8 +107,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
+        final String accountId2 = TestAccounts.IIS.getId();
 
         final int rubBalance1 = 1000;
         final int rubBlocked1 = 100;
@@ -149,8 +149,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlockedMinusBlockedGuarantee_whenCurrencyExists() {
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
+        final String accountId2 = TestAccounts.IIS.getId();
 
         final int rubBalance1 = 1000;
         final int rubBlocked1 = 100;
@@ -195,7 +195,7 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final List<MoneyValue> moneys = List.of(
                 TestData.newMoneyValue(100, Currencies.USD),
@@ -215,7 +215,7 @@ class ExtOperationsServiceUnitTest {
     @Test
     void getAvailableBalances_withBlockedValues() {
         // arrange
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;
@@ -261,7 +261,7 @@ class ExtOperationsServiceUnitTest {
     @Test
     void getAvailableBalances_withoutBlockedValues() {
         // arrange
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;

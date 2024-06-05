@@ -21,7 +21,7 @@ class BotConfigUnitTest {
         strategyParams.put("indexCoefficient", 0.5);
 
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.03),

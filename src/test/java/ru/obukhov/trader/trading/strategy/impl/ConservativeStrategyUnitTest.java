@@ -55,7 +55,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_throwsIllegalArgumentException_whenNoDecisionData() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
@@ -79,7 +79,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_throwsIllegalArgumentException_whenMultipleDecisionData() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
@@ -103,7 +103,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenExistsOperationStateInUnspecified() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
@@ -137,7 +137,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenNoAvailableLots() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
@@ -165,7 +165,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsBuy_whenThereAreAvailableLots() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
@@ -196,7 +196,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void initCache_returnsNotNull() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String figi = TestShares.SBER.share().figi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());

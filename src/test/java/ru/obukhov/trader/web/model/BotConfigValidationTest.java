@@ -21,7 +21,7 @@ class BotConfigValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
@@ -44,7 +44,7 @@ class BotConfigValidationTest {
                         "accountId is mandatory"
                 ),
                 Arguments.of(
-                        TestAccounts.TINKOFF.account().id(),
+                        TestAccounts.TINKOFF.getId(),
                         null,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
@@ -53,7 +53,7 @@ class BotConfigValidationTest {
                         "figies are mandatory"
                 ),
                 Arguments.of(
-                        TestAccounts.TINKOFF.account().id(),
+                        TestAccounts.TINKOFF.getId(),
                         Collections.emptyList(),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
@@ -62,7 +62,7 @@ class BotConfigValidationTest {
                         "figies are mandatory"
                 ),
                 Arguments.of(
-                        TestAccounts.TINKOFF.account().id(),
+                        TestAccounts.TINKOFF.getId(),
                         List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         null,
                         0.003,
@@ -71,7 +71,7 @@ class BotConfigValidationTest {
                         "candleInterval is mandatory"
                 ),
                 Arguments.of(
-                        TestAccounts.TINKOFF.account().id(),
+                        TestAccounts.TINKOFF.getId(),
                         List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         null,
@@ -80,7 +80,7 @@ class BotConfigValidationTest {
                         "commission is mandatory"
                 ),
                 Arguments.of(
-                        TestAccounts.TINKOFF.account().id(),
+                        TestAccounts.TINKOFF.getId(),
                         List.of(TestShares.APPLE.share().figi(), TestShares.SBER.share().figi()),
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,

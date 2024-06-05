@@ -166,7 +166,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetInstrumentThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
 
@@ -195,7 +195,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -227,7 +227,7 @@ class RunnableBotUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
 
@@ -251,7 +251,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetOperationsThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -277,7 +277,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetLastPriceThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -305,7 +305,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenDecideThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -336,7 +336,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_catchesException_whenPostOrderThrowsException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -406,7 +406,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenDecisionIsWait() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
 
         final Share share1 = TestShares.APPLE.share();
@@ -442,7 +442,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -478,7 +478,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_andPlacesSellOrder_whenDecisionIsSell() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();

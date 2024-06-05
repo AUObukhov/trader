@@ -93,7 +93,7 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime")
     void createBot_movesCurrentTimestampToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -171,7 +171,7 @@ class FakeBotFactoryUnitTest {
             final OffsetDateTime currentDateTime,
             final Map<String, BigDecimal> expectedBalances
     ) {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -200,7 +200,7 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_throwsInstrumentNotFoundException_whenShareNotFound() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();

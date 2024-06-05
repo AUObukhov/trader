@@ -69,7 +69,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -98,7 +98,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -136,7 +136,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -173,7 +173,7 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.NONE)) {
-            final String accountId = TestAccounts.TINKOFF.account().id();
+            final String accountId = TestAccounts.TINKOFF.getId();
             final List<String> figies = List.of(share.figi());
             final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
             final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -211,7 +211,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -249,7 +249,7 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
-            final String accountId = TestAccounts.TINKOFF.account().id();
+            final String accountId = TestAccounts.TINKOFF.getId();
             final List<String> figies = List.of(share.figi());
             final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
             final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -292,7 +292,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -343,7 +343,7 @@ class CrossStrategyUnitTest {
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
         final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
@@ -388,7 +388,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -435,7 +435,7 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
@@ -485,7 +485,7 @@ class CrossStrategyUnitTest {
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
         final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
@@ -513,7 +513,7 @@ class CrossStrategyUnitTest {
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 figies,
                 candleInterval,
                 DecimalUtils.ZERO,

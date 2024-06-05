@@ -33,8 +33,8 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
     void getOperations_filtersOperationsByInterval() {
         // arrange
 
-        final String accountId1 = TestAccounts.IIS.account().id();
-        final String accountId2 = TestAccounts.TINKOFF.account().id();
+        final String accountId1 = TestAccounts.IIS.getId();
+        final String accountId2 = TestAccounts.TINKOFF.getId();
 
         final String figi = TestShares.SBER.share().figi();
 
@@ -82,8 +82,8 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
     void getOperations_filtersOperationsByFigi_whenFigiIsNotNull() {
         // arrange
 
-        final String accountId1 = TestAccounts.IIS.account().id();
-        final String accountId2 = TestAccounts.TINKOFF.account().id();
+        final String accountId1 = TestAccounts.IIS.getId();
+        final String accountId2 = TestAccounts.TINKOFF.getId();
 
         final String figi1 = TestShares.SBER.share().figi();
         final String figi2 = TestShares.YANDEX.share().figi();
@@ -136,8 +136,8 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
     void getOperations_doesNotFilterOperationsByFigi_whenFigiIsNull() {
         // arrange
 
-        final String accountId1 = TestAccounts.IIS.account().id();
-        final String accountId2 = TestAccounts.TINKOFF.account().id();
+        final String accountId1 = TestAccounts.IIS.getId();
+        final String accountId2 = TestAccounts.TINKOFF.getId();
 
         final String figi1 = TestShares.SBER.share().figi();
         final String figi2 = TestShares.YANDEX.share().figi();
@@ -191,8 +191,8 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
     void getPositions() {
         // arrange
 
-        final String accountId1 = TestAccounts.IIS.account().id();
-        final String accountId2 = TestAccounts.TINKOFF.account().id();
+        final String accountId1 = TestAccounts.IIS.getId();
+        final String accountId2 = TestAccounts.TINKOFF.getId();
 
         final String figi1 = TestShares.SBER.share().figi();
         final String figi2 = TestShares.YANDEX.share().figi();
@@ -223,7 +223,7 @@ class FakeExtOperationsServiceIntegrationTest extends IntegrationTest {
     void getWithdrawLimits() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String currency1 = Currencies.USD;
         final String currency2 = Currencies.EUR;

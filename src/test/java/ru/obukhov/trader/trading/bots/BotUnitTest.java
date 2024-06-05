@@ -60,7 +60,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNothing_whenThereAreOrders() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String figi1 = TestShares.APPLE.share().figi();
         final String figi2 = TestShares.SBER.share().figi();
@@ -87,7 +87,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNoOrder_whenThereAreUncompletedOrders() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String figi1 = TestShares.APPLE.share().figi();
         final String figi2 = TestShares.SBER.share().figi();
@@ -107,7 +107,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_doesNoOrder_whenDecisionIsWait() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -151,7 +151,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_placesBuyOrder_whenDecisionIsBuy() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -200,7 +200,7 @@ class BotUnitTest {
 
     @Test
     void processBotConfig_placesSellOrder_whenDecisionIsSell() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();

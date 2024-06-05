@@ -39,7 +39,7 @@ class RealExtOrdersServiceUnitTest {
 
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<TestOrderState> testOrderStates = List.of(TestOrderStates.ORDER_STATE1, TestOrderStates.ORDER_STATE2);
 
         Mockito.when(ordersService.getOrdersSync(accountId))
@@ -56,7 +56,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_filtersOrdersByFigi() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String figi = TestShares.APPLE.share().figi();
 
@@ -79,7 +79,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void postOrder() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String figi = TestShares.APPLE.share().figi();
 
         final String currency = Currencies.USD;
@@ -125,7 +125,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void cancelOrder() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String orderId = "orderId";
 
         realExtOrdersService.cancelOrder(accountId, orderId);

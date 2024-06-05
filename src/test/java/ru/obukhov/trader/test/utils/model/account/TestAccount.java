@@ -34,4 +34,8 @@ public record TestAccount(Account account, ru.tinkoff.piapi.contract.v1.Account 
                 "\"accessLevel\":\"" + account.accessLevel() + "\"}";
     }
 
+    public String getId() {
+        return account.id();
+    }
+
 }

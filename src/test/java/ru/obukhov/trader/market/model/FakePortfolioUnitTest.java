@@ -8,7 +8,7 @@ class FakePortfolioUnitTest {
 
     @Test
     void constructor_initializesFields() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final FakePortfolio portfolio = new FakePortfolio(accountId);
 

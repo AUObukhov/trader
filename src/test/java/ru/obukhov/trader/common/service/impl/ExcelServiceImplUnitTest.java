@@ -69,7 +69,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_savesResults_whenFullData() throws IOException {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -126,7 +126,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_savesResults_whenNoPositions() throws IOException {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -183,7 +183,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResults_savesResults_whenNoOperations() throws IOException {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -246,7 +246,7 @@ class ExcelServiceImplUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
@@ -283,7 +283,7 @@ class ExcelServiceImplUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
@@ -322,7 +322,7 @@ class ExcelServiceImplUnitTest {
 
         final String error = "Test error";
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
@@ -361,7 +361,7 @@ class ExcelServiceImplUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
@@ -399,7 +399,7 @@ class ExcelServiceImplUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Map<String, Object> strategyParams = Map.of("minimumProfit", 0.01);
@@ -438,7 +438,7 @@ class ExcelServiceImplUnitTest {
         final String figi1 = share1.figi();
         final String figi2 = share2.figi();
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Collections.emptyMap());

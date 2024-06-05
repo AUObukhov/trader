@@ -131,7 +131,7 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final TestShare testShare = TestShares.APPLE;
         final String figi = testShare.share().figi();
         final String currency = testShare.share().currency();
@@ -223,7 +223,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(50), finalPrice1);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -248,7 +248,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(500), finalPrice2);
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
@@ -333,13 +333,13 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
         final TestShare testShare1 = TestShares.APPLE;
         final String figi1 = testShare1.share().figi();
         final String currency1 = testShare1.share().currency();
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
 
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId2 = TestAccounts.IIS.getId();
         final TestShare testShare2 = TestShares.SBER;
         final String figi2 = testShare2.share().figi();
         final String currency2 = testShare2.share().currency();
@@ -464,7 +464,7 @@ class BackTesterImplUnitTest {
         final int quantity1 = 2;
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -480,7 +480,7 @@ class BackTesterImplUnitTest {
         final int quantity2 = 10;
         final double currentPrice2 = 5000.0;
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
@@ -566,7 +566,7 @@ class BackTesterImplUnitTest {
         final Operation operation2 = TestData.newOperation(operationDateTime2, operationType2, operationPrice2, operationQuantity2, figi2);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
@@ -580,7 +580,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission2,
@@ -660,7 +660,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -680,7 +680,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(40), 4000.0);
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
@@ -748,7 +748,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 share1,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -762,7 +762,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 share2,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,
@@ -822,7 +822,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -878,7 +878,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare.share(),
                 CandleInterval.CANDLE_INTERVAL_DAY,
                 0.003,
@@ -942,7 +942,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
@@ -956,7 +956,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -1021,7 +1021,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
@@ -1035,7 +1035,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -1097,7 +1097,7 @@ class BackTesterImplUnitTest {
                 testShare1.share().figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
@@ -1173,7 +1173,7 @@ class BackTesterImplUnitTest {
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
         final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
 
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
         final String figi1 = testShare1.share().figi();
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
@@ -1187,7 +1187,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(botConfig1, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId2 = TestAccounts.IIS.getId();
         final String figi2 = testShare2.share().figi();
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
@@ -1262,7 +1262,7 @@ class BackTesterImplUnitTest {
                 testShare1.share().figi()
         );
         final BotConfig botConfig1 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare1.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 commission1,
@@ -1276,7 +1276,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 testShare2.share(),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.001,

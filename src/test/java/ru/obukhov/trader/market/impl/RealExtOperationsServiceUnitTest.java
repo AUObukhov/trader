@@ -39,7 +39,7 @@ class RealExtOperationsServiceUnitTest {
 
     @Test
     void getOperations() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String figi = TestShares.APPLE.share().figi();
 
@@ -63,7 +63,7 @@ class RealExtOperationsServiceUnitTest {
     void getPositions() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final String figi1 = share1.figi();

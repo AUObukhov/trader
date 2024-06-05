@@ -44,7 +44,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getOrders_byAccountId_returnsEmptyList() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         initializeContextAndService(DateUtils.now());
 
         List<OrderState> orders = fakeExtOrdersService.getOrders(accountId);
@@ -54,7 +54,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getOrders_byAccountIdAndFigi_returnsEmptyList() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String figi = TestShares.APPLE.share().figi();
         initializeContextAndService(DateUtils.now());
 
@@ -69,7 +69,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final TestShare testShare = TestShares.APPLE;
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = testShare.tinkoffInstrument();
         final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 12);
@@ -94,7 +94,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_buy_createsNewPosition_whenNoPositions() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare testShare = TestShares.SBER;
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = testShare.tinkoffInstrument();
@@ -138,7 +138,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare testShare = TestShares.SBER;
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = testShare.tinkoffInstrument();
@@ -208,7 +208,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_buy_createsMultiplePositions_whenDifferentFigiesAreBought() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare testShare1 = TestShares.SBER;
         final TestShare testShare2 = TestShares.YANDEX;
@@ -312,7 +312,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare testShare = TestShares.SBER;
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = testShare.tinkoffInstrument();
@@ -388,7 +388,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_sell_removesPosition_whenAllLotsAreSold() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare testShare = TestShares.SBER;
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = testShare.tinkoffInstrument();
@@ -470,7 +470,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     void postOrder_sell_reducesLotsCount() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare testShare = TestShares.SBER;
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = testShare.tinkoffInstrument();
@@ -583,7 +583,7 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void cancelOrder_throwsUnsupportedOperationException() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String orderId = "orderId";
         initializeContextAndService(DateUtils.now());
 

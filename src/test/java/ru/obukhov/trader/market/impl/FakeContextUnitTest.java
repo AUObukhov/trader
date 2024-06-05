@@ -43,7 +43,7 @@ class FakeContextUnitTest {
 
     @Test
     void constructor_withInitialBalances() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
 
@@ -227,7 +227,7 @@ class FakeContextUnitTest {
                 5
         );
 
-        final FakeContext fakeContext = getFakeContext(dateTime, TestAccounts.TINKOFF.account().id(), Currencies.USD, DecimalUtils.ZERO);
+        final FakeContext fakeContext = getFakeContext(dateTime, TestAccounts.TINKOFF.getId(), Currencies.USD, DecimalUtils.ZERO);
 
         final OffsetDateTime actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
 
@@ -240,8 +240,8 @@ class FakeContextUnitTest {
     void getBalances() {
         // arrange
 
-        final String accountId1 = TestAccounts.TINKOFF.account().id();
-        final String accountId2 = TestAccounts.IIS.account().id();
+        final String accountId1 = TestAccounts.TINKOFF.getId();
+        final String accountId2 = TestAccounts.IIS.getId();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
 
@@ -303,7 +303,7 @@ class FakeContextUnitTest {
     void addInvestment_changesInvestmentsAndCurrentBalance() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String currency = Currencies.RUB;
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(100);
@@ -338,7 +338,7 @@ class FakeContextUnitTest {
     void addInvestments_changesInvestmentsAndCurrentBalance() {
         // arrange
 
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String currency1 = Currencies.USD;
         final String currency2 = Currencies.RUB;
@@ -394,7 +394,7 @@ class FakeContextUnitTest {
 
     @Test
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
@@ -414,7 +414,7 @@ class FakeContextUnitTest {
 
     @Test
     void addPosition_addsPosition_and_getPosition_returnsPosition() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
@@ -433,7 +433,7 @@ class FakeContextUnitTest {
 
     @Test
     void getPositions_returnsAllPositions() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;
@@ -457,7 +457,7 @@ class FakeContextUnitTest {
 
     @Test
     void removePosition_removesPosition() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
         final String currency = Currencies.RUB;

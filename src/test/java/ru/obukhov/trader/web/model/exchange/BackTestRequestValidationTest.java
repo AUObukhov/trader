@@ -79,7 +79,7 @@ class BackTestRequestValidationTest {
     void validationFails_whenCandleIntervalIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi()),
                 null,
                 DecimalUtils.setDefaultScale(0.003),
@@ -95,7 +95,7 @@ class BackTestRequestValidationTest {
     void validationFails_whenCommissionIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
@@ -111,7 +111,7 @@ class BackTestRequestValidationTest {
     void validationFails_whenStrategyTypeIsNull() {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),
@@ -134,7 +134,7 @@ class BackTestRequestValidationTest {
         request.setFrom(DateUtils.now());
 
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.setDefaultScale(0.003),

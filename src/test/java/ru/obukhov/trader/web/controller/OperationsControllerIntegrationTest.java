@@ -40,7 +40,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getPositions() throws Exception {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share1 = TestShares.APPLE.share();
         final Share share2 = TestShares.SBER.share();
@@ -166,7 +166,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getAvailableBalances_withBlockedValues() throws Exception {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;
@@ -210,7 +210,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getAvailableBalances_withoutBlockedValues() throws Exception {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final String currency1 = Currencies.EUR;
         final String currency2 = Currencies.USD;

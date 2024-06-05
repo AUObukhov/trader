@@ -68,7 +68,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(false);
 
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(share.figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -88,7 +88,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(null);
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(TestShares.APPLE.share().figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -135,7 +135,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(share.figi()),
                 null,
                 DecimalUtils.ZERO,
@@ -158,7 +158,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(share.figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
@@ -181,7 +181,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.newBalanceConfig(currency, 1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.account().id(),
+                TestAccounts.TINKOFF.getId(),
                 List.of(share.figi()),
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 DecimalUtils.ZERO,
@@ -196,7 +196,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
         final String figi = share.getFigi();
         final String currency = share.getCurrency();

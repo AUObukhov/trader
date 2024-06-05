@@ -26,7 +26,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getOrders_returnsOrders() throws Exception {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final TestOrderState testOrderState1 = TestOrderStates.ORDER_STATE1;
         final TestOrderState testOrderState2 = TestOrderStates.ORDER_STATE2;
 

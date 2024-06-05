@@ -78,7 +78,7 @@ class FakeBotUnitTest {
 
     @Test
     void getInvestments() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String currency = Currencies.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(DateUtils.now(), DecimalUtils.setDefaultScale(10));
@@ -91,7 +91,7 @@ class FakeBotUnitTest {
 
     @Test
     void getBalance() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final String currency = Currencies.RUB;
         final BigDecimal expectedBalance = DecimalUtils.setDefaultScale(10);
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
@@ -103,7 +103,7 @@ class FakeBotUnitTest {
 
     @Test
     void getOperations() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
         final Interval interval = Interval.of(DateUtils.now(), DateUtils.now());
 
         final String figi1 = TestShares.APPLE.share().figi();
@@ -127,7 +127,7 @@ class FakeBotUnitTest {
 
     @Test
     void getPortfolioPositions() {
-        final String accountId = TestAccounts.TINKOFF.account().id();
+        final String accountId = TestAccounts.TINKOFF.getId();
 
         final Share share = TestShares.APPLE.share();
         final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
