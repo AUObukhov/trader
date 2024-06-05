@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.model.exchange;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -28,7 +29,7 @@ class SetPositionBalanceRequestValidationTest {
     @Test
     void validationFails_whenFigiIsEmpty() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setFigi(null);
+        request.setFigi(StringUtils.EMPTY);
         request.setBalance(DecimalUtils.setDefaultScale(10));
 
         AssertUtils.assertViolation(request, "figi is mandatory");
