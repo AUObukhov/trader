@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 
 class MapUtilsUnitTest {
 
@@ -116,6 +118,20 @@ class MapUtilsUnitTest {
                 "key2", 4,
                 "key 3", 5
         );
+
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void newSequencedMapValueCollector() {
+        final List<String> values = List.of("k1", "key2", "key 3");
+
+        final SequencedMap<String, Integer> actualResult = values.stream().collect(MapUtils.newSequencedMapValueCollector(String::length));
+
+        final SequencedMap<String, Integer> expectedResult = new LinkedHashMap<>();
+        expectedResult.put("k1", 2);
+        expectedResult.put("key2", 4);
+        expectedResult.put("key 3", 5);
 
         AssertUtils.assertEquals(expectedResult, actualResult);
     }

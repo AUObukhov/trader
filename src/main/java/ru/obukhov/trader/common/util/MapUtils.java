@@ -4,7 +4,10 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SequencedMap;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -46,6 +49,18 @@ public class MapUtils {
      */
     public static <T, V> Collector<T, ?, Map<T, V>> newMapValueCollector(final Function<? super T, ? extends V> valueMapper) {
         return Collectors.toMap(Function.identity(), valueMapper);
+    }
+
+    /**
+     * @param <T> stream items type
+     * @param <V> result map value type
+     * @return collector, creating SequencedMap with keys provided by given {@code valueMapper} and stream items as values
+     */
+    public static <T, V> Collector<T, ?, SequencedMap<T, V>> newSequencedMapValueCollector(final Function<? super T, ? extends V> valueMapper) {
+        BinaryOperator<V> mergeFunction = (x1, x2) -> {
+            throw new IllegalStateException("Unexpected merge");
+        };
+        return Collectors.toMap(Function.identity(), valueMapper, mergeFunction, LinkedHashMap::new);
     }
 
     /**

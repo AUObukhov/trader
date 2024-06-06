@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.MapUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -22,8 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SequencedMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Service to get extended statistics about market prices and instruments
@@ -76,14 +75,7 @@ public class StatisticsService {
     public SequencedMap<String, BigDecimal> getCapitalizationWeights(final List<String> shareFigies) {
         final SetCapitalization capitalization = getCapitalization(shareFigies);
         return capitalization.sharesCapitalizations().keySet().stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        figi -> getWeight(figi, capitalization),
-                        (x1, x2) -> {
-                            throw new IllegalStateException("Unexpected merge");
-                        },
-                        LinkedHashMap::new
-                ));
+                .collect(MapUtils.newSequencedMapValueCollector(figi -> getWeight(figi, capitalization)));
     }
 
     private BigDecimal getWeight(final String figi, final SetCapitalization capitalization) {

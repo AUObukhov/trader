@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SequencedCollection;
+import java.util.SequencedMap;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,6 +143,18 @@ public class AssertUtils {
     public static <K, V> void assertEquals(final Map<? extends K, ? extends V> expected, final Map<? extends K, ? extends V> actual) {
         final Set<? extends K> actualKeys = actual.keySet();
         Assertions.assertEquals(expected.keySet(), actualKeys);
+        for (K key : actualKeys) {
+            Assertions.assertEquals(expected.get(key), actual.get(key));
+        }
+    }
+
+    public static <K, V> void assertEquals(
+            final SequencedMap<? extends K, ? extends V> expected,
+            final SequencedMap<? extends K, ? extends V> actual
+    ) {
+        final SequencedSet<? extends K> actualKeys = (SequencedSet<? extends K>) actual.keySet();
+        final SequencedSet<? extends K> expectedKeys = (SequencedSet<? extends K>) expected.keySet();
+        AssertUtils.assertEquals(expectedKeys, actualKeys);
         for (K key : actualKeys) {
             Assertions.assertEquals(expected.get(key), actual.get(key));
         }
