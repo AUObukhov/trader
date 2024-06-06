@@ -49,6 +49,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SequencedMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -213,7 +214,7 @@ class BackTesterImplUnitTest {
         final BigDecimal finalBalance1 = DecimalUtils.setDefaultScale(2000);
         final int finalQuantity1 = 8;
 
-        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(10), 1000.0);
         prices1.put(from.plusMinutes(20), 1001.0);
         prices1.put(from.plusMinutes(30), 1002.0);
@@ -238,7 +239,7 @@ class BackTesterImplUnitTest {
         final BigDecimal finalBalance2 = DecimalUtils.setDefaultScale(100);
         final int finalQuantity2 = 500;
 
-        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
         prices2.put(from.plusMinutes(100), 100.0);
         prices2.put(from.plusMinutes(200), 100.1);
         prices2.put(from.plusMinutes(300), 100.2);
@@ -355,14 +356,14 @@ class BackTesterImplUnitTest {
         final double currentPrice1 = 500;
         final double currentPrice2 = 50;
 
-        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(10), 100.0);
         prices1.put(from.plusMinutes(20), 200.0);
         prices1.put(from.plusMinutes(30), 300.0);
         prices1.put(from.plusMinutes(40), 400.0);
         prices1.put(from.plusMinutes(50), currentPrice1);
 
-        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
         prices2.put(from.plusMinutes(100), 10.0);
         prices2.put(from.plusMinutes(200), 20.0);
         prices2.put(from.plusMinutes(300), 30.0);
@@ -452,7 +453,7 @@ class BackTesterImplUnitTest {
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
         final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
 
-        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(10), 100.0);
         prices1.put(from.plusMinutes(20), 200.0);
         prices1.put(from.plusMinutes(30), 300.0);
@@ -487,7 +488,7 @@ class BackTesterImplUnitTest {
                 interval,
                 DecimalUtils.setDefaultScale(10000L),
                 quantity2,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 currentPrice2,
                 null
         );
@@ -573,7 +574,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance1,
                 quantity1,
-                Map.of(from.plusMinutes(1), 100.0),
+                new LinkedHashMap<>(Map.of(from.plusMinutes(1), 100.0)),
                 100,
                 operation1
         );
@@ -587,7 +588,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance2,
                 quantity2,
-                Map.of(from.plusMinutes(3), 1000.0),
+                new LinkedHashMap<>(Map.of(from.plusMinutes(3), 1000.0)),
                 1000,
                 operation2
         );
@@ -651,7 +652,7 @@ class BackTesterImplUnitTest {
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
         final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
 
-        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(1), 100.0);
         prices1.put(from.plusMinutes(2), 200.0);
         prices1.put(from.plusMinutes(3), 300.0);
@@ -672,7 +673,7 @@ class BackTesterImplUnitTest {
                 null
         );
 
-        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
         prices2.put(from.plusMinutes(10), 1000.0);
         prices2.put(from.plusMinutes(20), 2000.0);
         prices2.put(from.plusMinutes(30), 3000.0);
@@ -752,7 +753,7 @@ class BackTesterImplUnitTest {
                 interval,
                 DecimalUtils.setDefaultScale(20000L),
                 null,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 300,
                 null
         );
@@ -766,7 +767,7 @@ class BackTesterImplUnitTest {
                 interval,
                 DecimalUtils.setDefaultScale(10000L),
                 null,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 200,
                 null
         );
@@ -808,7 +809,7 @@ class BackTesterImplUnitTest {
         final String currency = testShare.getCurrency();
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(currency, initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
-        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(1), 100.0);
         prices1.put(from.plusMinutes(2), 200.0);
         prices1.put(from.plusMinutes(3), 300.0);
@@ -863,7 +864,7 @@ class BackTesterImplUnitTest {
         final String currency = testShare.getCurrency();
         final BalanceConfig balanceConfig = TestData.newBalanceConfig(currency, initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(1), 100.0);
         prices1.put(from.plusMinutes(2), 200.0);
         prices1.put(from.plusMinutes(3), 300.0);
@@ -943,7 +944,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 1,
-                Map.of(from.plusMinutes(1), 100.0),
+                new LinkedHashMap<>(Map.of(from.plusMinutes(1), 100.0)),
                 100,
                 operation
         );
@@ -957,7 +958,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 200,
                 null
         );
@@ -1022,7 +1023,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 1,
-                Map.of(from.plusMinutes(1), 100.0),
+                new LinkedHashMap<>(Map.of(from.plusMinutes(1), 100.0)),
                 100,
                 operation
         );
@@ -1036,7 +1037,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 150,
                 null
         );
@@ -1098,7 +1099,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 10,
-                Map.of(from.plusMinutes(1), 100.0),
+                new LinkedHashMap<>(Map.of(from.plusMinutes(1), 100.0)),
                 100,
                 operation
         );
@@ -1112,7 +1113,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 300,
                 null
         );
@@ -1263,7 +1264,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 2,
-                Map.of(from.plusMinutes(1), 100.0),
+                new LinkedHashMap<>(Map.of(from.plusMinutes(1), 100.0)),
                 100,
                 operation
         );
@@ -1277,7 +1278,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                Collections.emptyMap(),
+                Collections.emptyNavigableMap(),
                 50,
                 null
         );
@@ -1309,7 +1310,7 @@ class BackTesterImplUnitTest {
             final Interval interval,
             final BigDecimal currentBalance,
             final Integer quantity,
-            final Map<OffsetDateTime, Double> prices,
+            final SequencedMap<OffsetDateTime, Double> prices,
             final double currentPrice,
             final Operation operation
     ) {

@@ -40,7 +40,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SequencedCollection;
+import java.util.SequencedMap;
 import java.util.stream.Stream;
 
 @SpringBootTest
@@ -740,15 +741,15 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final List<String> figies = List.of(figi1, figi2, figi3);
 
-        final Map<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
         figiesToPrices.put(figi1, price1);
         figiesToPrices.put(figi2, price2);
         figiesToPrices.put(figi3, price3);
         Mocker.mockLastPricesBigDecimal(marketDataService, figiesToPrices);
 
-        final Map<String, BigDecimal> actualResult = extMarketDataService.getLastPrices(figies);
+        final SequencedMap<String, BigDecimal> actualResult = extMarketDataService.getLastPrices(figies);
 
-        AssertUtils.assertEquals(figiesToPrices.entrySet(), actualResult.entrySet());
+        AssertUtils.assertEquals((SequencedCollection<?>) figiesToPrices.entrySet(), (SequencedCollection<?>) actualResult.entrySet());
     }
 
     @Test
@@ -957,7 +958,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
 
-        final Map<String, Double> figiesToPrices = new LinkedHashMap<>();
+        final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>();
         figiesToPrices.put(sourceCurrency.getFigi(), price1);
         figiesToPrices.put(targetCurrency.getFigi(), price2);
         Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
@@ -978,7 +979,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
 
-        final Map<String, Double> figiesToPrices = new LinkedHashMap<>(2, 1);
+        final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>(2, 1);
         figiesToPrices.put(targetCurrency.getFigi(), 1.0);
 
         Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);

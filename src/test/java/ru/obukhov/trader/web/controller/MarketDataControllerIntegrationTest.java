@@ -23,7 +23,7 @@ import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SequencedMap;
 import java.util.stream.Stream;
 
 class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
@@ -108,7 +108,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
 
-        final Map<String, Double> figiesToPrices = new LinkedHashMap<>();
+        final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>();
         figiesToPrices.put(sourceCurrency.getFigi(), price1);
         figiesToPrices.put(targetCurrency.getFigi(), price2);
         Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
@@ -131,7 +131,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
 
-        final Map<String, Double> figiesToPrices = new LinkedHashMap<>(2, 1);
+        final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>(2, 1);
         figiesToPrices.put(targetCurrency.getFigi(), 1.0);
 
         Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
@@ -150,7 +150,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getLastPrices_returnsPrices() throws Exception {
-        final Map<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<String, BigDecimal> figiesToPrices = new LinkedHashMap<>(3, 1);
         figiesToPrices.put(TestShares.APPLE.getFigi(), DecimalUtils.setDefaultScale(175.0));
         figiesToPrices.put(TestShares.SBER.getFigi(), DecimalUtils.setDefaultScale(270.0));
         figiesToPrices.put(TestShares.YANDEX.getFigi(), DecimalUtils.setDefaultScale(2600.0));

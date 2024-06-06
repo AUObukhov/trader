@@ -10,13 +10,13 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SequencedMap;
 
 class BotConfigUnitTest {
 
     @Test
     void testToString() {
-        final Map<String, Object> strategyParams = new LinkedHashMap<>();
+        final SequencedMap<String, Object> strategyParams = new LinkedHashMap<>();
         strategyParams.put("minimumProfit", 0.01);
         strategyParams.put("indexCoefficient", 0.5);
 

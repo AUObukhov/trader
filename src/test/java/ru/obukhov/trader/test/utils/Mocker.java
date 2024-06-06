@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 
 @UtilityClass
 public class Mocker {
@@ -202,7 +203,10 @@ public class Mocker {
         return TestData.newTradingDay(isTradingDay, startDateTime, endDateTime);
     }
 
-    public static void mockLastPricesDouble(final MarketDataService marketDataService, final Map<String, Double> figiesToPrices) {
+    public static void mockLastPricesDouble(
+            final MarketDataService marketDataService,
+            final SequencedMap<String, Double> figiesToPrices
+    ) {
         final List<String> figies = figiesToPrices.keySet().stream().toList();
         final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
                 .map(entry -> TestData.newLastPrice(entry.getKey(), entry.getValue()))
@@ -213,7 +217,7 @@ public class Mocker {
 
     public static void mockLastPricesBigDecimal(
             final MarketDataService marketDataService,
-            final Map<String, BigDecimal> figiesToPrices
+            final SequencedMap<String, BigDecimal> figiesToPrices
     ) {
         final List<String> figies = figiesToPrices.keySet().stream().toList();
         final List<LastPrice> lastPrices = figiesToPrices.entrySet().stream()
@@ -226,12 +230,12 @@ public class Mocker {
     public static void mockCurrenciesLastPrices(
             final InstrumentsService instrumentsService,
             final MarketDataService marketDataService,
-            final Map<ru.tinkoff.piapi.contract.v1.Currency, Double> prices
+            final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> prices
     ) {
         final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = prices.keySet().stream().toList();
         Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
-        final Map<String, Double> currenciesLastPrices = new LinkedHashMap<>(prices.size(), 1);
+        final SequencedMap<String, Double> currenciesLastPrices = new LinkedHashMap<>(prices.size(), 1);
         for (Map.Entry<ru.tinkoff.piapi.contract.v1.Currency, Double> entry : prices.entrySet()) {
             currenciesLastPrices.put(entry.getKey().getFigi(), entry.getValue());
         }
@@ -241,12 +245,12 @@ public class Mocker {
     public static void mockSharesLastPrices(
             final InstrumentsService instrumentsService,
             final MarketDataService marketDataService,
-            final Map<ru.tinkoff.piapi.contract.v1.Share, Double> prices
+            final SequencedMap<ru.tinkoff.piapi.contract.v1.Share, Double> prices
     ) {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = prices.keySet().stream().toList();
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
-        final Map<String, Double> lastPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<String, Double> lastPrices = new LinkedHashMap<>(3, 1);
         for (final Map.Entry<ru.tinkoff.piapi.contract.v1.Share, Double> entry : prices.entrySet()) {
             lastPrices.put(entry.getKey().getFigi(), entry.getValue());
         }

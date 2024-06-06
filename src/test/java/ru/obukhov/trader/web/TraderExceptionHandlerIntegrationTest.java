@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 import java.util.Set;
 
 @SpringBootTest(
@@ -58,7 +59,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
     @Test
     void handlesMethodArgumentNotValidException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
-        final Map<String, Object> expectedResponse = new LinkedHashMap<>();
+        final SequencedMap<String, Object> expectedResponse = new LinkedHashMap<>();
         expectedResponse.put("time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow));
         expectedResponse.put("message", "Invalid request");
         expectedResponse.put("errors", List.of("validation error1", "validation error2"));
@@ -77,7 +78,7 @@ class TraderExceptionHandlerIntegrationTest extends IntegrationTest {
     @Test
     void handlesConstraintViolationException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2020, 9, 23, 10);
-        final Map<String, Object> expectedResponse = new LinkedHashMap<>(3, 1);
+        final SequencedMap<String, Object> expectedResponse = new LinkedHashMap<>(3, 1);
         expectedResponse.put("time", DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(mockedNow));
         expectedResponse.put("message", "Invalid request");
         expectedResponse.put("errors", List.of("validation error1", "validation error2"));

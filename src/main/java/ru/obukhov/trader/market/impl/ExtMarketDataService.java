@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 
 /**
  * Service to get information about market prices and instruments
@@ -159,9 +160,9 @@ public class ExtMarketDataService {
      * @return map of FIGIes to corresponding last prices. Keeps the same order for the keys as for the given {@code figies}.
      * @throws IllegalArgumentException if there is no last price for any of the given {@code figies}.
      */
-    public Map<String, BigDecimal> getLastPrices(final List<String> figies) {
+    public SequencedMap<String, BigDecimal> getLastPrices(final List<String> figies) {
         final List<LastPrice> lastPrices = marketDataService.getLastPricesSync(figies);
-        final Map<String, BigDecimal> result = new LinkedHashMap<>(figies.size(), 1);
+        final SequencedMap<String, BigDecimal> result = new LinkedHashMap<>(figies.size(), 1);
 
         for (final String figi : figies) {
             final SingleItemCollector<BigDecimal> collector = createSingleItemCollector(figi);

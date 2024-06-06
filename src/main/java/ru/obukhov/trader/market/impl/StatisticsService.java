@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,7 @@ public class StatisticsService {
      * @param shareFigies list of set shares FIGIes
      * @return map with given {@code shareFigies} as keys and their weights as values
      */
-    public Map<String, BigDecimal> getCapitalizationWeights(final List<String> shareFigies) {
+    public SequencedMap<String, BigDecimal> getCapitalizationWeights(final List<String> shareFigies) {
         final SetCapitalization capitalization = getCapitalization(shareFigies);
         return capitalization.sharesCapitalizations().keySet().stream()
                 .collect(Collectors.toMap(

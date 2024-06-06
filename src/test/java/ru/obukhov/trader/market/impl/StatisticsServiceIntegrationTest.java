@@ -22,12 +22,14 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 
 @SpringBootTest
 class StatisticsServiceIntegrationTest extends IntegrationTest {
@@ -262,13 +264,13 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         final ru.tinkoff.piapi.contract.v1.Share share2 = TestShares.SBER.tinkoffShare();
         final ru.tinkoff.piapi.contract.v1.Share share3 = TestShares.YANDEX.tinkoffShare();
 
-        final Map<ru.tinkoff.piapi.contract.v1.Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
         sharesLastPrices.put(share1, 178.7);
         sharesLastPrices.put(share2, 258.79);
         sharesLastPrices.put(share3, 2585.6);
         Mocker.mockSharesLastPrices(instrumentsService, marketDataService, sharesLastPrices);
 
-        final Map<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
+        final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
         currenciesLastPrices.put(TestCurrencies.USD.tinkoffCurrency(), 98.4225);
         currenciesLastPrices.put(TestCurrencies.RUB.tinkoffCurrency(), 1.0);
         Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);
@@ -279,11 +281,11 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         // act
 
-        final Map<String, BigDecimal> actualResult = statisticsService.getCapitalizationWeights(shareFigies);
+        final SequencedMap<String, BigDecimal> actualResult = statisticsService.getCapitalizationWeights(shareFigies);
 
         // assert
 
-        final Map<String, BigDecimal> expectedWeights = new LinkedHashMap<>(3, 1);
+        final SequencedMap<String, BigDecimal> expectedWeights = new LinkedHashMap<>(3, 1);
         expectedWeights.put(share1.getFigi(), DecimalUtils.setDefaultScale(0.978361221));
         expectedWeights.put(share2.getFigi(), DecimalUtils.setDefaultScale(0.018799306));
         expectedWeights.put(share3.getFigi(), DecimalUtils.setDefaultScale(0.002839473));
@@ -299,13 +301,13 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         final ru.tinkoff.piapi.contract.v1.Share share2 = TestShares.SBER.tinkoffShare();
         final ru.tinkoff.piapi.contract.v1.Share share3 = TestShares.YANDEX.tinkoffShare();
 
-        final Map<ru.tinkoff.piapi.contract.v1.Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<ru.tinkoff.piapi.contract.v1.Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
         sharesLastPrices.put(share1, 178.7);
         sharesLastPrices.put(share2, 258.79);
         sharesLastPrices.put(share3, 2585.6);
         Mocker.mockSharesLastPrices(instrumentsService, marketDataService, sharesLastPrices);
 
-        final Map<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
+        final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
         currenciesLastPrices.put(TestCurrencies.USD.tinkoffCurrency(), 98.4225);
         currenciesLastPrices.put(TestCurrencies.RUB.tinkoffCurrency(), 1.0);
         Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);

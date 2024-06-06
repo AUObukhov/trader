@@ -35,7 +35,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.SequencedMap;
 import java.util.stream.Collectors;
 
 class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
@@ -336,13 +336,13 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final Share share2 = TestShares.SBER.tinkoffShare();
         final Share share3 = TestShares.YANDEX.tinkoffShare();
 
-        final Map<Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
         sharesLastPrices.put(share1, 178.7);
         sharesLastPrices.put(share2, 258.79);
         sharesLastPrices.put(share3, 2585.6);
         Mocker.mockSharesLastPrices(instrumentsService, marketDataService, sharesLastPrices);
 
-        final Map<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
+        final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
         currenciesLastPrices.put(TestCurrencies.USD.tinkoffCurrency(), 98.4225);
         currenciesLastPrices.put(TestCurrencies.RUB.tinkoffCurrency(), 1.0);
         Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);
@@ -354,7 +354,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .content(requestString)
                         .contentType(MediaType.APPLICATION_JSON);
 
-        final Map<String, BigDecimal> expectedResponse = new LinkedHashMap<>();
+        final SequencedMap<String, BigDecimal> expectedResponse = new LinkedHashMap<>();
         expectedResponse.put(share1.getFigi(), DecimalUtils.setDefaultScale(0.978361221));
         expectedResponse.put(share2.getFigi(), DecimalUtils.setDefaultScale(0.018799306));
         expectedResponse.put(share3.getFigi(), DecimalUtils.setDefaultScale(0.002839473));

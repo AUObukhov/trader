@@ -51,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -162,7 +163,7 @@ public class AssertUtils {
 
     // region collections assertions
 
-    public static void assertEquals(final Collection<?> expected, final Collection<?> actual) {
+    public static void assertEquals(final SequencedCollection<?> expected, final SequencedCollection<?> actual) {
         assertCollectionSize(expected, actual);
 
         final StringBuilder messageBuilder = new StringBuilder();
@@ -172,14 +173,16 @@ public class AssertUtils {
         while (expectedIterator.hasNext()) {
             final Object expectedValue = expectedIterator.next();
             final Object actualValue = actualIterator.next();
-            if (expectedValue instanceof Collection<?> expectedCollection && actualValue instanceof Collection<?> actualCollection) {
+            if (expectedValue instanceof SequencedCollection<?> expectedCollection
+                    && actualValue instanceof SequencedCollection<?> actualCollection) {
                 assertEquals(expectedCollection, actualCollection);
             } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof BigDecimal actualBigDecimal) {
                 if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
-            } else if (expectedValue instanceof ru.tinkoff.piapi.core.models.Money expectedMoney && actualValue instanceof ru.tinkoff.piapi.core.models.Money actualMoney) {
+            } else if (expectedValue instanceof ru.tinkoff.piapi.core.models.Money expectedMoney
+                    && actualValue instanceof ru.tinkoff.piapi.core.models.Money actualMoney) {
                 if (!equals(expectedMoney, actualMoney)) {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
