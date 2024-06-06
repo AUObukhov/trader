@@ -213,4 +213,8 @@ public record TestShare(
         return share.first1MinCandleDate();
     }
 
+    public OffsetDateTime getFirst1DayCandleDate() {
+        return share.first1DayCandleDate();
+    }
+
 }

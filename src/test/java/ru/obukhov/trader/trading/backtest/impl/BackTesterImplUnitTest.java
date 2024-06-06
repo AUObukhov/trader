@@ -852,7 +852,7 @@ class BackTesterImplUnitTest {
 
         Mocker.mockInstrument(extInstrumentsService, testShare.instrument());
 
-        final OffsetDateTime first1DayCandleMinimumDate = testShare.getFirst1MinCandleDate().minusHours(3);
+        final OffsetDateTime first1DayCandleMinimumDate = testShare.getFirst1DayCandleDate().minusHours(3);
         final OffsetDateTime from = first1DayCandleMinimumDate.minusDays(1);
         final OffsetDateTime to = first1DayCandleMinimumDate.plusDays(1);
         final Interval interval = Interval.of(from, to);
