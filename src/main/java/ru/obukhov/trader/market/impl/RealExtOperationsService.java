@@ -1,9 +1,11 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -13,6 +15,7 @@ import ru.tinkoff.piapi.core.models.WithdrawLimits;
 import java.time.Instant;
 import java.util.List;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class RealExtOperationsService implements ExtOperationsService {

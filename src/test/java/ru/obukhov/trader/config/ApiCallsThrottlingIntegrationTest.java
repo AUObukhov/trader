@@ -60,7 +60,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
         Mockito.doReturn(instrument).when(instrumentsService).getInstrumentByFigiSync(figi);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
         testThrottling(() -> instrumentsService.getInstrumentByFigiSync(figi), 200);
     }
@@ -69,7 +69,7 @@ public class ApiCallsThrottlingIntegrationTest {
     void usersService() throws InterruptedException {
         Mockito.doReturn(Collections.emptyList()).when(usersService).getAccountsSync();
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
         testThrottling(() -> usersService.getAccountsSync(), 100);
     }
@@ -79,16 +79,22 @@ public class ApiCallsThrottlingIntegrationTest {
     @Test
     void operationsService() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
+        final Instant from = Instant.now();
+        final Instant to = Instant.now();
 
         Mockito.doReturn(null).when(operationsService).getPositionsSync(accountId);
+        Mockito.doReturn(null).when(operationsService).getBrokerReportSync(accountId, from, to);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        testThrottling(() -> operationsService.getPositionsSync(accountId), 200);
+        final Runnable runnable = () -> operationsService.getBrokerReportSync(accountId, from, to);
+        ExecutionUtils.run(runnable, ApiCallsThrottling.OPERATIONS_SERVICE_BROKER_REPORT_LIMIT);
+
+        testThrottling(() -> operationsService.getPositionsSync(accountId), ApiCallsThrottling.OPERATIONS_SERVICE_LIMIT);
     }
 
     @Test
-    void operationsService_getBrokerReport() throws InterruptedException {
+    void operationsService_getBrokerReportSync() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
         final Instant from = Instant.now();
         final Instant to = Instant.now();
@@ -96,11 +102,12 @@ public class ApiCallsThrottlingIntegrationTest {
         Mockito.doReturn(null).when(operationsService).getPositionsSync(accountId);
         Mockito.doReturn(null).when(operationsService).getBrokerReportSync(accountId, from, to);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        ExecutionUtils.run(() -> operationsService.getPositionsSync(accountId), 200);
+        ExecutionUtils.run(() -> operationsService.getPositionsSync(accountId), ApiCallsThrottling.OPERATIONS_SERVICE_LIMIT);
 
-        testThrottling(() -> operationsService.getBrokerReportSync(accountId, from, to), 5);
+        final Runnable runnable = () -> operationsService.getBrokerReportSync(accountId, from, to);
+        testThrottling(runnable, ApiCallsThrottling.OPERATIONS_SERVICE_BROKER_REPORT_LIMIT);
     }
 
     // endregion
@@ -111,9 +118,9 @@ public class ApiCallsThrottlingIntegrationTest {
 
         Mockito.doReturn(null).when(marketDataService).getTradingStatusSync(instrumentId);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        testThrottling(() -> marketDataService.getTradingStatusSync(instrumentId), 300);
+        testThrottling(() -> marketDataService.getTradingStatusSync(instrumentId), ApiCallsThrottling.MARKET_DATA_SERVICE_LIMIT);
     }
 
     // region ordersService tests
@@ -125,28 +132,28 @@ public class ApiCallsThrottlingIntegrationTest {
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        testThrottling(() -> ordersService.getOrderStateSync(accountId, orderId), 100);
+        testThrottling(() -> ordersService.getOrderStateSync(accountId, orderId), ApiCallsThrottling.ORDERS_SERVICE_LIMIT);
     }
 
     @Test
-    void ordersService_getOrders() throws InterruptedException {
+    void ordersService_getOrdersSync() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
         final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
         Mockito.doReturn(null).when(ordersService).getOrdersSync(accountId);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        ExecutionUtils.run(() -> ordersService.getOrderStateSync(accountId, orderId), 100);
+        ExecutionUtils.run(() -> ordersService.getOrderStateSync(accountId, orderId), ApiCallsThrottling.ORDERS_SERVICE_LIMIT);
 
-        testThrottling(() -> ordersService.getOrdersSync(accountId), 200);
+        testThrottling(() -> ordersService.getOrdersSync(accountId), ApiCallsThrottling.ORDERS_SERVICE_GET_ORDERS_LIMIT);
     }
 
     @Test
-    void ordersService_postOrders() throws InterruptedException {
+    void ordersService_postOrderSync() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
         final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
         final String figi = TestInstruments.APPLE.getFigi();
@@ -158,25 +165,26 @@ public class ApiCallsThrottlingIntegrationTest {
         Mockito.doReturn(null).when(ordersService).getOrderState(accountId, orderId);
         Mockito.doReturn(null).when(ordersService).postOrderSync(figi, quantity, price, orderDirection, accountId, orderType, orderId);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        ExecutionUtils.run(() -> ordersService.getOrderState(accountId, orderId), 100);
+        ExecutionUtils.run(() -> ordersService.getOrderState(accountId, orderId), ApiCallsThrottling.ORDERS_SERVICE_LIMIT);
 
-        testThrottling(() -> ordersService.postOrderSync(figi, quantity, price, orderDirection, accountId, orderType, orderId), 300);
+        final Runnable runnable = () -> ordersService.postOrderSync(figi, quantity, price, orderDirection, accountId, orderType, orderId);
+        testThrottling(runnable, ApiCallsThrottling.ORDERS_SERVICE_POST_ORDER_LIMIT);
     }
 
     @Test
-    void ordersService_cancelOrder() throws InterruptedException {
+    void ordersService_cancelOrderSync() throws InterruptedException {
         final String accountId = TestAccounts.IIS.getId();
         final String orderId = TestOrderStates.ORDER_STATE1.getOrderId();
 
         Mockito.doReturn(null).when(ordersService).cancelOrderSync(accountId, orderId);
 
-        resetThrottlingCounters();
+        waitForThrottlingCounters();
 
-        ExecutionUtils.run(() -> ordersService.getOrderState(accountId, orderId), 100);
+        ExecutionUtils.run(() -> ordersService.getOrderState(accountId, orderId), ApiCallsThrottling.ORDERS_SERVICE_LIMIT);
 
-        testThrottling(() -> ordersService.cancelOrderSync(accountId, orderId), 100);
+        testThrottling(() -> ordersService.cancelOrderSync(accountId, orderId), ApiCallsThrottling.ORDERS_SERVICE_CANCEL_ORDER_LIMIT);
     }
 
     // endregion
@@ -184,21 +192,20 @@ public class ApiCallsThrottlingIntegrationTest {
     private void testThrottling(final Runnable runnable, final int limit) throws InterruptedException {
         System.gc(); // to reduce the chance of the GC start during test which can increase execution time
 
-        long duration = ExecutionUtils.run(runnable, limit + 1).toMillis();
+        long duration = ExecutionUtils.run(runnable, limit).toMillis();
+
+        Assertions.assertTrue(duration < 100, "Execution expected to take less than 100 ms, but took " + duration + " ms");
+
+        waitForThrottlingCounters();
+
+        duration = ExecutionUtils.run(runnable, limit + 1).toMillis();
 
         final Integer interval = apiProperties.throttlingInterval();
         AssertUtils.assertRangeInclusive(interval - 20, (int) (interval * 1.25), duration);
-
-        resetThrottlingCounters();
-
-        duration = ExecutionUtils.run(runnable, limit).toMillis();
-
-        String message = "Execution expected to take less than 100 ms, but took " + duration + " ms";
-        Assertions.assertTrue(duration < 100, message);
     }
 
     // used to finish all throttling counters triggered by mocks and previous tests
-    private void resetThrottlingCounters() throws InterruptedException {
+    private void waitForThrottlingCounters() throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(apiProperties.throttlingInterval());
     }
 

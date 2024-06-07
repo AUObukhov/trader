@@ -35,7 +35,9 @@ public class ThrottledCounter {
      */
     public void increment() {
         this.counterWithMaxValue.increment();
+    }
 
+    public void scheduleDecrement() {
         timer.schedule(new DecrementTask(), interval);
     }
 
