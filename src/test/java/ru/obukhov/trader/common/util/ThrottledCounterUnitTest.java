@@ -14,15 +14,16 @@ class ThrottledCounterUnitTest {
 
     @Test
     void decrementsValue_whenIntervalPassed() throws InterruptedException {
-        final ThrottledCounter counter = new ThrottledCounter(3, 1000);
-        incrementAndScheduleDecrement(counter);
+        final long interval = 1000;
+        final ThrottledCounter counter = new ThrottledCounter(3);
+        incrementAndScheduleDecrement(counter, interval);
         final int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(500);
         final int value2 = counter.getValue();
 
-        incrementAndScheduleDecrement(counter);
-        incrementAndScheduleDecrement(counter);
+        incrementAndScheduleDecrement(counter, interval);
+        incrementAndScheduleDecrement(counter, interval);
         final int value3 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(750);
@@ -40,22 +41,23 @@ class ThrottledCounterUnitTest {
 
     @Test
     void waiting_whenValueIsMax() throws InterruptedException {
-        final ThrottledCounter counter = new ThrottledCounter(3, 1000);
+        final long interval = 1000;
+        final ThrottledCounter counter = new ThrottledCounter(3);
         final long start = System.currentTimeMillis();
 
-        final Duration elapsed1 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter));
+        final Duration elapsed1 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter, interval));
         final int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not expected to decrement during this period
-        final Duration elapsed2 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter));
+        final Duration elapsed2 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter, interval));
         final int value2 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not expected to decrement during this period
-        final Duration elapsed3 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter));
+        final Duration elapsed3 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter, interval));
         final int value3 = counter.getValue();
 
         // expected to wait for ~500 milliseconds until first decrement, then counter::increment expected to be executed
-        final long elapsed4 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter)).toMillis();
+        final long elapsed4 = ExecutionUtils.run(() -> incrementAndScheduleDecrement(counter, interval)).toMillis();
         final int value4 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(50); // overhead buffer
@@ -87,13 +89,13 @@ class ThrottledCounterUnitTest {
 
     @Test
     void threadSafetyTest() throws InterruptedException {
-        final ThrottledCounter counter = new ThrottledCounter(5, 100);
+        final ThrottledCounter counter = new ThrottledCounter(5);
         AtomicReference<Exception> error = new AtomicReference<>();
 
         final Runnable target = () -> {
             try {
                 for (int i = 0; i < 20; i++) {
-                    incrementAndScheduleDecrement(counter);
+                    incrementAndScheduleDecrement(counter, 100);
                 }
             } catch (Exception exception) {
                 error.set(exception);
@@ -112,9 +114,9 @@ class ThrottledCounterUnitTest {
         Assertions.assertNull(error.get());
     }
 
-    private void incrementAndScheduleDecrement(final ThrottledCounter counter) {
+    private void incrementAndScheduleDecrement(final ThrottledCounter counter, final long interval) {
         counter.increment();
-        counter.scheduleDecrement();
+        counter.scheduleDecrement(interval);
     }
 
 }

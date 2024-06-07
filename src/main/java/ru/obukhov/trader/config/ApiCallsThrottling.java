@@ -31,6 +31,7 @@ public class ApiCallsThrottling {
     static final int ORDERS_SERVICE_POST_ORDER_LIMIT = 300;
     static final int ORDERS_SERVICE_CANCEL_ORDER_LIMIT = 100;
 
+    private final long interval;
     private final ThrottledCounter instrumentServiceCounter;
     private final ThrottledCounter usersServiceCounter;
     private final ThrottledCounter operationsServiceCounter;
@@ -42,17 +43,17 @@ public class ApiCallsThrottling {
     private final ThrottledCounter ordersServiceCancelOrderCounter;
 
     public ApiCallsThrottling(final ApiProperties apiProperties) {
-        final Integer interval = apiProperties.throttlingInterval();
+        interval = apiProperties.throttlingInterval();
 
-        this.instrumentServiceCounter = new ThrottledCounter(INSTRUMENT_SERVICE_LIMIT, interval);
-        this.usersServiceCounter = new ThrottledCounter(USER_SERVICE_LIMIT, interval);
-        this.operationsServiceCounter = new ThrottledCounter(OPERATIONS_SERVICE_LIMIT, interval);
-        this.operationsServiceGetBrokerReportCounter = new ThrottledCounter(OPERATIONS_SERVICE_BROKER_REPORT_LIMIT, interval);
-        this.marketDataServiceCounter = new ThrottledCounter(MARKET_DATA_SERVICE_LIMIT, interval);
-        this.ordersServiceCounter = new ThrottledCounter(ORDERS_SERVICE_LIMIT, interval);
-        this.ordersServiceGetOrdersCounter = new ThrottledCounter(ORDERS_SERVICE_GET_ORDERS_LIMIT, interval);
-        this.ordersServicePostOrderCounter = new ThrottledCounter(ORDERS_SERVICE_POST_ORDER_LIMIT, interval);
-        this.ordersServiceCancelOrderCounter = new ThrottledCounter(ORDERS_SERVICE_CANCEL_ORDER_LIMIT, interval);
+        this.instrumentServiceCounter = new ThrottledCounter(INSTRUMENT_SERVICE_LIMIT);
+        this.usersServiceCounter = new ThrottledCounter(USER_SERVICE_LIMIT);
+        this.operationsServiceCounter = new ThrottledCounter(OPERATIONS_SERVICE_LIMIT);
+        this.operationsServiceGetBrokerReportCounter = new ThrottledCounter(OPERATIONS_SERVICE_BROKER_REPORT_LIMIT);
+        this.marketDataServiceCounter = new ThrottledCounter(MARKET_DATA_SERVICE_LIMIT);
+        this.ordersServiceCounter = new ThrottledCounter(ORDERS_SERVICE_LIMIT);
+        this.ordersServiceGetOrdersCounter = new ThrottledCounter(ORDERS_SERVICE_GET_ORDERS_LIMIT);
+        this.ordersServicePostOrderCounter = new ThrottledCounter(ORDERS_SERVICE_POST_ORDER_LIMIT);
+        this.ordersServiceCancelOrderCounter = new ThrottledCounter(ORDERS_SERVICE_CANCEL_ORDER_LIMIT);
     }
 
     @Around("within(ru.tinkoff.piapi.core.InstrumentsService)")
@@ -119,7 +120,7 @@ public class ApiCallsThrottling {
         log.trace("{} throttling end. Counter = {}. Proceeding", targetName, counter.getValue());
         joinPoint.proceed();
         log.trace("{} executed. Scheduling of counter decrementing", targetName);
-        counter.scheduleDecrement();
+        counter.scheduleDecrement(interval);
     }
 
 }

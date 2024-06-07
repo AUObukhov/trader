@@ -12,14 +12,14 @@ import org.springframework.validation.annotation.Validated;
 public record ApiProperties(
         @NotNull(message = "host is mandatory") String host,
         @Nullable Integer port,
-        Integer throttlingInterval
+        Long throttlingInterval
 ) {
 
     @ConstructorBinding
-    public ApiProperties(final String host, final Integer port, final Integer throttlingInterval) {
+    public ApiProperties(final String host, final Integer port, final Long throttlingInterval) {
         this.host = host;
         this.port = port;
-        this.throttlingInterval = ObjectUtils.defaultIfNull(throttlingInterval, 60000);
+        this.throttlingInterval = ObjectUtils.defaultIfNull(throttlingInterval, 60000L);
     }
 
 }

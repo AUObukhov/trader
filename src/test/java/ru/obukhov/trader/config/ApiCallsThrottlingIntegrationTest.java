@@ -200,7 +200,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
         duration = ExecutionUtils.run(runnable, limit + 1).toMillis();
 
-        final Integer interval = apiProperties.throttlingInterval();
+        final long interval = apiProperties.throttlingInterval();
         AssertUtils.assertRangeInclusive(interval - 20, (int) (interval * 1.25), duration);
     }
 

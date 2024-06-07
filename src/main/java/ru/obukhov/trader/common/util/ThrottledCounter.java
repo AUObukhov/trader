@@ -15,18 +15,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThrottledCounter {
 
     private final CounterWithMaxValue counterWithMaxValue;
-    private final long interval;
     private final Timer timer;
 
     /**
      * Creates new instance of {@link ThrottledCounter}
      *
      * @param maxValue maximum value of counter
-     * @param interval delay before decrement after increment in milliseconds
      */
-    public ThrottledCounter(final int maxValue, final long interval) {
+    public ThrottledCounter(final int maxValue) {
         this.counterWithMaxValue = new CounterWithMaxValue(maxValue);
-        this.interval = interval;
         this.timer = new Timer();
     }
 
@@ -37,7 +34,12 @@ public class ThrottledCounter {
         this.counterWithMaxValue.increment();
     }
 
-    public void scheduleDecrement() {
+    /**
+     * Starts task to decrement the counter after delay
+     *
+     * @param interval delay before decrement in milliseconds
+     */
+    public void scheduleDecrement(final long interval) {
         timer.schedule(new DecrementTask(), interval);
     }
 
