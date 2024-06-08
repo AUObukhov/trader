@@ -57,32 +57,32 @@ public class ApiCallsThrottling {
     }
 
     @Around("within(ru.tinkoff.piapi.core.InstrumentsService)")
-    public void throttleInstrumentService(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(instrumentServiceCounter, "InstrumentService", joinPoint);
+    public Object throttleInstrumentService(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(instrumentServiceCounter, "InstrumentService", joinPoint);
     }
 
     @Around("within(ru.tinkoff.piapi.core.UsersService)")
-    public void throttleUsersService(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(usersServiceCounter, "UsersService", joinPoint);
+    public Object throttleUsersService(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(usersServiceCounter, "UsersService", joinPoint);
     }
 
     // region OperationsService throttling
 
     @Around("within(ru.tinkoff.piapi.core.OperationsService) && !execution(* ru.tinkoff.piapi.core.OperationsService.getBrokerReport*(..))")
-    public void throttleOperationsService(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(operationsServiceCounter, "OperationsService", joinPoint);
+    public Object throttleOperationsService(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(operationsServiceCounter, "OperationsService", joinPoint);
     }
 
     @Around("execution(* ru.tinkoff.piapi.core.OperationsService.getBrokerReport*(..))")
-    public void throttleOperationsServiceGetBrokerReport(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(operationsServiceGetBrokerReportCounter, "OperationsService.getBrokerReport*", joinPoint);
+    public Object throttleOperationsServiceGetBrokerReport(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(operationsServiceGetBrokerReportCounter, "OperationsService.getBrokerReport*", joinPoint);
     }
 
     // endregion
 
     @Around("within(ru.tinkoff.piapi.core.MarketDataService)")
-    public void throttleMarketDataService(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(marketDataServiceCounter, "MarketDataService", joinPoint);
+    public Object throttleMarketDataService(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(marketDataServiceCounter, "MarketDataService", joinPoint);
     }
 
     // region OrdersService throttling
@@ -92,35 +92,36 @@ public class ApiCallsThrottling {
             + " && !execution(* ru.tinkoff.piapi.core.OrdersService.postOrder*(..))"
             + " && !execution(* ru.tinkoff.piapi.core.OrdersService.cancelOrder*(..)))"
     )
-    public void throttleOrdersService(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(ordersServiceCounter, "OrdersService", joinPoint);
+    public Object throttleOrdersService(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(ordersServiceCounter, "OrdersService", joinPoint);
     }
 
     @Around("execution(* ru.tinkoff.piapi.core.OrdersService.getOrders*(..))")
-    public void throttleOrdersServiceGetOrders(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(ordersServiceGetOrdersCounter, "OrdersService.getOrders*", joinPoint);
+    public Object throttleOrdersServiceGetOrders(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(ordersServiceGetOrdersCounter, "OrdersService.getOrders*", joinPoint);
     }
 
     @Around("execution(* ru.tinkoff.piapi.core.OrdersService.postOrder*(..))")
-    public void throttleOrdersServicePostOrder(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(ordersServicePostOrderCounter, "OrdersService.postOrder*", joinPoint);
+    public Object throttleOrdersServicePostOrder(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(ordersServicePostOrderCounter, "OrdersService.postOrder*", joinPoint);
     }
 
     @Around("execution(* ru.tinkoff.piapi.core.OrdersService.cancelOrder*(..))")
-    public void throttleOrdersServiceCancelOrder(final ProceedingJoinPoint joinPoint) throws Throwable {
-        throttle(ordersServiceCancelOrderCounter, "OrdersService.cancelOrder*", joinPoint);
+    public Object throttleOrdersServiceCancelOrder(final ProceedingJoinPoint joinPoint) throws Throwable {
+        return throttle(ordersServiceCancelOrderCounter, "OrdersService.cancelOrder*", joinPoint);
     }
 
     // endregion
 
-    public void throttle(final ThrottledCounter counter, final String targetName, final ProceedingJoinPoint joinPoint)
+    public Object throttle(final ThrottledCounter counter, final String targetName, final ProceedingJoinPoint joinPoint)
             throws Throwable {
         log.trace("{} throttling start. Counter = {}", targetName, counter.getValue());
         counter.increment();
         log.trace("{} throttling end. Counter = {}. Proceeding", targetName, counter.getValue());
-        joinPoint.proceed();
+        final Object result = joinPoint.proceed();
         log.trace("{} executed. Scheduling of counter decrementing", targetName);
         counter.scheduleDecrement(interval);
+        return result;
     }
 
 }

@@ -37,7 +37,7 @@ class ExecutionUtilsUnitTest {
 
     // endregion
 
-    // region run tests
+    // region run multiple times tests
 
     @Test
     void runMultiple_executesRunnable_andReturnsNonNegativeDuration() {
@@ -57,6 +57,31 @@ class ExecutionUtilsUnitTest {
         };
 
         final Executable executable = () -> ExecutionUtils.run(runnable, 10);
+        AssertUtils.assertThrowsWithMessage(runnableException.getClass(), executable, runnableException.getMessage());
+    }
+
+    // endregion
+
+    // region get multiple times tests
+
+    @Test
+    void getMultiple_returnsSupplierResult_andNonNegativeDuration() {
+        final AtomicInteger integer = new AtomicInteger(0);
+
+        final ExecutionResult<Integer> executionResult = ExecutionUtils.get(integer::incrementAndGet, 10);
+
+        Assertions.assertEquals(10, executionResult.result());
+        Assertions.assertFalse(executionResult.duration().isNegative());
+    }
+
+    @Test
+    void getMultiple_throwsSupplierException() {
+        final IllegalArgumentException runnableException = new IllegalArgumentException("exception message");
+        final Supplier<?> supplier = () -> {
+            throw runnableException;
+        };
+
+        final Executable executable = () -> ExecutionUtils.get(supplier, 10);
         AssertUtils.assertThrowsWithMessage(runnableException.getClass(), executable, runnableException.getMessage());
     }
 

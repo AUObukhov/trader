@@ -35,6 +35,26 @@ public class ExecutionUtils {
     }
 
     /**
+     * Executes given {@code supplier} given {@code quantity} of times
+     *
+     * @return result of last execution of given {@code supplier} and execution time.
+     */
+    public static <T> ExecutionResult<T> get(final Supplier<T> supplier, final long quantity) {
+        T result = null;
+
+        final long start = System.nanoTime();
+
+        for (int i = 0; i < quantity; i++) {
+            result = supplier.get();
+        }
+
+        final long end = System.nanoTime();
+        final Duration duration = Duration.ofNanos(end - start);
+
+        return new ExecutionResult<>(result, duration, null);
+    }
+
+    /**
      * Executes given {@code supplier}. Doesn't catch execution exceptions.
      *
      * @return result of execution of given {@code supplier} and execution time.
