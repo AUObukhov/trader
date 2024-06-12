@@ -39,7 +39,7 @@ scheduled-bot:
         minimumProfit: 0.1
 
 spring.cache:
-  scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
+  caffeine.spec: maximumSize=1000,expireAfterAccess=5m
 
 report:
   save-directory: D:\test

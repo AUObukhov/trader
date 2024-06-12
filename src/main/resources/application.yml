@@ -32,6 +32,8 @@ back-test:
 spring:
   mvc.pathmatch.matching-strategy: ant_path_matcher
   cache:
+    type: caffeine
+    caffeine.spec: maximumSize=10000,expireAfterAccess=3h
     cache-names:
       exchange,
       instrument,
@@ -43,4 +45,3 @@ spring:
       marketCurrencies,
       marketCandles,
       tickerByFigi
-    scaffeine.spec: maximumSize=3000,expireAfterAccess=3h
