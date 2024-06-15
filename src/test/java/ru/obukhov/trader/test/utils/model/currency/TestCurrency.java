@@ -97,4 +97,8 @@ public record TestCurrency(Currency currency, ru.tinkoff.piapi.contract.v1.Curre
         return currency.figi();
     }
 
+    public String getIsoCurrencyName() {
+        return currency.isoCurrencyName();
+    }
+
 }

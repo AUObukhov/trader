@@ -71,7 +71,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @ParameterizedTest
     @MethodSource("getData_forConvertCurrencyIntoItself")
     void convertCurrencyIntoItself(final TestCurrency testCurrency) throws Exception {
-        final String currencyIsoName = testCurrency.tinkoffCurrency().getIsoCurrencyName();
+        final String currencyIsoName = testCurrency.getIsoCurrencyName();
         final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/market/convert-currency")
@@ -97,15 +97,12 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @ParameterizedTest
     @MethodSource("getData_forConvertCurrency")
     void convertCurrency(
-            final TestCurrency sourceTestCurrency,
-            final TestCurrency targetTestCurrency,
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
             final double price1,
             final double price2,
             final double expectedResult
     ) throws Exception {
-        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = sourceTestCurrency.tinkoffCurrency();
-        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = targetTestCurrency.tinkoffCurrency();
-
         Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
 
         final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>();
@@ -126,8 +123,8 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void convertCurrency_returnsBadRequest_whenCurrencyNotFound() throws Exception {
-        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = TestCurrencies.USD.tinkoffCurrency();
-        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = TestCurrencies.RUB.tinkoffCurrency();
+        final TestCurrency sourceCurrency = TestCurrencies.USD;
+        final TestCurrency targetCurrency = TestCurrencies.RUB;
 
         Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
 

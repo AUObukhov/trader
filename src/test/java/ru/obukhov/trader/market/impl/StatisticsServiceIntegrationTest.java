@@ -17,6 +17,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -270,9 +271,9 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         sharesLastPrices.put(share3, 2585.6);
         Mocker.mockSharesLastPrices(instrumentsService, marketDataService, sharesLastPrices);
 
-        final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
-        currenciesLastPrices.put(TestCurrencies.USD.tinkoffCurrency(), 98.4225);
-        currenciesLastPrices.put(TestCurrencies.RUB.tinkoffCurrency(), 1.0);
+        final SequencedMap<TestCurrency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
+        currenciesLastPrices.put(TestCurrencies.USD, 98.4225);
+        currenciesLastPrices.put(TestCurrencies.RUB, 1.0);
         Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);
 
         final List<String> shareFigies = sharesLastPrices.keySet().stream()
@@ -307,9 +308,9 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         sharesLastPrices.put(share3, 2585.6);
         Mocker.mockSharesLastPrices(instrumentsService, marketDataService, sharesLastPrices);
 
-        final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
-        currenciesLastPrices.put(TestCurrencies.USD.tinkoffCurrency(), 98.4225);
-        currenciesLastPrices.put(TestCurrencies.RUB.tinkoffCurrency(), 1.0);
+        final SequencedMap<TestCurrency, Double> currenciesLastPrices = new LinkedHashMap<>(2, 1);
+        currenciesLastPrices.put(TestCurrencies.USD, 98.4225);
+        currenciesLastPrices.put(TestCurrencies.RUB, 1.0);
         Mocker.mockCurrenciesLastPrices(instrumentsService, marketDataService, currenciesLastPrices);
 
         final List<String> shareFigies = sharesLastPrices.keySet().stream()

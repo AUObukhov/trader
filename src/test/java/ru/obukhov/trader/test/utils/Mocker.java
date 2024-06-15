@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -33,6 +34,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -119,10 +121,7 @@ public class Mocker {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument);
     }
 
-    public static void mockInstrument(
-            final ExtInstrumentsService instrumentsService,
-            final Instrument instrument
-    ) {
+    public static void mockInstrument(final ExtInstrumentsService instrumentsService, final Instrument instrument) {
         Mockito.when(instrumentsService.getInstrument(instrument.figi())).thenReturn(instrument);
     }
 
@@ -138,20 +137,15 @@ public class Mocker {
         Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf);
     }
 
-    public static void mockCurrency(
-            final InstrumentsService instrumentsService,
-            final ru.tinkoff.piapi.contract.v1.Currency currency
-    ) {
+    public static void mockCurrency(final InstrumentsService instrumentsService, final TestCurrency currency) {
         Mockito.when(instrumentsService.getCurrencyByFigiSync(currency.getFigi()))
-                .thenReturn(currency);
+                .thenReturn(currency.tinkoffCurrency());
     }
 
-    public static void mockAllCurrencies(
-            final InstrumentsService instrumentsService,
-            final ru.tinkoff.piapi.contract.v1.Currency... currencies
-    ) {
+    public static void mockAllCurrencies(final InstrumentsService instrumentsService, final TestCurrency... currencies) {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> tinkoffCurrencies = Arrays.stream(currencies).map(TestCurrency::tinkoffCurrency).toList();
         Mockito.when(instrumentsService.getAllCurrenciesSync())
-                .thenReturn(List.of(currencies));
+                .thenReturn(tinkoffCurrencies);
     }
 
     public static void mockBond(final InstrumentsService instrumentsService, final Bond bond) {
@@ -230,13 +224,13 @@ public class Mocker {
     public static void mockCurrenciesLastPrices(
             final InstrumentsService instrumentsService,
             final MarketDataService marketDataService,
-            final SequencedMap<ru.tinkoff.piapi.contract.v1.Currency, Double> prices
+            final SequencedMap<TestCurrency, Double> prices
     ) {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = prices.keySet().stream().toList();
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = prices.keySet().stream().map(TestCurrency::tinkoffCurrency).toList();
         Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final SequencedMap<String, Double> currenciesLastPrices = new LinkedHashMap<>(prices.size(), 1);
-        for (Map.Entry<ru.tinkoff.piapi.contract.v1.Currency, Double> entry : prices.entrySet()) {
+        for (Map.Entry<TestCurrency, Double> entry : prices.entrySet()) {
             currenciesLastPrices.put(entry.getKey().getFigi(), entry.getValue());
         }
         Mocker.mockLastPricesDouble(marketDataService, currenciesLastPrices);

@@ -155,7 +155,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCurrency_returnsCurrency() throws Exception {
         final TestCurrency testCurrency = TestCurrencies.USD;
 
-        Mocker.mockCurrency(instrumentsService, testCurrency.tinkoffCurrency());
+        Mocker.mockCurrency(instrumentsService, testCurrency);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")

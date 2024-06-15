@@ -300,7 +300,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrencyByFigi_returnsCurrency() {
-        final ru.tinkoff.piapi.contract.v1.Currency currency = TestCurrencies.RUB.tinkoffCurrency();
+        final TestCurrency currency = TestCurrencies.RUB;
         Mocker.mockCurrency(instrumentsService, currency);
 
         final Currency result = extInstrumentsService.getCurrencyByFigi(currency.getFigi());
@@ -314,7 +314,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final TestCurrency testCurrency1 = TestCurrencies.USD;
         final TestCurrency testCurrency2 = TestCurrencies.RUB;
 
-        Mocker.mockAllCurrencies(instrumentsService, testCurrency1.tinkoffCurrency(), testCurrency2.tinkoffCurrency());
+        Mocker.mockAllCurrencies(instrumentsService, testCurrency1, testCurrency2);
 
         final List<Currency> actualResult1 = extInstrumentsService.getAllCurrencies();
 
@@ -332,11 +332,9 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCurrenciesByIsoNames() {
-        final TestCurrency testCurrency1 = TestCurrencies.USD;
-        final TestCurrency testCurrency2 = TestCurrencies.RUB;
+        final TestCurrency currency1 = TestCurrencies.USD;
+        final TestCurrency currency2 = TestCurrencies.RUB;
 
-        final ru.tinkoff.piapi.contract.v1.Currency currency1 = testCurrency1.tinkoffCurrency();
-        final ru.tinkoff.piapi.contract.v1.Currency currency2 = testCurrency2.tinkoffCurrency();
         Mocker.mockAllCurrencies(instrumentsService, currency1, currency2);
 
         final List<Currency> actualResult1 = extInstrumentsService.getCurrenciesByIsoNames(
@@ -347,7 +345,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 currency2.getIsoCurrencyName()
         );
 
-        final List<Currency> expectedResult = List.of(testCurrency1.currency(), testCurrency2.currency());
+        final List<Currency> expectedResult = List.of(currency1.currency(), currency2.currency());
         Assertions.assertEquals(expectedResult, actualResult1);
 
         Mocker.mockAllCurrencies(instrumentsService);

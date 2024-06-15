@@ -926,7 +926,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @ParameterizedTest
     @MethodSource("getData_forConvertCurrencyIntoItself")
     void convertCurrencyIntoItself(final TestCurrency testCurrency) {
-        final String currencyIsoName = testCurrency.tinkoffCurrency().getIsoCurrencyName();
+        final String currencyIsoName = testCurrency.getIsoCurrencyName();
         final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
         final BigDecimal actualResult = extMarketDataService.convertCurrency(currencyIsoName, currencyIsoName, sourceValue);
 
@@ -947,15 +947,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @ParameterizedTest
     @MethodSource("getData_forConvertCurrency")
     void convertCurrency(
-            final TestCurrency sourceTestCurrency,
-            final TestCurrency targetTestCurrency,
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
             final double price1,
             final double price2,
             final double expectedResult
     ) {
-        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = sourceTestCurrency.tinkoffCurrency();
-        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = targetTestCurrency.tinkoffCurrency();
-
         Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
 
         final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>();
@@ -974,8 +971,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void convertCurrency_throwsIllegalArgumentException_whenCurrencyNotFound() {
-        final ru.tinkoff.piapi.contract.v1.Currency sourceCurrency = TestCurrencies.USD.tinkoffCurrency();
-        final ru.tinkoff.piapi.contract.v1.Currency targetCurrency = TestCurrencies.RUB.tinkoffCurrency();
+        final TestCurrency sourceCurrency = TestCurrencies.USD;
+        final TestCurrency targetCurrency = TestCurrencies.RUB;
 
         Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
 
