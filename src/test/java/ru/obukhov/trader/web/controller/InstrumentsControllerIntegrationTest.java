@@ -65,7 +65,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     void getShare_returnsShare() throws Exception {
         final TestShare share = TestShares.SBER;
-        Mocker.mockShare(instrumentsService, share.tinkoffShare());
+        Mocker.mockShare(instrumentsService, share);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")

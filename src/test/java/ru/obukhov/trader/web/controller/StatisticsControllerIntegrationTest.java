@@ -24,12 +24,12 @@ import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Instrument;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -333,11 +333,11 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getIndexWeights() throws Exception {
-        final Share share1 = TestShares.APPLE.tinkoffShare();
-        final Share share2 = TestShares.SBER.tinkoffShare();
-        final Share share3 = TestShares.YANDEX.tinkoffShare();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
+        final TestShare share3 = TestShares.YANDEX;
 
-        final SequencedMap<Share, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
+        final SequencedMap<TestShare, Double> sharesLastPrices = new LinkedHashMap<>(3, 1);
         sharesLastPrices.put(share1, 178.7);
         sharesLastPrices.put(share2, 258.79);
         sharesLastPrices.put(share3, 2585.6);

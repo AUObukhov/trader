@@ -197,7 +197,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @DirtiesContext
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final ru.tinkoff.piapi.contract.v1.Share share = TestShares.APPLE.tinkoffShare();
+        final TestShare share = TestShares.APPLE;
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
         final OffsetDateTime from = DateTimeTestData.newDateTime(2022, 1, 1, 10);

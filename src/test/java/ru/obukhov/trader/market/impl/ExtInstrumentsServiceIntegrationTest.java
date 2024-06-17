@@ -207,7 +207,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getShare_returnsShare() {
         final TestShare testShare = TestShares.SBER;
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockShare(instrumentsService, testShare);
 
         final Share result = extInstrumentsService.getShare(testShare.getFigi());
 
@@ -220,7 +220,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final TestShare testShare = TestShares.SBER;
         final String figi = testShare.getFigi();
 
-        Mocker.mockShare(instrumentsService, testShare.tinkoffShare());
+        Mocker.mockShare(instrumentsService, testShare);
         extInstrumentsService.getShare(figi);
 
         Mockito.when(instrumentsService.getShareByFigiSync(figi)).thenReturn(null);
@@ -234,24 +234,19 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getShares_returnsCachedValue() {
-        final TestShare testShare1 = TestShares.APPLE;
-        final TestShare testShare2 = TestShares.SBER;
-        final TestShare testShare3 = TestShares.YANDEX;
-        final TestShare testShare4 = TestShares.DIOD;
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
+        final TestShare share3 = TestShares.YANDEX;
+        final TestShare share4 = TestShares.DIOD;
 
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare1 = testShare1.tinkoffShare();
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare2 = testShare2.tinkoffShare();
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare3 = testShare3.tinkoffShare();
-        final ru.tinkoff.piapi.contract.v1.Share tinkoffShare4 = testShare4.tinkoffShare();
-
-        final List<String> figies = List.of(tinkoffShare1.getFigi(), tinkoffShare2.getFigi(), tinkoffShare4.getFigi());
-        Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare2, tinkoffShare3, tinkoffShare4);
+        final List<String> figies = List.of(share1.getFigi(), share2.getFigi(), share4.getFigi());
+        Mocker.mockAllShares(instrumentsService, share1, share2, share3, share4);
         final List<Share> actualResult1 = extInstrumentsService.getShares(figies);
 
-        Mocker.mockAllShares(instrumentsService, tinkoffShare1, tinkoffShare3);
+        Mocker.mockAllShares(instrumentsService, share1, share3);
         final List<Share> actualResult2 = extInstrumentsService.getShares(figies);
 
-        final List<Share> expectedResult = List.of(testShare1.share(), testShare2.share(), testShare4.share());
+        final List<Share> expectedResult = List.of(share1.share(), share2.share(), share4.share());
         AssertUtils.assertEquals(expectedResult, actualResult1);
         AssertUtils.assertEquals(expectedResult, actualResult2);
     }
@@ -265,12 +260,11 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final TestShare testShare4 = TestShares.DIOD;
 
         final List<TestShare> testShares = List.of(testShare1, testShare2, testShare3, testShare4);
-        final List<ru.tinkoff.piapi.contract.v1.Share> tinkoffShares = testShares.stream().map(TestShare::tinkoffShare).toList();
         final List<Share> shares = testShares.stream().map(TestShare::share).toList();
 
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
+        Mocker.mockAllShares(instrumentsService, testShares);
         final List<Share> actualResult1 = extInstrumentsService.getAllShares();
-        Mocker.mockAllShares(instrumentsService, testShare1.tinkoffShare(), testShare3.tinkoffShare());
+        Mocker.mockAllShares(instrumentsService, testShare1, testShare3);
         final List<Share> actualResult2 = extInstrumentsService.getAllShares();
 
         AssertUtils.assertEquals(shares, actualResult1);
