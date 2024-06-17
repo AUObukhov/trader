@@ -125,7 +125,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     void getBond_returnsBond() throws Exception {
         final TestBond testBond = TestBonds.KAZAKHSTAN;
 
-        Mocker.mockBond(instrumentsService, testBond.tinkoffBond());
+        Mocker.mockBond(instrumentsService, testBond);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")

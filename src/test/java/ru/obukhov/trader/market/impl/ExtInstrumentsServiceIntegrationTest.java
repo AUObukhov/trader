@@ -285,7 +285,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getBond_returnsBond() {
         final TestBond testBond = TestBonds.KAZAKHSTAN;
-        Mocker.mockBond(instrumentsService, testBond.tinkoffBond());
+        Mocker.mockBond(instrumentsService, testBond);
 
         final Bond result = extInstrumentsService.getBond(testBond.getFigi());
 

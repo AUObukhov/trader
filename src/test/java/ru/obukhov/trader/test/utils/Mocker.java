@@ -16,11 +16,11 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.bots.FakeBot;
-import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
@@ -155,8 +155,8 @@ public class Mocker {
                 .thenReturn(tinkoffCurrencies);
     }
 
-    public static void mockBond(final InstrumentsService instrumentsService, final Bond bond) {
-        Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond);
+    public static void mockBond(final InstrumentsService instrumentsService, final TestBond bond) {
+        Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond.tinkoffBond());
     }
 
     public static void mockTradingSchedules(
