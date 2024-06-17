@@ -35,15 +35,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getInstrument_returnsInstrument() throws Exception {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        final TestInstrument instrument = TestInstruments.APPLE;
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/instrument")
-                .param("figi", testInstrument.getFigi())
+                .param("figi", instrument.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, testInstrument.jsonString());
+        assertResponse(requestBuilder, instrument.jsonString());
     }
 
     @Test

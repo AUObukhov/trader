@@ -29,7 +29,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
-import ru.tinkoff.piapi.contract.v1.Instrument;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -143,7 +142,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
         final String figi = instrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -206,14 +205,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
+        final TestInstrument instrument = TestInstruments.APPLE;
 
-        final String figi = testInstrument.getFigi();
+        final String figi = instrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", figi)
@@ -237,14 +236,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
-        final Instrument share = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
-        final String figi = share.getFigi();
+        final String figi = instrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.newDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2021, 3, 25, 19);
 
-        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("figi", figi)
@@ -271,7 +270,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
         final String figi = instrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -302,7 +301,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
 
         Mocker.mockInstrument(instrumentsService, instrument);

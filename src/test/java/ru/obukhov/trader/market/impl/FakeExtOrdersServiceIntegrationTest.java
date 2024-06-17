@@ -70,23 +70,23 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
     @Test
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
         final String accountId = TestAccounts.TINKOFF.getId();
-        final TestShare testShare = TestShares.APPLE;
+        final TestShare share = TestShares.APPLE;
         final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final int initialBalance = 1000;
 
-        Mocker.mockInstrument(instrumentsService, testShare.tinkoffInstrument());
-        Mocker.mockShare(instrumentsService, testShare);
-        new CandleMocker(marketDataService, testShare.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockShare(instrumentsService, share);
+        new CandleMocker(marketDataService, share.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(1000, dateTime.minusMinutes(1))
                 .mock();
 
-        final FakeContext fakeContext = initializeContextAndService(accountId, testShare.getCurrency(), dateTime, initialBalance);
+        final FakeContext fakeContext = initializeContextAndService(accountId, share.getCurrency(), dateTime, initialBalance);
 
         final Executable executable =
-                () -> postOrder(fakeContext, accountId, testShare.getFigi(), 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime);
+                () -> postOrder(fakeContext, accountId, share.getFigi(), 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "balance can't be negative");
 
-        AssertUtils.assertEquals(initialBalance, fakeContext.getBalance(accountId, testShare.getCurrency()));
+        AssertUtils.assertEquals(initialBalance, fakeContext.getBalance(accountId, share.getCurrency()));
     }
 
     @Test
@@ -95,9 +95,9 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final TestShare testShare = TestShares.SBER;
-        final String figi = testShare.getFigi();
-        final String currency = testShare.getCurrency();
+        final TestShare share = TestShares.SBER;
+        final String figi = share.getFigi();
+        final String currency = share.getCurrency();
 
         final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final int quantity = 10;
@@ -105,8 +105,8 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final int balance1 = 1000000;
         final double balance2 = balance1 - currentPrice * quantity * COMMISSION_COEF;
 
-        Mocker.mockInstrument(instrumentsService, testShare.tinkoffInstrument());
-        Mocker.mockShare(instrumentsService, testShare);
+        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockShare(instrumentsService, share);
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(1000, dateTime.minusMinutes(1))
                 .mock();
@@ -138,9 +138,9 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final TestShare testShare = TestShares.SBER;
-        final String figi = testShare.getFigi();
-        final String currency = testShare.getCurrency();
+        final TestShare share = TestShares.SBER;
+        final String figi = share.getFigi();
+        final String currency = share.getCurrency();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -155,8 +155,8 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final double balance1 = initialBalance - price1 * quantity1 * COMMISSION_COEF;
         final double balance2 = balance1 - price2 * quantity2 * COMMISSION_COEF;
 
-        Mocker.mockInstrument(instrumentsService, testShare.tinkoffInstrument());
-        Mocker.mockShare(instrumentsService, testShare);
+        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockShare(instrumentsService, share);
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(price1, dateTime1.minusMinutes(1))
                 .add(price2, dateTime2.minusMinutes(1))
@@ -207,19 +207,15 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final TestShare testShare1 = TestShares.SBER;
-        final TestShare testShare2 = TestShares.YANDEX;
-        final TestShare testShare3 = TestShares.DIOD;
+        final TestShare share1 = TestShares.SBER;
+        final TestShare share2 = TestShares.YANDEX;
+        final TestShare share3 = TestShares.DIOD;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = testShare1.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = testShare2.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument3 = testShare3.tinkoffInstrument();
+        final String figi1 = share1.getFigi();
+        final String figi2 = share2.getFigi();
+        final String figi3 = share3.getFigi();
 
-        final String figi1 = instrument1.getFigi();
-        final String figi2 = instrument2.getFigi();
-        final String figi3 = instrument3.getFigi();
-
-        final String currency = instrument1.getCurrency();
+        final String currency = share1.getCurrency();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -235,13 +231,13 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final int quantity2 = 3;
         final int quantity3 = 100;
 
-        Mocker.mockInstrument(instrumentsService, instrument1);
-        Mocker.mockInstrument(instrumentsService, instrument2);
-        Mocker.mockInstrument(instrumentsService, instrument3);
+        Mocker.mockInstrument(instrumentsService, share1);
+        Mocker.mockInstrument(instrumentsService, share2);
+        Mocker.mockInstrument(instrumentsService, share3);
 
-        Mocker.mockShare(instrumentsService, testShare1);
-        Mocker.mockShare(instrumentsService, testShare2);
-        Mocker.mockShare(instrumentsService, testShare3);
+        Mocker.mockShare(instrumentsService, share1);
+        Mocker.mockShare(instrumentsService, share2);
+        Mocker.mockShare(instrumentsService, share3);
 
         new CandleMocker(marketDataService, figi1, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(price1, dateTime1.minusMinutes(1))
@@ -311,9 +307,9 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final TestShare testShare = TestShares.SBER;
-        final String figi = testShare.getFigi();
-        final String currency = testShare.getCurrency();
+        final TestShare share = TestShares.SBER;
+        final String figi = share.getFigi();
+        final String currency = share.getCurrency();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -329,8 +325,8 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final int quantity2 = 10;
         final int quantity3 = 40;
 
-        Mocker.mockInstrument(instrumentsService, testShare.tinkoffInstrument());
-        Mocker.mockShare(instrumentsService, testShare);
+        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockShare(instrumentsService, share);
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(price1, dateTime1.minusMinutes(1))
                 .add(price2, dateTime2.minusMinutes(1))
@@ -386,9 +382,9 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final TestShare testShare = TestShares.SBER;
-        final String figi = testShare.getFigi();
-        final String currency = testShare.getCurrency();
+        final TestShare share = TestShares.SBER;
+        final String figi = share.getFigi();
+        final String currency = share.getCurrency();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -407,8 +403,8 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final int quantity2 = 10;
         final int quantity3 = 30;
 
-        Mocker.mockInstrument(instrumentsService, testShare.tinkoffInstrument());
-        Mocker.mockShare(instrumentsService, testShare);
+        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockShare(instrumentsService, share);
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(price1, dateTime1.minusMinutes(1))
                 .add(price2, dateTime2.minusMinutes(1))
@@ -467,9 +463,9 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
 
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final TestShare testShare = TestShares.SBER;
-        final String figi = testShare.getFigi();
-        final String currency = testShare.getCurrency();
+        final TestShare share = TestShares.SBER;
+        final String figi = share.getFigi();
+        final String currency = share.getCurrency();
 
         final OffsetDateTime dateTime1 = DateTimeTestData.newDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -488,8 +484,8 @@ class FakeExtOrdersServiceIntegrationTest extends IntegrationTest {
         final int quantity2 = 10;
         final int quantity3 = 10;
 
-        Mocker.mockInstrument(instrumentsService, testShare.tinkoffInstrument());
-        Mocker.mockShare(instrumentsService, testShare);
+        Mocker.mockInstrument(instrumentsService, share);
+        Mocker.mockShare(instrumentsService, share);
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(price1, dateTime1.minusMinutes(1))
                 .add(price2, dateTime2.minusMinutes(1))

@@ -93,7 +93,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getExchange_returnsExchange() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         Mocker.mockInstrument(instrumentsService, instrument);
 
         final String result = extInstrumentsService.getExchange(instrument.getFigi());
@@ -104,7 +104,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getExchange_returnsCachedValue() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -133,8 +133,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getExchanges_returnsExchanges() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
         Mocker.mockInstrument(instrumentsService, instrument2);
@@ -149,8 +149,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getExchanges_returnsCachedValues() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
         Mocker.mockInstrument(instrumentsService, instrument2);
@@ -170,8 +170,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchanges_throwInstrumentNotFoundException_whenNoInstrument() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
 
@@ -188,7 +188,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getInstrument() {
         final TestInstrument testInstrument = TestInstruments.SBER;
         final String figi = testInstrument.getFigi();
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, testInstrument);
 
         final Instrument actualResult1 = extInstrumentsService.getInstrument(figi);
 
@@ -361,7 +361,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingDay_returnsTradingDay() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         Mocker.mockInstrument(instrumentsService, instrument);
 
         final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2022, 10, 3, 3);
@@ -448,7 +448,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingScheduleByFigi_forFuture() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.newEndOfDay(2023, 8, 18);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 8, 27);
@@ -478,7 +478,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
@@ -514,7 +514,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 20);
@@ -557,7 +557,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingScheduleByFigies_singleFigi_forFuture() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.newEndOfDay(2023, 8, 18);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 8, 27);
@@ -587,7 +587,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 27);
@@ -623,7 +623,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime from = DateTimeTestData.newEndOfDay(year, month, 18);
         final OffsetDateTime to = DateTimeTestData.newDateTime(year, month, 20);
@@ -671,8 +671,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingScheduleByFigies_multipleFigies_forFuture() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
         Mocker.mockInstrument(instrumentsService, instrument2);
@@ -730,8 +730,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
         Mocker.mockInstrument(instrumentsService, instrument2);
@@ -772,8 +772,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final int hour = 12;
         final int durationHours = 8;
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
         Mocker.mockInstrument(instrumentsService, instrument2);
@@ -807,8 +807,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getTradingScheduleByFigies_multipleFigies_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument1 = TestInstruments.APPLE.tinkoffInstrument();
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument2 = TestInstruments.SBER.tinkoffInstrument();
+        final TestInstrument instrument1 = TestInstruments.APPLE;
+        final TestInstrument instrument2 = TestInstruments.SBER;
 
         Mocker.mockInstrument(instrumentsService, instrument1);
 

@@ -18,6 +18,7 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
@@ -44,7 +45,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_simpleMovingAverage() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -96,7 +97,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_simpleMovingAverage_whenToIsNull() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -150,7 +151,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_linearWeightedMovingAverage() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -202,7 +203,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getExtendedCandles_exponentialWeightedMovingAverage() {
         // arrange
 
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final TestInstrument instrument = TestInstruments.APPLE;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 

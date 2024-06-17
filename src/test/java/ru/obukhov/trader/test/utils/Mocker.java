@@ -10,7 +10,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
@@ -20,6 +19,7 @@ import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -122,15 +122,16 @@ public class Mocker {
         Mockito.when(marketDataService.getTradingStatusSync(figi)).thenReturn(response);
     }
 
-    public static void mockInstrument(
-            final InstrumentsService instrumentsService,
-            final ru.tinkoff.piapi.contract.v1.Instrument instrument
-    ) {
-        Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument);
+    public static void mockInstrument(final InstrumentsService instrumentsService, final TestInstrument instrument) {
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument.tinkoffInstrument());
     }
 
-    public static void mockInstrument(final ExtInstrumentsService instrumentsService, final Instrument instrument) {
-        Mockito.when(instrumentsService.getInstrument(instrument.figi())).thenReturn(instrument);
+    public static void mockInstrument(final InstrumentsService instrumentsService, final TestShare share) {
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(share.getFigi())).thenReturn(share.tinkoffInstrument());
+    }
+
+    public static void mockInstrument(final ExtInstrumentsService instrumentsService, final TestShare share) {
+        Mockito.when(instrumentsService.getInstrument(share.getFigi())).thenReturn(share.instrument());
     }
 
     public static void mockShare(final InstrumentsService instrumentsService, final TestShare share) {

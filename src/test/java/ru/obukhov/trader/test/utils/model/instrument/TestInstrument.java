@@ -97,12 +97,20 @@ public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1
         return instrument.figi();
     }
 
+    public String getExchange() {
+        return instrument.exchange();
+    }
+
     public OffsetDateTime getFirst1MinCandleDate() {
         return instrument.first1MinCandleDate();
     }
 
     public OffsetDateTime getFirst1DayCandleDate() {
         return instrument.first1DayCandleDate();
+    }
+
+    public TestInstrument withFirst1DayCandleDate(final OffsetDateTime first1DayCandleDate) {
+        return new TestInstrument(instrument.withFirst1DayCandleDate(first1DayCandleDate));
     }
 
 }

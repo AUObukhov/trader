@@ -254,7 +254,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockAllShares(instrumentsService, share);
         Mocker.mockShare(instrumentsService, share);
-        Mocker.mockInstrument(instrumentsService, TestInstruments.APPLE.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, TestInstruments.APPLE);
 
         final Candle[] candles = ResourceUtils.getResourceAsObject("candles/candles.json", Candle[].class);
         final List<HistoricCandle> historicCandles = Arrays.stream(candles)

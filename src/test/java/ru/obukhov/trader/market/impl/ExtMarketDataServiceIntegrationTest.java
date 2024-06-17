@@ -344,10 +344,10 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
             final OffsetDateTime now,
             final OffsetDateTime[] candlesTimes
     ) {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         final CandleMocker candleMocker = new CandleMocker(marketDataService, figi, candleInterval);
         for (final OffsetDateTime candleTime : candlesTimes) {
@@ -382,14 +382,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirst1MinCandle_whenFromIsNull() {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final OffsetDateTime first1MinCandleDate = testInstrument.getFirst1MinCandleDate();
+        final OffsetDateTime first1MinCandleDate = instrument.getFirst1MinCandleDate();
         final OffsetDateTime to = first1MinCandleDate.plusMinutes(1);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1MinCandleDate.minusNanos(1))
@@ -423,12 +423,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @MethodSource("getData_forGetCandles_adjustsFrom_whenFromIsNull")
     @DirtiesContext
     void getCandles_adjustsFrom_whenFromIsNull(final CandleInterval candleInterval, final int adjustmentInMinutes) {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final OffsetDateTime first1MinCandleDate = testInstrument.getFirst1MinCandleDate();
+        final OffsetDateTime first1MinCandleDate = instrument.getFirst1MinCandleDate();
         final OffsetDateTime to = first1MinCandleDate.plusMinutes(adjustmentInMinutes);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1MinCandleDate.minusMinutes(adjustmentInMinutes).minusNanos(1))
@@ -449,13 +449,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirst1DayCandle_whenFromIsNull() {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        final OffsetDateTime first1DayCandleDate = testInstrument.getFirst1DayCandleDate();
+        final OffsetDateTime first1DayCandleDate = instrument.getFirst1DayCandleDate();
         final OffsetDateTime to = first1DayCandleDate.plusDays(1);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, first1DayCandleDate.minusHours(3).minusNanos(1))
@@ -476,14 +476,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfWeek() {
-        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 13, 10);
-        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
+        final TestInstrument instrument = TestInstruments.APPLE.withFirst1DayCandleDate(first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
 
-        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        new CandleMocker(marketDataService, figi, candleInterval)
+        new CandleMocker(marketDataService, instrument.getFigi(), candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
                 .add(2, DateTimeTestData.newDateTime(2020, 7, 13, 10))
                 .add(3, DateTimeTestData.newDateTime(2020, 7, 20, 10))
@@ -492,7 +491,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 7, 27, 10);
 
-        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(instrument.getFigi(), Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(2, candles.getFirst().getClose());
@@ -502,14 +501,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfWeek() {
-        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 17, 10);
-        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
+        final TestInstrument instrument = TestInstruments.APPLE.withFirst1DayCandleDate(first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
 
-        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        new CandleMocker(marketDataService, figi, candleInterval)
+        new CandleMocker(marketDataService, instrument.getFigi(), candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
                 .add(2, DateTimeTestData.newDateTime(2020, 7, 13, 10))
                 .add(3, DateTimeTestData.newDateTime(2020, 7, 20, 10))
@@ -518,7 +516,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 7, 27, 10);
 
-        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(instrument.getFigi(), Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(2, candles.getFirst().getClose());
@@ -528,14 +526,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstWeekCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfWeek() {
-        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2020, 7, 20, 2, 59, 59, 999_999_999);
-        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
+        final TestInstrument instrument = TestInstruments.APPLE.withFirst1DayCandleDate(first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_WEEK;
 
-        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        new CandleMocker(marketDataService, figi, candleInterval)
+        new CandleMocker(marketDataService, instrument.getFigi(), candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2020, 7, 6, 10))
                 .add(2, DateTimeTestData.newDateTime(2020, 7, 13, 10))
                 .add(3, DateTimeTestData.newDateTime(2020, 7, 20, 10))
@@ -544,7 +541,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime to = DateTimeTestData.newDateTime(2020, 7, 27, 10);
 
-        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(instrument.getFigi(), Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(2, candles.getFirst().getClose());
@@ -554,14 +551,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsFirstNanoOfMonth() {
-        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 1, 3);
-        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
+        final TestInstrument instrument = TestInstruments.APPLE.withFirst1DayCandleDate(first1DayCandleDate);
+
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
 
-        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        new CandleMocker(marketDataService, figi, candleInterval)
+        new CandleMocker(marketDataService, instrument.getFigi(), candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
                 .add(2, DateTimeTestData.newDateTime(2010, 2, 1, 10))
                 .add(3, DateTimeTestData.newDateTime(2010, 3, 1, 10))
@@ -570,7 +567,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime to = DateTimeTestData.newDateTime(2010, 4, 1, 10);
 
-        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(instrument.getFigi(), Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(2, candles.getFirst().getClose());
@@ -580,14 +577,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsMiddleOfMonth() {
-        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 2, 10, 10);
-        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
+        final TestInstrument instrument = TestInstruments.APPLE.withFirst1DayCandleDate(first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
 
-        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        new CandleMocker(marketDataService, figi, candleInterval)
+        new CandleMocker(marketDataService, instrument.getFigi(), candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
                 .add(2, DateTimeTestData.newDateTime(2010, 2, 1, 10))
                 .add(3, DateTimeTestData.newDateTime(2010, 3, 1, 10))
@@ -596,7 +592,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime to = DateTimeTestData.newDateTime(2010, 4, 1, 10);
 
-        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(instrument.getFigi(), Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(2, candles.getFirst().getClose());
@@ -606,14 +602,13 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_adjustsFromByFirstMonthCandle_whenFromIsNull_andFirst1DayCandleDateIsLastNanoOfMonth() {
-        final String figi = TestShares.APPLE.getFigi();
         final OffsetDateTime first1DayCandleDate = DateTimeTestData.newDateTime(2010, 3, 1, 2, 59, 59, 999_999_999);
-        final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument = TestData.newTinkoffInstrument(figi, first1DayCandleDate);
+        final TestInstrument instrument = TestInstruments.APPLE.withFirst1DayCandleDate(first1DayCandleDate);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_MONTH;
 
-        Mocker.mockInstrument(instrumentsService, tinkoffInstrument);
+        Mocker.mockInstrument(instrumentsService, instrument);
 
-        new CandleMocker(marketDataService, figi, candleInterval)
+        new CandleMocker(marketDataService, instrument.getFigi(), candleInterval)
                 .add(1, DateTimeTestData.newDateTime(2010, 1, 1, 10))
                 .add(2, DateTimeTestData.newDateTime(2010, 2, 1, 10))
                 .add(3, DateTimeTestData.newDateTime(2010, 3, 1, 10))
@@ -622,7 +617,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime to = DateTimeTestData.newDateTime(2010, 4, 1, 10);
 
-        final List<Candle> candles = getCandlesAndTestCaching(figi, Interval.of(null, to), candleInterval);
+        final List<Candle> candles = getCandlesAndTestCaching(instrument.getFigi(), Interval.of(null, to), candleInterval);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(2, candles.getFirst().getClose());
@@ -646,14 +641,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastPrice_returnsPrice_whenToAfterFirst1MinCandle() {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
-        final OffsetDateTime candlesTo = testInstrument.getFirst1MinCandleDate().plusDays(1);
+        final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(close, candlesFrom)
@@ -668,14 +663,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastPrice_returnsPrice_whenToAfterFirst1DayCandle() {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newDateTime(1988, 9, 15);
-        final OffsetDateTime candlesTo = testInstrument.getFirst1DayCandleDate().plusDays(1);
+        final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
                 .add(close, candlesFrom)
@@ -690,14 +685,14 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastPrice_throwsIllegalArgumentException_whenToBeforeAllCandles() {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
-        final OffsetDateTime to = testInstrument.getFirst1DayCandleDate().minusDays(1);
-        final OffsetDateTime candlesTo = testInstrument.getFirst1DayCandleDate().plusDays(1);
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime to = instrument.getFirst1DayCandleDate().minusDays(1);
+        final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
         final int close = 10;
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
                 .add(close, candlesFrom)
@@ -710,12 +705,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @Test
     @DirtiesContext
     void getLastPrice_throwsIllegalArgumentException_whenNoCandlesFound() {
-        final TestInstrument testInstrument = TestInstruments.APPLE;
-        final String figi = testInstrument.getFigi();
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
         final int close = 10;
 
-        Mocker.mockInstrument(instrumentsService, testInstrument.tinkoffInstrument());
+        Mocker.mockInstrument(instrumentsService, instrument);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(close, DateTimeTestData.newDateTime(2015, 2, 1))
