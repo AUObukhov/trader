@@ -17,11 +17,11 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
+import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -140,8 +140,8 @@ public class Mocker {
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
     }
 
-    public static void mockEtf(final InstrumentsService instrumentsService, final Etf etf) {
-        Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf);
+    public static void mockEtf(final InstrumentsService instrumentsService, final TestEtf etf) {
+        Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf.tinkoffEtf());
     }
 
     public static void mockCurrency(final InstrumentsService instrumentsService, final TestCurrency currency) {

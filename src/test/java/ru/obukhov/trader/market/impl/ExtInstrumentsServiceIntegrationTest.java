@@ -275,7 +275,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getEtf_returnsEtf() {
         final TestEtf testEtf = TestEtfs.EZA;
 
-        Mocker.mockEtf(instrumentsService, testEtf.tinkoffEtf());
+        Mocker.mockEtf(instrumentsService, testEtf);
 
         final Etf result = extInstrumentsService.getEtf(testEtf.getFigi());
 

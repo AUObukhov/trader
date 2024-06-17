@@ -95,7 +95,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     void getEtf_returnsEtf() throws Exception {
         final TestEtf testEtf = TestEtfs.FXUS;
 
-        Mocker.mockEtf(instrumentsService, testEtf.tinkoffEtf());
+        Mocker.mockEtf(instrumentsService, testEtf);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
