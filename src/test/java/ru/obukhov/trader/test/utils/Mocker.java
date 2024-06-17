@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
@@ -30,6 +31,7 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.UsersService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -96,6 +98,11 @@ public class Mocker {
                         Mockito.any(OrderType.class),
                         Mockito.isNull()
                 );
+    }
+
+    public static void mockAccounts(final UsersService usersService, final TestAccount... accounts) {
+        final List<ru.tinkoff.piapi.contract.v1.Account> tinkoffAccounts = Arrays.stream(accounts).map(TestAccount::tinkoffAccount).toList();
+        Mockito.when(usersService.getAccountsSync()).thenReturn(tinkoffAccounts);
     }
 
     public static void mockShare(final ExtInstrumentsService extInstrumentsService, final Share share) {

@@ -2,11 +2,11 @@ package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.market.model.Account;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 
@@ -23,11 +23,7 @@ class ExtUsersServiceIntegrationTest extends IntegrationTest {
         final TestAccount testAccount1 = TestAccounts.IIS;
         final TestAccount testAccount2 = TestAccounts.TINKOFF;
 
-        final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(testAccount1.tinkoffAccount(), testAccount2.tinkoffAccount());
-        Mockito.when(usersService.getAccountsSync())
-                .thenReturn(accounts);
-
-        Mockito.when(usersService.getAccountsSync()).thenReturn(accounts);
+        Mocker.mockAccounts(usersService, testAccount1, testAccount2);
 
         final List<Account> actualResult = extUsersService.getAccounts();
 

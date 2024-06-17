@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.Account;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 
@@ -24,9 +25,7 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         final TestAccount testAccount1 = TestAccounts.IIS;
         final TestAccount testAccount2 = TestAccounts.TINKOFF;
 
-        final List<ru.tinkoff.piapi.contract.v1.Account> accounts = List.of(testAccount1.tinkoffAccount(), testAccount2.tinkoffAccount());
-        Mockito.when(usersService.getAccountsSync())
-                .thenReturn(accounts);
+        Mocker.mockAccounts(usersService, testAccount1, testAccount2);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/user/accounts")
                 .contentType(MediaType.APPLICATION_JSON);
