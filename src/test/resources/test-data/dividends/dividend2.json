@@ -1,12 +1,12 @@
 {
-  "dividendNet": 100.000000000,
+  "dividendNet": 100,
   "paymentDate": "2021-08-29T03:00:00+03:00",
   "declaredDate": "2021-06-30T03:00:00+03:00",
   "lastBuyDate": "2021-05-23T03:00:00+03:00",
   "dividendType": "Cancelled",
   "recordDate": "2021-05-25T03:00:00+03:00",
   "regularity": "Annual",
-  "closePrice": 2000.000000000,
-  "yieldValue": 0.040000000,
+  "closePrice": 2000,
+  "yieldValue": 0.04,
   "createdAt": "2022-12-08T14:05:33.006257739+03:00"
 }

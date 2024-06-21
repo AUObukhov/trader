@@ -269,4 +269,12 @@ public class DecimalUtils {
 
     // endregion
 
+    public static BigDecimal stripTrailingZerosSafe(@Nullable final BigDecimal value) {
+        return value == null ? null : value.stripTrailingZeros();
+    }
+
+    public static String toPrettyStringSafe(@Nullable final BigDecimal value) {
+        return value == null ? null : value.stripTrailingZeros().toPlainString();
+    }
+
 }

@@ -2,13 +2,16 @@ package ru.obukhov.trader.test.utils.model.share;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public record TestShare(
@@ -19,14 +22,15 @@ public record TestShare(
         String jsonString
 ) {
 
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
+
     TestShare(final Share share) {
         this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), buildJsonString(share));
     }
 
     private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
-        final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
-        final MoneyValueMapper moneyValueMapper = Mappers.getMapper(MoneyValueMapper.class);
-        final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
         return ru.tinkoff.piapi.contract.v1.Share.newBuilder()
                 .setFigi(share.figi())
                 .setTicker(share.ticker())
@@ -34,29 +38,29 @@ public record TestShare(
                 .setIsin(share.isin())
                 .setLot(share.lot())
                 .setCurrency(share.currency())
-                .setKlong(quotationMapper.fromBigDecimal(share.klong()))
-                .setKshort(quotationMapper.fromBigDecimal(share.kshort()))
-                .setDlong(quotationMapper.fromBigDecimal(share.dlong()))
-                .setDshort(quotationMapper.fromBigDecimal(share.dshort()))
-                .setDlongMin(quotationMapper.fromBigDecimal(share.dlongMin()))
-                .setDshortMin(quotationMapper.fromBigDecimal(share.dshortMin()))
+                .setKlong(mapToQuotation(share.klong()))
+                .setKshort(mapToQuotation(share.kshort()))
+                .setDlong(mapToQuotation(share.dlong()))
+                .setDshort(mapToQuotation(share.dshort()))
+                .setDlongMin(mapToQuotation(share.dlongMin()))
+                .setDshortMin(mapToQuotation(share.dshortMin()))
                 .setShortEnabledFlag(share.shortEnabledFlag())
                 .setName(share.name())
                 .setExchange(share.exchange())
-                .setIpoDate(dateTimeMapper.offsetDateTimeToTimestamp(share.ipoDate()))
+                .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.ipoDate()))
                 .setIssueSize(share.issueSize())
                 .setCountryOfRisk(share.countryOfRisk())
                 .setCountryOfRiskName(share.countryOfRiskName())
                 .setSector(share.sector())
                 .setIssueSizePlan(share.issueSizePlan())
-                .setNominal(moneyValueMapper.map(share.nominal(), share.currency()))
+                .setNominal(MONEY_VALUE_MAPPER.map(share.nominal(), share.currency()))
                 .setTradingStatus(share.tradingStatus())
                 .setOtcFlag(share.otcFlag())
                 .setBuyAvailableFlag(share.buyAvailableFlag())
                 .setSellAvailableFlag(share.sellAvailableFlag())
                 .setDivYieldFlag(share.divYieldFlag())
                 .setShareType(share.shareType())
-                .setMinPriceIncrement(quotationMapper.fromBigDecimal(share.minPriceIncrement()))
+                .setMinPriceIncrement(mapToQuotation(share.minPriceIncrement()))
                 .setApiTradeAvailableFlag(share.apiTradeAvailableFlag())
                 .setUid(share.uid())
                 .setRealExchange(share.realExchange())
@@ -65,9 +69,13 @@ public record TestShare(
                 .setForQualInvestorFlag(share.forQualInvestorFlag())
                 .setWeekendFlag(share.weekendFlag())
                 .setBlockedTcaFlag(share.blockedTcaFlag())
-                .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
-                .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
                 .build();
+    }
+
+    private static Quotation mapToQuotation(final BigDecimal value) {
+        return value == null ? Quotation.getDefaultInstance() : QUOTATION_MAPPER.fromBigDecimal(value);
     }
 
     private static Instrument buildInstrument(final Share share) {
@@ -110,9 +118,6 @@ public record TestShare(
     }
 
     private static ru.tinkoff.piapi.contract.v1.Instrument buildTinkoffInstrument(final Share share) {
-        final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
-        final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
-
         return ru.tinkoff.piapi.contract.v1.Instrument.newBuilder()
                 .setFigi(share.figi())
                 .setTicker(share.ticker())
@@ -120,12 +125,12 @@ public record TestShare(
                 .setIsin(share.isin())
                 .setLot(share.lot())
                 .setCurrency(share.currency())
-                .setKlong(quotationMapper.fromBigDecimal(share.klong()))
-                .setKshort(quotationMapper.fromBigDecimal(share.kshort()))
-                .setDlong(quotationMapper.fromBigDecimal(share.dlong()))
-                .setDshort(quotationMapper.fromBigDecimal(share.dshort()))
-                .setDlongMin(quotationMapper.fromBigDecimal(share.dlongMin()))
-                .setDshortMin(quotationMapper.fromBigDecimal(share.dshortMin()))
+                .setKlong(mapToQuotation(share.klong()))
+                .setKshort(mapToQuotation(share.kshort()))
+                .setDlong(mapToQuotation(share.dlong()))
+                .setDshort(mapToQuotation(share.dshort()))
+                .setDlongMin(mapToQuotation(share.dlongMin()))
+                .setDshortMin(mapToQuotation(share.dshortMin()))
                 .setShortEnabledFlag(share.shortEnabledFlag())
                 .setName(share.name())
                 .setExchange(share.exchange())
@@ -136,7 +141,7 @@ public record TestShare(
                 .setOtcFlag(share.otcFlag())
                 .setBuyAvailableFlag(share.buyAvailableFlag())
                 .setSellAvailableFlag(share.sellAvailableFlag())
-                .setMinPriceIncrement(quotationMapper.fromBigDecimal(share.minPriceIncrement()))
+                .setMinPriceIncrement(mapToQuotation(share.minPriceIncrement()))
                 .setApiTradeAvailableFlag(share.apiTradeAvailableFlag())
                 .setUid(share.uid())
                 .setRealExchange(share.realExchange())
@@ -146,8 +151,8 @@ public record TestShare(
                 .setWeekendFlag(share.weekendFlag())
                 .setBlockedTcaFlag(share.blockedTcaFlag())
                 .setInstrumentKind(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
-                .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
                 .build();
     }
 
@@ -158,12 +163,12 @@ public record TestShare(
                 "\"isin\":\"" + share.isin() + "\"," +
                 "\"lot\":" + share.lot() + "," +
                 "\"currency\":\"" + share.currency() + "\"," +
-                "\"klong\":" + share.klong() + "," +
-                "\"kshort\":" + share.kshort() + "," +
-                "\"dlong\":" + share.dlong() + "," +
-                "\"dshort\":" + share.dshort() + "," +
-                "\"dlongMin\":" + share.dlongMin() + "," +
-                "\"dshortMin\":" + share.dshortMin() + "," +
+                "\"klong\":" + DecimalUtils.toPrettyStringSafe(share.klong()) + "," +
+                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(share.kshort()) + "," +
+                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(share.dlong()) + "," +
+                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(share.dshort()) + "," +
+                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(share.dlongMin()) + "," +
+                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(share.dshortMin()) + "," +
                 "\"shortEnabledFlag\":" + share.shortEnabledFlag() + "," +
                 "\"name\":\"" + share.name() + "\"," +
                 "\"exchange\":\"" + share.exchange() + "\"," +
@@ -180,7 +185,7 @@ public record TestShare(
                 "\"sellAvailableFlag\":" + share.sellAvailableFlag() + "," +
                 "\"divYieldFlag\":" + share.divYieldFlag() + "," +
                 "\"shareType\":\"" + share.shareType() + "\"," +
-                "\"minPriceIncrement\":" + share.minPriceIncrement() + "," +
+                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(share.minPriceIncrement()) + "," +
                 "\"apiTradeAvailableFlag\":" + share.apiTradeAvailableFlag() + "," +
                 "\"uid\":\"" + share.uid() + "\"," +
                 "\"realExchange\":\"" + share.realExchange() + "\"," +

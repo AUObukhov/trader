@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils.model.bond;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
@@ -76,12 +77,12 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 "\"isin\":\"" + bond.isin() + "\"," +
                 "\"lot\":" + bond.lot() + "," +
                 "\"currency\":\"" + bond.currency() + "\"," +
-                "\"klong\":" + bond.klong() + "," +
-                "\"kshort\":" + bond.kshort() + "," +
-                "\"dlong\":" + bond.dlong() + "," +
-                "\"dshort\":" + bond.dshort() + "," +
-                "\"dlongMin\":" + bond.dlongMin() + "," +
-                "\"dshortMin\":" + bond.dshortMin() + "," +
+                "\"klong\":" + DecimalUtils.toPrettyStringSafe(bond.klong()) + "," +
+                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(bond.kshort()) + "," +
+                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(bond.dlong()) + "," +
+                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(bond.dshort()) + "," +
+                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(bond.dlongMin()) + "," +
+                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(bond.dshortMin()) + "," +
                 "\"shortEnabledFlag\":" + bond.shortEnabledFlag() + "," +
                 "\"name\":\"" + bond.name() + "\"," +
                 "\"exchange\":\"" + bond.exchange() + "\"," +
@@ -106,7 +107,7 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 "\"floatingCouponFlag\":" + bond.floatingCouponFlag() + "," +
                 "\"perpetualFlag\":" + bond.perpetualFlag() + "," +
                 "\"amortizationFlag\":" + bond.amortizationFlag() + "," +
-                "\"minPriceIncrement\":" + bond.minPriceIncrement() + "," +
+                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(bond.minPriceIncrement()) + "," +
                 "\"apiTradeAvailableFlag\":" + bond.apiTradeAvailableFlag() + "," +
                 "\"uid\":\"" + bond.uid() + "\"," +
                 "\"realExchange\":\"" + bond.realExchange() + "\"," +

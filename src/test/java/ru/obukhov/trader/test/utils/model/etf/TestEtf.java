@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils.model.etf;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
@@ -65,12 +66,12 @@ public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tinkoffEtf, Stri
                 "\"isin\":\"" + etf.isin() + "\"," +
                 "\"lot\":" + etf.lot() + "," +
                 "\"currency\":\"" + etf.currency() + "\"," +
-                "\"klong\":" + etf.klong() + "," +
-                "\"kshort\":" + etf.kshort() + "," +
-                "\"dlong\":" + etf.dlong() + "," +
-                "\"dshort\":" + etf.dshort() + "," +
-                "\"dlongMin\":" + etf.dlongMin() + "," +
-                "\"dshortMin\":" + etf.dshortMin() + "," +
+                "\"klong\":" + DecimalUtils.toPrettyStringSafe(etf.klong()) + "," +
+                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(etf.kshort()) + "," +
+                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(etf.dlong()) + "," +
+                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(etf.dshort()) + "," +
+                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(etf.dlongMin()) + "," +
+                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(etf.dshortMin()) + "," +
                 "\"shortEnabledFlag\":" + etf.shortEnabledFlag() + "," +
                 "\"name\":\"" + etf.name() + "\"," +
                 "\"exchange\":\"" + etf.exchange() + "\"," +
@@ -86,7 +87,7 @@ public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tinkoffEtf, Stri
                 "\"otcFlag\":" + etf.otcFlag() + "," +
                 "\"buyAvailableFlag\":" + etf.buyAvailableFlag() + "," +
                 "\"sellAvailableFlag\":" + etf.sellAvailableFlag() + "," +
-                "\"minPriceIncrement\":" + etf.minPriceIncrement() + "," +
+                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(etf.minPriceIncrement()) + "," +
                 "\"apiTradeAvailableFlag\":" + etf.apiTradeAvailableFlag() + "," +
                 "\"uid\":\"" + etf.uid() + "\"," +
                 "\"realExchange\":\"" + etf.realExchange() + "\"," +

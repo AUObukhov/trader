@@ -1,6 +1,7 @@
 package ru.obukhov.trader.test.utils.model.order_state;
 
 import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.OrderStage;
 import ru.obukhov.trader.market.model.OrderState;
@@ -48,17 +49,17 @@ public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1
                 "\"executionReportStatus\":\"" + orderState.executionReportStatus() + "\"," +
                 "\"lotsRequested\":" + orderState.lotsRequested() + "," +
                 "\"lotsExecuted\":" + orderState.lotsExecuted() + "," +
-                "\"initialOrderPrice\":" + orderState.initialOrderPrice() + "," +
-                "\"executedOrderPrice\":" + orderState.executedOrderPrice() + "," +
-                "\"totalOrderAmount\":" + orderState.totalOrderAmount() + "," +
-                "\"averagePositionPrice\":" + orderState.averagePositionPrice() + "," +
-                "\"initialCommission\":" + orderState.initialCommission() + "," +
-                "\"executedCommission\":" + orderState.executedCommission() + "," +
+                "\"initialOrderPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.initialOrderPrice()) + "," +
+                "\"executedOrderPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.executedOrderPrice()) + "," +
+                "\"totalOrderAmount\":" + DecimalUtils.toPrettyStringSafe(orderState.totalOrderAmount()) + "," +
+                "\"averagePositionPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.averagePositionPrice()) + "," +
+                "\"initialCommission\":" + DecimalUtils.toPrettyStringSafe(orderState.initialCommission()) + "," +
+                "\"executedCommission\":" + DecimalUtils.toPrettyStringSafe(orderState.executedCommission()) + "," +
                 "\"figi\":\"" + orderState.figi() + "\"," +
                 "\"direction\":\"" + orderState.direction() + "\"," +
-                "\"initialSecurityPrice\":" + orderState.initialSecurityPrice() + "," +
+                "\"initialSecurityPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.initialSecurityPrice()) + "," +
                 "\"stages\":" + orderStagesToString(orderState) + "," +
-                "\"serviceCommission\":" + orderState.serviceCommission() + "," +
+                "\"serviceCommission\":" + DecimalUtils.toPrettyStringSafe(orderState.serviceCommission()) + "," +
                 "\"currency\":\"" + orderState.currency() + "\"," +
                 "\"orderType\":\"" + orderState.orderType() + "\"," +
                 "\"orderDate\":\"" + orderState.orderDate() + "\"," +
@@ -75,7 +76,7 @@ public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1
     }
 
     private static String orderStageToString(OrderStage orderStage) {
-        return "{\"price\":" + orderStage.price() + "," +
+        return "{\"price\":" + DecimalUtils.toPrettyStringSafe(orderStage.price()) + "," +
                 "\"quantity\":" + orderStage.quantity() + "," +
                 "\"tradeId\":\"" + orderStage.tradeId() + "\"}";
     }

@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils.model.dividend;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Dividend;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
@@ -32,15 +33,15 @@ public record TestDividend(Dividend dividend, ru.tinkoff.piapi.contract.v1.Divid
     }
 
     private static String buildJsonString(final Dividend dividend) {
-        return "{\"dividendNet\":\"" + dividend.dividendNet() + "\"," +
+        return "{\"dividendNet\":\"" + DecimalUtils.toPrettyStringSafe(dividend.dividendNet()) + "\"," +
                 "\"paymentDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(dividend.paymentDate()) + "\"," +
                 "\"declaredDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(dividend.declaredDate()) + "\"," +
                 "\"lastBuyDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(dividend.lastBuyDate()) + "\"," +
                 "\"dividendType\":" + dividend.dividendType() + "," +
                 "\"recordDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(dividend.recordDate()) + "\"," +
                 "\"regularity\":" + dividend.regularity() + "," +
-                "\"closePrice\":" + dividend.closePrice() + "," +
-                "\"yieldValue\":" + dividend.yieldValue() + "," +
+                "\"closePrice\":" + DecimalUtils.toPrettyStringSafe(dividend.closePrice()) + "," +
+                "\"yieldValue\":" + DecimalUtils.toPrettyStringSafe(dividend.yieldValue()) + "," +
                 "\"createdAt\":" + dividend.createdAt() + "}";
     }
 

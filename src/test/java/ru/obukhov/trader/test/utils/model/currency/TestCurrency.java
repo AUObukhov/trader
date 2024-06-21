@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils.model.currency;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
@@ -63,12 +64,12 @@ public record TestCurrency(Currency currency, ru.tinkoff.piapi.contract.v1.Curre
                 "\"isin\":\"" + currency.isin() + "\"," +
                 "\"lot\":" + currency.lot() + "," +
                 "\"currency\":\"" + currency.currency() + "\"," +
-                "\"klong\":" + currency.klong() + "," +
-                "\"kshort\":" + currency.kshort() + "," +
-                "\"dlong\":" + currency.dlong() + "," +
-                "\"dshort\":" + currency.dshort() + "," +
-                "\"dlongMin\":" + currency.dlongMin() + "," +
-                "\"dshortMin\":" + currency.dshortMin() + "," +
+                "\"klong\":" + DecimalUtils.toPrettyStringSafe(currency.klong()) + "," +
+                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(currency.kshort()) + "," +
+                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(currency.dlong()) + "," +
+                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(currency.dshort()) + "," +
+                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(currency.dlongMin()) + "," +
+                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(currency.dshortMin()) + "," +
                 "\"shortEnabledFlag\":" + currency.shortEnabledFlag() + "," +
                 "\"name\":\"" + currency.name() + "\"," +
                 "\"exchange\":\"" + currency.exchange() + "\"," +
@@ -80,7 +81,7 @@ public record TestCurrency(Currency currency, ru.tinkoff.piapi.contract.v1.Curre
                 "\"buyAvailableFlag\":" + currency.buyAvailableFlag() + "," +
                 "\"sellAvailableFlag\":" + currency.sellAvailableFlag() + "," +
                 "\"isoCurrencyName\":\"" + currency.isoCurrencyName() + "\"," +
-                "\"minPriceIncrement\":" + currency.minPriceIncrement() + "," +
+                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(currency.minPriceIncrement()) + "," +
                 "\"apiTradeAvailableFlag\":" + currency.apiTradeAvailableFlag() + "," +
                 "\"uid\":\"" + currency.uid() + "\"," +
                 "\"realExchange\":\"" + currency.realExchange() + "\"," +

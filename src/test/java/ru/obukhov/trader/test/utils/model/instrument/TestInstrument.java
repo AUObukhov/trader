@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils.model.instrument;
 
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
@@ -63,12 +64,12 @@ public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1
                 "\"isin\":\"" + instrument.isin() + "\"," +
                 "\"lot\":" + instrument.lot() + "," +
                 "\"currency\":\"" + instrument.currency() + "\"," +
-                "\"klong\":" + instrument.klong() + "," +
-                "\"kshort\":" + instrument.kshort() + "," +
-                "\"dlong\":" + instrument.dlong() + "," +
-                "\"dshort\":" + instrument.dshort() + "," +
-                "\"dlongMin\":" + instrument.dlongMin() + "," +
-                "\"dshortMin\":" + instrument.dshortMin() + "," +
+                "\"klong\":" + DecimalUtils.toPrettyStringSafe(instrument.klong()) + "," +
+                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(instrument.kshort()) + "," +
+                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(instrument.dlong()) + "," +
+                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(instrument.dshort()) + "," +
+                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(instrument.dlongMin()) + "," +
+                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(instrument.dshortMin()) + "," +
                 "\"shortEnabledFlag\":" + instrument.shortEnabledFlag() + "," +
                 "\"name\":\"" + instrument.name() + "\"," +
                 "\"exchange\":\"" + instrument.exchange() + "\"," +
@@ -79,7 +80,7 @@ public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1
                 "\"otcFlag\":" + instrument.otcFlag() + "," +
                 "\"buyAvailableFlag\":" + instrument.buyAvailableFlag() + "," +
                 "\"sellAvailableFlag\":" + instrument.sellAvailableFlag() + "," +
-                "\"minPriceIncrement\":" + instrument.minPriceIncrement() + "," +
+                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(instrument.minPriceIncrement()) + "," +
                 "\"apiTradeAvailableFlag\":" + instrument.apiTradeAvailableFlag() + "," +
                 "\"uid\":\"" + instrument.uid() + "\"," +
                 "\"realExchange\":\"" + instrument.realExchange() + "\"," +

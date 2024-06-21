@@ -436,4 +436,32 @@ class DecimalUtilsUnitTest {
 
     // endregion
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, null",
+            "0, 0",
+            "100, 1E+2",
+            "12.340000000, 12.34"
+    },
+            nullValues = "null")
+    void stripTrailingZerosSafe(final BigDecimal value, final BigDecimal expectedResult) {
+        final BigDecimal result = DecimalUtils.stripTrailingZerosSafe(value);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "null, null",
+            "0, 0",
+            "100.0, 100",
+            "12.340000000, 12.34"
+    },
+            nullValues = "null")
+    void toPrettyStringSafe(final BigDecimal value, final String expectedResult) {
+        final String result = DecimalUtils.toPrettyStringSafe(value);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
 }
