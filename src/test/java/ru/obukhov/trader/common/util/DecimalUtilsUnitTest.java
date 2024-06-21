@@ -250,7 +250,7 @@ class DecimalUtilsUnitTest {
             "1.234567, 2.345678, 1.790122500",
             "1.234567, 9.87654321, 5.555555105"
     })
-    void getAverage(BigDecimal value1, BigDecimal value2, BigDecimal expectedAverage) {
+    void getAverage(final BigDecimal value1, final BigDecimal value2, final BigDecimal expectedAverage) {
         final BigDecimal average = DecimalUtils.getAverage(value1, value2);
 
         AssertUtils.assertEquals(expectedAverage, average);
@@ -325,7 +325,7 @@ class DecimalUtilsUnitTest {
             "10, 2",
             "10, 6"
     })
-    void setDefaultScale_withBigDecimal(long unscaledVal, int scale) {
+    void setDefaultScale_withBigDecimal(final long unscaledVal, final int scale) {
         final BigDecimal number = BigDecimal.valueOf(unscaledVal, scale);
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
@@ -348,7 +348,7 @@ class DecimalUtilsUnitTest {
             "10.0000000001, 10",
             "10.0000000005, 10.000000001"
     })
-    void setDefaultScale_withDouble(Double number, double expectedValue) {
+    void setDefaultScale_withDouble(final Double number, final double expectedValue) {
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
@@ -406,7 +406,7 @@ class DecimalUtilsUnitTest {
             "100, 100, true",
             "11, 100, false"
     })
-    void numbersEqual_withBigDecimal(BigDecimal value1, BigDecimal value2, boolean expectedResult) {
+    void numbersEqual_withBigDecimal(final BigDecimal value1, final BigDecimal value2, final boolean expectedResult) {
         final boolean result = DecimalUtils.numbersEqual(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
@@ -417,7 +417,7 @@ class DecimalUtilsUnitTest {
             "100, 100, true",
             "11, 100, false",
     })
-    void numbersEqual_withInt(BigDecimal value1, int value2, boolean expectedResult) {
+    void numbersEqual_withInt(final BigDecimal value1, final int value2, final boolean expectedResult) {
         final boolean result = DecimalUtils.numbersEqual(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
@@ -428,7 +428,7 @@ class DecimalUtilsUnitTest {
             "100, 100, true",
             "11, 100, false",
     })
-    void numbersEqual_withDouble(BigDecimal value1, double value2, boolean expectedResult) {
+    void numbersEqual_withDouble(final BigDecimal value1, final double value2, final boolean expectedResult) {
         final boolean result = DecimalUtils.numbersEqual(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
