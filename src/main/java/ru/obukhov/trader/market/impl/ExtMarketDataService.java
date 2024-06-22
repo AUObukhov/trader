@@ -75,8 +75,7 @@ public class ExtMarketDataService {
 
         final List<Candle> candles = new ArrayList<>();
         for (final Interval subInterval : subIntervals) {
-            final List<Candle> currentCandles = loadCandlesBetterCacheable(instrument.figi(), subInterval.extendTo(period), subInterval, candleInterval);
-            candles.addAll(currentCandles);
+            candles.addAll(loadCandlesCacheable(instrument.figi(), subInterval, period, candleInterval));
         }
         log.info("Loaded {} candles of {} size for FIGI '{}' in interval [{}]", candles.size(), candleInterval, figi, interval.toPrettyString());
 
@@ -90,25 +89,26 @@ public class ExtMarketDataService {
     }
 
     /**
-     * Loads candles from often used interval for better benefit from cache hits
+     * Loads candles from often used interval for better benefit from cache hits.
+     * If given {@code interval} is in current {@code period} then cache is not used.
      *
-     * @param figi              FIGI of loaded candles
-     * @param loadInterval      often used interval, better be whole day, year, etc.
-     * @param effectiveInterval effective interval.
-     *                          Must smaller or equal to {@code loadInterval}, otherwise values outside of {@code loadInterval} will be lost
-     * @param candleInterval    interval of loaded candles
+     * @param figi           FIGI of loaded candles
+     * @param interval       interval to search candles
+     * @param period         period of time to cache candles
+     * @param candleInterval interval of loaded candles
      * @return candles from given {@code effectiveInterval}
      */
-    private List<Candle> loadCandlesBetterCacheable(
+    private List<Candle> loadCandlesCacheable(
             final String figi,
-            final Interval loadInterval,
-            final Interval effectiveInterval,
+            final Interval interval,
+            final Period period,
             final CandleInterval candleInterval
     ) {
+        final Interval loadInterval = interval.extendTo(period);
         final List<Candle> candles = loadInterval.isAnyPeriod()
                 ? self.getMarketCandles(figi, loadInterval, candleInterval)
                 : getMarketCandles(figi, loadInterval, candleInterval);
-        return effectiveInterval.equals(loadInterval) ? candles : filterCandles(candles, effectiveInterval);
+        return interval.equals(loadInterval) ? candles : filterCandles(candles, interval);
     }
 
     private List<Candle> filterCandles(final List<Candle> candles, final Interval interval) {
@@ -146,7 +146,7 @@ public class ExtMarketDataService {
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
         for (final Interval interval : intervals.reversed()) {
-            final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendTo(period), interval, candleInterval);
+            final List<Candle> candles = loadCandlesCacheable(figi, interval, period, candleInterval);
             final Candle lastCandle = CollectionUtils.lastElement(candles);
             if (lastCandle != null) {
                 return lastCandle.getClose();
