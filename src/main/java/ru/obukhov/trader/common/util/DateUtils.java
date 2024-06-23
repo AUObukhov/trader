@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -379,21 +380,23 @@ public class DateUtils {
                 .toInstant();
     }
 
-    /**
-     * @return true, if dates of instants of given {@code dateTime1} and {@code dateTime2} are equal, or else false
-     */
-    public static boolean equalDates(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
-        if (dateTime1 == null) {
-            return dateTime2 == null;
-        } else if (dateTime2 == null) {
-            return false;
-        }
-
-        final OffsetDateTime adjustedDateTime1 = dateTime1.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
-        final OffsetDateTime adjustedDateTime2 = dateTime2.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
-
-        return adjustedDateTime1.getYear() == adjustedDateTime2.getYear()
-                && adjustedDateTime1.getDayOfYear() == adjustedDateTime2.getDayOfYear();
+    public static OffsetDateTime getCandleEndTime(final OffsetDateTime candleTime, final CandleInterval candleInterval) {
+        return switch (candleInterval) {
+            case CANDLE_INTERVAL_1_MIN -> candleTime.plusMinutes(1);
+            case CANDLE_INTERVAL_2_MIN -> candleTime.plusMinutes(2);
+            case CANDLE_INTERVAL_3_MIN -> candleTime.plusMinutes(3);
+            case CANDLE_INTERVAL_5_MIN -> candleTime.plusMinutes(5);
+            case CANDLE_INTERVAL_10_MIN -> candleTime.plusMinutes(10);
+            case CANDLE_INTERVAL_15_MIN -> candleTime.plusMinutes(15);
+            case CANDLE_INTERVAL_30_MIN -> candleTime.plusMinutes(30);
+            case CANDLE_INTERVAL_HOUR -> candleTime.plusHours(1);
+            case CANDLE_INTERVAL_2_HOUR -> candleTime.plusHours(2);
+            case CANDLE_INTERVAL_4_HOUR -> candleTime.plusHours(4);
+            case CANDLE_INTERVAL_DAY -> candleTime.plusDays(1);
+            case CANDLE_INTERVAL_WEEK -> candleTime.plusWeeks(1);
+            case CANDLE_INTERVAL_MONTH -> candleTime.plusMonths(1);
+            default -> throw new IllegalArgumentException("Unexpected candle interval " + candleInterval);
+        };
     }
 
 }

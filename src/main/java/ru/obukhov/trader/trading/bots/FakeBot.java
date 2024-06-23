@@ -76,9 +76,9 @@ public class FakeBot extends Bot {
         return getFakeContext().getBalance(accountId, currency);
     }
 
-    public BigDecimal getCurrentPrice(final String figi, final OffsetDateTime to) {
-        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(context.getCurrentDateTime(), to);
-        return extMarketDataService.getLastPrice(figi, innerTo);
+    public BigDecimal getCurrentPrice(final String figi, final OffsetDateTime dateTime) {
+        final OffsetDateTime innerDateTime = ObjectUtils.defaultIfNull(context.getCurrentDateTime(), dateTime);
+        return extMarketDataService.getPrice(figi, innerDateTime);
     }
 
     private FakeContext getFakeContext() {

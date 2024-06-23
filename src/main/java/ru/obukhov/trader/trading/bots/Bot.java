@@ -107,7 +107,7 @@ public abstract class Bot {
     }
 
     private long getAvailableLots(final String figi, final BigDecimal availableBalance, final BigDecimal commission) {
-        final BigDecimal lastPrice = extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
+        final BigDecimal lastPrice = extMarketDataService.getPrice(figi, context.getCurrentDateTime());
         final BigDecimal lastPriceWithCommission = DecimalUtils.addFraction(lastPrice, commission);
         return DecimalUtils.divide(availableBalance, lastPriceWithCommission).longValue();
     }

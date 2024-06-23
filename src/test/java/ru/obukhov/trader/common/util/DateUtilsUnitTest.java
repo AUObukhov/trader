@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
@@ -15,6 +16,7 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -1104,54 +1106,90 @@ class DateUtilsUnitTest {
     // region equalDates tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forEqualDates() {
+    static Stream<Arguments> getData_forGetCandleEndTime() {
         return Stream.of(
                 Arguments.of(
-                        null,
-                        null,
-                        true
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 3),
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 4)
                 ),
                 Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 10, 20, 30, 40),
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        true
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 10),
+                        CandleInterval.CANDLE_INTERVAL_2_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 12)
                 ),
                 Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5),
-                        DateTimeTestData.newEndOfDay(2020, 10, 5),
-                        true
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 3),
+                        CandleInterval.CANDLE_INTERVAL_3_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 6)
                 ),
                 Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 1, 1, 5, ZoneOffset.ofHours(10)),
-                        DateTimeTestData.newDateTime(2019, 12, 31, 5, ZoneOffset.ofHours(1)),
-                        true
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 5),
+                        CandleInterval.CANDLE_INTERVAL_5_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 10)
                 ),
                 Arguments.of(
-                        null,
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        false
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 30),
+                        CandleInterval.CANDLE_INTERVAL_10_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 40)
                 ),
                 Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5, 11, 30, 40, 50),
-                        null,
-                        false
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 30),
+                        CandleInterval.CANDLE_INTERVAL_15_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 45)
                 ),
                 Arguments.of(
-                        DateTimeTestData.newDateTime(2020, 10, 5).minusNanos(1),
-                        DateTimeTestData.newDateTime(2020, 10, 5),
-                        false
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10, 30),
+                        CandleInterval.CANDLE_INTERVAL_30_MIN,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10),
+                        CandleInterval.CANDLE_INTERVAL_HOUR,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10),
+                        CandleInterval.CANDLE_INTERVAL_2_HOUR,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 12)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2024, 6, 10, 10),
+                        CandleInterval.CANDLE_INTERVAL_4_HOUR,
+                        DateTimeTestData.newDateTime(2024, 6, 10, 14)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2024, 6, 10),
+                        CandleInterval.CANDLE_INTERVAL_DAY,
+                        DateTimeTestData.newDateTime(2024, 6, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2024, 6, 10),
+                        CandleInterval.CANDLE_INTERVAL_WEEK,
+                        DateTimeTestData.newDateTime(2024, 6, 17)
+                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2024, 5, 1),
+                        CandleInterval.CANDLE_INTERVAL_MONTH,
+                        DateTimeTestData.newDateTime(2024, 6, 1)
                 )
         );
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forEqualDates")
-    void equalDates(OffsetDateTime dateTime1, OffsetDateTime dateTime2, boolean expected) {
-        final boolean result1 = DateUtils.equalDates(dateTime1, dateTime2);
-        final boolean result2 = DateUtils.equalDates(dateTime2, dateTime1);
+    @MethodSource("getData_forGetCandleEndTime")
+    void getCandleEndTime(final OffsetDateTime candleTime, final CandleInterval candleInterval, final OffsetDateTime expectedResult) {
+        final OffsetDateTime actualResult = DateUtils.getCandleEndTime(candleTime, candleInterval);
 
-        Assertions.assertEquals(result1, result2);
-        Assertions.assertEquals(expected, result1);
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"CANDLE_INTERVAL_UNSPECIFIED", "UNRECOGNIZED"})
+    void getCandleEndTime_throwsIllegalArgumentException_whenCandlesIntervalIsUnexpected(final CandleInterval candleInterval) {
+        final OffsetDateTime candleTime = DateTimeTestData.newDateTime(2024, 5, 1);
+        final Executable executable = () -> DateUtils.getCandleEndTime(candleTime, candleInterval);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Unexpected candle interval " + candleInterval);
     }
 
     // endregion

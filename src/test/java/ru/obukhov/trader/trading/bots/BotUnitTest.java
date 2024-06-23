@@ -134,8 +134,8 @@ class BotUnitTest {
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, null, null);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         final Interval interval = Interval.of(
                 DateTimeTestData.newDateTime(2023, 9, 10),
@@ -177,8 +177,8 @@ class BotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decisions);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -227,8 +227,8 @@ class BotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decisions);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;

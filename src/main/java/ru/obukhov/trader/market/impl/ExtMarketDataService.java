@@ -11,6 +11,7 @@ import ru.obukhov.trader.common.exception.MultipleInstrumentsFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Periods;
 import ru.obukhov.trader.common.util.CollectionsUtils;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.FirstCandleUtils;
 import ru.obukhov.trader.common.util.SingleItemCollector;
@@ -126,34 +127,35 @@ public class ExtMarketDataService {
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    public BigDecimal getLastPrice(final String figi, final OffsetDateTime to) {
+    public BigDecimal getPrice(final String figi, final OffsetDateTime dateTime) {
         final Instrument instrument = extInstrumentsService.getInstrument(figi);
 
         OffsetDateTime from;
         CandleInterval candleInterval;
         Period period;
-        if (instrument.first1MinCandleDate().isBefore(to)) {
+        if (instrument.first1MinCandleDate().isBefore(dateTime)) {
             from = instrument.first1MinCandleDate();
             candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
             period = Periods.DAY;
-        } else if (instrument.first1DayCandleDate().isBefore(to)) {
+        } else if (instrument.first1DayCandleDate().isBefore(dateTime)) {
             from = instrument.first1DayCandleDate();
             candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
             period = Periods.YEAR;
         } else {
-            throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + to);
+            throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + dateTime);
         }
 
-        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
+        final List<Interval> intervals = Interval.of(from, dateTime).splitIntoIntervals(period);
         for (final Interval interval : intervals.reversed()) {
             final List<Candle> candles = loadCandlesCacheable(figi, interval, period, candleInterval);
             final Candle lastCandle = CollectionUtils.lastElement(candles);
             if (lastCandle != null) {
-                return lastCandle.getClose();
+                final OffsetDateTime endTime = DateUtils.getCandleEndTime(lastCandle.getTime(), candleInterval);
+                return endTime.isAfter(dateTime) ? lastCandle.getOpen() : lastCandle.getClose();
             }
         }
 
-        throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + to);
+        throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + dateTime);
     }
 
     /**

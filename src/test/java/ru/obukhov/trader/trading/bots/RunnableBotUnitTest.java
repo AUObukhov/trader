@@ -185,7 +185,7 @@ class RunnableBotUnitTest {
         Mockito.when(extInstrumentsService.getShare(figi1)).thenReturn(share1);
         Mockito.when(extInstrumentsService.getShare(figi2)).thenThrow(new IllegalArgumentException());
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -212,7 +212,7 @@ class RunnableBotUnitTest {
         Mocker.mockShares(extInstrumentsService, share1, share2);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, share2.currency()))
                 .thenThrow(new IllegalArgumentException());
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         createRunnableBot().run();
@@ -241,7 +241,7 @@ class RunnableBotUnitTest {
         Mockito.when(extOperationsService.getSecurity(accountId, figi1)).thenReturn(Position.builder().build());
         Mockito.when(extOperationsService.getSecurity(accountId, figi2)).thenThrow(new IllegalArgumentException());
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -294,8 +294,8 @@ class RunnableBotUnitTest {
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
         Mocker.mockShares(extInstrumentsService, share1, share2);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenThrow(new IllegalArgumentException());
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenThrow(new IllegalArgumentException());
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -322,8 +322,8 @@ class RunnableBotUnitTest {
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
         Mocker.mockShares(extInstrumentsService, share1, share2);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -366,8 +366,8 @@ class RunnableBotUnitTest {
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         Assertions.assertDoesNotThrow(() -> createRunnableBot().run());
     }
@@ -423,8 +423,8 @@ class RunnableBotUnitTest {
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
         Mocker.mockShares(extInstrumentsService, share1, share2);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         final Map<String, Decision> decisions = Map.of(
                 figi1, new Decision(DecisionAction.WAIT),
@@ -458,8 +458,8 @@ class RunnableBotUnitTest {
         mockNormalTradingStatus(figi1, figi2);
         Mocker.mockShares(extInstrumentsService, share1, share2);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
         Mocker.mockSecurity(extOperationsService, accountId);
@@ -501,8 +501,8 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(Map.of(figi1, decision, figi2, decision));
 
-        Mockito.when(extMarketDataService.getLastPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(extMarketDataService.getLastPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
+        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
+        Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         createRunnableBot().run();
 

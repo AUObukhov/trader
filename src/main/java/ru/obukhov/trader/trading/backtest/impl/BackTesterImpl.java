@@ -282,15 +282,19 @@ public class BackTesterImpl implements BackTester {
         );
     }
 
-    private List<Position> getPositions(final FakeBot fakeBot, final String accountId, final OffsetDateTime to) {
+    private List<Position> getPositions(final FakeBot fakeBot, final String accountId, final OffsetDateTime dateTime) {
         return fakeBot.getPortfolioPositions(accountId).stream()
-                .map(position -> cloneWithActualCurrentPrice(position, fakeBot, to))
+                .map(position -> cloneWithActualCurrentPrice(position, fakeBot, dateTime))
                 .toList();
     }
 
-    private Position cloneWithActualCurrentPrice(final Position portfolioPosition, final FakeBot fakeBot, final OffsetDateTime to) {
+    private Position cloneWithActualCurrentPrice(
+            final Position portfolioPosition,
+            final FakeBot fakeBot,
+            final OffsetDateTime dateTime
+    ) {
         final String figi = portfolioPosition.getFigi();
-        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, to);
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, dateTime);
         return PositionUtils.cloneWithNewCurrentPrice(portfolioPosition, currentPrice);
     }
 

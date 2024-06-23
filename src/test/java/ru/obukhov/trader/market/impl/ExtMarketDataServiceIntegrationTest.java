@@ -636,16 +636,16 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getLastPrice test
+    // region getPrice test
 
     @Test
     @DirtiesContext
-    void getLastPrice_returnsPrice_whenToAfterFirst1MinCandle() {
+    void getPrice_returnsClosePrice_whenToAfterFirst1MinCandle() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
         final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
+        final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
         final int close = 10;
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -654,7 +654,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getLastPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, to);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);
@@ -662,12 +662,61 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getLastPrice_returnsPrice_whenToAfterFirst1DayCandle() {
+    void getPrice_returnsOpenPrice_whenToAfterFirst1MinCandle_andToWithinCandleInterval() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime to = DateTimeTestData.newDateTime(1988, 9, 15);
+        final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
+        final OffsetDateTime to = candlesFrom.plusSeconds(30);
+        final int open = 10;
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(open, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_returnsOpenPrice_whenToAfterFirst1MinCandle_andToEqualToCandleEndTime() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
+        final OffsetDateTime to = candlesFrom.plusMinutes(1);
+        final int close = 10;
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(close, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_returnsClosePrice_whenToAfterFirst1DayCandle() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
         final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
+        final OffsetDateTime to = DateTimeTestData.newDateTime(1988, 9, 15);
         final int close = 10;
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -676,7 +725,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getLastPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, to);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);
@@ -684,7 +733,55 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getLastPrice_throwsIllegalArgumentException_whenToBeforeAllCandles() {
+    void getPrice_returnsOpenPrice_whenToAfterFirst1DayCandle_andToWithinCandleInterval() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
+        final OffsetDateTime to = candlesFrom.plusHours(10);
+        final int open = 10;
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(open, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_returnsOpenPrice_whenToAfterFirst1DayCandle_andToEqualToCandleEndTime() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1DayCandleDate()).plusDays(1);
+        final OffsetDateTime candlesTo = candlesFrom.plusDays(1);
+        final int close = 10;
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(figi, candlesTo);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(close, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_throwsIllegalArgumentException_whenToBeforeAllCandles() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime to = instrument.getFirst1DayCandleDate().minusDays(1);
@@ -699,12 +796,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .mock();
 
         final String expectedMessage = "No candles found for FIGI " + figi + " before " + to;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getLastPrice(figi, to), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getPrice(figi, to), expectedMessage);
     }
 
     @Test
     @DirtiesContext
-    void getLastPrice_throwsIllegalArgumentException_whenNoCandlesFound() {
+    void getPrice_throwsIllegalArgumentException_whenNoCandlesFound() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
@@ -717,7 +814,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .mock();
 
         final String expectedMessage = "No candles found for FIGI " + figi + " before " + to;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getLastPrice(figi, to), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getPrice(figi, to), expectedMessage);
     }
 
     // endregion

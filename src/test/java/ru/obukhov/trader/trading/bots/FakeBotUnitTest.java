@@ -157,7 +157,7 @@ class FakeBotUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(expectedCurrentPrice);
+        Mockito.when(extMarketDataService.getPrice(figi, currentDateTime)).thenReturn(expectedCurrentPrice);
 
         final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, null);
 
@@ -172,7 +172,7 @@ class FakeBotUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(null);
 
-        Mockito.when(extMarketDataService.getLastPrice(figi, to)).thenReturn(expectedCurrentPrice);
+        Mockito.when(extMarketDataService.getPrice(figi, to)).thenReturn(expectedCurrentPrice);
 
         final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi, to);
 
