@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils.model.transform;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.quartz.CronExpression;
+import org.springframework.scheduling.support.CronExpression;
 
 import java.io.IOException;
 

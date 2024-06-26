@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
-import org.quartz.CronExpression;
+import org.springframework.scheduling.support.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -18,7 +18,6 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
@@ -891,10 +890,9 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetCronHitsBetweenDates_throwsIllegalArgumentException")
-    void getCronHitsBetweenDates_throwsIllegalArgumentException(final String expression, final OffsetDateTime from, final OffsetDateTime to)
-            throws ParseException {
+    void getCronHitsBetweenDates_throwsIllegalArgumentException(final String expression, final OffsetDateTime from, final OffsetDateTime to) {
 
-        final CronExpression cronExpression = new CronExpression(expression);
+        final CronExpression cronExpression = CronExpression.parse(expression);
 
         final Executable executable = () -> DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
         final String expectedMessage = String.format("from [%s] must be before to [%s]", from, to);
@@ -955,10 +953,14 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetCronHitsBetweenDates")
-    void getCronHitsBetweenDates(final String expression, final OffsetDateTime from, final OffsetDateTime to, final List<OffsetDateTime> expectedHits)
-            throws ParseException {
+    void getCronHitsBetweenDates(
+            final String expression,
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final List<OffsetDateTime> expectedHits
+    ) {
 
-        final CronExpression cronExpression = new CronExpression(expression);
+        final CronExpression cronExpression = CronExpression.parse(expression);
 
         final List<OffsetDateTime> hits = DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
 

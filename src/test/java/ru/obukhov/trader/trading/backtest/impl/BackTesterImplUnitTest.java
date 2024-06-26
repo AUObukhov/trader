@@ -209,7 +209,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestmentDecimal, currency2, initialInvestmentDecimal);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final BigDecimal finalBalance1 = DecimalUtils.setDefaultScale(2000);
         final int finalQuantity1 = 8;
@@ -349,7 +349,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -451,7 +451,7 @@ class BackTesterImplUnitTest {
 
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(10), 100.0);
@@ -537,7 +537,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final String figi1 = share1.getFigi();
         final double commission1 = 0.003;
@@ -650,7 +650,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final SequencedMap<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
         prices1.put(from.plusMinutes(1), 100.0);
@@ -742,7 +742,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestAccounts.TINKOFF.getId(),
@@ -922,7 +922,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final BigDecimal currentBalance = DecimalUtils.ZERO;
 
@@ -1001,7 +1001,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final BigDecimal currentBalance = DecimalUtils.ZERO;
 
@@ -1080,7 +1080,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final double commission1 = 0.003;
         final Operation operation = TestData.newOperation(
@@ -1165,7 +1165,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(10000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final String accountId1 = TestAccounts.TINKOFF.getId();
         final String figi1 = share1.getFigi();
@@ -1243,7 +1243,7 @@ class BackTesterImplUnitTest {
         final BigDecimal balanceIncrement = DecimalUtils.setDefaultScale(1000);
         final Map<String, BigDecimal> initialBalances = Map.of(currency1, initialInvestment, currency2, initialInvestment);
         final Map<String, BigDecimal> balanceIncrements = Map.of(currency1, balanceIncrement, currency2, balanceIncrement);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, TestData.newCronExpression(BALANCE_INCREMENT_CRON));
+        final BalanceConfig balanceConfig = new BalanceConfig(initialBalances, balanceIncrements, BALANCE_INCREMENT_CRON);
 
         final BigDecimal currentBalance = DecimalUtils.ZERO;
 

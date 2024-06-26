@@ -34,7 +34,6 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Collections;
@@ -119,7 +118,7 @@ class FakeBotFactoryUnitTest {
     }
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forCreateBot_initializesBalance() throws ParseException {
+    static Stream<Arguments> getData_forCreateBot_initializesBalance() {
         final int initialBalanceUsd = 1000000;
         final int initialBalanceRub = 10000;
         final Map<String, BigDecimal> initialBalances = TestData.newDecimalMap(
@@ -136,7 +135,7 @@ class FakeBotFactoryUnitTest {
 
         return Stream.of(
                 Arguments.of(
-                        TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
+                        new BalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1),
                         TestData.newDecimalMap(
                                 Currencies.USD, initialBalanceUsd + balanceIncrementUsd,
@@ -144,12 +143,12 @@ class FakeBotFactoryUnitTest {
                         )
                 ),
                 Arguments.of(
-                        TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
+                        new BalanceConfig(initialBalances, balanceIncrements, "0 0 0 1 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1, 7),
                         TestData.newDecimalMap(Currencies.USD, initialBalanceUsd, Currencies.RUB, initialBalanceRub)
                 ),
                 Arguments.of(
-                        TestData.newBalanceConfig(initialBalances, balanceIncrements, "0 0 0 2 * ?"),
+                        new BalanceConfig(initialBalances, balanceIncrements, "0 0 0 2 * ?"),
                         DateTimeTestData.newDateTime(2023, 9, 1),
                         TestData.newDecimalMap(Currencies.USD, initialBalanceUsd, Currencies.RUB, initialBalanceRub)
                 ),

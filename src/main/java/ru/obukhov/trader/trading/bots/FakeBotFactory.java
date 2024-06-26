@@ -1,8 +1,8 @@
 package ru.obukhov.trader.trading.bots;
 
 import lombok.RequiredArgsConstructor;
-import org.quartz.CronExpression;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;

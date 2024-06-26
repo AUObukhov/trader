@@ -1,10 +1,8 @@
 package ru.obukhov.trader.test.utils.model;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
-import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
@@ -33,7 +31,6 @@ import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
@@ -174,11 +171,6 @@ public class TestData {
 
     // endregion
 
-    @SneakyThrows
-    public static CronExpression newCronExpression(final String expression) {
-        return new CronExpression(expression);
-    }
-
     // region BalanceConfig creation
 
     public static BalanceConfig newBalanceConfig() {
@@ -203,22 +195,11 @@ public class TestData {
             balanceIncrements.put(currency, DecimalUtils.setDefaultScale(balanceIncrement));
         }
 
-        final CronExpression cronExpression = balanceIncrementCron == null ? null : newCronExpression(balanceIncrementCron);
-
-        return new BalanceConfig(initialBalances, balanceIncrements, cronExpression);
+        return new BalanceConfig(initialBalances, balanceIncrements, balanceIncrementCron);
     }
 
     public static BalanceConfig newBalanceConfig(final Map<String, BigDecimal> initialBalances, final Map<String, BigDecimal> balanceIncrements) {
         return new BalanceConfig(initialBalances, balanceIncrements, null);
-    }
-
-    public static BalanceConfig newBalanceConfig(
-            final Map<String, BigDecimal> initialBalances,
-            final Map<String, BigDecimal> balanceIncrements,
-            final String balanceIncrementCronExpression
-    ) throws ParseException {
-        final CronExpression balanceIncrementCron = new CronExpression(balanceIncrementCronExpression);
-        return new BalanceConfig(initialBalances, balanceIncrements, balanceIncrementCron);
     }
 
     // endregion

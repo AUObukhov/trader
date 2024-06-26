@@ -3,7 +3,7 @@ package ru.obukhov.trader.trading.backtest.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.quartz.CronExpression;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;

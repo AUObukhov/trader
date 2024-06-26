@@ -4,7 +4,7 @@ import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quartz.CronExpression;
+import org.springframework.scheduling.support.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -19,7 +19,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -339,22 +338,16 @@ public class DateUtils {
     ) {
         Assert.isTrue(from.isBefore(to), () -> "from [" + from + "] must be before to [" + to + "]");
 
-        if (expression == null) {
-            return Collections.emptyList();
-        }
-
-        final Date dateFrom = DateUtils.toDate(from);
-        final Date dateTo = DateUtils.toDate(to);
-
         final List<OffsetDateTime> hits = new ArrayList<>();
-        if (expression.isSatisfiedBy(dateFrom)) {
-            hits.add(fromDate(dateFrom));
+
+        if (expression == null) {
+            return hits;
         }
 
-        Date currentValidDate = expression.getNextValidTimeAfter(dateFrom);
-        while (currentValidDate.before(dateTo)) {
-            hits.add(fromDate(currentValidDate));
-            currentValidDate = expression.getNextValidTimeAfter(currentValidDate);
+        OffsetDateTime currentValidDateTime = expression.next(from.minusNanos(1));
+        while (currentValidDateTime != null && currentValidDateTime.isBefore(to)) {
+            hits.add(currentValidDateTime);
+            currentValidDateTime = expression.next(currentValidDateTime);
         }
 
         return hits;
