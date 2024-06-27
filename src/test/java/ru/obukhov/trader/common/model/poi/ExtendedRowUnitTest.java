@@ -76,7 +76,7 @@ class ExtendedRowUnitTest {
                 BigDecimal.TEN,
                 10,
                 DateUtils.now(),
-                DateUtils.now().toLocalDateTime()
+                DateUtils.toLocalDateTime(DateUtils.now())
         };
 
         final List<ExtendedCell> cells = extendedRow.createCells(values);
@@ -148,7 +148,7 @@ class ExtendedRowUnitTest {
                 BigDecimal.TEN,
                 10,
                 DateUtils.now(),
-                DateUtils.now().toLocalDateTime()
+                DateUtils.toLocalDateTime(DateUtils.now())
         };
 
         final List<ExtendedCell> cells = extendedRow.createCells(column, values);
@@ -313,7 +313,7 @@ class ExtendedRowUnitTest {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = DateUtils.now();
-        final Object value = offsetDateTime.toLocalDateTime();
+        final Object value = DateUtils.toLocalDateTime(offsetDateTime);
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
@@ -532,7 +532,7 @@ class ExtendedRowUnitTest {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = DateUtils.now();
-        final LocalDateTime value = offsetDateTime.toLocalDateTime();
+        final LocalDateTime value = DateUtils.toLocalDateTime(offsetDateTime);
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
 

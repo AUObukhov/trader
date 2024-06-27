@@ -12,22 +12,26 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @UtilityClass
 public class DateUtils {
 
     public static final double DAYS_IN_YEAR = 365.25;
 
-    public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.of("+03:00");
+    public static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getTimeZone("Europe/Moscow");
+    public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.ofTotalSeconds(DEFAULT_TIME_ZONE.getRawOffset() / 1000);
 
     public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static final String OFFSET_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssXXX";
@@ -390,6 +394,11 @@ public class DateUtils {
             case CANDLE_INTERVAL_MONTH -> candleTime.plusMonths(1);
             default -> throw new IllegalArgumentException("Unexpected candle interval " + candleInterval);
         };
+    }
+
+    public static LocalDateTime toLocalDateTime(final OffsetDateTime dateTime) {
+        final int secondsAdjustment = TimeZone.getTimeZone(ZoneId.systemDefault()).getRawOffset() / 1000 - dateTime.getOffset().getTotalSeconds();
+        return dateTime.toLocalDateTime().plusSeconds(secondsAdjustment);
     }
 
 }

@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -276,7 +277,7 @@ public class ExtendedRow implements Row {
      * @return created cell
      */
     public ExtendedCell createCell(final int column, final OffsetDateTime value) {
-        final LocalDateTime localDateTime = value == null ? null : value.toLocalDateTime();
+        final LocalDateTime localDateTime = value == null ? null : DateUtils.toLocalDateTime(value);
         return createCell(column, localDateTime);
     }
 

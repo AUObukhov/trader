@@ -19,6 +19,7 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
@@ -833,6 +834,7 @@ class DateUtilsUnitTest {
 
         final Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
+        calendar.setTimeZone(DateUtils.DEFAULT_TIME_ZONE);
         Assertions.assertEquals(year, calendar.get(Calendar.YEAR));
         Assertions.assertEquals(month, calendar.get(Calendar.MONTH) + 1);
         Assertions.assertEquals(dayOfMonth, calendar.get(Calendar.DAY_OF_MONTH));
@@ -856,6 +858,7 @@ class DateUtilsUnitTest {
 
         final Calendar calendar = new GregorianCalendar();
         calendar.set(year, Calendar.OCTOBER, dayOfMonth, hour, minute, second);
+        calendar.setTimeZone(DateUtils.DEFAULT_TIME_ZONE);
         final Date date = calendar.getTime();
 
         final OffsetDateTime dateTime = DateUtils.fromDate(date);
@@ -1195,5 +1198,13 @@ class DateUtilsUnitTest {
     }
 
     // endregion
+
+    @Test
+    void toLocalDateTime() {
+        final OffsetDateTime offsetDateTime = DateTimeTestData.newDateTime(2024, 5, 1, 10);
+        final LocalDateTime actualResult = DateUtils.toLocalDateTime(offsetDateTime);
+        final ZoneOffset systemOffset = OffsetDateTime.now().getOffset();
+        Assertions.assertEquals(offsetDateTime.toInstant(), actualResult.toInstant(systemOffset));
+    }
 
 }
