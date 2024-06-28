@@ -13,6 +13,8 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 
 public class TestUtils {
 
@@ -28,5 +30,10 @@ public class TestUtils {
             .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
             .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
             .registerModule(MODULE);
+
+    public static List<HistoricCandle> getHistoricCandles(final String fileName) {
+        final HistoricCandle[] candles = ResourceUtils.getResourceAsObject("candles/" + fileName, HistoricCandle[].class);
+        return Arrays.asList(candles);
+    }
 
 }

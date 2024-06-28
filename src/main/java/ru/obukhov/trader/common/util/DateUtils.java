@@ -29,6 +29,8 @@ import java.util.TimeZone;
 public class DateUtils {
 
     public static final double DAYS_IN_YEAR = 365.25;
+    public static final long NANOSECONDS_PER_DAY = 24L * 60L * 60L * 1000_000_000L;
+    public static final long NANOSECONDS_PER_YEAR = (long) (DAYS_IN_YEAR * NANOSECONDS_PER_DAY);
 
     public static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getTimeZone("Europe/Moscow");
     public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.ofTotalSeconds(DEFAULT_TIME_ZONE.getRawOffset() / 1000);

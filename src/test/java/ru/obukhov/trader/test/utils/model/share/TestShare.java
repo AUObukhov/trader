@@ -8,26 +8,36 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
+import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.dividend.TestDividend;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.ShareType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Map;
 
 public record TestShare(
         Share share,
         ru.tinkoff.piapi.contract.v1.Share tinkoffShare,
         Instrument instrument,
         ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument,
-        String jsonString
+        String jsonString,
+        List<TestDividend> dividends,
+        Map<CandleInterval, List<HistoricCandle>> candles
 ) {
 
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
-    TestShare(final Share share) {
-        this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), buildJsonString(share));
+    public TestShare(final Share share, final List<TestDividend> dividends, final Map<CandleInterval, List<HistoricCandle>> candles) {
+        this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), buildJsonString(share), dividends, candles);
     }
 
     private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
@@ -214,12 +224,33 @@ public record TestShare(
         return share.currency();
     }
 
+    public String getName() {
+        return share.name();
+    }
+
     public OffsetDateTime getFirst1MinCandleDate() {
         return share.first1MinCandleDate();
     }
 
     public OffsetDateTime getFirst1DayCandleDate() {
         return share.first1DayCandleDate();
+    }
+
+    public LastPrice getLastPrice() {
+        final HistoricCandle lastCandle = candles.get(CandleInterval.CANDLE_INTERVAL_1_MIN).getLast();
+        return TestData.newLastPrice(share.figi(), lastCandle.getClose(), lastCandle.getTime());
+    }
+
+    public TestShare withForQualInvestorFlag(final boolean forQualInvestorFlag) {
+        return new TestShare(share.withForQualInvestorFlag(forQualInvestorFlag), dividends, candles);
+    }
+
+    public TestShare withForIisFlag(final boolean forIisFlag) {
+        return new TestShare(share.withForIisFlag(forIisFlag), dividends, candles);
+    }
+
+    public TestShare withShareType(final ShareType shareType) {
+        return new TestShare(share.withShareType(shareType), dividends, candles);
     }
 
 }

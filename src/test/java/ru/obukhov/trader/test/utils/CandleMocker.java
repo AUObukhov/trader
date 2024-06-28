@@ -62,6 +62,17 @@ public class CandleMocker {
         return this;
     }
 
+    public CandleMocker add(final double open, final double close, @NotNull final OffsetDateTime time) {
+        final HistoricCandle candle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setClose(close)
+                .setTime(time)
+                .setIsComplete(true)
+                .build();
+        this.candles.add(candle);
+        return this;
+    }
+
     public CandleMocker add(@NotNull final HistoricCandle... candles) {
         return add(List.of(candles));
     }

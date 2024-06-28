@@ -7,4 +7,6 @@ public class Currencies {
     public static final String RUB = "rub";
     public static final String USD = "usd";
     public static final String EUR = "eur";
+
+    public static final String RUB_FIGI = "RUB000UTSTOM";
 }

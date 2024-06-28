@@ -321,8 +321,6 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Assertions.assertEquals(expectedResult, actualResult2);
     }
 
-    // region getCurrenciesByIsoNames tests
-
     @Test
     @DirtiesContext
     void getCurrenciesByIsoNames() {
@@ -354,7 +352,19 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Assertions.assertEquals(expectedResult, actualResult2);
     }
 
-    // endregion
+    @Test
+    @DirtiesContext
+    void getTomCurrencyByIsoName() {
+        final TestCurrency currency1 = TestCurrencies.RUB;
+        final TestCurrency currency2 = TestCurrencies.USD;
+        final TestCurrency currency3 = TestCurrencies.USD.withTicker("USD000UTS");
+
+        Mocker.mockAllCurrencies(instrumentsService, currency1, currency2, currency3);
+
+        final Currency result = extInstrumentsService.getTomCurrencyByIsoName(currency2.getIsoCurrencyName());
+
+        Assertions.assertEquals(currency2.currency(), result);
+    }
 
     // region getTradingDay tests
 

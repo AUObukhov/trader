@@ -18,12 +18,14 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.bond.TestBond;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
+import ru.obukhov.trader.test.utils.model.dividend.TestDividend;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.LastPrice;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -130,12 +132,37 @@ public class Mocker {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(share.getFigi())).thenReturn(share.tinkoffInstrument());
     }
 
+    public static void mockInstrument(final InstrumentsService instrumentsService, final TestCurrency currency) {
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(currency.getFigi())).thenReturn(currency.tinkoffInstrument());
+    }
+
     public static void mockInstrument(final ExtInstrumentsService instrumentsService, final TestShare share) {
         Mockito.when(instrumentsService.getInstrument(share.getFigi())).thenReturn(share.instrument());
     }
 
+    public void mockShare(
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final TestShare share,
+            final OffsetDateTime to
+    ) {
+        mockInstrument(instrumentsService, share);
+        mockCandles(marketDataService, share.getFigi(), share.candles());
+        mockDividends(instrumentsService, share, to);
+    }
+
     public static void mockShare(final InstrumentsService instrumentsService, final TestShare share) {
         Mockito.when(instrumentsService.getShareByFigiSync(share.getFigi())).thenReturn(share.tinkoffShare());
+    }
+
+    public void mockAllShares(
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final List<TestShare> testShares,
+            final OffsetDateTime mockedNow
+    ) {
+        testShares.forEach(share -> mockShare(instrumentsService, marketDataService, share, mockedNow));
+        mockAllShares(instrumentsService, testShares);
     }
 
     public static void mockAllShares(final InstrumentsService instrumentsService, final List<TestShare> shares) {
@@ -150,6 +177,15 @@ public class Mocker {
 
     public static void mockEtf(final InstrumentsService instrumentsService, final TestEtf etf) {
         Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf.tinkoffEtf());
+    }
+
+    public void mockCurrency(
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final TestCurrency currency
+    ) {
+        mockInstrument(instrumentsService, currency);
+        mockCandles(marketDataService, currency.getFigi(), currency.candles());
     }
 
     public static void mockCurrency(final InstrumentsService instrumentsService, final TestCurrency currency) {
@@ -193,6 +229,18 @@ public class Mocker {
                     .map(dayInterval -> intervalToTradingDay(dayInterval, startTime, endTime))
                     .toList();
         });
+    }
+
+    public static void mockDividends(
+            final InstrumentsService instrumentsService,
+            final TestShare share,
+            final OffsetDateTime to
+    ) {
+        final List<ru.tinkoff.piapi.contract.v1.Dividend> tinkoffDividends = share.dividends().stream()
+                .map(TestDividend::tinkoffDividend)
+                .toList();
+        Mockito.when(instrumentsService.getDividendsSync(share.getFigi(), share.getFirst1DayCandleDate().toInstant(), to.toInstant()))
+                .thenReturn(tinkoffDividends);
     }
 
     public static void mockSecurity(final ExtOperationsService extOperationsService, final String accountId) {
@@ -290,6 +338,18 @@ public class Mocker {
                 Mockito.any(Instant.class),
                 Mockito.eq(candleInterval)
         )).thenReturn(Collections.emptyList());
+    }
+
+    private void mockCandles(
+            final MarketDataService marketDataService,
+            final String figi,
+            final Map<CandleInterval, List<HistoricCandle>> candles
+    ) {
+        for (Map.Entry<CandleInterval, List<HistoricCandle>> entry : candles.entrySet()) {
+            new CandleMocker(marketDataService, figi, entry.getKey())
+                    .add(entry.getValue())
+                    .mock();
+        }
     }
 
 }

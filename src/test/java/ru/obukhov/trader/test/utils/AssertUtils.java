@@ -151,12 +151,9 @@ public class AssertUtils {
             final SequencedMap<? extends K, ? extends V> expected,
             final SequencedMap<? extends K, ? extends V> actual
     ) {
-        final SequencedSet<? extends K> actualKeys = (SequencedSet<? extends K>) actual.keySet();
-        final SequencedSet<? extends K> expectedKeys = (SequencedSet<? extends K>) expected.keySet();
-        AssertUtils.assertEquals(expectedKeys, actualKeys);
-        for (K key : actualKeys) {
-            Assertions.assertEquals(expected.get(key), actual.get(key));
-        }
+        final SequencedSet<?> actualEntries = (SequencedSet<?>) actual.entrySet();
+        final SequencedSet<?> expectedEntries = (SequencedSet<?>) expected.entrySet();
+        assertEquals(expectedEntries, actualEntries);
     }
 
     // endregion

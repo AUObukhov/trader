@@ -44,4 +44,5 @@ spring:
       marketEtfs,
       marketCurrencies,
       marketCandles,
-      tickerByFigi
+      tickerByFigi,
+      firstPrice

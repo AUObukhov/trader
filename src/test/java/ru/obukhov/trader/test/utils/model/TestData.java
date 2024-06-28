@@ -1,5 +1,6 @@
 package ru.obukhov.trader.test.utils.model;
 
+import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
@@ -376,10 +377,26 @@ public class TestData {
                 .build();
     }
 
+    public static LastPrice newLastPrice(final String figi, final double price, final OffsetDateTime time) {
+        return LastPrice.newBuilder()
+                .setFigi(figi)
+                .setPrice(QUOTATION_MAPPER.fromDouble(price))
+                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
+                .build();
+    }
+
     public static LastPrice newLastPrice(final String figi, final BigDecimal price) {
         return LastPrice.newBuilder()
                 .setFigi(figi)
                 .setPrice(QUOTATION_MAPPER.fromBigDecimal(price))
+                .build();
+    }
+
+    public static LastPrice newLastPrice(final String figi, final Quotation price, final Timestamp time) {
+        return LastPrice.newBuilder()
+                .setFigi(figi)
+                .setPrice(price)
+                .setTime(time)
                 .build();
     }
 
@@ -431,13 +448,6 @@ public class TestData {
             decimalMap.put((String) keysAndValues[i], decimalValue);
         }
         return decimalMap;
-    }
-
-    public static ru.tinkoff.piapi.contract.v1.Instrument newTinkoffInstrument(final String figi, final OffsetDateTime first1DayCandleDate) {
-        return ru.tinkoff.piapi.contract.v1.Instrument.newBuilder()
-                .setFigi(figi)
-                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate))
-                .build();
     }
 
 }

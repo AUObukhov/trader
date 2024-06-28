@@ -1,0 +1,14 @@
+[
+  {
+    "dividendNet": 10.25,
+    "paymentDate": "2024-01-16T03:00:00+03:00",
+    "declaredDate": "2023-11-21T03:00:00+03:00",
+    "lastBuyDate": "2023-12-01T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2023-12-04T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 222.6,
+    "yieldValue": 4.6,
+    "createdAt": "2023-12-05T02:20:08.166021+03:00"
+  }
+]

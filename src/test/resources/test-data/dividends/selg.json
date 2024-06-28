@@ -1,0 +1,86 @@
+[
+  {
+    "dividendNet": 0.15,
+    "paymentDate": "2012-08-26T03:00:00+03:00",
+    "declaredDate": "2012-06-28T03:00:00+03:00",
+    "lastBuyDate": "2012-04-19T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2012-04-21T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 10.991,
+    "yieldValue": 1.36,
+    "createdAt": "2020-12-08T14:05:33.625739+03:00"
+  },
+  {
+    "dividendNet": 0.78,
+    "paymentDate": "2020-02-05T03:00:00+03:00",
+    "declaredDate": "2019-12-13T03:00:00+03:00",
+    "lastBuyDate": "2019-12-20T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2019-12-24T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 13.31,
+    "yieldValue": 5.86,
+    "createdAt": "2020-12-08T14:05:33.625739+03:00"
+  },
+  {
+    "dividendNet": 1.42,
+    "paymentDate": "2020-08-03T03:00:00+03:00",
+    "declaredDate": "2020-06-16T03:00:00+03:00",
+    "lastBuyDate": "2020-06-24T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2020-06-26T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 26.65,
+    "yieldValue": 5.33,
+    "createdAt": "2020-12-08T14:05:33.625739+03:00"
+  },
+  {
+    "dividendNet": 2.55,
+    "paymentDate": "2021-01-12T03:00:00+03:00",
+    "declaredDate": "2020-11-17T03:00:00+03:00",
+    "lastBuyDate": "2020-11-26T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2020-11-30T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 49.8,
+    "yieldValue": 5.12,
+    "createdAt": "2020-12-31T05:04:23.748503+03:00"
+  },
+  {
+    "dividendNet": 1.95,
+    "paymentDate": "2021-07-30T03:00:00+03:00",
+    "declaredDate": "2021-06-15T03:00:00+03:00",
+    "lastBuyDate": "2021-06-23T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2021-06-25T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 46.14,
+    "yieldValue": 4.23,
+    "createdAt": "2021-07-28T06:49:05.477728+03:00"
+  },
+  {
+    "dividendNet": 4.5,
+    "paymentDate": "2022-07-26T03:00:00+03:00",
+    "declaredDate": "2022-06-10T03:00:00+03:00",
+    "lastBuyDate": "2022-06-17T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2022-06-21T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 52.04,
+    "yieldValue": 8.65,
+    "createdAt": "2022-07-23T05:10:09.403371+03:00"
+  },
+  {
+    "dividendNet": 2,
+    "paymentDate": "2024-01-15T03:00:00+03:00",
+    "declaredDate": "2023-11-22T03:00:00+03:00",
+    "lastBuyDate": "2023-11-30T03:00:00+03:00",
+    "dividendType": "",
+    "recordDate": "2023-12-03T03:00:00+03:00",
+    "regularity": "",
+    "closePrice": 68.25,
+    "yieldValue": 2.93,
+    "createdAt": "2023-12-04T02:20:07.087485+03:00"
+  }
+]

@@ -3,7 +3,6 @@ package ru.obukhov.trader.web.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -16,10 +15,8 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -42,14 +39,11 @@ import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 class BotControllerIntegrationTest extends ControllerIntegrationTest {
-
-    private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     @Autowired
     private SchedulingProperties schedulingProperties;
@@ -256,10 +250,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         Mocker.mockShare(instrumentsService, share);
         Mocker.mockInstrument(instrumentsService, TestInstruments.APPLE);
 
-        final Candle[] candles = ResourceUtils.getResourceAsObject("candles/candles.json", Candle[].class);
-        final List<HistoricCandle> historicCandles = Arrays.stream(candles)
-                .map(candle -> CANDLE_MAPPER.map(candle, true))
-                .toList();
+        final List<HistoricCandle> historicCandles = TestShares.APPLE.candles().get(CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)

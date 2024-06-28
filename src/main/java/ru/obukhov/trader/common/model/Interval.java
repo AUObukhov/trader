@@ -29,8 +29,6 @@ import java.util.List;
 @NotAllNull(message = "from and to can't be both null")
 public class Interval {
 
-    private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
-
     @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
     private final OffsetDateTime from;
 
@@ -185,7 +183,7 @@ public class Interval {
      * @return double count of days in current interval
      */
     public double toDays() {
-        return toDuration().toNanos() / NANOSECONDS_IN_DAY;
+        return (double) toDuration().toNanos() / DateUtils.NANOSECONDS_PER_DAY;
     }
 
     public List<TradingDay> toTradingDays(final WorkSchedule workSchedule) {

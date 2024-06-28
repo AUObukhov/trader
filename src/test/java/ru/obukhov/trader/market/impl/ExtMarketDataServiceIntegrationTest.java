@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -30,6 +34,7 @@ import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstruments;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -40,6 +45,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SequencedCollection;
 import java.util.SequencedMap;
 import java.util.stream.Stream;
@@ -47,6 +53,8 @@ import java.util.stream.Stream;
 @SpringBootTest
 @AutoConfigureMockMvc
 class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
+
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     @Autowired
     private ExtMarketDataService extMarketDataService;
@@ -636,17 +644,16 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getPrice test
+    // region getPrice by figi test
 
     @Test
     @DirtiesContext
-    void getPrice_returnsClosePrice_whenToAfterFirst1MinCandle() {
+    void getPrice_byFigi_returnsClosePrice_whenDateTimeAfterFirst1MinCandle() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
-        final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
-        final int close = 10;
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(2);
+        final int close = 125;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -654,7 +661,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);
@@ -662,12 +669,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getPrice_returnsOpenPrice_whenToAfterFirst1MinCandle_andToWithinCandleInterval() {
+    void getPrice_byFigi_returnsOpenPrice_whenDateTimeWithinFirst1MinCandleInterval() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
-        final OffsetDateTime to = candlesFrom.plusSeconds(30);
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusSeconds(30);
         final int open = 10;
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -681,7 +687,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(historicCandle)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(open, price);
@@ -689,13 +695,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getPrice_returnsOpenPrice_whenToAfterFirst1MinCandle_andToEqualToCandleEndTime() {
+    void getPrice_byFigi_returnsOpenPrice_whenDateTimeEqualToFirst1MinCandleEndTime() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime candlesTo = instrument.getFirst1MinCandleDate().plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
-        final OffsetDateTime to = candlesFrom.plusMinutes(1);
-        final int close = 10;
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(1);
+        final int close = 125;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -703,7 +708,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);
@@ -711,13 +716,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getPrice_returnsClosePrice_whenToAfterFirst1DayCandle() {
+    void getPrice_byFigi_returnsClosePrice_whenDateTimeAfterFirst1DayCandle() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(1988, 9, 15);
-        final int close = 10;
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1DayCandleDate().plusDays(3));
+        final OffsetDateTime dateTime = candlesFrom.plusDays(2);
+        final int close = 125;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -725,7 +729,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);
@@ -733,12 +737,11 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getPrice_returnsOpenPrice_whenToAfterFirst1DayCandle_andToWithinCandleInterval() {
+    void getPrice_byFigi_returnsOpenPrice_whenDateTimeWithinFirst1DayCandleInterval() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
-        final OffsetDateTime to = candlesFrom.plusHours(10);
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusHours(10);
         final int open = 10;
 
         Mocker.mockInstrument(instrumentsService, instrument);
@@ -752,7 +755,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(historicCandle)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getPrice(figi, to);
+        final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(open, price);
@@ -760,12 +763,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getPrice_returnsOpenPrice_whenToAfterFirst1DayCandle_andToEqualToCandleEndTime() {
+    void getPrice_byFigi_returnsOpenPrice_whenDateTimeEqualToFirst1DayCandleEndTime() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
         final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1DayCandleDate()).plusDays(1);
-        final OffsetDateTime candlesTo = candlesFrom.plusDays(1);
-        final int close = 10;
+        final OffsetDateTime dateTime = candlesFrom.plusDays(1);
+        final int close = 125;
 
         Mocker.mockInstrument(instrumentsService, instrument);
 
@@ -773,7 +776,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .add(close, candlesFrom)
                 .mock();
 
-        final BigDecimal price = extMarketDataService.getPrice(figi, candlesTo);
+        final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(close, price);
@@ -781,40 +784,352 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getPrice_throwsIllegalArgumentException_whenToBeforeAllCandles() {
+    void getPrice_byFigi_throwsInstrumentNotFoundException_whenInstrumentNotFound() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
-        final OffsetDateTime to = instrument.getFirst1DayCandleDate().minusDays(1);
-        final OffsetDateTime candlesTo = instrument.getFirst1DayCandleDate().plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(candlesTo);
-        final int close = 10;
+        final OffsetDateTime dateTime = instrument.getFirst1DayCandleDate().minusDays(1);
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(instrument.getFirst1DayCandleDate().plusDays(1));
+
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(125, candlesFrom)
+                .mock();
+
+        final String expectedMessage = "Instrument not found for id " + figi;
+        AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, () -> extMarketDataService.getPrice(figi, dateTime), expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byFigi_throwsIllegalArgumentException_whenDateTimeBeforeAllCandles() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime dateTime = instrument.getFirst1DayCandleDate().minusDays(1);
+        final OffsetDateTime candlesFrom = instrument.getFirst1DayCandleDate().minusHours(1);
 
         Mocker.mockInstrument(instrumentsService, instrument);
+
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(125, candlesFrom)
+                .mock();
+
+        final String expectedMessage = "No candles found for FIGI " + figi + " before " + dateTime;
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getPrice(figi, dateTime), expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byFigi_throwsIllegalArgumentException_whenNoCandlesFound() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime dateTime = DateTimeTestData.newEndOfDay(2020, 1, 10);
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        final String expectedMessage = "No candles found for FIGI " + figi + " before " + dateTime;
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getPrice(figi, dateTime), expectedMessage);
+    }
+
+    // endregion
+
+    // region getPrice by currency tests
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_returnsClosePrice_whenDateTimeAfterFirst1MinCandle() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(2);
+        final int close = 90;
+
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(close, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_returnsOpenPrice_whenDateTimeWithinFirst1MinCandle() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusSeconds(30);
+        final int open = 90;
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(open, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_returnsOpenPrice_whenDateTimeEqualToFirst1MinCandleEndTime() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(1);
+        final int close = 90;
+
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(close, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_returnsClosePrice_whenDateTimeAfterFirst1DayCandle() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusDays(2);
+        final int close = 90;
+
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(close, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_returnsOpenPrice_whenDateTimeWithinFirst1DayCandle() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusHours(10);
+        final int open = 90;
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(open, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_returnsOpenPrice_whenDateTimeEqualToFirst1DayCandleEndTime() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate()).plusDays(1);
+        final OffsetDateTime dateTime = candlesFrom.plusDays(1);
+        final int close = 90;
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
                 .add(close, candlesFrom)
                 .mock();
 
-        final String expectedMessage = "No candles found for FIGI " + figi + " before " + to;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getPrice(figi, to), expectedMessage);
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(close, price);
     }
 
     @Test
     @DirtiesContext
-    void getPrice_throwsIllegalArgumentException_whenNoCandlesFound() {
-        final TestInstrument instrument = TestInstruments.APPLE;
-        final String figi = instrument.getFigi();
-        final OffsetDateTime to = DateTimeTestData.newEndOfDay(2020, 1, 10);
-        final int close = 10;
+    void getPrice_byUsdCurrency_throwsIllegalArgumentException_whenDateTimeBeforeAllCandles() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = currency.first1DayCandleDate().minusDays(1);
 
-        Mocker.mockInstrument(instrumentsService, instrument);
-
-        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(close, DateTimeTestData.newDateTime(2015, 2, 1))
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(90, candlesFrom)
                 .mock();
 
-        final String expectedMessage = "No candles found for FIGI " + figi + " before " + to;
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extMarketDataService.getPrice(figi, to), expectedMessage);
+        final String expectedMessage = "No candles found for FIGI " + figi + " before " + dateTime;
+        final Executable executable = () -> extMarketDataService.getPrice(currency, dateTime);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byUsdCurrency_throwsIllegalArgumentException_whenNoCandlesFound() {
+        final Currency currency = TestCurrencies.USD.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime dateTime = currency.first1DayCandleDate();
+
+        final String expectedMessage = "No candles found for FIGI " + figi + " before " + dateTime;
+        final Executable executable = () -> extMarketDataService.getPrice(currency, dateTime);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeAfterFirst1MinCandle() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(2);
+        final int close = 2;
+
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeWithinFirst1MinCandle() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusSeconds(30);
+        final int open = 2;
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeEqualToFirst1MinCandleEndTime() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(1);
+        final int close = 2;
+
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeAfterFirst1DayCandle() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusDays(2);
+        final int close = 2;
+
+        new CandleMocker(marketDataService, currency.figi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeWithinFirst1DayCandle() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusHours(10);
+        final int open = 2;
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeEqualToFirst1DayCandleEndTime() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate()).plusDays(1);
+        final OffsetDateTime dateTime = candlesFrom.plusDays(1);
+        final int close = 2;
+
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(close, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenDateTimeBeforeAllCandles() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final String figi = currency.figi();
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(currency.first1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = currency.first1DayCandleDate().minusDays(1);
+
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(2, candlesFrom)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byRubCurrency_returnsOne_whenNoCandlesFound() {
+        final Currency currency = TestCurrencies.RUB.currency();
+        final OffsetDateTime dateTime = currency.first1DayCandleDate();
+
+        final BigDecimal price = extMarketDataService.getPrice(currency, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(1, price);
     }
 
     // endregion
@@ -890,6 +1205,261 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Executable executable = () -> extMarketDataService.getLastPrices(figies);
         final String expectedMessage = "Multiple instruments found for id " + figi1;
         AssertUtils.assertThrowsWithMessage(MultipleInstrumentsFoundException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
+    // region getSharesPrices tests
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_returnsClosePrice_whenDateTimeAfterFirst1MinCandle() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.WOOSH;
+
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(share2.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(2);
+        final int closePrice2 = 340;
+
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(closePrice2, candlesFrom)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final Map<String, BigDecimal> prices = extMarketDataService.getSharesPrices(shares, dateTime);
+
+        final Map<String, BigDecimal> expectedPrices = Map.of(
+                share1.getFigi(), DecimalUtils.setDefaultScale(QUOTATION_MAPPER.toBigDecimal(lastPrices.get(0).getPrice())),
+                share2.getFigi(), DecimalUtils.setDefaultScale(closePrice2)
+        );
+        AssertUtils.assertEquals(expectedPrices, prices);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_returnsOpenPrice_whenDateTimeWithinFirst1MinCandleInterval() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(share2.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusSeconds(30);
+        final int openPrice2 = 10;
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(openPrice2)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(historicCandle)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final Map<String, BigDecimal> prices = extMarketDataService.getSharesPrices(shares, dateTime);
+
+        final Map<String, BigDecimal> expectedPrices = Map.of(
+                share1.getFigi(), DecimalUtils.setDefaultScale(QUOTATION_MAPPER.toBigDecimal(lastPrices.get(0).getPrice())),
+                share2.getFigi(), DecimalUtils.setDefaultScale(openPrice2)
+        );
+        AssertUtils.assertEquals(expectedPrices, prices);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_returnsOpenPrice_whenDateTimeEqualToFirst1MinCandleEndTime() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(share2.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(1);
+        final int closePrice2 = 125;
+
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(closePrice2, candlesFrom)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final Map<String, BigDecimal> prices = extMarketDataService.getSharesPrices(shares, dateTime);
+
+        final Map<String, BigDecimal> expectedPrices = Map.of(
+                share1.getFigi(), DecimalUtils.setDefaultScale(QUOTATION_MAPPER.toBigDecimal(lastPrices.get(0).getPrice())),
+                share2.getFigi(), DecimalUtils.setDefaultScale(closePrice2)
+        );
+        AssertUtils.assertEquals(expectedPrices, prices);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_returnsClosePrice_whenDateTimeAfterFirst1DayCandle() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(share2.getFirst1DayCandleDate().plusDays(3));
+        final OffsetDateTime dateTime = candlesFrom.plusDays(2);
+        final int closePrice2 = 125;
+
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(closePrice2, candlesFrom)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final Map<String, BigDecimal> prices = extMarketDataService.getSharesPrices(shares, dateTime);
+
+        final Map<String, BigDecimal> expectedPrices = Map.of(
+                share1.getFigi(), DecimalUtils.setDefaultScale(QUOTATION_MAPPER.toBigDecimal(lastPrices.get(0).getPrice())),
+                share2.getFigi(), DecimalUtils.setDefaultScale(closePrice2)
+        );
+        AssertUtils.assertEquals(expectedPrices, prices);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_returnsOpenPrice_whenDateTimeWithinFirst1DayCandleInterval() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(share2.getFirst1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusHours(10);
+        final int openPrice2 = 10;
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(openPrice2)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(historicCandle)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final Map<String, BigDecimal> prices = extMarketDataService.getSharesPrices(shares, dateTime);
+
+        final Map<String, BigDecimal> expectedPrices = Map.of(
+                share1.getFigi(), DecimalUtils.setDefaultScale(QUOTATION_MAPPER.toBigDecimal(lastPrices.get(0).getPrice())),
+                share2.getFigi(), DecimalUtils.setDefaultScale(openPrice2)
+        );
+        AssertUtils.assertEquals(expectedPrices, prices);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_returnsOpenPrice_whenDateTimeEqualToFirst1DayCandleEndTime() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(share2.getFirst1DayCandleDate()).plusDays(1);
+        final OffsetDateTime dateTime = candlesFrom.plusDays(1);
+        final int closePrice2 = 125;
+
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(closePrice2, candlesFrom)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final Map<String, BigDecimal> prices = extMarketDataService.getSharesPrices(shares, dateTime);
+
+        final Map<String, BigDecimal> expectedPrices = Map.of(
+                share1.getFigi(), DecimalUtils.setDefaultScale(QUOTATION_MAPPER.toBigDecimal(lastPrices.get(0).getPrice())),
+                share2.getFigi(), DecimalUtils.setDefaultScale(closePrice2)
+        );
+        AssertUtils.assertEquals(expectedPrices, prices);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_throwsIllegalArgumentException_whenDateTimeBeforeAllCandles() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final OffsetDateTime dateTime = share2.getFirst1DayCandleDate().minusDays(1);
+        final OffsetDateTime candlesFrom = share2.getFirst1DayCandleDate().minusHours(1);
+
+        new CandleMocker(marketDataService, share2.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(125, candlesFrom)
+                .mock();
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, candlesFrom.minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final String expectedMessage = "No candles found for FIGI " + share2.getFigi() + " before " + dateTime;
+        final Executable executable = () -> extMarketDataService.getSharesPrices(shares, dateTime);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSharesPrices_throwsIllegalArgumentException_whenNoCandlesFound() {
+        final TestShare share1 = TestShares.SPB_BANK;
+        final TestShare share2 = TestShares.APPLE;
+
+        final List<TestShare> testShares = List.of(share1, share2);
+        final List<String> figies = testShares.stream().map(TestShare::getFigi).toList();
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(share1.getFigi(), 100, share2.getFirst1DayCandleDate().minusDays(1)),
+                share2.getLastPrice()
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        final OffsetDateTime dateTime = DateTimeTestData.newEndOfDay(2020, 1, 10);
+
+        final List<Share> shares = testShares.stream().map(TestShare::share).toList();
+        final String expectedMessage = "No candles found for FIGI " + share2.getFigi() + " before " + dateTime;
+        final Executable executable = () -> extMarketDataService.getSharesPrices(shares, dateTime);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -1028,10 +1598,12 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forConvertCurrency() {
         return Stream.of(
-                Arguments.of(TestCurrencies.USD, TestCurrencies.RUB, 97.31, 1, 97310),
-                Arguments.of(TestCurrencies.RUB, TestCurrencies.USD, 1, 97.31, 10.276436132),
-                Arguments.of(TestCurrencies.USD, TestCurrencies.CNY, 97.31, 13.322, 7304.458789971),
-                Arguments.of(TestCurrencies.CNY, TestCurrencies.USD, 13.322, 97.31, 136.90268215)
+                Arguments.of(TestCurrencies.RUB, TestCurrencies.RUB, 1, 1, 1),
+                Arguments.of(TestCurrencies.USD, TestCurrencies.USD, 97.31, 97.31, 1),
+                Arguments.of(TestCurrencies.USD, TestCurrencies.RUB, 97.31, 1, 97.310),
+                Arguments.of(TestCurrencies.RUB, TestCurrencies.USD, 1, 97.31, 0.010276436132),
+                Arguments.of(TestCurrencies.USD, TestCurrencies.CNY, 97.31, 13.322, 7.304458789971),
+                Arguments.of(TestCurrencies.CNY, TestCurrencies.USD, 13.322, 97.31, 0.13690268215)
         );
     }
 
@@ -1041,23 +1613,23 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     void convertCurrency(
             final TestCurrency sourceCurrency,
             final TestCurrency targetCurrency,
-            final double price1,
-            final double price2,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyPrice,
             final double expectedResult
     ) {
         Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
 
         final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>();
-        figiesToPrices.put(sourceCurrency.getFigi(), price1);
-        figiesToPrices.put(targetCurrency.getFigi(), price2);
+        figiesToPrices.put(sourceCurrency.getFigi(), sourceCurrencyPrice);
+        figiesToPrices.put(targetCurrency.getFigi(), targetCurrencyPrice);
         Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
 
         final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
         final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
         final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
-        final BigDecimal actualResult1 = extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue);
+        final BigDecimal actualResult = extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue);
 
-        AssertUtils.assertEquals(expectedResult, actualResult1);
+        AssertUtils.assertEquals(DecimalUtils.multiply(sourceValue, expectedResult), actualResult);
     }
 
     @Test
@@ -1080,6 +1652,277 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Executable executable = () -> extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue);
         final String expectedMessage = "Instrument not found for id " + sourceCurrencyIsoName;
         AssertUtils.assertThrowsWithMessage(InstrumentNotFoundException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
+    // region convertCurrency with date tests
+
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrencyIntoItself")
+    void convertCurrency_withDateTime_intoItself(final TestCurrency testCurrency) {
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2024, 4, 1);
+        testConvertCurrency(testCurrency, testCurrency, 1, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_whenDateTimeAfterLastPrice(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyPrice,
+            final double expectedResult
+    ) {
+        final SequencedMap<String, Double> figiesToPrices = new LinkedHashMap<>();
+        figiesToPrices.put(sourceCurrency.getFigi(), sourceCurrencyPrice);
+        figiesToPrices.put(targetCurrency.getFigi(), targetCurrencyPrice);
+        Mocker.mockLastPricesDouble(marketDataService, figiesToPrices);
+
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2024, 4, 1);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_usesClosePrice_whenDateTimeAfterFirst1MinCandle(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyClosePrice,
+            final double expectedResult
+    ) {
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(targetCurrency.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(2);
+
+        new CandleMocker(marketDataService, targetCurrency.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(targetCurrencyClosePrice, candlesFrom)
+                .mock();
+
+        final List<String> figies = List.of(sourceCurrency.getFigi(), targetCurrency.getFigi());
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(sourceCurrency.getFigi(), sourceCurrencyPrice, candlesFrom.minusDays(1)),
+                TestData.newLastPrice(targetCurrency.getFigi(), 0, dateTime)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_usesOpenPrice_whenDateTimeWithinFirst1MinCandleInterval(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyOpenPrice,
+            final double expectedResult
+    ) {
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(targetCurrency.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusSeconds(30);
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(targetCurrencyOpenPrice)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, targetCurrency.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(historicCandle)
+                .mock();
+
+        final List<String> figies = List.of(sourceCurrency.getFigi(), targetCurrency.getFigi());
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(sourceCurrency.getFigi(), sourceCurrencyPrice, candlesFrom.minusDays(1)),
+                TestData.newLastPrice(targetCurrency.getFigi(), 0, dateTime)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_usesOpenPrice_whenDateTimeEqualToFirst1MinCandleEndTime(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyClosePrice,
+            final double expectedResult
+    ) {
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(targetCurrency.getFirst1MinCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusMinutes(1);
+
+        new CandleMocker(marketDataService, targetCurrency.getFigi(), CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(targetCurrencyClosePrice, candlesFrom)
+                .mock();
+
+        final List<String> figies = List.of(sourceCurrency.getFigi(), targetCurrency.getFigi());
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(sourceCurrency.getFigi(), sourceCurrencyPrice, candlesFrom.minusDays(1)),
+                TestData.newLastPrice(targetCurrency.getFigi(), 0, dateTime)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_usesClosePrice_whenDateTimeAfterFirst1DayCandle(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyClosePrice,
+            final double expectedResult
+    ) {
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(targetCurrency.getFirst1DayCandleDate().plusDays(3));
+        final OffsetDateTime dateTime = candlesFrom.plusDays(2);
+
+        new CandleMocker(marketDataService, targetCurrency.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(targetCurrencyClosePrice, candlesFrom)
+                .mock();
+
+        final List<String> figies = List.of(sourceCurrency.getFigi(), targetCurrency.getFigi());
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(sourceCurrency.getFigi(), sourceCurrencyPrice, candlesFrom.minusDays(1)),
+                TestData.newLastPrice(targetCurrency.getFigi(), 0, dateTime)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_usesOpenPrice_whenDateTimeWithinFirst1DayCandleInterval(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyOpenPrice,
+            final double expectedResult
+    ) {
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(targetCurrency.getFirst1DayCandleDate().plusDays(1));
+        final OffsetDateTime dateTime = candlesFrom.plusHours(10);
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(targetCurrencyOpenPrice)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, targetCurrency.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(historicCandle)
+                .mock();
+
+        final List<String> figies = List.of(sourceCurrency.getFigi(), targetCurrency.getFigi());
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(sourceCurrency.getFigi(), sourceCurrencyPrice, candlesFrom.minusDays(1)),
+                TestData.newLastPrice(targetCurrency.getFigi(), 0, dateTime)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    @DirtiesContext
+    @ParameterizedTest
+    @MethodSource("getData_forConvertCurrency")
+    void convertCurrency_withDateTime_usesOpenPrice_whenDateTimeEqualToFirst1DayCandleEndTime(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double sourceCurrencyPrice,
+            final double targetCurrencyClosePrice,
+            final double expectedResult
+    ) {
+        final OffsetDateTime candlesFrom = DateUtils.toStartOfDay(targetCurrency.getFirst1DayCandleDate()).plusDays(1);
+        final OffsetDateTime dateTime = candlesFrom.plusDays(1);
+
+        new CandleMocker(marketDataService, targetCurrency.getFigi(), CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(targetCurrencyClosePrice, candlesFrom)
+                .mock();
+
+        final List<String> figies = List.of(sourceCurrency.getFigi(), targetCurrency.getFigi());
+        final List<LastPrice> lastPrices = List.of(
+                TestData.newLastPrice(sourceCurrency.getFigi(), sourceCurrencyPrice, candlesFrom.minusDays(1)),
+                TestData.newLastPrice(targetCurrency.getFigi(), 0, dateTime)
+        );
+        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+
+        testConvertCurrency(sourceCurrency, targetCurrency, expectedResult, dateTime);
+    }
+
+    private void testConvertCurrency(
+            final TestCurrency sourceCurrency,
+            final TestCurrency targetCurrency,
+            final double expectedResult,
+            final OffsetDateTime dateTime
+    ) {
+        Mocker.mockAllCurrencies(instrumentsService, sourceCurrency, targetCurrency);
+
+        final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
+        final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal actualResult = extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue, dateTime);
+
+        AssertUtils.assertEquals(DecimalUtils.multiply(sourceValue, expectedResult), actualResult);
+    }
+
+    @Test
+    @DirtiesContext
+    void convertCurrency_withDateTime_throwsIllegalArgumentException_whenSourceCurrencyNotFound() {
+        final TestCurrency sourceCurrency = TestCurrencies.USD;
+        final TestCurrency targetCurrency = TestCurrencies.RUB;
+
+        Mocker.mockAllCurrencies(instrumentsService, targetCurrency);
+
+        final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
+        final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2024, 4, 1);
+
+        final Executable executable = () -> extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue, dateTime);
+        final String expectedMessage = "Expected single item. No items found.";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void convertCurrency_withDateTime_throwsIllegalArgumentException_whenTargetCurrencyNotFound() {
+        final TestCurrency sourceCurrency = TestCurrencies.USD;
+        final TestCurrency targetCurrency = TestCurrencies.RUB;
+
+        Mocker.mockAllCurrencies(instrumentsService, sourceCurrency);
+
+        final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
+        final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2024, 4, 1);
+
+        final Executable executable = () -> extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue, dateTime);
+        final String expectedMessage = "Expected single item. No items found.";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    @DirtiesContext
+    void convertCurrency_withDateTime_throwsIllegalArgumentException_whenBothCurrenciesNotFound() {
+        final TestCurrency sourceCurrency = TestCurrencies.USD;
+        final TestCurrency targetCurrency = TestCurrencies.RUB;
+
+        final String sourceCurrencyIsoName = sourceCurrency.getIsoCurrencyName();
+        final String targetCurrencyIsoName = targetCurrency.getIsoCurrencyName();
+        final BigDecimal sourceValue = DecimalUtils.setDefaultScale(1000);
+        final OffsetDateTime dateTime = DateTimeTestData.newDateTime(2024, 4, 1);
+
+        final Executable executable = () -> extMarketDataService.convertCurrency(sourceCurrencyIsoName, targetCurrencyIsoName, sourceValue, dateTime);
+        final String expectedMessage = "Expected single item. No items found.";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion

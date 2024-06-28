@@ -18,4 +18,9 @@ public record Dividend(
         BigDecimal yieldValue,
         OffsetDateTime createdAt
 ) {
+
+    public boolean isBefore(final OffsetDateTime dateTime) {
+        return lastBuyDate.isBefore(dateTime);
+    }
+
 }

@@ -1,12 +1,14 @@
 package ru.obukhov.trader.market.model;
 
 import lombok.Builder;
+import lombok.With;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+@With
 @Builder
 public record Currency(
         String figi,

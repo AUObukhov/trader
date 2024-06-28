@@ -24,8 +24,8 @@ public class HistoricCandleDeserializer extends StdDeserializer<HistoricCandle> 
     }
 
     @Override
-    public HistoricCandle deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        final JsonNode node = parser.getCodec().readTree(parser);
+    public HistoricCandle deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+        final JsonNode node = jp.getCodec().readTree(jp);
         final JsonNode openNode = node.get("open");
         final JsonNode closeNode = node.get("close");
         final JsonNode timeNode = node.get("time");
@@ -33,17 +33,16 @@ public class HistoricCandleDeserializer extends StdDeserializer<HistoricCandle> 
         return HistoricCandle.newBuilder()
                 .setOpen(getQuotationValue(openNode))
                 .setClose(getQuotationValue(closeNode))
-                .setTime(getTimestampValue(timeNode, context))
+                .setTime(getTimestampValue(timeNode, ctxt))
                 .setIsComplete(true)
                 .build();
     }
 
-    private static Quotation getQuotationValue(final JsonNode node) {
+    private static Quotation getQuotationValue(JsonNode node) {
         return QUOTATION_MAPPER.fromDouble(node.asDouble());
     }
 
-    private static Timestamp getTimestampValue(final JsonNode node, final DeserializationContext context) throws IOException {
-        return DATE_TIME_MAPPER.offsetDateTimeToTimestamp(context.readTreeAsValue(node, OffsetDateTime.class));
+    private static Timestamp getTimestampValue(JsonNode node, DeserializationContext ctxt) throws IOException {
+        return DATE_TIME_MAPPER.offsetDateTimeToTimestamp(ctxt.readTreeAsValue(node, OffsetDateTime.class));
     }
-
 }

@@ -149,4 +149,26 @@ class MapUtilsUnitTest {
         AssertUtils.assertEquals(map, result);
     }
 
+    @Test
+    void sortByValue() {
+        final Map<String, Integer> map = Map.of(
+                "key1", 2,
+                "key2", 4,
+                "key3", 5,
+                "key4", 1,
+                "key5", 3
+        );
+
+        final SequencedMap<String, Integer> actualResult = MapUtils.sortByValue(map);
+
+        final SequencedMap<String, Integer> expectedResult = new LinkedHashMap<>();
+        expectedResult.put("key4", 1);
+        expectedResult.put("key1", 2);
+        expectedResult.put("key5", 3);
+        expectedResult.put("key2", 4);
+        expectedResult.put("key3", 5);
+
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
+
 }

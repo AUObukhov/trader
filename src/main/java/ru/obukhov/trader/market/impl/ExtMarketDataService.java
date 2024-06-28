@@ -10,6 +10,7 @@ import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.exception.MultipleInstrumentsFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Periods;
+import ru.obukhov.trader.common.util.Asserter;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -19,7 +20,9 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Instrument;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -33,6 +36,7 @@ import java.time.OffsetDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +51,7 @@ public class ExtMarketDataService {
 
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     private final ExtInstrumentsService extInstrumentsService;
     private final MarketDataService marketDataService;
@@ -121,24 +126,48 @@ public class ExtMarketDataService {
         return candles.subList(fromIndex, toIndex);
     }
 
+    // region prices
+
     /**
-     * Searches last price by {@code figi}
-     *
-     * @return found candle
-     * @throws IllegalArgumentException if candle not found
+     * @return last price not after given {@code dateTime} by given {@code figi}
+     * @throws IllegalArgumentException    if candle not found
+     * @throws InstrumentNotFoundException if instrument not found
      */
     public BigDecimal getPrice(final String figi, final OffsetDateTime dateTime) {
         final Instrument instrument = extInstrumentsService.getInstrument(figi);
+        Asserter.notNull(instrument, () -> new InstrumentNotFoundException(figi));
 
-        OffsetDateTime from;
-        CandleInterval candleInterval;
-        Period period;
-        if (instrument.first1MinCandleDate().isBefore(dateTime)) {
-            from = instrument.first1MinCandleDate();
+        return getPrice(figi, dateTime, instrument.first1MinCandleDate(), instrument.first1DayCandleDate());
+    }
+
+    /**
+     * @return last price of given {@code currency} not after given {@code dateTime}
+     * @throws IllegalArgumentException    if candle not found
+     * @throws InstrumentNotFoundException if instrument not found
+     */
+    public BigDecimal getPrice(final Currency currency, final OffsetDateTime dateTime) {
+        if (currency.figi().equals(Currencies.RUB_FIGI)) {
+            return DecimalUtils.ONE;
+        }
+
+        return getPrice(currency.figi(), dateTime, currency.first1MinCandleDate(), currency.first1DayCandleDate());
+    }
+
+    private BigDecimal getPrice(
+            final String figi,
+            final OffsetDateTime dateTime,
+            final OffsetDateTime first1MinCandleDate,
+            final OffsetDateTime first1DayCandleDate
+    ) {
+        final OffsetDateTime from;
+        final CandleInterval candleInterval;
+        final Period period;
+        if (first1MinCandleDate.isBefore(dateTime)) {
+            from = first1MinCandleDate;
             candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
             period = Periods.DAY;
-        } else if (instrument.first1DayCandleDate().isBefore(dateTime)) {
-            from = instrument.first1DayCandleDate();
+        } else if (first1DayCandleDate.isBefore(dateTime)) {
+            from = first1DayCandleDate;
             candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
             period = Periods.YEAR;
         } else {
@@ -177,6 +206,50 @@ public class ExtMarketDataService {
 
         return result;
     }
+
+    public Map<String, BigDecimal> getSharesPrices(final List<Share> shares, final OffsetDateTime dateTime) {
+        final List<String> figies = shares.stream().map(Share::figi).toList();
+        final Map<String, BigDecimal> result = getPrices(figies, dateTime);
+
+        for (final Share share : shares) {
+            if (!result.containsKey(share.figi())) {
+                final BigDecimal lastPriceValue = getPrice(share.figi(), dateTime, share.first1MinCandleDate(), share.first1DayCandleDate());
+                result.put(share.figi(), lastPriceValue);
+            }
+        }
+
+        return result;
+    }
+
+    private Map<String, BigDecimal> getCurrenciesPrices(final List<Currency> currencies, final OffsetDateTime dateTime) {
+        final List<String> figies = currencies.stream().map(Currency::figi).toList();
+        final Map<String, BigDecimal> result = getPrices(figies, dateTime);
+
+        for (final Currency currency : currencies) {
+            if (!result.containsKey(currency.figi())) {
+                final BigDecimal lastPriceValue = getPrice(currency, dateTime);
+                result.put(currency.figi(), lastPriceValue);
+            }
+        }
+
+        return result;
+    }
+
+    private Map<String, BigDecimal> getPrices(final List<String> figies, final OffsetDateTime dateTime) {
+        final Map<String, BigDecimal> result = new HashMap<>();
+        final List<LastPrice> lastPrices = marketDataService.getLastPricesSync(figies);
+        for (final LastPrice lastPrice : lastPrices) {
+            final OffsetDateTime lastPriceDateTime = DATE_TIME_MAPPER.timestampToOffsetDateTime(lastPrice.getTime());
+            if (lastPriceDateTime.isBefore(dateTime)) {
+                final BigDecimal lastPriceValue = QUOTATION_MAPPER.toBigDecimal(lastPrice.getPrice());
+                result.put(lastPrice.getFigi(), lastPriceValue);
+            }
+        }
+
+        return result;
+    }
+
+    // endregion
 
     @Cacheable(value = "marketCandles", sync = true)
     List<Candle> getMarketCandles(final String figi, final Interval interval, final CandleInterval candleInterval) {
@@ -235,6 +308,33 @@ public class ExtMarketDataService {
                 .collect(collector);
 
         return lastPrices.get(figi);
+    }
+
+    /**
+     * Converts the given {@code sourceValue} of the given {@code sourceCurrencyIsoName}<br/>
+     * to corresponding value of the given {@code targetCurrencyIsoName}<br/>
+     * by course on given {@code dateTime}
+     *
+     * @return conversion result
+     */
+    public BigDecimal convertCurrency(
+            final String sourceCurrencyIsoName,
+            final String targetCurrencyIsoName,
+            final BigDecimal sourceValue,
+            final OffsetDateTime dateTime
+    ) {
+        if (sourceCurrencyIsoName.equals(targetCurrencyIsoName)) {
+            return sourceValue;
+        }
+
+        final Currency sourceCurrency = extInstrumentsService.getTomCurrencyByIsoName(sourceCurrencyIsoName);
+        final Currency targetCurrency = extInstrumentsService.getTomCurrencyByIsoName(targetCurrencyIsoName);
+
+        final Map<String, BigDecimal> lastPrices = getCurrenciesPrices(List.of(sourceCurrency, targetCurrency), dateTime);
+        final BigDecimal sourceCurrencyLastPrice = lastPrices.get(sourceCurrency.figi());
+        final BigDecimal targetCurrencyLastPrice = lastPrices.get(targetCurrency.figi());
+
+        return DecimalUtils.divide(sourceValue.multiply(sourceCurrencyLastPrice), targetCurrencyLastPrice);
     }
 
     private static <T> SingleItemCollector<T> createSingleItemCollector(final String instrumentId) {

@@ -10,6 +10,7 @@ import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.Asserter;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.SingleItemCollector;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Bond;
@@ -178,6 +179,16 @@ public class ExtInstrumentsService {
                 .stream()
                 .filter(currency -> isoNamesList.contains(currency.isoCurrencyName()))
                 .toList();
+    }
+
+    /**
+     * @return single {@link Currency} corresponding to given {@code isoName} with ticker ending with "TOM"
+     */
+    public Currency getTomCurrencyByIsoName(final String isoName) {
+        return self.getAllCurrencies()
+                .stream()
+                .filter(currency -> isoName.equals(currency.isoCurrencyName()) && currency.ticker().endsWith("TOM"))
+                .collect(new SingleItemCollector<>());
     }
 
     /**

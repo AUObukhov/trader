@@ -68,8 +68,16 @@ public class MapUtils {
      * @param <V> result map value type
      * @return collector, creating map from stream items of type {@link Map.Entry}
      */
-    public static <K, V> java.util.stream.Collector<Map.Entry<K, V>, ?, java.util.Map<K, V>> newMapEntryCollector() {
+    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> newMapEntryCollector() {
         return Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue);
+    }
+
+    public static <K, V extends Comparable<V>> SequencedMap<K, V> sortByValue(final Map<K, V> map) {
+        final LinkedHashMap<K, V> result = new LinkedHashMap<>();
+        map.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(entry -> result.put(entry.getKey(), entry.getValue()));
+        return result;
     }
 
 }
