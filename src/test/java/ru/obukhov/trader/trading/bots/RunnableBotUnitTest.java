@@ -507,12 +507,6 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private void mockBotConfig(final CandleInterval candleInterval, final String... figies) {
-        Mockito.when(botConfig.figies()).thenReturn(Arrays.asList(figies));
-        Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
-    }
-
     private void mockNormalTradingStatus(final String... figies) {
         for (final String figi : figies) {
             Mockito.when(extMarketDataService.getTradingStatus(figi)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
