@@ -1,18 +1,16 @@
 package ru.obukhov.trader.test.utils.model.instrument;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 
 import java.time.OffsetDateTime;
 
-public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument, String jsonString) {
+public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument) {
 
     TestInstrument(final Instrument instrument) {
-        this(instrument, buildTinkoffInstrument(instrument), buildJsonString(instrument));
+        this(instrument, buildTinkoffInstrument(instrument));
     }
 
     private static ru.tinkoff.piapi.contract.v1.Instrument buildTinkoffInstrument(final Instrument instrument) {
@@ -55,43 +53,6 @@ public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1
                 .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(instrument.first1MinCandleDate()))
                 .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(instrument.first1DayCandleDate()))
                 .build();
-    }
-
-    private static String buildJsonString(final Instrument instrument) {
-        return "{\"figi\":\"" + instrument.figi() + "\"," +
-                "\"ticker\":\"" + instrument.ticker() + "\"," +
-                "\"classCode\":\"" + instrument.classCode() + "\"," +
-                "\"isin\":\"" + instrument.isin() + "\"," +
-                "\"lot\":" + instrument.lot() + "," +
-                "\"currency\":\"" + instrument.currency() + "\"," +
-                "\"klong\":" + DecimalUtils.toPrettyStringSafe(instrument.klong()) + "," +
-                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(instrument.kshort()) + "," +
-                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(instrument.dlong()) + "," +
-                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(instrument.dshort()) + "," +
-                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(instrument.dlongMin()) + "," +
-                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(instrument.dshortMin()) + "," +
-                "\"shortEnabledFlag\":" + instrument.shortEnabledFlag() + "," +
-                "\"name\":\"" + instrument.name() + "\"," +
-                "\"exchange\":\"" + instrument.exchange() + "\"," +
-                "\"countryOfRisk\":\"" + instrument.countryOfRisk() + "\"," +
-                "\"countryOfRiskName\":\"" + instrument.countryOfRiskName() + "\"," +
-                "\"instrumentType\":\"" + instrument.instrumentType() + "\"," +
-                "\"tradingStatus\":\"" + instrument.tradingStatus() + "\"," +
-                "\"otcFlag\":" + instrument.otcFlag() + "," +
-                "\"buyAvailableFlag\":" + instrument.buyAvailableFlag() + "," +
-                "\"sellAvailableFlag\":" + instrument.sellAvailableFlag() + "," +
-                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(instrument.minPriceIncrement()) + "," +
-                "\"apiTradeAvailableFlag\":" + instrument.apiTradeAvailableFlag() + "," +
-                "\"uid\":\"" + instrument.uid() + "\"," +
-                "\"realExchange\":\"" + instrument.realExchange() + "\"," +
-                "\"positionUid\":\"" + instrument.positionUid() + "\"," +
-                "\"forIisFlag\":" + instrument.forIisFlag() + "," +
-                "\"forQualInvestorFlag\":" + instrument.forQualInvestorFlag() + "," +
-                "\"weekendFlag\":" + instrument.weekendFlag() + "," +
-                "\"blockedTcaFlag\":" + instrument.blockedTcaFlag() + "," +
-                "\"instrumentKind\":\"" + instrument.instrumentKind() + "\"," +
-                "\"first1MinCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(instrument.first1MinCandleDate()) + "\"," +
-                "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(instrument.first1DayCandleDate()) + "\"}";
     }
 
     public String getFigi() {

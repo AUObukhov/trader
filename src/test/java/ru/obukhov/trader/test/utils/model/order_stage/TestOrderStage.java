@@ -4,10 +4,10 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.OrderStage;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 
-public record TestOrderStage(OrderStage orderStage, ru.tinkoff.piapi.contract.v1.OrderStage tinkoffOrderStage, String jsonString) {
+public record TestOrderStage(OrderStage orderStage, ru.tinkoff.piapi.contract.v1.OrderStage tinkoffOrderStage) {
 
     TestOrderStage(final OrderStage orderStage) {
-        this(orderStage, buildTinkoffOrderStage(orderStage), buildJsonString(orderStage));
+        this(orderStage, buildTinkoffOrderStage(orderStage));
     }
 
     private static ru.tinkoff.piapi.contract.v1.OrderStage buildTinkoffOrderStage(final OrderStage orderStage) {
@@ -18,12 +18,6 @@ public record TestOrderStage(OrderStage orderStage, ru.tinkoff.piapi.contract.v1
                 .setQuantity(orderStage.quantity())
                 .setTradeId(orderStage.tradeId())
                 .build();
-    }
-
-    private static String buildJsonString(final OrderStage orderStage) {
-        return "{\"price\":" + orderStage.price() + "," +
-                "\"quantity\":" + orderStage.quantity() + "," +
-                "\"tradeId\":\"" + orderStage.tradeId() + "\"}";
     }
 
 }

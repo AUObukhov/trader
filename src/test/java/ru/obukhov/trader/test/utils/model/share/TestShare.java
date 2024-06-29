@@ -1,8 +1,6 @@
 package ru.obukhov.trader.test.utils.model.share;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
@@ -27,7 +25,6 @@ public record TestShare(
         ru.tinkoff.piapi.contract.v1.Share tinkoffShare,
         Instrument instrument,
         ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument,
-        String jsonString,
         List<TestDividend> dividends,
         Map<CandleInterval, List<HistoricCandle>> candles
 ) {
@@ -37,7 +34,7 @@ public record TestShare(
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public TestShare(final Share share, final List<TestDividend> dividends, final Map<CandleInterval, List<HistoricCandle>> candles) {
-        this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), buildJsonString(share), dividends, candles);
+        this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), dividends, candles);
     }
 
     private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
@@ -165,49 +162,6 @@ public record TestShare(
                 .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
                 .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
                 .build();
-    }
-
-    private static String buildJsonString(final Share share) {
-        return "{\"figi\":\"" + share.figi() + "\"," +
-                "\"ticker\":\"" + share.ticker() + "\"," +
-                "\"classCode\":\"" + share.classCode() + "\"," +
-                "\"isin\":\"" + share.isin() + "\"," +
-                "\"lot\":" + share.lot() + "," +
-                "\"currency\":\"" + share.currency() + "\"," +
-                "\"klong\":" + DecimalUtils.toPrettyStringSafe(share.klong()) + "," +
-                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(share.kshort()) + "," +
-                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(share.dlong()) + "," +
-                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(share.dshort()) + "," +
-                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(share.dlongMin()) + "," +
-                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(share.dshortMin()) + "," +
-                "\"shortEnabledFlag\":" + share.shortEnabledFlag() + "," +
-                "\"name\":\"" + share.name() + "\"," +
-                "\"exchange\":\"" + share.exchange() + "\"," +
-                "\"ipoDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.ipoDate()) + "," +
-                "\"issueSize\":" + share.issueSize() + "," +
-                "\"countryOfRisk\":\"" + share.countryOfRisk() + "\"," +
-                "\"countryOfRiskName\":\"" + share.countryOfRiskName() + "\"," +
-                "\"sector\":\"" + share.sector() + "\"," +
-                "\"issueSizePlan\":" + share.issueSizePlan() + "," +
-                "\"nominal\":" + share.nominal() + "," +
-                "\"tradingStatus\":\"" + share.tradingStatus() + "\"," +
-                "\"otcFlag\":" + share.otcFlag() + "," +
-                "\"buyAvailableFlag\":" + share.buyAvailableFlag() + "," +
-                "\"sellAvailableFlag\":" + share.sellAvailableFlag() + "," +
-                "\"divYieldFlag\":" + share.divYieldFlag() + "," +
-                "\"shareType\":\"" + share.shareType() + "\"," +
-                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(share.minPriceIncrement()) + "," +
-                "\"apiTradeAvailableFlag\":" + share.apiTradeAvailableFlag() + "," +
-                "\"uid\":\"" + share.uid() + "\"," +
-                "\"realExchange\":\"" + share.realExchange() + "\"," +
-                "\"positionUid\":\"" + share.positionUid() + "\"," +
-                "\"forIisFlag\":" + share.forIisFlag() + "," +
-                "\"forQualInvestorFlag\":" + share.forQualInvestorFlag() + "," +
-                "\"weekendFlag\":" + share.weekendFlag() + "," +
-                "\"blockedTcaFlag\":" + share.blockedTcaFlag() + "," +
-                "\"liquidityFlag\":" + share.liquidityFlag() + "," +
-                "\"first1MinCandleDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.first1MinCandleDate()) + "," +
-                "\"first1DayCandleDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.first1DayCandleDate()) + "}";
     }
 
     public String getFigi() {

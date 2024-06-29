@@ -1,8 +1,6 @@
 package ru.obukhov.trader.test.utils.model.currency;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
@@ -19,12 +17,11 @@ public record TestCurrency(
         Currency currency,
         ru.tinkoff.piapi.contract.v1.Currency tinkoffCurrency,
         ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument,
-        String jsonString,
         Map<CandleInterval, List<HistoricCandle>> candles
 ) {
 
     TestCurrency(final Currency currency, final Map<CandleInterval, List<HistoricCandle>> candles) {
-        this(currency, buildTinkoffCurrency(currency), buildTinkoffInstrument(currency), buildJsonString(currency), candles);
+        this(currency, buildTinkoffCurrency(currency), buildTinkoffInstrument(currency), candles);
     }
 
     private static ru.tinkoff.piapi.contract.v1.Currency buildTinkoffCurrency(final Currency currency) {
@@ -109,44 +106,6 @@ public record TestCurrency(
                 .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(currency.first1MinCandleDate()))
                 .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(currency.first1DayCandleDate()))
                 .build();
-    }
-
-    private static String buildJsonString(final Currency currency) {
-        return "{" +
-                "\"figi\":\"" + currency.figi() + "\"," +
-                "\"ticker\":\"" + currency.ticker() + "\"," +
-                "\"classCode\":\"" + currency.classCode() + "\"," +
-                "\"isin\":\"" + currency.isin() + "\"," +
-                "\"lot\":" + currency.lot() + "," +
-                "\"currency\":\"" + currency.currency() + "\"," +
-                "\"klong\":" + DecimalUtils.toPrettyStringSafe(currency.klong()) + "," +
-                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(currency.kshort()) + "," +
-                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(currency.dlong()) + "," +
-                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(currency.dshort()) + "," +
-                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(currency.dlongMin()) + "," +
-                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(currency.dshortMin()) + "," +
-                "\"shortEnabledFlag\":" + currency.shortEnabledFlag() + "," +
-                "\"name\":\"" + currency.name() + "\"," +
-                "\"exchange\":\"" + currency.exchange() + "\"," +
-                "\"nominal\":" + currency.nominal() + "," +
-                "\"countryOfRisk\":\"" + currency.countryOfRisk() + "\"," +
-                "\"countryOfRiskName\":\"" + currency.countryOfRiskName() + "\"," +
-                "\"tradingStatus\":\"" + currency.tradingStatus() + "\"," +
-                "\"otcFlag\":" + currency.otcFlag() + "," +
-                "\"buyAvailableFlag\":" + currency.buyAvailableFlag() + "," +
-                "\"sellAvailableFlag\":" + currency.sellAvailableFlag() + "," +
-                "\"isoCurrencyName\":\"" + currency.isoCurrencyName() + "\"," +
-                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(currency.minPriceIncrement()) + "," +
-                "\"apiTradeAvailableFlag\":" + currency.apiTradeAvailableFlag() + "," +
-                "\"uid\":\"" + currency.uid() + "\"," +
-                "\"realExchange\":\"" + currency.realExchange() + "\"," +
-                "\"positionUid\":\"" + currency.positionUid() + "\"," +
-                "\"forIisFlag\":" + currency.forIisFlag() + "," +
-                "\"forQualInvestorFlag\":" + currency.forQualInvestorFlag() + "," +
-                "\"weekendFlag\":" + currency.weekendFlag() + "," +
-                "\"blockedTcaFlag\":" + currency.blockedTcaFlag() + "," +
-                "\"first1MinCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(currency.first1MinCandleDate()) + "\"," +
-                "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(currency.first1DayCandleDate()) + "\"}";
     }
 
     public String getFigi() {

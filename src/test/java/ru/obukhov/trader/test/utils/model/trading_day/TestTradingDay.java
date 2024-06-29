@@ -4,10 +4,10 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 
-public record TestTradingDay(TradingDay tradingDay, ru.tinkoff.piapi.contract.v1.TradingDay tinkoffTradingDay, String jsonString) {
+public record TestTradingDay(TradingDay tradingDay, ru.tinkoff.piapi.contract.v1.TradingDay tinkoffTradingDay) {
 
     TestTradingDay(final TradingDay tradingDay) {
-        this(tradingDay, buildTinkoffTradingDay(tradingDay), buildJsonString(tradingDay));
+        this(tradingDay, buildTinkoffTradingDay(tradingDay));
     }
 
     private static ru.tinkoff.piapi.contract.v1.TradingDay buildTinkoffTradingDay(final TradingDay tradingDay) {
@@ -27,22 +27,6 @@ public record TestTradingDay(TradingDay tradingDay, ru.tinkoff.piapi.contract.v1
                 .setPremarketStartTime(dateTimeMapper.offsetDateTimeToTimestamp(tradingDay.premarketStartTime()))
                 .setPremarketEndTime(dateTimeMapper.offsetDateTimeToTimestamp(tradingDay.premarketEndTime()))
                 .build();
-    }
-
-    private static String buildJsonString(final TradingDay tradingDay) {
-        return "{\"date\":\"" + tradingDay.date() + "\"," +
-                "\"isTradingDay\":" + tradingDay.isTradingDay() + "," +
-                "\"startTime\":\"" + tradingDay.startTime() + "\"," +
-                "\"endTime\":\"" + tradingDay.endTime() + "\"," +
-                "\"openingAuctionStartTime\":\"" + tradingDay.openingAuctionStartTime() + "\"," +
-                "\"closingAuctionEndTime\":\"" + tradingDay.closingAuctionEndTime() + "\"," +
-                "\"eveningOpeningAuctionStartTime\":\"" + tradingDay.eveningOpeningAuctionStartTime() + "\"," +
-                "\"eveningStartTime\":\"" + tradingDay.eveningStartTime() + "\"," +
-                "\"eveningEndTime\":\"" + tradingDay.eveningEndTime() + "\"," +
-                "\"clearingStartTime\":\"" + tradingDay.clearingStartTime() + "\"," +
-                "\"clearingEndTime\":\"" + tradingDay.clearingEndTime() + "\"," +
-                "\"premarketStartTime\":\"" + tradingDay.premarketStartTime() + "\"," +
-                "\"premarketEndTime\":\"" + tradingDay.premarketEndTime() + "\"}";
     }
 
 }

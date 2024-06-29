@@ -1,14 +1,13 @@
 package ru.obukhov.trader.test.utils.model.account;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Account;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 
-public record TestAccount(Account account, ru.tinkoff.piapi.contract.v1.Account tinkoffAccount, String jsonString) {
+public record TestAccount(Account account, ru.tinkoff.piapi.contract.v1.Account tinkoffAccount) {
 
     TestAccount(final Account account) {
-        this(account, buildTinkoffAccount(account), buildJsonString(account));
+        this(account, buildTinkoffAccount(account));
     }
 
     private static ru.tinkoff.piapi.contract.v1.Account buildTinkoffAccount(final Account account) {
@@ -22,16 +21,6 @@ public record TestAccount(Account account, ru.tinkoff.piapi.contract.v1.Account 
                 .setClosedDate(dateTimeMapper.offsetDateTimeToTimestamp(account.closedDate()))
                 .setAccessLevel(account.accessLevel())
                 .build();
-    }
-
-    private static String buildJsonString(final Account account) {
-        return "{\"id\":\"" + account.id() + "\"," +
-                "\"type\":\"" + account.type() + "\"," +
-                "\"name\":\"" + account.name() + "\"," +
-                "\"status\":\"" + account.status() + "\"," +
-                "\"openedDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(account.openedDate()) + "\"," +
-                "\"closedDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(account.closedDate()) + "\"," +
-                "\"accessLevel\":\"" + account.accessLevel() + "\"}";
     }
 
     public String getId() {

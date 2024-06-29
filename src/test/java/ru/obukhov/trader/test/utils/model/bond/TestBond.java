@@ -1,17 +1,15 @@
 package ru.obukhov.trader.test.utils.model.bond;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
-public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond, String jsonString) {
+public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond) {
 
     TestBond(final Bond bond) {
-        this(bond, buildTinkoffBond(bond), buildJsonString(bond));
+        this(bond, buildTinkoffBond(bond));
     }
 
     private static ru.tinkoff.piapi.contract.v1.Bond buildTinkoffBond(final Bond bond) {
@@ -69,59 +67,6 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 .setFirst1DayCandleDate(DateTimeTestData.newTimestamp(bond.first1DayCandleDate()))
                 .setRiskLevel(bond.riskLevel())
                 .build();
-    }
-
-    private static String buildJsonString(final Bond bond) {
-        return "{\"figi\":\"" + bond.figi() + "\"," +
-                "\"ticker\":\"" + bond.ticker() + "\"," +
-                "\"classCode\":\"" + bond.classCode() + "\"," +
-                "\"isin\":\"" + bond.isin() + "\"," +
-                "\"lot\":" + bond.lot() + "," +
-                "\"currency\":\"" + bond.currency() + "\"," +
-                "\"klong\":" + DecimalUtils.toPrettyStringSafe(bond.klong()) + "," +
-                "\"kshort\":" + DecimalUtils.toPrettyStringSafe(bond.kshort()) + "," +
-                "\"dlong\":" + DecimalUtils.toPrettyStringSafe(bond.dlong()) + "," +
-                "\"dshort\":" + DecimalUtils.toPrettyStringSafe(bond.dshort()) + "," +
-                "\"dlongMin\":" + DecimalUtils.toPrettyStringSafe(bond.dlongMin()) + "," +
-                "\"dshortMin\":" + DecimalUtils.toPrettyStringSafe(bond.dshortMin()) + "," +
-                "\"shortEnabledFlag\":" + bond.shortEnabledFlag() + "," +
-                "\"name\":\"" + bond.name() + "\"," +
-                "\"exchange\":\"" + bond.exchange() + "\"," +
-                "\"couponQuantityPerYear\":" + bond.couponQuantityPerYear() + "," +
-                "\"maturityDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.maturityDate()) + "\"," +
-                "\"nominal\":" + bond.nominal() + "," +
-                "\"initialNominal\":" + bond.initialNominal() + "," +
-                "\"stateRegDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.stateRegDate()) + "\"," +
-                "\"placementDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.placementDate()) + "\"," +
-                "\"placementPrice\":" + bond.placementPrice() + "," +
-                "\"aciValue\":" + bond.aciValue() + "," +
-                "\"countryOfRisk\":\"" + bond.countryOfRisk() + "\"," +
-                "\"countryOfRiskName\":\"" + bond.countryOfRiskName() + "\"," +
-                "\"sector\":\"" + bond.sector() + "\"," +
-                "\"issueKind\":\"" + bond.issueKind() + "\"," +
-                "\"issueSize\":" + bond.issueSize() + "," +
-                "\"issueSizePlan\":" + bond.issueSizePlan() + "," +
-                "\"tradingStatus\":\"" + bond.tradingStatus() + "\"," +
-                "\"otcFlag\":" + bond.otcFlag() + "," +
-                "\"buyAvailableFlag\":" + bond.buyAvailableFlag() + "," +
-                "\"sellAvailableFlag\":" + bond.sellAvailableFlag() + "," +
-                "\"floatingCouponFlag\":" + bond.floatingCouponFlag() + "," +
-                "\"perpetualFlag\":" + bond.perpetualFlag() + "," +
-                "\"amortizationFlag\":" + bond.amortizationFlag() + "," +
-                "\"minPriceIncrement\":" + DecimalUtils.toPrettyStringSafe(bond.minPriceIncrement()) + "," +
-                "\"apiTradeAvailableFlag\":" + bond.apiTradeAvailableFlag() + "," +
-                "\"uid\":\"" + bond.uid() + "\"," +
-                "\"realExchange\":\"" + bond.realExchange() + "\"," +
-                "\"positionUid\":\"" + bond.positionUid() + "\"," +
-                "\"forIisFlag\":" + bond.forIisFlag() + "," +
-                "\"forQualInvestorFlag\":" + bond.forQualInvestorFlag() + "," +
-                "\"weekendFlag\":" + bond.weekendFlag() + "," +
-                "\"blockedTcaFlag\":" + bond.blockedTcaFlag() + "," +
-                "\"subordinatedFlag\":" + bond.subordinatedFlag() + "," +
-                "\"liquidityFlag\":" + bond.liquidityFlag() + "," +
-                "\"first1MinCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.first1MinCandleDate()) + "\"," +
-                "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.first1DayCandleDate()) + "\"," +
-                "\"riskLevel\":\"" + bond.riskLevel() + "\"}";
     }
 
     public String getFigi() {

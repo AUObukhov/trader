@@ -1,20 +1,16 @@
 package ru.obukhov.trader.test.utils.model.order_state;
 
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.OrderStage;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.OrderStageMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
-import java.util.stream.Collectors;
-
-public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1.OrderState tinkoffOrderState, String jsonString) {
+public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1.OrderState tinkoffOrderState) {
 
     TestOrderState(final OrderState orderState) {
-        this(orderState, buildTinkoffOrderState(orderState), buildJsonString(orderState));
+        this(orderState, buildTinkoffOrderState(orderState));
     }
 
     private static ru.tinkoff.piapi.contract.v1.OrderState buildTinkoffOrderState(final OrderState orderState) {
@@ -42,43 +38,6 @@ public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1
                 .setInstrumentUid(orderState.instrumentUid())
                 .setOrderRequestId(orderState.orderRequestId())
                 .build();
-    }
-
-    private static String buildJsonString(final OrderState orderState) {
-        return "{\"orderId\":\"" + orderState.orderId() + "\"," +
-                "\"executionReportStatus\":\"" + orderState.executionReportStatus() + "\"," +
-                "\"lotsRequested\":" + orderState.lotsRequested() + "," +
-                "\"lotsExecuted\":" + orderState.lotsExecuted() + "," +
-                "\"initialOrderPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.initialOrderPrice()) + "," +
-                "\"executedOrderPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.executedOrderPrice()) + "," +
-                "\"totalOrderAmount\":" + DecimalUtils.toPrettyStringSafe(orderState.totalOrderAmount()) + "," +
-                "\"averagePositionPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.averagePositionPrice()) + "," +
-                "\"initialCommission\":" + DecimalUtils.toPrettyStringSafe(orderState.initialCommission()) + "," +
-                "\"executedCommission\":" + DecimalUtils.toPrettyStringSafe(orderState.executedCommission()) + "," +
-                "\"figi\":\"" + orderState.figi() + "\"," +
-                "\"direction\":\"" + orderState.direction() + "\"," +
-                "\"initialSecurityPrice\":" + DecimalUtils.toPrettyStringSafe(orderState.initialSecurityPrice()) + "," +
-                "\"stages\":" + orderStagesToString(orderState) + "," +
-                "\"serviceCommission\":" + DecimalUtils.toPrettyStringSafe(orderState.serviceCommission()) + "," +
-                "\"currency\":\"" + orderState.currency() + "\"," +
-                "\"orderType\":\"" + orderState.orderType() + "\"," +
-                "\"orderDate\":\"" + orderState.orderDate() + "\"," +
-                "\"instrumentUid\":\"" + orderState.instrumentUid() + "\"," +
-                "\"orderRequestId\":\"" + orderState.orderRequestId() + "\"}";
-    }
-
-    private static String orderStagesToString(final OrderState orderState) {
-        return "[" +
-                orderState.stages().stream()
-                        .map(TestOrderState::orderStageToString)
-                        .collect(Collectors.joining(",")) +
-                "]";
-    }
-
-    private static String orderStageToString(OrderStage orderStage) {
-        return "{\"price\":" + DecimalUtils.toPrettyStringSafe(orderStage.price()) + "," +
-                "\"quantity\":" + orderStage.quantity() + "," +
-                "\"tradeId\":\"" + orderStage.tradeId() + "\"}";
     }
 
     public String getOrderId() {

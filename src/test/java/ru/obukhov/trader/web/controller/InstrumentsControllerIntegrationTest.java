@@ -43,7 +43,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", instrument.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, instrument.jsonString());
+        assertResponse(requestBuilder, instrument.instrument());
     }
 
     @Test
@@ -102,7 +102,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", testEtf.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, testEtf.jsonString());
+        assertResponse(requestBuilder, testEtf.etf());
     }
 
     @Test
@@ -132,7 +132,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", testBond.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, testBond.jsonString());
+        assertResponse(requestBuilder, testBond.bond());
     }
 
     @Test
@@ -162,7 +162,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("figi", testCurrency.getFigi())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        assertResponse(requestBuilder, testCurrency.jsonString());
+        assertResponse(requestBuilder, testCurrency.currency());
     }
 
     @Test
