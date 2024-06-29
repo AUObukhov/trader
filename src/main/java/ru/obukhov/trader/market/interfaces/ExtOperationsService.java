@@ -52,7 +52,7 @@ public interface ExtOperationsService {
     }
 
     /**
-     * @return map currency FIGI to balance at given {@code accountId}.
+     * @return map currency ISO name to balance at given {@code accountId}.
      */
     default Map<String, BigDecimal> getAvailableBalances(final String accountId) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);

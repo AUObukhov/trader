@@ -7,6 +7,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Periods;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.MapUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
@@ -317,10 +318,9 @@ public class Mocker {
             final String... currencies
     ) {
         final BigDecimal decimalBalance = DecimalUtils.setDefaultScale(balance);
-        for (final String currency : currencies) {
-            Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
-                    .thenReturn(decimalBalance);
-        }
+        final Map<String, BigDecimal> balances = Arrays.stream(currencies).collect(MapUtils.newMapValueCollector(currency -> decimalBalance));
+        Mockito.when(extOperationsService.getAvailableBalances(accountId))
+                .thenReturn(balances);
     }
 
     public static void mockEmptyCandles(

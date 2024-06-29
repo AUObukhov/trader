@@ -81,9 +81,10 @@ public abstract class Bot {
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(botConfig.commission());
         final List<DecisionData> decisionDataList = new ArrayList<>();
-        List<Share> shares = extInstrumentsService.getShares(figies);
+        final List<Share> shares = extInstrumentsService.getShares(figies);
+        final Map<String, BigDecimal> availableBalances = extOperationsService.getAvailableBalances(botConfig.accountId());
         for (final Share share : shares) {
-            final BigDecimal availableBalance = extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency());
+            final BigDecimal availableBalance = availableBalances.get(share.currency());
             final DecisionData decisionData = prepareDecisionData(botConfig, share, availableBalance);
             decisionDataList.add(decisionData);
         }

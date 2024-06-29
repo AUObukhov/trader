@@ -165,7 +165,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
+    void run_doesNoOrder_whenGetAvailableBalancesThrowsException() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
         final TestShare share1 = TestShares.APPLE;
@@ -174,16 +174,11 @@ class RunnableBotUnitTest {
         final String figi1 = share1.getFigi();
         final String figi2 = share2.getFigi();
 
-        final OffsetDateTime currentDateTime = DateTimeTestData.newDateTime(2020, 9, 23, 6);
-
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, figi1, figi2);
         mockNormalTradingStatus(figi1, figi2);
         Mocker.mockShares(extInstrumentsService, share1, share2);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, share2.getCurrency()))
-                .thenThrow(new IllegalArgumentException());
-        Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(extOperationsService.getAvailableBalances(accountId)).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
