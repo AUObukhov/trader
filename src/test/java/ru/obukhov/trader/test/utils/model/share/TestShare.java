@@ -79,6 +79,7 @@ public record TestShare(
                 .setForQualInvestorFlag(share.forQualInvestorFlag())
                 .setWeekendFlag(share.weekendFlag())
                 .setBlockedTcaFlag(share.blockedTcaFlag())
+                .setLiquidityFlag(share.liquidityFlag())
                 .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1MinCandleDate()))
                 .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(share.first1DayCandleDate()))
                 .build();
@@ -204,6 +205,7 @@ public record TestShare(
                 "\"forQualInvestorFlag\":" + share.forQualInvestorFlag() + "," +
                 "\"weekendFlag\":" + share.weekendFlag() + "," +
                 "\"blockedTcaFlag\":" + share.blockedTcaFlag() + "," +
+                "\"liquidityFlag\":" + share.liquidityFlag() + "," +
                 "\"first1MinCandleDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.first1MinCandleDate()) + "," +
                 "\"first1DayCandleDate\":" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(share.first1DayCandleDate()) + "}";
     }

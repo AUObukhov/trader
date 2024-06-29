@@ -54,6 +54,7 @@ public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tinkoffEtf, Stri
                 .setForQualInvestorFlag(etf.forQualInvestorFlag())
                 .setWeekendFlag(etf.weekendFlag())
                 .setBlockedTcaFlag(etf.blockedTcaFlag())
+                .setLiquidityFlag(etf.liquidityFlag())
                 .setFirst1MinCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(etf.first1MinCandleDate()))
                 .setFirst1DayCandleDate(dateTimeMapper.offsetDateTimeToTimestamp(etf.first1DayCandleDate()))
                 .build();
@@ -96,6 +97,7 @@ public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tinkoffEtf, Stri
                 "\"forQualInvestorFlag\":" + etf.forQualInvestorFlag() + "," +
                 "\"weekendFlag\":" + etf.weekendFlag() + "," +
                 "\"blockedTcaFlag\":" + etf.blockedTcaFlag() + "," +
+                "\"liquidityFlag\":" + etf.liquidityFlag() + "," +
                 "\"first1MinCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(etf.first1MinCandleDate()) + "\"," +
                 "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(etf.first1DayCandleDate()) + "\"}";
     }

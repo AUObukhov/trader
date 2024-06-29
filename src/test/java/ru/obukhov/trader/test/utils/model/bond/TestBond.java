@@ -64,6 +64,7 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 .setWeekendFlag(bond.weekendFlag())
                 .setBlockedTcaFlag(bond.blockedTcaFlag())
                 .setSubordinatedFlag(bond.subordinatedFlag())
+                .setLiquidityFlag(bond.liquidityFlag())
                 .setFirst1MinCandleDate(DateTimeTestData.newTimestamp(bond.first1MinCandleDate()))
                 .setFirst1DayCandleDate(DateTimeTestData.newTimestamp(bond.first1DayCandleDate()))
                 .setRiskLevel(bond.riskLevel())
@@ -117,6 +118,7 @@ public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond,
                 "\"weekendFlag\":" + bond.weekendFlag() + "," +
                 "\"blockedTcaFlag\":" + bond.blockedTcaFlag() + "," +
                 "\"subordinatedFlag\":" + bond.subordinatedFlag() + "," +
+                "\"liquidityFlag\":" + bond.liquidityFlag() + "," +
                 "\"first1MinCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.first1MinCandleDate()) + "\"," +
                 "\"first1DayCandleDate\":\"" + DateUtils.OFFSET_DATE_TIME_FORMATTER.format(bond.first1DayCandleDate()) + "\"," +
                 "\"riskLevel\":\"" + bond.riskLevel() + "\"}";
