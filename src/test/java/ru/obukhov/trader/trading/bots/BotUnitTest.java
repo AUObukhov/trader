@@ -16,12 +16,12 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.OrderState;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.order_state.TestOrderStates;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -109,16 +109,16 @@ class BotUnitTest {
     void processBotConfig_doesNoOrder_whenDecisionIsWait() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final String figi1 = share1.getFigi();
+        final String figi2 = share2.getFigi();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mocker.mockShares(extInstrumentsService, share1, share2);
-        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.getCurrency(), share2.getCurrency());
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final Decision decision = new Decision(DecisionAction.WAIT);
@@ -153,17 +153,17 @@ class BotUnitTest {
     void processBotConfig_placesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final String figi1 = share1.getFigi();
+        final String figi2 = share2.getFigi();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mocker.mockShares(extInstrumentsService, share1, share2);
-        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.getCurrency(), share2.getCurrency());
         Mocker.mockSecurity(extOperationsService, accountId);
 
         final List<Operation> operations = List.of(TestData.newOperation());
@@ -202,16 +202,16 @@ class BotUnitTest {
     void processBotConfig_placesSellOrder_whenDecisionIsSell() {
         final String accountId = TestAccounts.TINKOFF.getId();
 
-        final Share share1 = TestShares.APPLE.share();
-        final Share share2 = TestShares.SBER.share();
+        final TestShare share1 = TestShares.APPLE;
+        final TestShare share2 = TestShares.SBER;
 
-        final String figi1 = share1.figi();
-        final String figi2 = share2.figi();
+        final String figi1 = share1.getFigi();
+        final String figi2 = share2.getFigi();
 
         final OffsetDateTime currentDateTime = DateUtils.now();
 
         Mocker.mockShares(extInstrumentsService, share1, share2);
-        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.currency(), share2.currency());
+        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.getCurrency(), share2.getCurrency());
         Mocker.mockSecurity(extOperationsService, accountId);
 
         final List<Operation> operations = List.of(TestData.newOperation());

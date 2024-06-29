@@ -107,14 +107,10 @@ public class Mocker {
         Mockito.when(usersService.getAccountsSync()).thenReturn(tinkoffAccounts);
     }
 
-    public static void mockShare(final ExtInstrumentsService extInstrumentsService, final Share share) {
-        Mockito.when(extInstrumentsService.getShare(share.figi())).thenReturn(share);
-    }
-
-    public static void mockShares(final ExtInstrumentsService extInstrumentsService, final Share... shares) {
-        for (final Share share : shares) {
-            mockShare(extInstrumentsService, share);
-        }
+    public static void mockShares(final ExtInstrumentsService extInstrumentsService, final TestShare... testShares) {
+        final List<String> figies = Arrays.stream(testShares).map(TestShare::getFigi).toList();
+        final List<Share> shares = Arrays.stream(testShares).map(TestShare::share).toList();
+        Mockito.when(extInstrumentsService.getShares(figies)).thenReturn(shares);
     }
 
     public static void mockTradingStatus(final MarketDataService marketDataService, final String figi, final SecurityTradingStatus status) {

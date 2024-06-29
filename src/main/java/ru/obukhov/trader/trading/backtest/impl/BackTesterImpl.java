@@ -21,6 +21,7 @@ import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.PositionUtils;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.FakeBot;
@@ -305,8 +306,8 @@ public class BackTesterImpl implements BackTester {
             final List<Position> positions,
             final List<String> figies
     ) {
-        return figies.stream()
-                .map(figi -> extInstrumentsService.getShare(figi).currency())
+        return extInstrumentsService.getShares(figies).stream()
+                .map(Share::currency)
                 .distinct()
                 .collect(Collectors.toMap(Function.identity(), currency -> getBalances(accountId, interval, fakeBot, positions, currency)));
     }
