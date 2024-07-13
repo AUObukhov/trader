@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import ru.obukhov.trader.market.model.Dividend;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.SetCapitalization;
 import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.web.model.SharesFiltrationFlags;
+import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.ShareType;
@@ -115,24 +116,24 @@ public class StatisticsService {
         return new SetCapitalization(securitiesCapitalizations, totalCapitalization);
     }
 
-    public SequencedMap<String, Double> getMostProfitableShares(final SharesFiltrationFlags filtrationFlags) {
+    public SequencedMap<String, Double> getMostProfitableShares(final SharesFiltrationOptions filtrationOptions) {
         List<Share> shares = extInstrumentsService.getAllShares();
 
         log.info("Found {} shares total", shares.size());
 
         final OffsetDateTime now = DateUtils.now();
 
-        shares = filterByCurrency(shares, filtrationFlags);
-        shares = filterByApiTradeAvailableFlag(shares, filtrationFlags);
-        shares = filterByForQualInvestorFlag(shares, filtrationFlags);
-        shares = filterByForIisFlag(shares, filtrationFlags);
-        shares = filterByShareType(shares, filtrationFlags);
-        shares = filterByTradingPeriod(shares, now, filtrationFlags);
+        shares = filterByCurrency(shares, filtrationOptions);
+        shares = filterByApiTradeAvailableFlag(shares, filtrationOptions);
+        shares = filterByForQualInvestorFlag(shares, filtrationOptions);
+        shares = filterByForIisFlag(shares, filtrationOptions);
+        shares = filterByShareType(shares, filtrationOptions);
+        shares = filterByTradingPeriod(shares, now, filtrationOptions);
 
         final Map<String, List<Dividend>> dividends = getDividends(shares, now);
 
-        shares = filterByHavingDividends(shares, dividends, filtrationFlags);
-        shares = filterByHavingRecentDividends(shares, dividends, now, filtrationFlags);
+        shares = filterByHavingDividends(shares, dividends, filtrationOptions);
+        shares = filterByHavingRecentDividends(shares, dividends, now, filtrationOptions);
 
         final Map<String, Double> result = new HashMap<>();
         final Currency usdCurrency = getUsdCurrency();
@@ -140,7 +141,7 @@ public class StatisticsService {
         result.put(usdCurrency.name(), usdRegularInvestingAnnualReturn);
 
         final Map<String, Double> regularInvestingAnnualReturns = getRegularInvestingAnnualReturns(shares, dividends, now);
-        shares = filterByRegularInvestingAnnualReturns(shares, regularInvestingAnnualReturns, usdRegularInvestingAnnualReturn, filtrationFlags);
+        shares = filterByRegularInvestingAnnualReturns(shares, regularInvestingAnnualReturns, usdRegularInvestingAnnualReturn, filtrationOptions);
 
         for (final Share share : shares) {
             result.put(share.name(), regularInvestingAnnualReturns.get(share.figi()));
@@ -148,21 +149,20 @@ public class StatisticsService {
         return MapUtils.sortByValue(result);
     }
 
-    private static List<Share> filterByCurrency(final List<Share> shares, final SharesFiltrationFlags filtrationFlags) {
-        if (!filtrationFlags.filterByCurrency()) {
+    private static List<Share> filterByCurrency(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
+        if (CollectionUtils.isEmpty(filtrationOptions.currencies())) {
             return shares;
         }
 
-        final String currency = Currencies.RUB;
         final List<Share> result = shares.stream()
-                .filter(share -> currency.equals(share.currency()))
+                .filter(share -> filtrationOptions.currencies().contains(share.currency()))
                 .toList();
-        log.info("Remaining {} shares after filtration by {} currency", result.size(), currency);
+        log.info("Remaining {} shares after filtration by currencies {}", result.size(), filtrationOptions.currencies());
         return result;
     }
 
-    private static List<Share> filterByApiTradeAvailableFlag(final List<Share> shares, final SharesFiltrationFlags filtrationFlags) {
-        if (!filtrationFlags.filterByApiTradeAvailableFlag()) {
+    private static List<Share> filterByApiTradeAvailableFlag(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
+        if (!filtrationOptions.filterByApiTradeAvailableFlag()) {
             return shares;
         }
 
@@ -173,8 +173,8 @@ public class StatisticsService {
         return result;
     }
 
-    private static List<Share> filterByForQualInvestorFlag(final List<Share> shares, final SharesFiltrationFlags filtrationFlags) {
-        if (!filtrationFlags.filterByForQualInvestorFlag()) {
+    private static List<Share> filterByForQualInvestorFlag(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
+        if (!filtrationOptions.filterByForQualInvestorFlag()) {
             return shares;
         }
 
@@ -185,8 +185,8 @@ public class StatisticsService {
         return result;
     }
 
-    private static List<Share> filterByForIisFlag(final List<Share> shares, final SharesFiltrationFlags filtrationFlags) {
-        if (!filtrationFlags.filterByForIisFlag()) {
+    private static List<Share> filterByForIisFlag(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
+        if (!filtrationOptions.filterByForIisFlag()) {
             return shares;
         }
 
@@ -197,8 +197,8 @@ public class StatisticsService {
         return result;
     }
 
-    private static List<Share> filterByShareType(final List<Share> shares, final SharesFiltrationFlags filtrationFlags) {
-        if (!filtrationFlags.filterByShareType()) {
+    private static List<Share> filterByShareType(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
+        if (!filtrationOptions.filterByShareType()) {
             return shares;
         }
 
@@ -212,9 +212,9 @@ public class StatisticsService {
     private static List<Share> filterByTradingPeriod(
             final List<Share> shares,
             final OffsetDateTime now,
-            final SharesFiltrationFlags filtrationFlags
+            final SharesFiltrationOptions filtrationOptions
     ) {
-        if (!filtrationFlags.filterByTradingPeriod()) {
+        if (!filtrationOptions.filterByTradingPeriod()) {
             return shares;
         }
 
@@ -239,9 +239,9 @@ public class StatisticsService {
     private static List<Share> filterByHavingDividends(
             final List<Share> shares,
             final Map<String, List<Dividend>> dividends,
-            final SharesFiltrationFlags filtrationFlags
+            final SharesFiltrationOptions filtrationOptions
     ) {
-        if (!filtrationFlags.filterByHavingDividends()) {
+        if (!filtrationOptions.filterByHavingDividends()) {
             return shares;
         }
 
@@ -256,9 +256,9 @@ public class StatisticsService {
             final List<Share> shares,
             final Map<String, List<Dividend>> dividends,
             final OffsetDateTime now,
-            final SharesFiltrationFlags filtrationFlags
+            final SharesFiltrationOptions filtrationOptions
     ) {
-        if (!filtrationFlags.filterByHavingRecentDividends()) {
+        if (!filtrationOptions.filterByHavingRecentDividends()) {
             return shares;
         }
 
@@ -295,9 +295,9 @@ public class StatisticsService {
             final List<Share> shares,
             final Map<String, Double> regularInvestingAnnualReturns,
             final double minimumReturn,
-            final SharesFiltrationFlags filtrationFlags
+            final SharesFiltrationOptions filtrationOptions
     ) {
-        if (!filtrationFlags.filterByRegularInvestingAnnualReturns()) {
+        if (!filtrationOptions.filterByRegularInvestingAnnualReturns()) {
             return shares;
         }
 
