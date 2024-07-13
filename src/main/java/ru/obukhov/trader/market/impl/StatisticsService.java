@@ -162,14 +162,14 @@ public class StatisticsService {
     }
 
     private static List<Share> filterByApiTradeAvailableFlag(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
-        if (!filtrationOptions.filterByApiTradeAvailableFlag()) {
+        if (filtrationOptions.apiTradeAvailableFlag() == null) {
             return shares;
         }
 
         final List<Share> result = shares.stream()
-                .filter(Share::apiTradeAvailableFlag)
+                .filter(share -> share.apiTradeAvailableFlag() == filtrationOptions.apiTradeAvailableFlag())
                 .toList();
-        log.info("Remaining {} shares after filtration by apiTradeAvailableFlag", result.size());
+        log.info("Remaining {} shares after filtration by apiTradeAvailableFlag = {}", result.size(), filtrationOptions.apiTradeAvailableFlag());
         return result;
     }
 
