@@ -60,5 +60,5 @@ public record Bond(
         OffsetDateTime first1MinCandleDate,
         OffsetDateTime first1DayCandleDate,
         RiskLevel riskLevel
-) {
+) implements InstrumentMarker {
 }

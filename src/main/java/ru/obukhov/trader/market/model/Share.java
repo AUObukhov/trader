@@ -52,5 +52,5 @@ public record Share(
         boolean liquidityFlag,
         OffsetDateTime first1MinCandleDate,
         OffsetDateTime first1DayCandleDate
-) {
+) implements InstrumentMarker {
 }

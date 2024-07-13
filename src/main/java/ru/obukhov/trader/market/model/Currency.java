@@ -45,5 +45,5 @@ public record Currency(
         boolean blockedTcaFlag,
         OffsetDateTime first1MinCandleDate,
         OffsetDateTime first1DayCandleDate
-) {
+) implements InstrumentMarker {
 }
