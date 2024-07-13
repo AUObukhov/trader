@@ -10,7 +10,7 @@ public record SharesFiltrationOptions(
         @Nullable List<String> currencies,
         @Nullable Boolean apiTradeAvailableFlag,
         @Nullable Boolean forQualInvestorFlag,
-        boolean filterByForIisFlag,
+        @Nullable Boolean forIisFlag,
         boolean filterByShareType,
         boolean filterByTradingPeriod,
         boolean filterByHavingDividends,

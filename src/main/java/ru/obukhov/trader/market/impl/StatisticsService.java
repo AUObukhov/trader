@@ -186,14 +186,14 @@ public class StatisticsService {
     }
 
     private static List<Share> filterByForIisFlag(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
-        if (!filtrationOptions.filterByForIisFlag()) {
+        if (filtrationOptions.forIisFlag() == null) {
             return shares;
         }
 
         final List<Share> result = shares.stream()
-                .filter(Share::forIisFlag)
+                .filter(share -> share.forIisFlag() == filtrationOptions.forIisFlag())
                 .toList();
-        log.info("Remaining {} shares after filtration by forIisFlag", result.size());
+        log.info("Remaining {} shares after filtration by forIisFlag = {}", result.size(), filtrationOptions.forIisFlag());
         return result;
     }
 
