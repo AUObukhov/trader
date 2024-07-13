@@ -132,8 +132,7 @@ public class StatisticsService {
 
         final Map<String, List<Dividend>> dividends = getDividends(shares, now);
 
-        shares = filterByHavingDividends(shares, dividends, filtrationOptions);
-        shares = filterByHavingRecentDividends(shares, dividends, now, filtrationOptions);
+        shares = filterByHavingDividendsWithinDays(shares, dividends, now, filtrationOptions);
 
         final Map<String, Double> result = new HashMap<>();
         final Currency usdCurrency = getUsdCurrency();
@@ -239,42 +238,26 @@ public class StatisticsService {
         return extInstrumentsService.getDividends(share.figi(), interval);
     }
 
-    private static List<Share> filterByHavingDividends(
-            final List<Share> shares,
-            final Map<String, List<Dividend>> dividends,
-            final SharesFiltrationOptions filtrationOptions
-    ) {
-        if (!filtrationOptions.filterByHavingDividends()) {
-            return shares;
-        }
-
-        final List<Share> result = shares.stream()
-                .filter(share -> !dividends.get(share.uid()).isEmpty())
-                .toList();
-        log.info("Remaining {} shares after filtration by having dividends", result.size());
-        return result;
-    }
-
-    private static List<Share> filterByHavingRecentDividends(
+    private static List<Share> filterByHavingDividendsWithinDays(
             final List<Share> shares,
             final Map<String, List<Dividend>> dividends,
             final OffsetDateTime now,
             final SharesFiltrationOptions filtrationOptions
     ) {
-        if (!filtrationOptions.filterByHavingRecentDividends()) {
+        final Integer havingDividendsWithinDays = filtrationOptions.havingDividendsWithinDays();
+        if (havingDividendsWithinDays == null) {
             return shares;
         }
 
-        final int dividendsYears = 2;
+        final OffsetDateTime pivotDate = now.minusDays(havingDividendsWithinDays);
         final List<Share> result = shares.stream()
-                .filter(share -> havingRecentDividends(dividends.get(share.uid()), now, dividendsYears))
+                .filter(share -> havingDividendsAfter(dividends.get(share.uid()), pivotDate))
                 .toList();
-        log.info("Remaining {} shares after filtration by having dividends for last {} years", result.size(), dividendsYears);
+        log.info("Remaining {} shares after filtration by having dividends within last {} days", result.size(), havingDividendsWithinDays);
         return result;
     }
 
-    private static boolean havingRecentDividends(final List<Dividend> dividends, final OffsetDateTime now, final int years) {
-        final OffsetDateTime pivotDate = now.minusYears(years);
+    private static boolean havingDividendsAfter(final List<Dividend> dividends, final OffsetDateTime pivotDate) {
         return dividends.stream()
                 .map(Dividend::declaredDate)
                 .anyMatch(pivotDate::isBefore);

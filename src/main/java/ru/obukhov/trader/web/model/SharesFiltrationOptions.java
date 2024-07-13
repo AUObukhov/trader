@@ -14,8 +14,7 @@ public record SharesFiltrationOptions(
         @Nullable Boolean forIisFlag,
         @Nullable List<ShareType> shareTypes,
         @Nullable Integer minTradingDays,
-        boolean filterByHavingDividends,
-        boolean filterByHavingRecentDividends,
+        @Nullable Integer havingDividendsWithinDays,
         boolean filterByRegularInvestingAnnualReturns
 ) {
 }
