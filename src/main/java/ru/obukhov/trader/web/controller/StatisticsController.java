@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.impl.StatisticsService;
+import ru.obukhov.trader.market.model.InstrumentMarker;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.FigiesListRequest;
@@ -75,7 +76,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/most-profitable-shares")
-    public SequencedMap<String, Double> getMostProfitableShares(@RequestBody final SharesFiltrationOptions filtrationOptions) {
+    public SequencedMap<InstrumentMarker, Double> getMostProfitableShares(@RequestBody final SharesFiltrationOptions filtrationOptions) {
         return statisticsService.getMostProfitableShares(filtrationOptions);
     }
 }

@@ -17,6 +17,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Dividend;
+import ru.obukhov.trader.market.model.InstrumentMarker;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.SetCapitalization;
 import ru.obukhov.trader.market.model.Share;
@@ -117,7 +118,7 @@ public class StatisticsService {
         return new SetCapitalization(securitiesCapitalizations, totalCapitalization);
     }
 
-    public SequencedMap<String, Double> getMostProfitableShares(final SharesFiltrationOptions filtrationOptions) {
+    public SequencedMap<InstrumentMarker, Double> getMostProfitableShares(final SharesFiltrationOptions filtrationOptions) {
         List<Share> shares = extInstrumentsService.getAllShares();
 
         log.info("Found {} shares total", shares.size());
@@ -135,10 +136,10 @@ public class StatisticsService {
 
         shares = filterByHavingDividendsWithinDays(shares, dividends, now, filtrationOptions.havingDividendsWithinDays());
 
-        final Map<String, Double> result = new HashMap<>();
+        final Map<InstrumentMarker, Double> result = new HashMap<>();
         final Currency usdCurrency = getUsdCurrency();
         final double usdRegularInvestingAnnualReturn = getRegularInvestingAnnualReturn(usdCurrency, now);
-        result.put(usdCurrency.name(), usdRegularInvestingAnnualReturn);
+        result.put(usdCurrency, usdRegularInvestingAnnualReturn);
 
         final Map<String, Double> regularInvestingAnnualReturns = getRegularInvestingAnnualReturns(shares, dividends, now);
         shares = filterByRegularInvestingAnnualReturns(
@@ -149,7 +150,7 @@ public class StatisticsService {
         );
 
         for (final Share share : shares) {
-            result.put(share.name(), regularInvestingAnnualReturns.get(share.figi()));
+            result.put(share, regularInvestingAnnualReturns.get(share.figi()));
         }
         return MapUtils.sortByValue(result);
     }

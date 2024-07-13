@@ -14,6 +14,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.InstrumentMarker;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.SetCapitalization;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -383,6 +384,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_currenciesNull() {
+        final TestShare almostApple = TestShares.APPLE.withForQualInvestorFlag(false);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -390,20 +392,21 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.APPLE.withForQualInvestorFlag(false)
+                almostApple
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withCurrencies(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.APPLE.getName(), 0.055922813848445996);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostApple.share(), 0.055922813848445996);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_currenciesEmpty() {
+        final TestShare almostApple = TestShares.APPLE.withForQualInvestorFlag(false);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -411,20 +414,21 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.APPLE.withForQualInvestorFlag(false)
+                almostApple
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withCurrencies(Collections.emptyList());
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.APPLE.getName(), 0.055922813848445996);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostApple.share(), 0.055922813848445996);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_currenciesUsd() {
+        final TestShare almostApple = TestShares.APPLE.withForQualInvestorFlag(false);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -432,14 +436,14 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.APPLE.withForQualInvestorFlag(false)
+                almostApple
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withCurrencies(List.of(Currencies.USD));
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.APPLE.getName(), 0.055922813848445996);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostApple.share(), 0.055922813848445996);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -456,10 +460,10 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withApiTradeAvailableFlag(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
-        expectedResult.put(TestShares.TRANS_CONTAINER.getName(), 0.10967098669399622);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10967098669399622);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -476,14 +480,15 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withApiTradeAvailableFlag(false);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.TRANS_CONTAINER.getName(), 0.10967098669399622);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10967098669399622);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_forQualInvestorFlagNull() {
+        final TestShare almostSeligdar = TestShares.SELIGDAR.withForQualInvestorFlag(true);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -491,20 +496,21 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withForQualInvestorFlag(true)
+                almostSeligdar
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForQualInvestorFlag(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostSeligdar.share(), 0.10300118574872186);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_forQualInvestorFlagTrue() {
+        final TestShare almostSeligdar = TestShares.SELIGDAR.withForQualInvestorFlag(true);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -512,19 +518,20 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withForQualInvestorFlag(true)
+                almostSeligdar
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForQualInvestorFlag(true);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostSeligdar.share(), 0.10300118574872186);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_forIisFlagNull() {
+        final TestShare almostSeligdar = TestShares.SELIGDAR.withForIisFlag(false);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -532,20 +539,21 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withForIisFlag(false)
+                almostSeligdar
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForIisFlag(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostSeligdar.share(), 0.10300118574872186);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_forIisFlagFalse() {
+        final TestShare almostSeligdar = TestShares.SELIGDAR.withForIisFlag(false);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -553,19 +561,20 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withForIisFlag(false)
+                almostSeligdar
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForIisFlag(false);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostSeligdar.share(), 0.10300118574872186);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_shareTypesNull() {
+        final TestShare almostSeligdar = TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -573,20 +582,21 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
+                almostSeligdar
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostSeligdar.share(), 0.10300118574872186);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_shareTypesEmpty() {
+        final TestShare almostSeligdar = TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -594,15 +604,15 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
+                almostSeligdar
         );
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(Collections.emptyList());
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(almostSeligdar.share(), 0.10300118574872186);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -618,9 +628,9 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
         );
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
     }
@@ -637,10 +647,10 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withMinTradingDays(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
-        expectedResult.put(TestShares.WOOSH.getName(), 0.1424311683598216);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.WOOSH.share(), 0.1424311683598216);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -657,10 +667,10 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withMinTradingDays(365);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
-        expectedResult.put(TestShares.WOOSH.getName(), 0.1424311683598216);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.WOOSH.share(), 0.1424311683598216);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -677,11 +687,11 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withHavingDividendsWithinDays(null);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.PIK.getName(), 0.057035507311362865);
-        expectedResult.put(TestShares.RBC.getName(), 0.06186532835804104);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.PIK.share(), 0.057035507311362865);
+        expectedResult.put(TestShares.RBC.share(), 0.06186532835804104);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -698,10 +708,10 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withHavingDividendsWithinDays(2000);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.PIK.getName(), 0.057035507311362865);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.PIK.share(), 0.057035507311362865);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -719,10 +729,10 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS
                 .withFilterByRegularInvestingAnnualReturns(false);
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestShares.GAZPROM.getName(), 0.012762569152802827);
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestShares.GAZPROM.share(), 0.012762569152802827);
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -737,9 +747,9 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
-        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
 
         return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
     }
@@ -750,7 +760,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     void getMostProfitableShares(
             final List<TestShare> shares,
             final SharesFiltrationOptions filtrationOptions,
-            final SequencedMap<String, Double> expectedResult
+            final SequencedMap<Object, Double> expectedResult
     ) {
         final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2024, 6, 1);
         Mocker.mockCurrency(instrumentsService, marketDataService, TestCurrencies.USD);
@@ -758,7 +768,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockAllShares(instrumentsService, marketDataService, shares, mockedNow);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final SequencedMap<String, Double> actualResult = statisticsService.getMostProfitableShares(filtrationOptions);
+            final SequencedMap<InstrumentMarker, Double> actualResult = statisticsService.getMostProfitableShares(filtrationOptions);
             AssertUtils.assertEquals(expectedResult, actualResult);
         }
     }
