@@ -174,14 +174,14 @@ public class StatisticsService {
     }
 
     private static List<Share> filterByForQualInvestorFlag(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
-        if (!filtrationOptions.filterByForQualInvestorFlag()) {
+        if (filtrationOptions.forQualInvestorFlag() == null) {
             return shares;
         }
 
         final List<Share> result = shares.stream()
-                .filter(share -> !share.forQualInvestorFlag())
+                .filter(share -> share.forQualInvestorFlag() == filtrationOptions.forQualInvestorFlag())
                 .toList();
-        log.info("Remaining {} shares after filtration by forQualInvestorFlag", result.size());
+        log.info("Remaining {} shares after filtration by forQualInvestorFlag = {}", result.size(), filtrationOptions.forQualInvestorFlag());
         return result;
     }
 

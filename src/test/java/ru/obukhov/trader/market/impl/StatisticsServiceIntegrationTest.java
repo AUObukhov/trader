@@ -350,7 +350,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     private static final SharesFiltrationOptions BASIC_FILTRATION_OPTIONS = new SharesFiltrationOptions(
             List.of(Currencies.RUB),
             true,
-            true,
+            false,
             true,
             true,
             true,
@@ -366,7 +366,8 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 getArgumentsForGetMostProfitableShares_currenciesUsd(),
                 getArgumentsForGetMostProfitableShares_apiTradeAvailableFlagNull(),
                 getArgumentsForGetMostProfitableShares_apiTradeAvailableFlagFalse(),
-                getArgumentsForGetMostProfitableShares_excludeFiltrationByForQualInvestorFlag(),
+                getArgumentsForGetMostProfitableShares_forQualInvestorFlagNull(),
+                getArgumentsForGetMostProfitableShares_forQualInvestorFlagTrue(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByForIisFlag(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByShareType(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByTradingPeriod(),
@@ -457,7 +458,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_excludeFiltrationByForQualInvestorFlag() {
+    private static Arguments getArgumentsForGetMostProfitableShares_forQualInvestorFlagNull() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -468,12 +469,32 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.SELIGDAR.withForQualInvestorFlag(true)
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withFilterByForQualInvestorFlag(false);
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForQualInvestorFlag(null);
 
         final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
         expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
         expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+
+        return Arguments.of(shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetMostProfitableShares_forQualInvestorFlagTrue() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                TestShares.SELIGDAR.withForQualInvestorFlag(true)
+        );
+
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForQualInvestorFlag(true);
+
+        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
+        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }

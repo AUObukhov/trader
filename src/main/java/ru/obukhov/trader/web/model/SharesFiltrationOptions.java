@@ -9,7 +9,7 @@ import java.util.List;
 public record SharesFiltrationOptions(
         @Nullable List<String> currencies,
         @Nullable Boolean apiTradeAvailableFlag,
-        boolean filterByForQualInvestorFlag,
+        @Nullable Boolean forQualInvestorFlag,
         boolean filterByForIisFlag,
         boolean filterByShareType,
         boolean filterByTradingPeriod,
