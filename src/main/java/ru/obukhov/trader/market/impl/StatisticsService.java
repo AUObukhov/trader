@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.model.Interval;
@@ -127,7 +128,7 @@ public class StatisticsService {
         shares = filterByForQualInvestorFlag(shares, filtrationOptions);
         shares = filterByForIisFlag(shares, filtrationOptions);
         shares = filterByShareType(shares, filtrationOptions);
-        shares = filterByTradingPeriod(shares, now, filtrationOptions);
+        shares = filterByMinTradingDays(shares, now, filtrationOptions);
 
         final Map<String, List<Dividend>> dividends = getDividends(shares, now);
 
@@ -208,21 +209,24 @@ public class StatisticsService {
         return result;
     }
 
-    private static List<Share> filterByTradingPeriod(
+    private static List<Share> filterByMinTradingDays(
             final List<Share> shares,
             final OffsetDateTime now,
             final SharesFiltrationOptions filtrationOptions
     ) {
-        if (!filtrationOptions.filterByTradingPeriod()) {
+        if (filtrationOptions.minTradingDays() == null) {
             return shares;
         }
 
-        final int minTradingYears = 10;
         final List<Share> result = shares.stream()
-                .filter(share -> share.first1DayCandleDate() != null && ChronoUnit.YEARS.between(share.first1DayCandleDate(), now) > minTradingYears)
+                .filter(share -> intervalIsLonger(share.first1DayCandleDate(), now, filtrationOptions.minTradingDays()))
                 .toList();
-        log.info("Remaining {} shares after filtration by trading for more than {} years", result.size(), minTradingYears);
+        log.info("Remaining {} shares after filtration by trading for more than {} years", result.size(), filtrationOptions.minTradingDays());
         return result;
+    }
+
+    private static boolean intervalIsLonger(@Nullable final OffsetDateTime from, final OffsetDateTime to, final int minTradingDays) {
+        return from != null && ChronoUnit.DAYS.between(from, to) > minTradingDays;
     }
 
     private Map<String, List<Dividend>> getDividends(final List<Share> shares, final OffsetDateTime now) {

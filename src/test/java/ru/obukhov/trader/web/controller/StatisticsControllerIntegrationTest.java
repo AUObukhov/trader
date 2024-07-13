@@ -379,7 +379,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
             false,
             true,
             List.of(ShareType.SHARE_TYPE_COMMON, ShareType.SHARE_TYPE_PREFERRED),
-            true,
+            10,
             true,
             true,
             true
@@ -400,7 +400,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 getArgumentsForGetMostProfitableShares_shareTypesNull(),
                 getArgumentsForGetMostProfitableShares_shareTypesEmpty(),
                 getArgumentsForGetMostProfitableShares_shareTypesBasic(),
-                getArgumentsForGetMostProfitableShares_excludeFiltrationByTradingPeriod(),
+                getArgumentsForGetMostProfitableShares_minTradingDaysNull(),
+                getArgumentsForGetMostProfitableShares_minTradingDays365(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByHavingDividends(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByHavingRecentDividends(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByRegularInvestingAnnualReturns(),
@@ -651,7 +652,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_excludeFiltrationByTradingPeriod() {
+    private static Arguments getArgumentsForGetMostProfitableShares_minTradingDaysNull() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -661,7 +662,27 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withFilterByTradingPeriod(false);
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withMinTradingDays(null);
+
+        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+        expectedResult.put(TestShares.WOOSH.getName(), 0.1424311683598216);
+
+        return Arguments.of(shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetMostProfitableShares_minTradingDays365() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withMinTradingDays(365);
 
         final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);

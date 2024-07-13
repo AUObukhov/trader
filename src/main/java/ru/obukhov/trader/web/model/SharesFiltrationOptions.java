@@ -13,7 +13,7 @@ public record SharesFiltrationOptions(
         @Nullable Boolean forQualInvestorFlag,
         @Nullable Boolean forIisFlag,
         @Nullable List<ShareType> shareTypes,
-        boolean filterByTradingPeriod,
+        @Nullable Integer minTradingDays,
         boolean filterByHavingDividends,
         boolean filterByHavingRecentDividends,
         boolean filterByRegularInvestingAnnualReturns
