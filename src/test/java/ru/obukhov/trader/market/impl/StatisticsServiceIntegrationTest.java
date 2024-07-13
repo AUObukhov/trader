@@ -362,9 +362,9 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetMostProfitableShares() {
         return Stream.of(
-                getArgumentsForGetMostProfitableShares_noFiltrationByCurrency(),
-                getArgumentsForGetMostProfitableShares_filtrationByCurrencyUsd(),
-                getArgumentsForGetMostProfitableShares_noApiTradeAvailableFlag(),
+                getArgumentsForGetMostProfitableShares_currenciesNull(),
+                getArgumentsForGetMostProfitableShares_currenciesUsd(),
+                getArgumentsForGetMostProfitableShares_apiTradeAvailableFlagNull(),
                 getArgumentsForGetMostProfitableShares_apiTradeAvailableFlagFalse(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByForQualInvestorFlag(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByForIisFlag(),
@@ -377,7 +377,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         );
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_noFiltrationByCurrency() {
+    private static Arguments getArgumentsForGetMostProfitableShares_currenciesNull() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -398,7 +398,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_filtrationByCurrencyUsd() {
+    private static Arguments getArgumentsForGetMostProfitableShares_currenciesUsd() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -418,7 +418,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_noApiTradeAvailableFlag() {
+    private static Arguments getArgumentsForGetMostProfitableShares_apiTradeAvailableFlagNull() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
