@@ -22,7 +22,6 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.ShareType;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -198,14 +197,14 @@ public class StatisticsService {
     }
 
     private static List<Share> filterByShareType(final List<Share> shares, final SharesFiltrationOptions filtrationOptions) {
-        if (!filtrationOptions.filterByShareType()) {
+        if (CollectionUtils.isEmpty(filtrationOptions.shareTypes())) {
             return shares;
         }
 
         final List<Share> result = shares.stream()
-                .filter(share -> share.shareType() == ShareType.SHARE_TYPE_COMMON || share.shareType() == ShareType.SHARE_TYPE_PREFERRED)
+                .filter(share -> filtrationOptions.shareTypes().contains(share.shareType()))
                 .toList();
-        log.info("Remaining {} shares after filtration by share type", result.size());
+        log.info("Remaining {} shares after filtration by share types {}", result.size(), filtrationOptions.shareTypes());
         return result;
     }
 

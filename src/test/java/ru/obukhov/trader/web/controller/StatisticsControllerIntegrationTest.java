@@ -378,7 +378,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
             true,
             false,
             true,
-            true,
+            List.of(ShareType.SHARE_TYPE_COMMON, ShareType.SHARE_TYPE_PREFERRED),
             true,
             true,
             true,
@@ -396,7 +396,9 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 getArgumentsForGetMostProfitableShares_forQualInvestorFlagTrue(),
                 getArgumentsForGetMostProfitableShares_forIisFlagNull(),
                 getArgumentsForGetMostProfitableShares_forIisFlagFalse(),
-                getArgumentsForGetMostProfitableShares_excludeFiltrationByShareType(),
+                getArgumentsForGetMostProfitableShares_shareTypesNull(),
+                getArgumentsForGetMostProfitableShares_shareTypesEmpty(),
+                getArgumentsForGetMostProfitableShares_shareTypesBasic(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByTradingPeriod(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByHavingDividends(),
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByHavingRecentDividends(),
@@ -567,7 +569,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_excludeFiltrationByShareType() {
+    private static Arguments getArgumentsForGetMostProfitableShares_shareTypesNull() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -578,7 +580,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withFilterByShareType(false);
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(null);
 
         final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
@@ -586,6 +588,45 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetMostProfitableShares_shareTypesEmpty() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
+        );
+
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(Collections.emptyList());
+
+        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
+        expectedResult.put(TestShares.SELIGDAR.getName(), 0.10300118574872186);
+        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+
+        return Arguments.of(shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetMostProfitableShares_shareTypesBasic() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
+        );
+
+        final SequencedMap<String, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestCurrencies.USD.getName(), 0.019214449974637393);
+        expectedResult.put(TestShares.SPB_BANK.getName(), 0.10691806625087197);
+
+        return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_excludeFiltrationByTradingPeriod() {

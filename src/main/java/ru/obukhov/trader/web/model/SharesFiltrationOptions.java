@@ -2,6 +2,7 @@ package ru.obukhov.trader.web.model;
 
 import lombok.With;
 import org.jetbrains.annotations.Nullable;
+import ru.tinkoff.piapi.contract.v1.ShareType;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public record SharesFiltrationOptions(
         @Nullable Boolean apiTradeAvailableFlag,
         @Nullable Boolean forQualInvestorFlag,
         @Nullable Boolean forIisFlag,
-        boolean filterByShareType,
+        @Nullable List<ShareType> shareTypes,
         boolean filterByTradingPeriod,
         boolean filterByHavingDividends,
         boolean filterByHavingRecentDividends,
