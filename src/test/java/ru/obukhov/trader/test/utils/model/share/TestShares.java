@@ -15,6 +15,7 @@ import java.util.Map;
 public class TestShares {
 
     public static final TestShare APPLE = buildShare("aapl", TestDividends.AAPL);
+    public static final TestShare MICROSOFT = buildShare("msft", TestDividends.MSFT);
     public static final TestShare SBER = buildShare("sber");
     public static final TestShare YANDEX = buildShare("yndx");
     public static final TestShare DIOD = buildShare("diod");

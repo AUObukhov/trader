@@ -12,6 +12,7 @@ public class TestDividends {
     public static final TestDividend TEST_DIVIDEND1 = readDividend("dividend1");
     public static final TestDividend TEST_DIVIDEND2 = readDividend("dividend2");
     public static final List<TestDividend> AAPL = readDividends("aapl");
+    public static final List<TestDividend> MSFT = readDividends("msft");
     public static final List<TestDividend> BSPB = readDividends("bspb");
     public static final List<TestDividend> PIKK = readDividends("pikk");
     public static final List<TestDividend> GAZP = readDividends("gazp");
