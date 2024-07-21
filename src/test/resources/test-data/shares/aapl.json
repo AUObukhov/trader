@@ -32,7 +32,7 @@
   "uid": "a9eb4238-eba9-488c-b102-b6140fd08e38",
   "realExchange": "REAL_EXCHANGE_RTS",
   "positionUid": "5c5e6656-c4d3-4391-a7ee-e81a76f1804e",
-  "forIisFlag": true,
+  "forIisFlag": false,
   "forQualInvestorFlag": true,
   "weekendFlag": false,
   "blockedTcaFlag": false,
