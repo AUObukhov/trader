@@ -23,9 +23,9 @@ public class TestCurrencies {
 
     private static TestCurrency readCurrencyWithCandles(final String ticker) {
         final Currency currency = ResourceUtils.getResourceAsObject("currencies/" + ticker + ".json", Currency.class);
-        final List<HistoricCandle> minCandles = TestUtils.getHistoricCandles(ticker + "-1min.json");
-        final List<HistoricCandle> dayCandles = TestUtils.getHistoricCandles(ticker + "-day.json");
-        final List<HistoricCandle> monthCandles = TestUtils.getHistoricCandles(ticker + "-month.json");
+        final List<HistoricCandle> minCandles = TestUtils.getHistoricCandles(ticker + "-1min.csv");
+        final List<HistoricCandle> dayCandles = TestUtils.getHistoricCandles(ticker + "-day.csv");
+        final List<HistoricCandle> monthCandles = TestUtils.getHistoricCandles(ticker + "-month.csv");
         final Map<CandleInterval, List<HistoricCandle>> candles = Map.of(
                 CandleInterval.CANDLE_INTERVAL_1_MIN, minCandles,
                 CandleInterval.CANDLE_INTERVAL_DAY, dayCandles,

@@ -33,8 +33,8 @@ public class TestShares {
 
     private static TestShare buildShare(final String ticker, final List<TestDividend> dividends) {
         final Share share = ResourceUtils.getResourceAsObject("shares/" + ticker + ".json", Share.class);
-        final List<HistoricCandle> minCandles = TestUtils.getHistoricCandles(ticker + "-1min.json");
-        final List<HistoricCandle> monthCandles = TestUtils.getHistoricCandles(ticker + "-month.json");
+        final List<HistoricCandle> minCandles = TestUtils.getHistoricCandles(ticker + "-1min.csv");
+        final List<HistoricCandle> monthCandles = TestUtils.getHistoricCandles(ticker + "-month.csv");
         final Map<CandleInterval, List<HistoricCandle>> candles = Map.of(
                 CandleInterval.CANDLE_INTERVAL_1_MIN, minCandles,
                 CandleInterval.CANDLE_INTERVAL_MONTH, monthCandles

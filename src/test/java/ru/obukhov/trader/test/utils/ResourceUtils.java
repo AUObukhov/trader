@@ -1,10 +1,14 @@
 package ru.obukhov.trader.test.utils;
 
 import lombok.experimental.UtilityClass;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.List;
 
 @UtilityClass
 public class ResourceUtils {
@@ -20,6 +24,13 @@ public class ResourceUtils {
         } catch (final IOException ioException) {
             throw new RuntimeException(ioException);
         }
+    }
+
+    public static List<String> getResourceAsStrings(final String path) {
+        final String fullPath = TEST_DATA_FOLDER + path;
+        final InputStream url = ResourceUtils.class.getClassLoader().getResourceAsStream(fullPath);
+        Assert.assertNotNull("resource \"" + fullPath + "\" not found", url);
+        return IOUtils.readLines(url, Charset.defaultCharset());
     }
 
 }
