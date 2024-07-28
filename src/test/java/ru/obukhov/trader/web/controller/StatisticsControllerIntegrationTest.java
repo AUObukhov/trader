@@ -398,7 +398,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 getArgumentsForGetMostProfitableShares_forIisFlagFalse(),
                 getArgumentsForGetMostProfitableShares_shareTypesNull(),
                 getArgumentsForGetMostProfitableShares_shareTypesEmpty(),
-                getArgumentsForGetMostProfitableShares_shareTypesBasic(),
+                getArgumentsForGetMostProfitableShares_shareTypesAdr(),
                 getArgumentsForGetMostProfitableShares_minTradingDaysNull(),
                 getArgumentsForGetMostProfitableShares_minTradingDays365(),
                 getArgumentsForGetMostProfitableShares_havingDividendsWithinDaysNull(),
@@ -639,7 +639,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetMostProfitableShares_shareTypesBasic() {
+    private static Arguments getArgumentsForGetMostProfitableShares_shareTypesAdr() {
+        final TestShare seligdarAdr = TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR);
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -647,14 +648,16 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 TestShares.RBC,
                 TestShares.WOOSH,
                 TestShares.TRANS_CONTAINER,
-                TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR)
+                seligdarAdr
         );
+
+        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(List.of(ShareType.SHARE_TYPE_ADR));
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(seligdarAdr.share(), 0.10300118574872186);
 
-        return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
+        return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_minTradingDaysNull() {
