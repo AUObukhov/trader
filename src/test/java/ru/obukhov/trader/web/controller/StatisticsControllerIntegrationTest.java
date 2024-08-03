@@ -423,8 +423,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.AVAILABLE_APPLE.share(), 0.055922813848445996);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.AVAILABLE_APPLE.share(), 0.05739874688830482);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -444,8 +444,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.AVAILABLE_APPLE.share(), 0.055922813848445996);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.AVAILABLE_APPLE.share(), 0.05739874688830482);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -465,7 +465,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.AVAILABLE_APPLE.share(), 0.055922813848445996);
+        expectedResult.put(TestShares.AVAILABLE_APPLE.share(), 0.05739874688830482);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -484,8 +484,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
-        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10967098669399622);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
+        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10703759628725629);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -504,7 +504,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10967098669399622);
+        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10703759628725629);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -526,7 +526,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(availableSeligdar.share(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -569,7 +569,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(availableSeligdar.share(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -612,7 +612,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(availableSeligdar.share(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -634,7 +634,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(availableSeligdar.share(), 0.10300118574872186);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -674,7 +674,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
         expectedResult.put(TestShares.WOOSH.share(), 0.1424311683598216);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
@@ -694,7 +694,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
         expectedResult.put(TestShares.WOOSH.share(), 0.1424311683598216);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
@@ -716,7 +716,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(TestShares.PIK.share(), 0.057035507311362865);
         expectedResult.put(TestShares.RBC.share(), 0.06186532835804104);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -736,7 +736,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(TestShares.PIK.share(), 0.057035507311362865);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -757,7 +757,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestShares.GAZPROM.share(), 0.012762569152802827);
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, filtrationOptions, expectedResult);
     }
@@ -774,7 +774,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
-        expectedResult.put(TestShares.SPB_BANK.share(), 0.10691806625087197);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
         return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
     }

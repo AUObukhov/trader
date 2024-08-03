@@ -234,6 +234,7 @@ public class Mocker {
             final OffsetDateTime to
     ) {
         final List<ru.tinkoff.piapi.contract.v1.Dividend> tinkoffDividends = share.dividends().stream()
+                .filter(dividend -> dividend.dividend().paymentDate().isBefore(to))
                 .map(TestDividend::tinkoffDividend)
                 .toList();
         Mockito.when(instrumentsService.getDividendsSync(share.getFigi(), share.getFirst1DayCandleDate().toInstant(), to.toInstant()))
