@@ -160,21 +160,34 @@ public class ExtMarketDataService {
             final OffsetDateTime first1DayCandleDate
     ) {
         final OffsetDateTime from;
+        final OffsetDateTime to;
         final CandleInterval candleInterval;
         final Period period;
         if (first1MinCandleDate.isBefore(dateTime)) {
             from = first1MinCandleDate;
+            to = dateTime;
+            candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+            period = Periods.DAY;
+        } else if (first1MinCandleDate.isEqual(dateTime)) {
+            from = first1MinCandleDate;
+            to = dateTime.plusNanos(1);
             candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
             period = Periods.DAY;
         } else if (first1DayCandleDate.isBefore(dateTime)) {
             from = first1DayCandleDate;
+            to = dateTime;
+            candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
+            period = Periods.YEAR;
+        } else if (first1DayCandleDate.isEqual(dateTime)) {
+            from = first1DayCandleDate;
+            to = dateTime.plusNanos(1);
             candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
             period = Periods.YEAR;
         } else {
             throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + dateTime);
         }
 
-        final List<Interval> intervals = Interval.of(from, dateTime).splitIntoIntervals(period);
+        final List<Interval> intervals = Interval.of(from, to).splitIntoIntervals(period);
         for (final Interval interval : intervals.reversed()) {
             final List<Candle> candles = loadCandlesCacheable(figi, interval, period, candleInterval);
             final Candle lastCandle = CollectionUtils.lastElement(candles);

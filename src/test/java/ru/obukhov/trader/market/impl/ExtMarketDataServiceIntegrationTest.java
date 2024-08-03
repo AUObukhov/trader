@@ -695,6 +695,31 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
+    void getPrice_byFigi_returnsOpenPrice_whenDateTimeEqualToFirst1MinCandleTime() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime candlesFrom = instrument.getFirst1MinCandleDate();
+        final int open = 10;
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(figi, candlesFrom);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(open, price);
+    }
+
+    @Test
+    @DirtiesContext
     void getPrice_byFigi_returnsOpenPrice_whenDateTimeEqualToFirst1MinCandleEndTime() {
         final TestInstrument instrument = TestInstruments.APPLE;
         final String figi = instrument.getFigi();
@@ -756,6 +781,31 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .mock();
 
         final BigDecimal price = extMarketDataService.getPrice(figi, dateTime);
+
+        Assertions.assertNotNull(price);
+        AssertUtils.assertEquals(open, price);
+    }
+
+    @Test
+    @DirtiesContext
+    void getPrice_byFigi_returnsOpenPrice_whenDateTimeEqualToFirst1DayCandleTime() {
+        final TestInstrument instrument = TestInstruments.APPLE;
+        final String figi = instrument.getFigi();
+        final OffsetDateTime candlesFrom = instrument.getFirst1DayCandleDate();
+        final int open = 10;
+
+        Mocker.mockInstrument(instrumentsService, instrument);
+
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpen(open)
+                .setTime(candlesFrom)
+                .setIsComplete(true)
+                .build();
+        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_DAY)
+                .add(historicCandle)
+                .mock();
+
+        final BigDecimal price = extMarketDataService.getPrice(figi, candlesFrom);
 
         Assertions.assertNotNull(price);
         AssertUtils.assertEquals(open, price);
