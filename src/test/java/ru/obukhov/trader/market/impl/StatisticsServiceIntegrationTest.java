@@ -362,6 +362,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetMostProfitableShares() {
         return Stream.of(
+                getArgumentsForGetMostProfitableShares_noFiltration(),
                 getArgumentsForGetMostProfitableShares_currenciesNull(),
                 getArgumentsForGetMostProfitableShares_currenciesEmpty(),
                 getArgumentsForGetMostProfitableShares_currenciesUsd(),
@@ -381,6 +382,45 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 getArgumentsForGetMostProfitableShares_excludeFiltrationByRegularInvestingAnnualReturns(),
                 getArgumentsForGetMostProfitableShares_fullFiltration()
         );
+    }
+
+    private static Arguments getArgumentsForGetMostProfitableShares_noFiltration() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.MICROSOFT,
+                TestShares.WOOSH,
+                TestShares.GAZPROM,
+                TestShares.APPLE,
+                TestShares.TRANS_CONTAINER,
+                TestShares.SELIGDAR,
+                TestShares.RBC
+        );
+
+        final SharesFiltrationOptions filtrationOptions = new SharesFiltrationOptions(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false
+        );
+
+        final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
+        expectedResult.put(TestShares.GAZPROM.share(), 0.012762569152802827);
+        expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
+        expectedResult.put(TestShares.PIK.share(), 0.057035507311362865);
+        expectedResult.put(TestShares.APPLE.share(), 0.05739874688830482);
+        expectedResult.put(TestShares.MICROSOFT.share(), 0.058288438156771205);
+        expectedResult.put(TestShares.RBC.share(), 0.06186532835804104);
+        expectedResult.put(TestShares.SELIGDAR.share(), 0.10300118574872186);
+        expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
+        expectedResult.put(TestShares.TRANS_CONTAINER.share(), 0.10703759628725629);
+        expectedResult.put(TestShares.WOOSH.share(), 0.1424311683598216);
+
+        return Arguments.of(shares, filtrationOptions, expectedResult);
     }
 
     private static Arguments getArgumentsForGetMostProfitableShares_currenciesNull() {
