@@ -12,29 +12,24 @@ import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MapUtils;
+import ru.obukhov.trader.common.util.MoneyUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.Dividend;
-import ru.obukhov.trader.market.model.InstrumentMarker;
-import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.market.model.SetCapitalization;
-import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.*;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.WeightedShare;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.ShareType;
+import ru.tinkoff.piapi.core.models.Money;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SequencedMap;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,6 +45,7 @@ public class StatisticsService {
 
     private final ExtMarketDataService extMarketDataService;
     private final ExtInstrumentsService extInstrumentsService;
+    private final ExtOperationsService extOperationsService;
     private final ApplicationContext applicationContext;
     private final TradingProperties tradingProperties;
 
@@ -116,6 +112,114 @@ public class StatisticsService {
         }
 
         return new SetCapitalization(securitiesCapitalizations, totalCapitalization);
+    }
+
+    public List<WeightedShare> getWeightedShares(final Collection<String> accountIds, final SharesFiltrationOptions filtrationOptions) {
+        final List<Share> shares = getMostProfitableShares(filtrationOptions)
+                .keySet().stream()
+                .filter(instrument -> instrument instanceof Share)
+                .map(instrument -> (Share) instrument)
+                .toList();
+
+        final List<String> figies = shares.stream().map(Share::figi).toList();
+        final SequencedMap<String, BigDecimal> lastPrices = extMarketDataService.getLastPrices(figies);
+        final SequencedMap<String, BigDecimal> capitalizationWeights = getCapitalizationWeights(figies);
+        final List<Position> positions = accountIds.stream()
+                .flatMap(accountId -> extOperationsService.getPositions(accountId).stream())
+                .toList();
+        final List<WeightedShare> weightedShares = new ArrayList<>();
+        BigDecimal totalPortfolioPrice = DecimalUtils.ZERO;
+        for (final Share share : shares) {
+            final Optional<Position> position = getJoinedPosition(share.figi(), positions);
+            BigDecimal price;
+            int portfolioSharesQuantity;
+            if (position.isPresent()) {
+                price = position.get().getCurrentPrice().getValue();
+                portfolioSharesQuantity = position.get().getQuantity().intValue();
+            } else {
+                price = lastPrices.get(share.figi());
+                portfolioSharesQuantity = 0;
+            }
+
+            price = extMarketDataService.convertCurrency(share.currency(), Currencies.RUB, price);
+
+            final BigDecimal capitalizationWeight = capitalizationWeights.get(share.figi());
+            final BigDecimal lotPrice = DecimalUtils.multiply(price, share.lot());
+            final BigDecimal totalPrice = DecimalUtils.multiply(price, portfolioSharesQuantity);
+
+            final WeightedShare weightedShare = new WeightedShare();
+            weightedShare.setFigi(share.figi());
+            weightedShare.setTicker(share.ticker());
+            weightedShare.setName(share.name());
+            weightedShare.setPriceRub(price);
+            weightedShare.setCapitalizationWeight(capitalizationWeight);
+            weightedShare.setLot(share.lot());
+            weightedShare.setLotPriceRub(lotPrice);
+            weightedShare.setPortfolioSharesQuantity(portfolioSharesQuantity);
+            weightedShare.setTotalPriceRub(totalPrice);
+
+            weightedShares.add(weightedShare);
+
+            totalPortfolioPrice = totalPortfolioPrice.add(totalPrice);
+        }
+
+        for (final WeightedShare weightedShare : weightedShares) {
+            final BigDecimal portfolioWeight = DecimalUtils.divide(weightedShare.getTotalPriceRub(), totalPortfolioPrice);
+            weightedShare.setPortfolioWeight(portfolioWeight);
+            final BigDecimal needToBuy = weightedShare.getPortfolioSharesQuantity() == 0
+                    ? BigDecimal.ONE
+                    : DecimalUtils.divide(weightedShare.getCapitalizationWeight().subtract(portfolioWeight), portfolioWeight);
+            weightedShare.setNeedToBuy(needToBuy);
+        }
+
+        return weightedShares;
+    }
+
+    private Optional<Position> getJoinedPosition(final String figi, final List<Position> positions) {
+        final List<Position> filteredPositions = positions.stream()
+                .filter(pos -> pos.getFigi().equals(figi))
+                .toList();
+        if (filteredPositions.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final Position position1 = filteredPositions.getFirst();
+
+        final List<Integer> quantities = filteredPositions.stream().map(position -> position.getQuantity().intValue()).toList();
+        final List<Money> averagePositionPrices = filteredPositions.stream().map(Position::getAveragePositionPrice).toList();
+        final List<Money> averagePositionPricesFifo = filteredPositions.stream().map(Position::getAveragePositionPriceFifo).toList();
+        final List<Money> currentNkds = filteredPositions.stream().map(Position::getCurrentNkd).toList();
+        final List<BigDecimal> averagePositionPricesPt = filteredPositions.stream().map(Position::getAveragePositionPricePt).toList();
+
+        final BigDecimal quantity = quantities.stream().reduce(Integer::sum).map(DecimalUtils::setDefaultScale).orElseThrow();
+        final Money averagePositionPrice = MoneyUtils.getAverage(averagePositionPrices, quantities);
+        final BigDecimal expectedYield = filteredPositions.stream()
+                .map(Position::getExpectedYield)
+                .reduce(BigDecimal::add)
+                .map(DecimalUtils::setDefaultScale)
+                .orElseThrow();
+        final Money currentNkd = MoneyUtils.getSum(currentNkds);
+        final BigDecimal averagePositionPricePt = DecimalUtils.getAverage(averagePositionPricesPt, quantities);
+        final Money averagePositionPriceFifo = MoneyUtils.getAverage(averagePositionPricesFifo, quantities);
+        final BigDecimal quantityLots = filteredPositions.stream()
+                .map(Position::getQuantityLots)
+                .reduce(BigDecimal::add)
+                .map(DecimalUtils::setDefaultScale)
+                .orElseThrow();
+
+        final Position position = Position.builder()
+                .figi(position1.getFigi())
+                .instrumentType(position1.getInstrumentType())
+                .quantity(quantity)
+                .averagePositionPrice(averagePositionPrice)
+                .expectedYield(expectedYield)
+                .currentNkd(currentNkd)
+                .averagePositionPricePt(averagePositionPricePt)
+                .currentPrice(position1.getCurrentPrice())
+                .averagePositionPriceFifo(averagePositionPriceFifo)
+                .quantityLots(quantityLots)
+                .build();
+        return Optional.of(position);
     }
 
     public SequencedMap<InstrumentMarker, Double> getMostProfitableShares(final SharesFiltrationOptions filtrationOptions) {

@@ -1,6 +1,7 @@
 package ru.obukhov.trader.test.utils;
 
 import lombok.experimental.UtilityClass;
+import org.mapstruct.factory.Mappers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
@@ -8,6 +9,7 @@ import ru.obukhov.trader.common.model.Periods;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MapUtils;
+import ru.obukhov.trader.common.util.SingleItemCollector;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
@@ -15,40 +17,35 @@ import ru.obukhov.trader.market.model.OrderState;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
+import ru.obukhov.trader.test.utils.matchers.AnyOrderMatcher;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.account.TestAccount;
 import ru.obukhov.trader.test.utils.model.bond.TestBond;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.dividend.TestDividend;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.bots.FakeBot;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
-import ru.tinkoff.piapi.contract.v1.HistoricCandle;
-import ru.tinkoff.piapi.contract.v1.LastPrice;
-import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderType;
-import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
+import ru.tinkoff.piapi.contract.v1.*;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.UsersService;
+import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SequencedMap;
+import java.util.*;
 
 @UtilityClass
 public class Mocker {
+
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static void mockEmptyOrder(final ExtOrdersService ordersService, final String figi) {
         final OrderState order = OrderState.builder().build();
@@ -267,7 +264,7 @@ public class Mocker {
                 .map(entry -> TestData.newLastPrice(entry.getKey(), entry.getValue()))
                 .toList();
 
-        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+        Mockito.when(marketDataService.getLastPricesSync(anyOrderArg(figies))).thenReturn(lastPrices);
     }
 
     public static void mockLastPricesBigDecimal(
@@ -279,7 +276,7 @@ public class Mocker {
                 .map(entry -> TestData.newLastPrice(entry.getKey(), entry.getValue()))
                 .toList();
 
-        Mockito.when(marketDataService.getLastPricesSync(figies)).thenReturn(lastPrices);
+        Mockito.when(marketDataService.getLastPricesSync(anyOrderArg(figies))).thenReturn(lastPrices);
     }
 
     public static void mockCurrenciesLastPrices(
@@ -310,6 +307,32 @@ public class Mocker {
             lastPrices.put(entry.getKey().getFigi(), entry.getValue());
         }
         Mocker.mockLastPricesDouble(marketDataService, lastPrices);
+    }
+
+    public static void mockLastPrices(
+            final MarketDataService marketDataService,
+            final Collection<Portfolio> portfolios,
+            final Collection<String> figies
+    ) {
+        SequencedMap<String, BigDecimal> figiesToPrices = new LinkedHashMap<>();
+
+        final Quotation usdLastPrice = TestCurrencies.USD.candles().get(CandleInterval.CANDLE_INTERVAL_1_MIN).getLast().getClose();
+        figiesToPrices.put(TestCurrencies.USD.getFigi(), QUOTATION_MAPPER.toBigDecimal(usdLastPrice));
+        figiesToPrices.put(TestCurrencies.RUB.getFigi(), DecimalUtils.ONE);
+        Mocker.mockLastPricesBigDecimal(marketDataService, figiesToPrices);
+
+        figiesToPrices = new LinkedHashMap<>();
+        for (final String figi : figies) {
+            final BigDecimal price = portfolios
+                    .stream()
+                    .flatMap(portfolio -> portfolio.getPositions().stream())
+                    .filter(position -> position.getFigi().equals(figi))
+                    .collect(new SingleItemCollector<>())
+                    .getCurrentPrice()
+                    .getValue();
+            figiesToPrices.put(figi, price);
+        }
+        Mocker.mockLastPricesBigDecimal(marketDataService, figiesToPrices);
     }
 
     public static void mockAvailableBalances(
@@ -347,6 +370,16 @@ public class Mocker {
                     .add(entry.getValue())
                     .mock();
         }
+    }
+
+    public void mockPortfolios(final OperationsService operationsService, final Map<String, Portfolio> accountsToPortfolios) {
+        for (final Map.Entry<String, Portfolio> entry : accountsToPortfolios.entrySet()) {
+            Mockito.when(operationsService.getPortfolioSync(entry.getKey())).thenReturn(entry.getValue());
+        }
+    }
+
+    public static <T> Collection<T> anyOrderArg(Collection<T> expected) {
+        return Mockito.argThat(new AnyOrderMatcher<>(expected));
     }
 
 }

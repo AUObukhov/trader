@@ -12,16 +12,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.InstrumentMarker;
-import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.market.model.SetCapitalization;
+import ru.obukhov.trader.market.model.*;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.account.TestAccounts;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrencies;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
@@ -30,17 +27,15 @@ import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.WeightedShare;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.ShareType;
+import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SequencedMap;
+import java.util.*;
 import java.util.stream.Stream;
 
 @SpringBootTest
@@ -348,17 +343,6 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
     // region getMostProfitableShares tests
 
-    private static final SharesFiltrationOptions BASIC_FILTRATION_OPTIONS = new SharesFiltrationOptions(
-            List.of(Currencies.RUB),
-            true,
-            false,
-            true,
-            List.of(ShareType.SHARE_TYPE_COMMON, ShareType.SHARE_TYPE_PREFERRED),
-            3652,
-            700,
-            true
-    );
-
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetMostProfitableShares() {
         return Stream.of(
@@ -434,7 +418,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.AVAILABLE_APPLE
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withCurrencies(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withCurrencies(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -455,7 +439,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.AVAILABLE_APPLE
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withCurrencies(Collections.emptyList());
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withCurrencies(Collections.emptyList());
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -476,7 +460,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.AVAILABLE_APPLE
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withCurrencies(List.of(Currencies.USD));
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withCurrencies(List.of(Currencies.USD));
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -495,7 +479,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withApiTradeAvailableFlag(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withApiTradeAvailableFlag(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -515,7 +499,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withApiTradeAvailableFlag(false);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withApiTradeAvailableFlag(false);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -536,7 +520,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 availableSeligdar
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForQualInvestorFlag(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForQualInvestorFlag(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -558,7 +542,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 availableSeligdar
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForQualInvestorFlag(true);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForQualInvestorFlag(true);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -579,7 +563,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 availableSeligdar
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForIisFlag(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForIisFlag(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -601,7 +585,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 availableSeligdar
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withForIisFlag(false);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForIisFlag(false);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -622,7 +606,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 availableSeligdar
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withShareTypes(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -644,7 +628,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 availableSeligdar
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(Collections.emptyList());
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withShareTypes(Collections.emptyList());
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -666,7 +650,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 seligdarAdr
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withShareTypes(List.of(ShareType.SHARE_TYPE_ADR));
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withShareTypes(List.of(ShareType.SHARE_TYPE_ADR));
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -685,7 +669,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withMinTradingDays(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withMinTradingDays(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -705,7 +689,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withMinTradingDays(365);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withMinTradingDays(365);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -725,7 +709,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withHavingDividendsWithinDays(null);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withHavingDividendsWithinDays(null);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -746,7 +730,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS.withHavingDividendsWithinDays(2000);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withHavingDividendsWithinDays(2000);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
@@ -766,7 +750,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
                 TestShares.TRANS_CONTAINER
         );
 
-        final SharesFiltrationOptions filtrationOptions = BASIC_FILTRATION_OPTIONS
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS
                 .withFilterByRegularInvestingAnnualReturns(false);
 
         final SequencedMap<Object, Double> expectedResult = new LinkedHashMap<>();
@@ -791,7 +775,7 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
         expectedResult.put(TestCurrencies.USD.currency(), 0.019214449974637393);
         expectedResult.put(TestShares.SPB_BANK.share(), 0.1030930657724991);
 
-        return Arguments.of(shares, BASIC_FILTRATION_OPTIONS, expectedResult);
+        return Arguments.of(shares, TestData.BASIC_SHARE_FILTRATION_OPTIONS, expectedResult);
     }
 
     @ParameterizedTest
@@ -809,6 +793,823 @@ class StatisticsServiceIntegrationTest extends IntegrationTest {
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final SequencedMap<InstrumentMarker, Double> actualResult = statisticsService.getMostProfitableShares(filtrationOptions);
+            AssertUtils.assertEquals(expectedResult, actualResult);
+        }
+    }
+
+    // endregion
+
+    // region getWeightedShares tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetWeightedShares() {
+        return Stream.of(
+                getArgumentsForGetWeightedShares_noFiltration(),
+                getArgumentsForGetWeightedShares_currenciesNull(),
+                getArgumentsForGetWeightedShares_currenciesEmpty(),
+                getArgumentsForGetWeightedShares_currenciesUsd(),
+                getArgumentsForGetWeightedShares_apiTradeAvailableFlagNull(),
+                getArgumentsForGetWeightedShares_apiTradeAvailableFlagFalse(),
+                getArgumentsForGetWeightedShares_forQualInvestorFlagNull(),
+                getArgumentsForGetWeightedShares_forQualInvestorFlagTrue(),
+                getArgumentsForGetWeightedShares_forIisFlagNull(),
+                getArgumentsForGetWeightedShares_forIisFlagFalse(),
+                getArgumentsForGetWeightedShares_shareTypesNull(),
+                getArgumentsForGetWeightedShares_shareTypesEmpty(),
+                getArgumentsForGetWeightedShares_shareTypesAdr(),
+                getArgumentsForGetWeightedShares_minTradingDaysNull(),
+                getArgumentsForGetWeightedShares_minTradingDays365(),
+                getArgumentsForGetWeightedShares_havingDividendsWithinDaysNull(),
+                getArgumentsForGetWeightedShares_havingDividendsWithinDays2000(),
+                getArgumentsForGetWeightedShares_excludeFiltrationByRegularInvestingAnnualReturns(),
+                getArgumentsForGetWeightedShares_fullFiltration()
+        );
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_noFiltration() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.MICROSOFT,
+                TestShares.WOOSH,
+                TestShares.GAZPROM,
+                TestShares.APPLE,
+                TestShares.TRANS_CONTAINER,
+                TestShares.SELIGDAR,
+                TestShares.RBC
+        );
+
+        final SharesFiltrationOptions filtrationOptions = new SharesFiltrationOptions(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.000265210,
+                0.002551175,
+                -0.896043980
+        );
+        final WeightedShare weightedSharePikk = TestData.newWeightedShare(
+                TestShares.PIK,
+                accountsToPortfolios,
+                1,
+                0.000940233,
+                0.000313269,
+                2.001359854
+        );
+        final WeightedShare weightedShareMsft = TestData.newWeightedShare(
+                TestShares.MICROSOFT,
+                accountsToPortfolios,
+                90.1,
+                0.503282430,
+                0.147381406,
+                2.414829887
+        );
+        final WeightedShare weightedShareWush = TestData.newWeightedShare(
+                TestShares.WOOSH,
+                accountsToPortfolios,
+                1,
+                0.000051649,
+                0.004694163,
+                -0.988997187
+        );
+        final WeightedShare weightedShareGazp = TestData.newWeightedShare(
+                TestShares.GAZPROM,
+                accountsToPortfolios,
+                1,
+                0.005085235,
+                0.001418153,
+                2.585815494
+        );
+        final WeightedShare weightedShareAapl = TestData.newWeightedShare(
+                TestShares.APPLE,
+                accountsToPortfolios,
+                90.1,
+                0.490046287,
+                0.652399343,
+                -0.248855333
+        );
+        final WeightedShare weightedShareTrcn = TestData.newWeightedShare(
+                TestShares.TRANS_CONTAINER,
+                accountsToPortfolios,
+                1,
+                0.000203599,
+                0.003224611,
+                -0.936860911
+        );
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                TestShares.SELIGDAR,
+                accountsToPortfolios,
+                1,
+                0.000114138,
+                0.029995070,
+                -0.996194775
+        );
+        final WeightedShare weightedShareRbcm = TestData.newWeightedShare(
+                TestShares.RBC,
+                accountsToPortfolios,
+                1,
+                0.00001122,
+                0.158022809,
+                -0.999928998
+        );
+
+        final List<WeightedShare> expectedResult = List.of(
+                weightedShareGazp,
+                weightedShareMsft,
+                weightedShareAapl,
+                weightedSharePikk,
+                weightedShareRbcm,
+                weightedShareSelg,
+                weightedShareBspb,
+                weightedShareTrcn,
+                weightedShareWush
+        );
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_currenciesNull() {
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                TestShares.AVAILABLE_APPLE
+        );
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withCurrencies(null);
+
+        final WeightedShare weightedShareSpb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.0005409007,
+                0.0038952186,
+                -0.861137204
+        );
+        final WeightedShare weightedShareApple = TestData.newWeightedShare(
+                TestShares.AVAILABLE_APPLE,
+                accountsToPortfolios,
+                90.1,
+                0.99945909933,
+                0.99610478138,
+                0.00336743484
+        );
+        final List<WeightedShare> expectedResult = List.of(weightedShareApple, weightedShareSpb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_currenciesEmpty() {
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                TestShares.AVAILABLE_APPLE
+        );
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withCurrencies(Collections.emptyList());
+
+        final WeightedShare weightedShareSpb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.0005409007,
+                0.0038952186,
+                -0.861137204
+        );
+        final WeightedShare weightedShareApple = TestData.newWeightedShare(
+                TestShares.AVAILABLE_APPLE,
+                accountsToPortfolios,
+                90.1,
+                0.99945909933,
+                0.99610478138,
+                0.00336743484
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareApple, weightedShareSpb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_currenciesUsd() {
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                TestShares.AVAILABLE_MICROSOFT,
+                TestShares.AVAILABLE_APPLE
+        );
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withCurrencies(List.of(Currencies.USD));
+
+        final WeightedShare weightedShareMicrosoft = TestData.newWeightedShare(
+                TestShares.AVAILABLE_MICROSOFT,
+                accountsToPortfolios,
+                90.1,
+                0.506662519,
+                0.184277261,
+                1.749457618
+        );
+        final WeightedShare weightedShareApple = TestData.newWeightedShare(
+                TestShares.AVAILABLE_APPLE,
+                accountsToPortfolios,
+                90.1,
+                0.493337481,
+                0.815722739,
+                -0.395214259
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareMicrosoft, weightedShareApple);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_apiTradeAvailableFlagNull() {
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withApiTradeAvailableFlag(null);
+
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.565710165,
+                0.441701851,
+                0.280751176
+        );
+        final WeightedShare weightedShareTrcn = TestData.newWeightedShare(
+                TestShares.TRANS_CONTAINER,
+                accountsToPortfolios,
+                1,
+                0.434289835,
+                0.558298149,
+                -0.222118440
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareBspb, weightedShareTrcn);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_apiTradeAvailableFlagFalse() {
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withApiTradeAvailableFlag(false);
+
+        final WeightedShare weightedShareTrcn = TestData.newWeightedShare(
+                TestShares.TRANS_CONTAINER,
+                accountsToPortfolios,
+                1,
+                1,
+                1,
+                0
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareTrcn);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_forQualInvestorFlagNull() {
+        final TestShare seligdarForQual = TestShares.SELIGDAR.withForQualInvestorFlag(true);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarForQual
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForQualInvestorFlag(null);
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarForQual,
+                accountsToPortfolios,
+                1,
+                0.300878632,
+                0.921613833,
+                -0.673530690
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.699121368,
+                0.078386167,
+                7.918938057
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_forQualInvestorFlagTrue() {
+        final TestShare seligdarForQual = TestShares.SELIGDAR.withForQualInvestorFlag(true);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarForQual
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForQualInvestorFlag(true);
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarForQual,
+                accountsToPortfolios,
+                1,
+                1,
+                1,
+                0
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_forIisFlagNull() {
+        final TestShare seligdarNotIis = TestShares.SELIGDAR.withForIisFlag(false);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarNotIis
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForIisFlag(null);
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarNotIis,
+                accountsToPortfolios,
+                1,
+                0.300878632,
+                0.921613833,
+                -0.673530690
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.699121368,
+                0.078386167,
+                7.918938057
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_forIisFlagFalse() {
+        final TestShare seligdarNotIis = TestShares.SELIGDAR.withForIisFlag(false);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarNotIis
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withForIisFlag(false);
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarNotIis,
+                accountsToPortfolios,
+                1,
+                1,
+                1,
+                0
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_shareTypesNull() {
+        final TestShare seligdarTypeAdr = TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarTypeAdr
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withShareTypes(null);
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarTypeAdr,
+                accountsToPortfolios,
+                1,
+                0.300878632,
+                0.921613833,
+                -0.673530690
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.699121368,
+                0.078386167,
+                7.918938057
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_shareTypesEmpty() {
+        final TestShare seligdarTypeAdr = TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarTypeAdr
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withShareTypes(Collections.emptyList());
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarTypeAdr,
+                accountsToPortfolios,
+                1,
+                0.300878632,
+                0.921613833,
+                -0.673530690
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.699121368,
+                0.078386167,
+                7.918938057
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_shareTypesAdr() {
+        final TestShare seligdarAdr = TestShares.SELIGDAR.withShareType(ShareType.SHARE_TYPE_ADR);
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER,
+                seligdarAdr
+        );
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withShareTypes(List.of(ShareType.SHARE_TYPE_ADR));
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final WeightedShare weightedShareSelg = TestData.newWeightedShare(
+                seligdarAdr,
+                accountsToPortfolios,
+                1,
+                1,
+                1,
+                0
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareSelg);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_minTradingDaysNull() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withMinTradingDays(null);
+
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.836996342,
+                0.352112676,
+                1.377069612
+        );
+        final WeightedShare weightedShareWush = TestData.newWeightedShare(
+                TestShares.WOOSH,
+                accountsToPortfolios,
+                1,
+                0.163003658,
+                0.647887324,
+                -0.748407397
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareBspb, weightedShareWush);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_minTradingDays365() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withMinTradingDays(365);
+
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.836996342,
+                0.352112676,
+                1.377069612
+        );
+        final WeightedShare weightedShareWush = TestData.newWeightedShare(
+                TestShares.WOOSH,
+                accountsToPortfolios,
+                1,
+                0.163003658,
+                0.647887324,
+                -0.748407397
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareBspb, weightedShareWush);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_havingDividendsWithinDaysNull() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.GAZPROM,
+                TestShares.PIK,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withHavingDividendsWithinDays(null);
+
+        final WeightedShare weightedSharePikk = TestData.newWeightedShare(
+                TestShares.PIK,
+                accountsToPortfolios,
+                1,
+                0.772796622,
+                0.001947136,
+                395.888877818
+        );
+        final WeightedShare weightedShareRbcm = TestData.newWeightedShare(
+                TestShares.RBC,
+                accountsToPortfolios,
+                1,
+                0.009221959,
+                0.982195949,
+                -0.990610877
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.217981419,
+                0.015856915,
+                12.746773505
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedSharePikk, weightedShareRbcm, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_havingDividendsWithinDays2000() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.GAZPROM,
+                TestShares.PIK,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withHavingDividendsWithinDays(2000);
+
+        final WeightedShare weightedSharePikk = TestData.newWeightedShare(
+                TestShares.PIK,
+                accountsToPortfolios,
+                1,
+                0.779989655,
+                0.109364768,
+                6.132001185
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.220010345,
+                0.890635232,
+                -0.752973679
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedSharePikk, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_excludeFiltrationByRegularInvestingAnnualReturns() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withFilterByRegularInvestingAnnualReturns(false);
+
+        final WeightedShare weightedSharePikk = TestData.newWeightedShare(
+                TestShares.GAZPROM,
+                accountsToPortfolios,
+                1,
+                0.950432194,
+                0.357277883,
+                1.660204393
+        );
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                0.049567806,
+                0.642722117,
+                -0.922878325
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedSharePikk, weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+    }
+
+    private static Arguments getArgumentsForGetWeightedShares_fullFiltration() {
+        final List<TestShare> shares = List.of(
+                TestShares.SPB_BANK,
+                TestShares.PIK,
+                TestShares.GAZPROM,
+                TestShares.RBC,
+                TestShares.WOOSH,
+                TestShares.TRANS_CONTAINER
+        );
+
+        final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final WeightedShare weightedShareBspb = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                accountsToPortfolios,
+                1,
+                1,
+                1,
+                0
+        );
+
+        final List<WeightedShare> expectedResult = List.of(weightedShareBspb);
+
+        return Arguments.of(accountsToPortfolios, shares, TestData.BASIC_SHARE_FILTRATION_OPTIONS, expectedResult);
+    }
+
+    private static Map<String, Portfolio> getAccountsToPortfoliosArgument() {
+        final Portfolio portfolio1 = TestData.newPortfolio(
+                TestData.newPortfolioPosition(TestShares.SPB_BANK, 2, 340),
+                TestData.newPortfolioPosition(TestShares.PIK, 1, 835),
+                TestData.newPortfolioPosition(TestShares.MICROSOFT, 10, 436),
+                TestData.newPortfolioPosition(TestShares.WOOSH, 46, 272),
+                TestData.newPortfolioPosition(TestShares.GAZPROM, 3, 126)
+        );
+        final Portfolio portfolio2 = TestData.newPortfolio(
+                TestData.newPortfolioPosition(TestShares.AVAILABLE_APPLE, 100, 193),
+                TestData.newPortfolioPosition(TestShares.TRANS_CONTAINER, 1, 8595),
+                TestData.newPortfolioPosition(TestShares.SELIGDAR, 123, 65),
+                TestData.newPortfolioPosition(TestShares.RBC, 234, 18)
+        );
+        return Map.of(
+                TestAccounts.IIS.getId(), portfolio1,
+                TestAccounts.TINKOFF.getId(), portfolio2
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetWeightedShares")
+    @DirtiesContext
+    void getWeightedShares(
+            final Map<String, Portfolio> accountsToPortfolios,
+            final List<TestShare> shares,
+            final SharesFiltrationOptions filtrationOptions,
+            final List<WeightedShare> expectedResult
+    ) {
+        final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2024, 6, 1);
+        Mocker.mockCurrency(instrumentsService, marketDataService, TestCurrencies.USD);
+        Mocker.mockAllCurrencies(instrumentsService, TestCurrencies.USD, TestCurrencies.RUB);
+        Mocker.mockAllShares(instrumentsService, marketDataService, shares, mockedNow);
+        Mocker.mockPortfolios(operationsService, accountsToPortfolios);
+        final List<String> figies = expectedResult.stream().map(WeightedShare::getFigi).toList();
+        Mocker.mockLastPrices(marketDataService, accountsToPortfolios.values(), figies);
+
+        try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            final List<WeightedShare> actualResult = statisticsService.getWeightedShares(accountsToPortfolios.keySet(), filtrationOptions);
             AssertUtils.assertEquals(expectedResult, actualResult);
         }
     }

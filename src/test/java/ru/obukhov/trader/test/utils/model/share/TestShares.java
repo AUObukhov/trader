@@ -19,6 +19,9 @@ public class TestShares {
             .withForQualInvestorFlag(false)
             .withForIisFlag(true);
     public static final TestShare MICROSOFT = buildShare("msft", TestDividends.MSFT);
+    public static final TestShare AVAILABLE_MICROSOFT = TestShares.MICROSOFT
+            .withForQualInvestorFlag(false)
+            .withForIisFlag(true);
     public static final TestShare SBER = buildShare("sber");
     public static final TestShare YANDEX = buildShare("yndx");
     public static final TestShare DIOD = buildShare("diod");

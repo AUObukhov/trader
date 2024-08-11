@@ -14,19 +14,13 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
+import ru.obukhov.trader.test.utils.TestMoneyUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.tinkoff.piapi.contract.v1.HistoricCandle;
-import ru.tinkoff.piapi.contract.v1.InstrumentType;
-import ru.tinkoff.piapi.contract.v1.LastPrice;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.OperationState;
-import ru.tinkoff.piapi.contract.v1.OperationType;
-import ru.tinkoff.piapi.contract.v1.OrderState;
-import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
-import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
-import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.obukhov.trader.web.model.SharesFiltrationOptions;
+import ru.obukhov.trader.web.model.exchange.WeightedShare;
+import ru.tinkoff.piapi.contract.v1.*;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
@@ -35,12 +29,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,6 +39,16 @@ public class TestData {
     private static final Random RANDOM = new Random();
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
+    public static final SharesFiltrationOptions BASIC_SHARE_FILTRATION_OPTIONS = new SharesFiltrationOptions(
+            List.of(Currencies.RUB),
+            true,
+            false,
+            true,
+            List.of(ShareType.SHARE_TYPE_COMMON, ShareType.SHARE_TYPE_PREFERRED),
+            3652,
+            700,
+            true
+    );
 
     // region DecisionData creation
 
@@ -103,6 +102,26 @@ public class TestData {
                 .setCurrentNkd(newMoneyValue(currency))
                 .setCurrentPrice(newMoneyValue(currentPrice, currency))
                 .setAveragePositionPriceFifo(newMoneyValue(currency))
+                .build();
+    }
+
+    public static PortfolioPosition newPortfolioPosition(
+            final TestShare testShare,
+            final long lotsQuantity,
+            final long currentPrice
+    ) {
+        final long averagePositionPrice = 0; // to do remove
+        final long quantity = testShare.getLot() * lotsQuantity;
+        return PortfolioPosition.newBuilder()
+                .setFigi(testShare.getFigi())
+                .setInstrumentType(testShare.instrument().instrumentKind().name())
+                .setQuantity(newQuotation(quantity))
+                .setAveragePositionPrice(newMoneyValue(averagePositionPrice, testShare.getCurrency()))
+                .setExpectedYield(newQuotation((currentPrice - averagePositionPrice) * quantity))
+                .setCurrentNkd(newMoneyValue(testShare.getCurrency()))
+                .setCurrentPrice(newMoneyValue(currentPrice, testShare.getCurrency()))
+                .setAveragePositionPriceFifo(newMoneyValue(testShare.getCurrency()))
+                .setQuantityLots(newQuotation(lotsQuantity))
                 .build();
     }
 
@@ -448,6 +467,36 @@ public class TestData {
             decimalMap.put((String) keysAndValues[i], decimalValue);
         }
         return decimalMap;
+    }
+
+    public static WeightedShare newWeightedShare(
+            final TestShare testShare,
+            final Map<String, Portfolio> accountsToPortfolios,
+            final double currencyPrice,
+            final double capitalizationWeight,
+            final double portfolioWeight,
+            final double needToBuy
+    ) {
+        final Position portfolioPosition = accountsToPortfolios.values().stream()
+                .flatMap(portfolio -> portfolio.getPositions().stream())
+                .filter(position -> position.getFigi().equals(testShare.getFigi()))
+                .findFirst()
+                .orElseThrow();
+        final Money currentPriceRub = TestMoneyUtils.multiply(portfolioPosition.getCurrentPrice(), currencyPrice);
+        final int portfolioSharesQuantity = portfolioPosition.getQuantityLots().intValue() * testShare.getLot();
+        return new WeightedShare(
+                testShare.getFigi(),
+                testShare.getTicker(),
+                testShare.getName(),
+                currentPriceRub.getValue(),
+                DecimalUtils.setDefaultScale(capitalizationWeight),
+                testShare.getLot(),
+                DecimalUtils.multiply(currentPriceRub.getValue(), testShare.getLot()),
+                portfolioSharesQuantity,
+                DecimalUtils.multiply(currentPriceRub.getValue(), portfolioSharesQuantity),
+                DecimalUtils.setDefaultScale(portfolioWeight),
+                DecimalUtils.setDefaultScale(needToBuy)
+        );
     }
 
 }

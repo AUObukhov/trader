@@ -13,6 +13,7 @@ import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Stream;
 
 class DecimalUtilsUnitTest {
@@ -246,12 +247,63 @@ class DecimalUtilsUnitTest {
     @CsvSource({
             "10, 5, 7.5",
             "-10, 10, 0",
+            "-15, -10, -12.5",
             "10, 10, 10",
             "1.234567, 2.345678, 1.790122500",
             "1.234567, 9.87654321, 5.555555105"
     })
-    void getAverage(final BigDecimal value1, final BigDecimal value2, final BigDecimal expectedAverage) {
+    void getAverage_withTwoNumbers(final BigDecimal value1, final BigDecimal value2, final BigDecimal expectedAverage) {
         final BigDecimal average = DecimalUtils.getAverage(value1, value2);
+
+        AssertUtils.assertEquals(expectedAverage, average);
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetAverage_withList() {
+        return Stream.of(
+                Arguments.of(List.of(1.234567), List.of(1), 1.234567),
+
+                Arguments.of(List.of(10.0, 5.0), List.of(1, 0), 10),
+                Arguments.of(List.of(-10.0, 10.0), List.of(1, 0), -10),
+                Arguments.of(List.of(1.234567, 2.345678), List.of(1, 0), 1.234567),
+
+                Arguments.of(List.of(10.0, 5.0), List.of(0, 1), 5),
+                Arguments.of(List.of(-10.0, 10.0), List.of(0, 1), 10),
+                Arguments.of(List.of(1.234567, 2.345678), List.of(0, 1), 2.345678),
+
+                Arguments.of(List.of(10.0, 5.0), List.of(1, 1), 7.5),
+                Arguments.of(List.of(-10.0, 10.0), List.of(1, 1), 0),
+                Arguments.of(List.of(-15.0, -10.0), List.of(1, 1), -12.5),
+                Arguments.of(List.of(10.0, 10.0), List.of(1, 1), 10),
+                Arguments.of(List.of(1.234567, 2.345678), List.of(1, 1), 1.790122500),
+                Arguments.of(List.of(1.234567, 9.87654321), List.of(1, 1), 5.555555105),
+
+                Arguments.of(List.of(10.0, 5.0), List.of(14, 14), 7.5),
+                Arguments.of(List.of(-10.0, 10.0), List.of(14, 14), 0),
+                Arguments.of(List.of(-15.0, -10.0), List.of(14, 14), -12.5),
+                Arguments.of(List.of(10.0, 10.0), List.of(14, 14), 10),
+                Arguments.of(List.of(1.234567, 2.345678), List.of(14, 14), 1.790122500),
+                Arguments.of(List.of(1.234567, 9.87654321), List.of(14, 14), 5.555555105),
+
+                Arguments.of(List.of(10.0, 5.0), List.of(14, 3), 9.117647059),
+                Arguments.of(List.of(-10.0, 10.0), List.of(14, 3), -6.470588235),
+                Arguments.of(List.of(-15.0, -10.0), List.of(14, 3), -14.117647059),
+                Arguments.of(List.of(10.0, 10.0), List.of(14, 3), 10),
+                Arguments.of(List.of(1.234567, 2.345678), List.of(14, 3), 1.430645412),
+
+                Arguments.of(
+                        List.of(65.75, 58.51, -96.37, -57.45, -63.09, -28.95, -92.69, 41.09, 55.55, -18.76),
+                        List.of(12, 14, 47, 14, 54, 30, 39, 66, 90, 30),
+                        -11.280757576
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetAverage_withList")
+    void getAverage_withList(final List<Double> values, final List<Integer> weights, final double expectedAverage) {
+        final List<BigDecimal> bigDecimalValues = values.stream().map(DecimalUtils::setDefaultScale).toList();
+        final BigDecimal average = DecimalUtils.getAverage(bigDecimalValues, weights);
 
         AssertUtils.assertEquals(expectedAverage, average);
     }

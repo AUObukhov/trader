@@ -1,14 +1,12 @@
 package ru.obukhov.trader.web.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.impl.StatisticsService;
@@ -17,9 +15,11 @@ import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.FigiesListRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.WeightedShare;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.SequencedMap;
 
@@ -79,4 +79,13 @@ public class StatisticsController {
     public SequencedMap<InstrumentMarker, Double> getMostProfitableShares(@RequestBody final SharesFiltrationOptions filtrationOptions) {
         return statisticsService.getMostProfitableShares(filtrationOptions);
     }
+
+    @GetMapping("/weighted-shares")
+    public List<WeightedShare> getWeightedShares(
+            @RequestParam @NotEmpty(message = "accountIds is mandatory") final List<String> accountIds,
+            @RequestBody final SharesFiltrationOptions filtrationOptions
+    ) {
+        return statisticsService.getWeightedShares(accountIds, filtrationOptions);
+    }
+
 }

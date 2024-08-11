@@ -8,6 +8,7 @@ import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 @UtilityClass
 public class DecimalUtils {
@@ -167,6 +168,14 @@ public class DecimalUtils {
      */
     public static BigDecimal getAverage(final BigDecimal value1, final BigDecimal value2) {
         return divide(value1.add(value2), 2);
+    }
+
+    public static BigDecimal getAverage(final List<BigDecimal> values, final List<Integer> weights) {
+        BigDecimal sum = DecimalUtils.ZERO;
+        for (int i = 0; i < values.size(); i++) {
+            sum = sum.add(DecimalUtils.multiply(values.get(i), weights.get(i)));
+        }
+        return DecimalUtils.divide(sum, weights.stream().reduce(Integer::sum).orElseThrow());
     }
 
     /**
