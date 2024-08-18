@@ -1,6 +1,4 @@
 ru.tinkoff.invest.openapi:
-  host: "http://localhost"
-  port: 8081
   throttling-interval: 1000
 
 trading:
