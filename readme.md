@@ -5,7 +5,7 @@ API to launch and test them.
 
 ## Configuration
 
-- JDK version is 17
+- JDK version is 21
 
 - For build use maven version 4.0.0
 
