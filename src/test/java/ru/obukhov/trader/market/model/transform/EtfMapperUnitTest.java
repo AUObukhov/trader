@@ -15,7 +15,7 @@ class EtfMapperUnitTest {
     void map() {
         final TestEtf testEtf = TestEtfs.FXIT;
 
-        final Etf result = etfMapper.map(testEtf.tinkoffEtf());
+        final Etf result = etfMapper.map(testEtf.tEtf());
 
         Assertions.assertEquals(testEtf.etf(), result);
     }

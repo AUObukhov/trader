@@ -43,7 +43,7 @@ class RealExtOrdersServiceUnitTest {
         final List<TestOrderState> testOrderStates = List.of(TestOrderStates.ORDER_STATE1, TestOrderStates.ORDER_STATE2);
 
         Mockito.when(ordersService.getOrdersSync(accountId))
-                .thenReturn(testOrderStates.stream().map(TestOrderState::tinkoffOrderState).toList());
+                .thenReturn(testOrderStates.stream().map(TestOrderState::tOrderState).toList());
 
         // action
 

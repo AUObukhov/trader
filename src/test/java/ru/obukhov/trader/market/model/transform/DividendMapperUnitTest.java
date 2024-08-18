@@ -15,7 +15,7 @@ class DividendMapperUnitTest {
     void map() {
         final TestDividend testDividend = TestDividends.TEST_DIVIDEND1;
 
-        final Dividend actualResult = DIVIDEND_MAPPER.map(testDividend.tinkoffDividend());
+        final Dividend actualResult = DIVIDEND_MAPPER.map(testDividend.tDividend());
 
         Assertions.assertEquals(testDividend.dividend(), actualResult);
     }

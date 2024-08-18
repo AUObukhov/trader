@@ -7,13 +7,13 @@ import ru.obukhov.trader.market.model.transform.QuotationMapper;
 
 import java.time.OffsetDateTime;
 
-public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument) {
+public record TestInstrument(Instrument instrument, ru.tinkoff.piapi.contract.v1.Instrument tInstrument) {
 
     TestInstrument(final Instrument instrument) {
-        this(instrument, buildTinkoffInstrument(instrument));
+        this(instrument, buildTInstrument(instrument));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Instrument buildTinkoffInstrument(final Instrument instrument) {
+    private static ru.tinkoff.piapi.contract.v1.Instrument buildTInstrument(final Instrument instrument) {
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
 

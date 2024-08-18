@@ -12,10 +12,10 @@ class TradingDayMapperUnitTest {
     private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
 
     @Test
-    void mapTinkoffToCustom() {
+    void mapTToCustom() {
         final TestTradingDay testTradingDay = TestTradingDays.TRADING_DAY1;
 
-        final ru.tinkoff.piapi.contract.v1.TradingDay source = testTradingDay.tinkoffTradingDay();
+        final ru.tinkoff.piapi.contract.v1.TradingDay source = testTradingDay.tTradingDay();
 
         final TradingDay result = TRADING_DAY_MAPPER.map(source);
 
@@ -24,7 +24,7 @@ class TradingDayMapperUnitTest {
     }
 
     @Test
-    void mapTinkoffToCustom_whenValueIsNull() {
+    void mapTToCustom_whenValueIsNull() {
         final ru.tinkoff.piapi.contract.v1.TradingDay source = null;
 
         final TradingDay result = TRADING_DAY_MAPPER.map(source);
@@ -33,19 +33,19 @@ class TradingDayMapperUnitTest {
     }
 
     @Test
-    void mapCustomToTinkoff() {
+    void mapCustomToT() {
         final TestTradingDay testTradingDay = TestTradingDays.TRADING_DAY1;
 
         final TradingDay source = testTradingDay.tradingDay();
 
         final ru.tinkoff.piapi.contract.v1.TradingDay result = TRADING_DAY_MAPPER.map(source);
 
-        final ru.tinkoff.piapi.contract.v1.TradingDay expectedResult = testTradingDay.tinkoffTradingDay();
+        final ru.tinkoff.piapi.contract.v1.TradingDay expectedResult = testTradingDay.tTradingDay();
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    void mapCustomToTinkoff_whenValueIsNull() {
+    void mapCustomToT_whenValueIsNull() {
         final TradingDay source = null;
 
         final ru.tinkoff.piapi.contract.v1.TradingDay result = TRADING_DAY_MAPPER.map(source);

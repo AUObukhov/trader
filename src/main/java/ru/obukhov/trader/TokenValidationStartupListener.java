@@ -10,7 +10,7 @@ import ru.obukhov.trader.market.impl.ExtUsersService;
 
 /**
  * Class for failing application on startup if token is invalid.
- * Tinkoff is hiding unauthorized error now, so application is failed in case of any exception
+ * TBank is hiding unauthorized error now, so application is failed in case of any exception
  */
 @Slf4j
 @Component

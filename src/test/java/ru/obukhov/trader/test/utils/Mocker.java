@@ -29,7 +29,15 @@ import ru.obukhov.trader.test.utils.model.etf.TestEtf;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument;
 import ru.obukhov.trader.test.utils.model.share.TestShare;
 import ru.obukhov.trader.trading.bots.FakeBot;
-import ru.tinkoff.piapi.contract.v1.*;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -40,7 +48,13 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SequencedMap;
 
 @UtilityClass
 public class Mocker {
@@ -64,7 +78,7 @@ public class Mocker {
         return instantStaticMock;
     }
 
-    public static void mockTinkoffOperations(
+    public static void mockTOperations(
             final FakeBot fakeBot,
             final String accountId,
             final String figi,
@@ -101,8 +115,8 @@ public class Mocker {
     }
 
     public static void mockAccounts(final UsersService usersService, final TestAccount... accounts) {
-        final List<ru.tinkoff.piapi.contract.v1.Account> tinkoffAccounts = Arrays.stream(accounts).map(TestAccount::tinkoffAccount).toList();
-        Mockito.when(usersService.getAccountsSync()).thenReturn(tinkoffAccounts);
+        final List<ru.tinkoff.piapi.contract.v1.Account> tAccounts = Arrays.stream(accounts).map(TestAccount::tAccount).toList();
+        Mockito.when(usersService.getAccountsSync()).thenReturn(tAccounts);
     }
 
     public static void mockShares(final ExtInstrumentsService extInstrumentsService, final TestShare... testShares) {
@@ -119,15 +133,15 @@ public class Mocker {
     }
 
     public static void mockInstrument(final InstrumentsService instrumentsService, final TestInstrument instrument) {
-        Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument.tinkoffInstrument());
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument.tInstrument());
     }
 
     public static void mockInstrument(final InstrumentsService instrumentsService, final TestShare share) {
-        Mockito.when(instrumentsService.getInstrumentByFigiSync(share.getFigi())).thenReturn(share.tinkoffInstrument());
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(share.getFigi())).thenReturn(share.tInstrument());
     }
 
     public static void mockInstrument(final InstrumentsService instrumentsService, final TestCurrency currency) {
-        Mockito.when(instrumentsService.getInstrumentByFigiSync(currency.getFigi())).thenReturn(currency.tinkoffInstrument());
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(currency.getFigi())).thenReturn(currency.tInstrument());
     }
 
     public static void mockInstrument(final ExtInstrumentsService instrumentsService, final TestShare share) {
@@ -146,7 +160,7 @@ public class Mocker {
     }
 
     public static void mockShare(final InstrumentsService instrumentsService, final TestShare share) {
-        Mockito.when(instrumentsService.getShareByFigiSync(share.getFigi())).thenReturn(share.tinkoffShare());
+        Mockito.when(instrumentsService.getShareByFigiSync(share.getFigi())).thenReturn(share.tShare());
     }
 
     public void mockAllShares(
@@ -160,17 +174,17 @@ public class Mocker {
     }
 
     public static void mockAllShares(final InstrumentsService instrumentsService, final List<TestShare> shares) {
-        final List<ru.tinkoff.piapi.contract.v1.Share> tinkoffShares = shares.stream().map(TestShare::tinkoffShare).toList();
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
+        final List<ru.tinkoff.piapi.contract.v1.Share> tShares = shares.stream().map(TestShare::tShare).toList();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tShares);
     }
 
     public static void mockAllShares(final InstrumentsService instrumentsService, final TestShare... shares) {
-        final List<ru.tinkoff.piapi.contract.v1.Share> tinkoffShares = Arrays.stream(shares).map(TestShare::tinkoffShare).toList();
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
+        final List<ru.tinkoff.piapi.contract.v1.Share> tShares = Arrays.stream(shares).map(TestShare::tShare).toList();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tShares);
     }
 
     public static void mockEtf(final InstrumentsService instrumentsService, final TestEtf etf) {
-        Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf.tinkoffEtf());
+        Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf.tEtf());
     }
 
     public void mockCurrency(
@@ -184,17 +198,17 @@ public class Mocker {
 
     public static void mockCurrency(final InstrumentsService instrumentsService, final TestCurrency currency) {
         Mockito.when(instrumentsService.getCurrencyByFigiSync(currency.getFigi()))
-                .thenReturn(currency.tinkoffCurrency());
+                .thenReturn(currency.tCurrency());
     }
 
     public static void mockAllCurrencies(final InstrumentsService instrumentsService, final TestCurrency... currencies) {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> tinkoffCurrencies = Arrays.stream(currencies).map(TestCurrency::tinkoffCurrency).toList();
+        final List<ru.tinkoff.piapi.contract.v1.Currency> tCurrencies = Arrays.stream(currencies).map(TestCurrency::tCurrency).toList();
         Mockito.when(instrumentsService.getAllCurrenciesSync())
-                .thenReturn(tinkoffCurrencies);
+                .thenReturn(tCurrencies);
     }
 
     public static void mockBond(final InstrumentsService instrumentsService, final TestBond bond) {
-        Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond.tinkoffBond());
+        Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond.tBond());
     }
 
     public static void mockTradingSchedules(
@@ -230,12 +244,12 @@ public class Mocker {
             final TestShare share,
             final OffsetDateTime to
     ) {
-        final List<ru.tinkoff.piapi.contract.v1.Dividend> tinkoffDividends = share.dividends().stream()
+        final List<ru.tinkoff.piapi.contract.v1.Dividend> tDividends = share.dividends().stream()
                 .filter(dividend -> dividend.dividend().paymentDate().isBefore(to))
-                .map(TestDividend::tinkoffDividend)
+                .map(TestDividend::tDividend)
                 .toList();
         Mockito.when(instrumentsService.getDividendsSync(share.getFigi(), share.getFirst1DayCandleDate().toInstant(), to.toInstant()))
-                .thenReturn(tinkoffDividends);
+                .thenReturn(tDividends);
     }
 
     public static void mockSecurity(final ExtOperationsService extOperationsService, final String accountId) {
@@ -284,7 +298,7 @@ public class Mocker {
             final MarketDataService marketDataService,
             final SequencedMap<TestCurrency, Double> prices
     ) {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = prices.keySet().stream().map(TestCurrency::tinkoffCurrency).toList();
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = prices.keySet().stream().map(TestCurrency::tCurrency).toList();
         Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final SequencedMap<String, Double> currenciesLastPrices = new LinkedHashMap<>(prices.size(), 1);
@@ -299,8 +313,8 @@ public class Mocker {
             final MarketDataService marketDataService,
             final SequencedMap<TestShare, Double> prices
     ) {
-        final List<ru.tinkoff.piapi.contract.v1.Share> tinkoffShares = prices.keySet().stream().map(TestShare::tinkoffShare).toList();
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tinkoffShares);
+        final List<ru.tinkoff.piapi.contract.v1.Share> tShares = prices.keySet().stream().map(TestShare::tShare).toList();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(tShares);
 
         final SequencedMap<String, Double> lastPrices = new LinkedHashMap<>(3, 1);
         for (final Map.Entry<TestShare, Double> entry : prices.entrySet()) {

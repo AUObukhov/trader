@@ -6,13 +6,13 @@ import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
-public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tinkoffBond) {
+public record TestBond(Bond bond, ru.tinkoff.piapi.contract.v1.Bond tBond) {
 
     TestBond(final Bond bond) {
-        this(bond, buildTinkoffBond(bond));
+        this(bond, buildTBond(bond));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Bond buildTinkoffBond(final Bond bond) {
+    private static ru.tinkoff.piapi.contract.v1.Bond buildTBond(final Bond bond) {
         final MoneyValueMapper moneyValueMapper = Mappers.getMapper(MoneyValueMapper.class);
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
         return ru.tinkoff.piapi.contract.v1.Bond.newBuilder()

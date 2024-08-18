@@ -5,13 +5,13 @@ import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 
-public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tinkoffEtf) {
+public record TestEtf(Etf etf, ru.tinkoff.piapi.contract.v1.Etf tEtf) {
 
     TestEtf(final Etf etf) {
-        this(etf, buildTinkoffEtf(etf));
+        this(etf, buildTEtf(etf));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Etf buildTinkoffEtf(final Etf etf) {
+    private static ru.tinkoff.piapi.contract.v1.Etf buildTEtf(final Etf etf) {
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
 

@@ -4,13 +4,13 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 
-public record TestTradingDay(TradingDay tradingDay, ru.tinkoff.piapi.contract.v1.TradingDay tinkoffTradingDay) {
+public record TestTradingDay(TradingDay tradingDay, ru.tinkoff.piapi.contract.v1.TradingDay tTradingDay) {
 
     TestTradingDay(final TradingDay tradingDay) {
-        this(tradingDay, buildTinkoffTradingDay(tradingDay));
+        this(tradingDay, buildTTradingDay(tradingDay));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.TradingDay buildTinkoffTradingDay(final TradingDay tradingDay) {
+    private static ru.tinkoff.piapi.contract.v1.TradingDay buildTTradingDay(final TradingDay tradingDay) {
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         return ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
                 .setDate(dateTimeMapper.offsetDateTimeToTimestamp(tradingDay.date()))

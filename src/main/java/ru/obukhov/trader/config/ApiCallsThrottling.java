@@ -10,7 +10,7 @@ import ru.obukhov.trader.common.util.ThrottledCounter;
 import ru.obukhov.trader.config.properties.ApiProperties;
 
 /**
- * Aspect to limit rate of API calls according to Tinkoff's limits
+ * Aspect to limit rate of API calls according to TBank's limits
  *
  * @see <a href=https://tinkoff.github.io/investAPI/limits/">Tinkoff documentation</a>
  */

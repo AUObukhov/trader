@@ -117,7 +117,7 @@ public class ExtInstrumentsService {
      */
     public List<Share> getShares(final List<String> figies) {
         final Comparator<Share> comparator = Comparator.comparing(share -> figies.indexOf(share.figi()));
-        return self.getAllTinkoffShares()
+        return self.getAllTShares()
                 .stream()
                 .filter(share -> figies.contains(share.getFigi()))
                 .map(SHARE_MAPPER::map)
@@ -129,14 +129,14 @@ public class ExtInstrumentsService {
      * @return list of all shares
      */
     public List<Share> getAllShares() {
-        return self.getAllTinkoffShares()
+        return self.getAllTShares()
                 .stream()
                 .map(SHARE_MAPPER::map)
                 .toList();
     }
 
     @Cacheable(value = "allShares", sync = true)
-    List<ru.tinkoff.piapi.contract.v1.Share> getAllTinkoffShares() {
+    List<ru.tinkoff.piapi.contract.v1.Share> getAllTShares() {
         return instrumentsService.getAllSharesSync();
     }
 

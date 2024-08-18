@@ -23,8 +23,8 @@ class TradingScheduleMapperUnitTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(testTradingDay1.tinkoffTradingDay())
-                .addDays(testTradingDay2.tinkoffTradingDay())
+                .addDays(testTradingDay1.tTradingDay())
+                .addDays(testTradingDay2.tTradingDay())
                 .build();
 
         final TradingSchedule result = TRADING_SCHEDULE_MAPPER.map(tradingSchedule);

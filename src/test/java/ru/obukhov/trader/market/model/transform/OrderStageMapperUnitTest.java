@@ -12,32 +12,32 @@ class OrderStageMapperUnitTest {
     private final OrderStageMapper orderStageMapper = Mappers.getMapper(OrderStageMapper.class);
 
     @Test
-    void map_tinkoffToCustom() {
+    void map_tToCustom() {
         final TestOrderStage testOrderStage = TestOrderStages.ORDER_STAGE1;
 
-        final OrderStage orderStage = orderStageMapper.map(testOrderStage.tinkoffOrderStage());
+        final OrderStage orderStage = orderStageMapper.map(testOrderStage.tOrderStage());
 
         Assertions.assertEquals(testOrderStage.orderStage(), orderStage);
     }
 
     @Test
-    void map_tinkoffToCustom_whenValueIsNull() {
+    void map_tToCustom_whenValueIsNull() {
         final OrderStage orderStage = orderStageMapper.map((ru.tinkoff.piapi.contract.v1.OrderStage) null);
 
         Assertions.assertNull(orderStage);
     }
 
     @Test
-    void map_customToTinkoff() {
+    void map_customToT() {
         final TestOrderStage testOrderStage = TestOrderStages.ORDER_STAGE1;
 
         final ru.tinkoff.piapi.contract.v1.OrderStage orderStage = orderStageMapper.map(testOrderStage.orderStage());
 
-        Assertions.assertEquals(testOrderStage.tinkoffOrderStage(), orderStage);
+        Assertions.assertEquals(testOrderStage.tOrderStage(), orderStage);
     }
 
     @Test
-    void map_customToTinkoff_whenValueIsNull() {
+    void map_customToT_whenValueIsNull() {
         final ru.tinkoff.piapi.contract.v1.OrderStage orderStage = orderStageMapper.map((OrderStage) null);
 
         Assertions.assertNull(orderStage);

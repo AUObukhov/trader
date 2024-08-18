@@ -64,7 +64,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
     @Test
     void instrumentsService() throws InterruptedException {
-        final Instrument instrument = TestInstruments.APPLE.tinkoffInstrument();
+        final Instrument instrument = TestInstruments.APPLE.tInstrument();
         final String figi = instrument.getFigi();
 
         Mockito.doReturn(instrument).when(instrumentsService).getInstrumentByFigiSync(figi);
@@ -76,7 +76,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
     @Test
     void usersService() throws InterruptedException {
-        final List<Account> accounts = List.of(TestAccounts.IIS.tinkoffAccount(), TestAccounts.TINKOFF.tinkoffAccount());
+        final List<Account> accounts = List.of(TestAccounts.IIS.tAccount(), TestAccounts.TINKOFF.tAccount());
         Mockito.doReturn(accounts).when(usersService).getAccountsSync();
 
         waitForThrottlingCounters();
@@ -160,7 +160,7 @@ public class ApiCallsThrottlingIntegrationTest {
 
         Mockito.doReturn(null).when(ordersService).getOrderStateSync(accountId, orderId);
 
-        List<OrderState> orderStates = List.of(TestOrderStates.ORDER_STATE1.tinkoffOrderState(), TestOrderStates.ORDER_STATE2.tinkoffOrderState());
+        List<OrderState> orderStates = List.of(TestOrderStates.ORDER_STATE1.tOrderState(), TestOrderStates.ORDER_STATE2.tOrderState());
         Mockito.doReturn(orderStates).when(ordersService).getOrdersSync(accountId);
 
         waitForThrottlingCounters();

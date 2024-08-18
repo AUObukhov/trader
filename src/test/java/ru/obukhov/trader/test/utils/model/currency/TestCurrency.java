@@ -15,16 +15,16 @@ import java.util.Map;
 
 public record TestCurrency(
         Currency currency,
-        ru.tinkoff.piapi.contract.v1.Currency tinkoffCurrency,
-        ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument,
+        ru.tinkoff.piapi.contract.v1.Currency tCurrency,
+        ru.tinkoff.piapi.contract.v1.Instrument tInstrument,
         Map<CandleInterval, List<HistoricCandle>> candles
 ) {
 
     TestCurrency(final Currency currency, final Map<CandleInterval, List<HistoricCandle>> candles) {
-        this(currency, buildTinkoffCurrency(currency), buildTinkoffInstrument(currency), candles);
+        this(currency, buildTCurrency(currency), buildTInstrument(currency), candles);
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Currency buildTinkoffCurrency(final Currency currency) {
+    private static ru.tinkoff.piapi.contract.v1.Currency buildTCurrency(final Currency currency) {
         final MoneyValueMapper moneyValueMapper = Mappers.getMapper(MoneyValueMapper.class);
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
@@ -66,7 +66,7 @@ public record TestCurrency(
                 .build();
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Instrument buildTinkoffInstrument(final Currency currency) {
+    private static ru.tinkoff.piapi.contract.v1.Instrument buildTInstrument(final Currency currency) {
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
 

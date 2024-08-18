@@ -15,7 +15,7 @@ class BondMapperUnitTest {
     void map() {
         final TestBond testBond = TestBonds.ROSTELECOM;
 
-        final Bond bond = bondMapper.map(testBond.tinkoffBond());
+        final Bond bond = bondMapper.map(testBond.tBond());
 
         Assertions.assertEquals(testBond.bond(), bond);
     }

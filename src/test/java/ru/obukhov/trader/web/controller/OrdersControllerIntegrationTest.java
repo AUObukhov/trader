@@ -31,7 +31,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
         final TestOrderState testOrderState2 = TestOrderStates.ORDER_STATE2;
 
         final List<ru.tinkoff.piapi.contract.v1.OrderState> orderStates =
-                List.of(testOrderState1.tinkoffOrderState(), testOrderState2.tinkoffOrderState());
+                List.of(testOrderState1.tOrderState(), testOrderState2.tOrderState());
         Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(orderStates);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders

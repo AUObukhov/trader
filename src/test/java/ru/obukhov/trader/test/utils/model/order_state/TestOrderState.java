@@ -7,13 +7,13 @@ import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.OrderStageMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
-public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1.OrderState tinkoffOrderState) {
+public record TestOrderState(OrderState orderState, ru.tinkoff.piapi.contract.v1.OrderState tOrderState) {
 
     TestOrderState(final OrderState orderState) {
-        this(orderState, buildTinkoffOrderState(orderState));
+        this(orderState, buildTOrderState(orderState));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.OrderState buildTinkoffOrderState(final OrderState orderState) {
+    private static ru.tinkoff.piapi.contract.v1.OrderState buildTOrderState(final OrderState orderState) {
         final OrderStageMapper orderStageMapper = Mappers.getMapper(OrderStageMapper.class);
         final MoneyValueMapper moneyValueMapper = Mappers.getMapper(MoneyValueMapper.class);
         return ru.tinkoff.piapi.contract.v1.OrderState.newBuilder()

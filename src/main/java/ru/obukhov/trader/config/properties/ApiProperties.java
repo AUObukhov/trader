@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.validation.annotation.Validated;
 
-@ConfigurationProperties(prefix = "ru.tinkoff.invest.openapi")
+@ConfigurationProperties(prefix = "ru.tbank.invest.openapi")
 @Validated
 public record ApiProperties(Long throttlingInterval) {
 

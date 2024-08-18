@@ -14,7 +14,7 @@ class InstrumentMapperUnitTest {
     @Test
     void map() {
         final TestInstrument testInstrument = TestInstruments.APPLE;
-        final Instrument instrument = instrumentMapper.map(testInstrument.tinkoffInstrument());
+        final Instrument instrument = instrumentMapper.map(testInstrument.tInstrument());
 
         Assertions.assertEquals(testInstrument.instrument(), instrument);
     }

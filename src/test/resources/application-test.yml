@@ -1,4 +1,4 @@
-ru.tinkoff.invest.openapi:
+ru.tbank.invest.openapi:
   throttling-interval: 1000
 
 trading:

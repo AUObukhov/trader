@@ -14,7 +14,7 @@ import java.util.Collections;
 
 /**
  * Common ancestor for tests with Spring context initialization.
- * Used to mock calls to Tinkoff API
+ * Used to mock calls to TBank API
  */
 @ActiveProfiles("test")
 @SuppressWarnings("java:S2187") // Sonar rule: TestCases should contain tests

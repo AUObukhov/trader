@@ -15,7 +15,7 @@ class ShareMapperUnitTest {
     void map() {
         final TestShare testShare = TestShares.APPLE;
 
-        final Share result = shareMapper.map(testShare.tinkoffShare());
+        final Share result = shareMapper.map(testShare.tShare());
 
         Assertions.assertEquals(testShare.share(), result);
     }

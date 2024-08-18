@@ -4,13 +4,13 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Account;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 
-public record TestAccount(Account account, ru.tinkoff.piapi.contract.v1.Account tinkoffAccount) {
+public record TestAccount(Account account, ru.tinkoff.piapi.contract.v1.Account tAccount) {
 
     TestAccount(final Account account) {
-        this(account, buildTinkoffAccount(account));
+        this(account, buildTAccount(account));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Account buildTinkoffAccount(final Account account) {
+    private static ru.tinkoff.piapi.contract.v1.Account buildTAccount(final Account account) {
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         return ru.tinkoff.piapi.contract.v1.Account.newBuilder()
                 .setId(account.id())

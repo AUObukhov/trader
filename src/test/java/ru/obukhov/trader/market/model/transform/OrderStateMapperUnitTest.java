@@ -15,7 +15,7 @@ class OrderStateMapperUnitTest {
     void map() {
         final TestOrderState testOrderState = TestOrderStates.ORDER_STATE1;
 
-        final OrderState orderState = orderStateMapper.map(testOrderState.tinkoffOrderState());
+        final OrderState orderState = orderStateMapper.map(testOrderState.tOrderState());
 
         Assertions.assertEquals(testOrderState.orderState(), orderState);
     }

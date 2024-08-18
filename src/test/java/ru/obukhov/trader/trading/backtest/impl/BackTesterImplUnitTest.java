@@ -1331,9 +1331,9 @@ class BackTesterImplUnitTest {
             mockCurrentPrice(fakeBot, figi, currentPrice);
         }
         if (operation == null) {
-            Mocker.mockTinkoffOperations(fakeBot, accountId, figi, interval);
+            Mocker.mockTOperations(fakeBot, accountId, figi, interval);
         } else {
-            Mocker.mockTinkoffOperations(fakeBot, accountId, figi, interval, operation);
+            Mocker.mockTOperations(fakeBot, accountId, figi, interval, operation);
         }
 
         return botConfig;

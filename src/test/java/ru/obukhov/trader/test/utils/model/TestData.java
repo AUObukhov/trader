@@ -20,7 +20,18 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.WeightedShare;
-import ru.tinkoff.piapi.contract.v1.*;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.LastPrice;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationState;
+import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
+import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
+import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.ShareType;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
@@ -29,7 +40,12 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -369,7 +385,7 @@ public class TestData {
         return schedule;
     }
 
-    public static ru.tinkoff.piapi.contract.v1.TradingDay newTinkoffTradingDay(
+    public static ru.tinkoff.piapi.contract.v1.TradingDay newTTradingDay(
             final boolean isTradingDay,
             final OffsetDateTime startDateTime,
             final OffsetDateTime endDateTime

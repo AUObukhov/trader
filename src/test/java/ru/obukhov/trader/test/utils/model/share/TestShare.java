@@ -20,9 +20,9 @@ import java.util.Map;
 
 public record TestShare(
         Share share,
-        ru.tinkoff.piapi.contract.v1.Share tinkoffShare,
+        ru.tinkoff.piapi.contract.v1.Share tShare,
         Instrument instrument,
-        ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument,
+        ru.tinkoff.piapi.contract.v1.Instrument tInstrument,
         List<TestDividend> dividends,
         Map<CandleInterval, List<HistoricCandle>> candles
 ) {
@@ -32,10 +32,10 @@ public record TestShare(
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public TestShare(final Share share, final List<TestDividend> dividends, final Map<CandleInterval, List<HistoricCandle>> candles) {
-        this(share, buildTinkoffShare(share), buildInstrument(share), buildTinkoffInstrument(share), dividends, candles);
+        this(share, buildTShare(share), buildInstrument(share), buildTinkoffInstrument(share), dividends, candles);
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Share buildTinkoffShare(final Share share) {
+    private static ru.tinkoff.piapi.contract.v1.Share buildTShare(final Share share) {
         final ru.tinkoff.piapi.contract.v1.Share.Builder builder = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
                 .setFigi(share.figi())
                 .setTicker(share.ticker())

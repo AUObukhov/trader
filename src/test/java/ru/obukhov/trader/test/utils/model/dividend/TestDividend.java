@@ -6,13 +6,13 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 
-public record TestDividend(Dividend dividend, ru.tinkoff.piapi.contract.v1.Dividend tinkoffDividend) {
+public record TestDividend(Dividend dividend, ru.tinkoff.piapi.contract.v1.Dividend tDividend) {
 
     TestDividend(final Dividend dividend, final String currency) {
-        this(dividend, buildTinkoffDividend(dividend, currency));
+        this(dividend, buildTDividend(dividend, currency));
     }
 
-    private static ru.tinkoff.piapi.contract.v1.Dividend buildTinkoffDividend(final Dividend dividend, final String currency) {
+    private static ru.tinkoff.piapi.contract.v1.Dividend buildTDividend(final Dividend dividend, final String currency) {
         final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
         final MoneyValueMapper moneyValueMapper = Mappers.getMapper(MoneyValueMapper.class);
         final QuotationMapper quotationMapper = Mappers.getMapper(QuotationMapper.class);

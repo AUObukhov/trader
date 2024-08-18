@@ -21,7 +21,7 @@ public class ExtUsersService {
     private final UsersService usersService;
 
     /**
-     * @return list of current customer accounts. Current customer is defined by token passed to Tinkoff.
+     * @return list of current customer accounts. Current customer is defined by token passed to TBank.
      */
     public List<Account> getAccounts() {
         return usersService.getAccountsSync().stream()

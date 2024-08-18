@@ -260,12 +260,12 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1)
-                .addDays(testTradingDay1.tinkoffTradingDay())
-                .addDays(testTradingDay2.tinkoffTradingDay())
+                .addDays(testTradingDay1.tTradingDay())
+                .addDays(testTradingDay2.tTradingDay())
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2)
-                .addDays(testTradingDay3.tinkoffTradingDay())
+                .addDays(testTradingDay3.tTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
@@ -288,8 +288,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final Instant toInstant = DateUtils.toSameDayInstant(to);
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(TestTradingDays.TRADING_DAY1.tinkoffTradingDay())
-                .addDays(TestTradingDays.TRADING_DAY2.tinkoffTradingDay())
+                .addDays(TestTradingDays.TRADING_DAY1.tTradingDay())
+                .addDays(TestTradingDays.TRADING_DAY2.tTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }

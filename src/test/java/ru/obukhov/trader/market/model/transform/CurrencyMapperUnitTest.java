@@ -15,7 +15,7 @@ class CurrencyMapperUnitTest {
     void map() {
         final TestCurrency testCurrency = TestCurrencies.USD;
 
-        final Currency result = currencyMapper.map(testCurrency.tinkoffCurrency());
+        final Currency result = currencyMapper.map(testCurrency.tCurrency());
 
         Assertions.assertEquals(testCurrency.currency(), result);
     }

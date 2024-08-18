@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Utils to create and work with inconvenient Tinkoff data structures
+ * Utils to create and work with inconvenient TBank data structures
  */
 @UtilityClass
 public class DataStructsHelper {

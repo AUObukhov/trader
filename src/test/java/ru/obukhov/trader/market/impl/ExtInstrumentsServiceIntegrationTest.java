@@ -703,16 +703,16 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1)
-                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 18, 7), DateTimeTestData.newDateTime(2023, 8, 18, 19)))
-                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)))
-                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 20, 7), DateTimeTestData.newDateTime(2023, 8, 20, 19)))
-                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 7), DateTimeTestData.newDateTime(2023, 8, 21, 19)))
+                .addDays(TestData.newTTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 18, 7), DateTimeTestData.newDateTime(2023, 8, 18, 19)))
+                .addDays(TestData.newTTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)))
+                .addDays(TestData.newTTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 20, 7), DateTimeTestData.newDateTime(2023, 8, 20, 19)))
+                .addDays(TestData.newTTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 7), DateTimeTestData.newDateTime(2023, 8, 21, 19)))
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2)
-                .addDays(TestData.newTinkoffTradingDay(false, DateTimeTestData.newDateTime(2023, 8, 18, 10), DateTimeTestData.newDateTime(2023, 8, 19, 2)))
-                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)))
-                .addDays(TestData.newTinkoffTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 10), DateTimeTestData.newDateTime(2023, 8, 22, 2)))
+                .addDays(TestData.newTTradingDay(false, DateTimeTestData.newDateTime(2023, 8, 18, 10), DateTimeTestData.newDateTime(2023, 8, 19, 2)))
+                .addDays(TestData.newTTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 19, 7), DateTimeTestData.newDateTime(2023, 8, 19, 19)))
+                .addDays(TestData.newTTradingDay(true, DateTimeTestData.newDateTime(2023, 8, 21, 10), DateTimeTestData.newDateTime(2023, 8, 22, 2)))
                 .build();
 
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange1, fromInstant, toInstant)).thenReturn(tradingSchedule1);
@@ -852,12 +852,12 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1)
-                .addDays(testTradingDay1.tinkoffTradingDay())
-                .addDays(testTradingDay2.tinkoffTradingDay())
+                .addDays(testTradingDay1.tTradingDay())
+                .addDays(testTradingDay2.tTradingDay())
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2)
-                .addDays(testTradingDay3.tinkoffTradingDay())
+                .addDays(testTradingDay3.tTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
@@ -879,8 +879,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Instant toInstant = to.toInstant();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange)
-                .addDays(TestTradingDays.TRADING_DAY1.tinkoffTradingDay())
-                .addDays(TestTradingDays.TRADING_DAY2.tinkoffTradingDay())
+                .addDays(TestTradingDays.TRADING_DAY1.tTradingDay())
+                .addDays(TestTradingDays.TRADING_DAY2.tTradingDay())
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }
@@ -893,9 +893,9 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final TestDividend testDividend1 = TestDividends.TEST_DIVIDEND1;
         final TestDividend testDividend2 = TestDividends.TEST_DIVIDEND2;
-        final List<ru.tinkoff.piapi.contract.v1.Dividend> tinkoffDividends =
-                List.of(testDividend1.tinkoffDividend(), testDividend2.tinkoffDividend());
-        Mockito.when(instrumentsService.getDividendsSync(figi, from.toInstant(), to.toInstant())).thenReturn(tinkoffDividends);
+        final List<ru.tinkoff.piapi.contract.v1.Dividend> tDividends =
+                List.of(testDividend1.tDividend(), testDividend2.tDividend());
+        Mockito.when(instrumentsService.getDividendsSync(figi, from.toInstant(), to.toInstant())).thenReturn(tDividends);
 
         final List<Dividend> actualResult = extInstrumentsService.getDividends(figi, Interval.of(from, to));
 
