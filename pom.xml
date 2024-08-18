@@ -22,7 +22,7 @@
         <spring-boot.version>3.3.2</spring-boot.version>
         <apache.poi.version>5.3.0</apache.poi.version>
         <mapstruct.version>1.6.0</mapstruct.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <fasterxml.jackson.version>2.15.2</fasterxml.jackson.version>
         <junit-jupiter.version>5.10.0</junit-jupiter.version>
         <mockito.version>5.5.0</mockito.version>
