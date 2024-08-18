@@ -20,7 +20,7 @@
     <properties>
         <java.version>21</java.version>
         <apache.poi.version>5.3.0</apache.poi.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.0</mapstruct.version>
         <mockito.version>5.5.0</mockito.version>
         <junit-jupiter.version>5.10.0</junit-jupiter.version>
         <spring-boot.version>3.3.0</spring-boot.version>
