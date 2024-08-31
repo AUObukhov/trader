@@ -12,10 +12,10 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 
+@Getter
 @RequiredArgsConstructor
 public class ExtendedChart extends XDDFChart {
 
-    @Getter
     private final XSSFChart delegate;
 
     // region additional methods

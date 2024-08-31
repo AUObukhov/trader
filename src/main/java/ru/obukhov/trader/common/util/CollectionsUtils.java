@@ -43,7 +43,7 @@ public class CollectionsUtils {
         Assert.isTrue(!list.isEmpty(), "list can't be empty");
 
         if (index == 0) {
-            list.add(0, list.getFirst());
+            list.addFirst(list.getFirst());
         } else if (index == list.size()) {
             list.add(getLast(list));
         } else {
