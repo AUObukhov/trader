@@ -389,6 +389,7 @@ public class ExtendedSheet implements Sheet {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public double getMargin(short margin) {
         return delegate.getMargin(margin);
     }
@@ -399,6 +400,7 @@ public class ExtendedSheet implements Sheet {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void setMargin(short margin, double size) {
         delegate.setMargin(margin, size);
     }
@@ -469,6 +471,7 @@ public class ExtendedSheet implements Sheet {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         delegate.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
     }
