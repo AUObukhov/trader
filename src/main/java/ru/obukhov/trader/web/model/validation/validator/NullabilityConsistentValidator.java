@@ -8,9 +8,6 @@ import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import java.util.Map;
 
-/**
- * Validates that fields of given object, listed in {@link NullabilityConsistent} are all null or all not null
- */
 public class NullabilityConsistentValidator implements ConstraintValidator<NullabilityConsistent, Object> {
 
     @Override

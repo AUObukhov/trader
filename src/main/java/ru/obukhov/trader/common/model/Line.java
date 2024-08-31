@@ -16,9 +16,6 @@ public class Line {
     private final BigDecimal b;
     private final BigDecimal c;
 
-    /**
-     * Creates a new line passing through the points with the given coordinates
-     */
     public Line(final int x1, final BigDecimal y1, final int x2, final BigDecimal y2) {
         Assert.isTrue(x1 != x2, "x1 and x2 can't be equal");
 
@@ -27,9 +24,6 @@ public class Line {
         this.c = DecimalUtils.multiply(y2, x1).subtract(DecimalUtils.multiply(y1, x2));
     }
 
-    /**
-     * @return value of {@code y} of point with given {@code x}
-     */
     public BigDecimal getValue(final int x) {
         return DecimalUtils.divide(DecimalUtils.multiply(a, x).subtract(c), b);
     }

@@ -3,11 +3,8 @@ package ru.obukhov.trader.common.model.poi;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.mapstruct.Mapper;
 
-import java.awt.Color;
+import java.awt.*;
 
-/**
- * Maps {@link Color} to {@link XDDFColor}
- */
 @Mapper
 public interface ColorMapper {
 

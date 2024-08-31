@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Class with util methods to transform or analyse trends
- */
 @UtilityClass
 public class TrendUtils {
 
@@ -29,7 +26,7 @@ public class TrendUtils {
 
     /**
      * Calculates indices of local extremes.
-     * If several consecutive elements are equal, then the last one is considered the extremum
+     * If several consecutive elements are equal, then the last one is considered the extreme
      *
      * @param values     extended values among which extremes are sought for
      * @param comparator comparator of elements, defining character of extremes

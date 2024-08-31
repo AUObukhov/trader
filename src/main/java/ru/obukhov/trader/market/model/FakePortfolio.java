@@ -11,9 +11,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * POJO keeping portfolio data for back testing purposes
- */
 @Data
 public class FakePortfolio {
 

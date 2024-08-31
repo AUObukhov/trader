@@ -49,9 +49,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Back tests trading by bots
- */
 @Slf4j
 @Service
 public class BackTesterImpl implements BackTester {
@@ -76,13 +73,6 @@ public class BackTesterImpl implements BackTester {
         this.executor = Executors.newFixedThreadPool(backTestProperties.getThreadCount());
     }
 
-    /**
-     * @param botConfigs    bot configurations of each back test
-     * @param balanceConfig all back tests balance configuration
-     * @param interval      all back tests interval
-     * @param saveToFiles   flag to save back tests results to file
-     * @return list of back tests results
-     */
     @Override
     public List<BackTestResult> test(
             final List<BotConfig> botConfigs,

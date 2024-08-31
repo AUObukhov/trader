@@ -6,9 +6,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import java.time.OffsetDateTime;
 import java.time.Period;
 
-/**
- * Utils do calculate first candles date based on known other first candles dates or adjust inaccurate candles date
- */
 @UtilityClass
 public class FirstCandleUtils {
 

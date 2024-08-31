@@ -7,9 +7,6 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-/**
- * Utils for {@link Timestamp}
- */
 @UtilityClass
 public class TimestampUtils {
 

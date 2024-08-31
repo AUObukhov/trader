@@ -33,41 +33,27 @@ public class MapUtils {
         return value;
     }
 
-    /**
-     * @param <T> stream items type
-     * @param <K> result map keys type
-     * @return collector, creating map with keys provided by given {@code keyMapper} and stream items as values
-     */
-    public static <T, K> Collector<T, ?, Map<K, T>> newMapKeyCollector(final Function<? super T, ? extends K> keyMapper) {
+    public static <T, K> Collector<T, ?, Map<K, T>> newMapKeyCollector(
+            final Function<? super T, ? extends K> keyMapper
+    ) {
         return Collectors.toMap(keyMapper, Function.identity());
     }
 
-    /**
-     * @param <T> stream items type
-     * @param <V> result map value type
-     * @return collector, creating map with keys provided by given {@code valueMapper} and stream items as values
-     */
-    public static <T, V> Collector<T, ?, Map<T, V>> newMapValueCollector(final Function<? super T, ? extends V> valueMapper) {
+    public static <T, V> Collector<T, ?, Map<T, V>> newMapValueCollector(
+            final Function<? super T, ? extends V> valueMapper
+    ) {
         return Collectors.toMap(Function.identity(), valueMapper);
     }
 
-    /**
-     * @param <T> stream items type
-     * @param <V> result map value type
-     * @return collector, creating SequencedMap with keys provided by given {@code valueMapper} and stream items as values
-     */
-    public static <T, V> Collector<T, ?, SequencedMap<T, V>> newSequencedMapValueCollector(final Function<? super T, ? extends V> valueMapper) {
+    public static <T, V> Collector<T, ?, SequencedMap<T, V>> newSequencedMapValueCollector(
+            final Function<? super T, ? extends V> valueMapper
+    ) {
         BinaryOperator<V> mergeFunction = (x1, x2) -> {
             throw new IllegalStateException("Unexpected merge");
         };
         return Collectors.toMap(Function.identity(), valueMapper, mergeFunction, LinkedHashMap::new);
     }
 
-    /**
-     * @param <K> result map key type
-     * @param <V> result map value type
-     * @return collector, creating map from stream items of type {@link Map.Entry}
-     */
     public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> newMapEntryCollector() {
         return Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue);
     }

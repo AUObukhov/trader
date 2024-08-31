@@ -46,10 +46,6 @@ public class Periods {
         };
     }
 
-    /**
-     * @param dateTime must be positive, otherwise the result may be wrong.
-     * @return dateTime in the beginning of given {@code period} containing given {@code dateTime}
-     */
     public static OffsetDateTime toStartOfPeriod(final OffsetDateTime dateTime, final Period period) {
         if (period.equals(DAY)) {
             return DateUtils.toStartOfDay(dateTime);
@@ -70,10 +66,6 @@ public class Periods {
         }
     }
 
-    /**
-     * @param dateTime must be positive, otherwise the result may be wrong.
-     * @return dateTime in the end of given {@code period} containing given {@code dateTime}
-     */
     public static OffsetDateTime toEndOfPeriod(final OffsetDateTime dateTime, final Period period) {
         if (period.equals(DAY)) {
             return DateUtils.toEndOfDay(dateTime);

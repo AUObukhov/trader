@@ -17,28 +17,15 @@ public class ThrottledCounter {
     private final CounterWithMaxValue counterWithMaxValue;
     private final Timer timer;
 
-    /**
-     * Creates new instance of {@link ThrottledCounter}
-     *
-     * @param maxValue maximum value of counter
-     */
     public ThrottledCounter(final int maxValue) {
         this.counterWithMaxValue = new CounterWithMaxValue(maxValue);
         this.timer = new Timer();
     }
 
-    /**
-     * Increments current value and starts task to decrement it after delay
-     */
     public void increment() {
         this.counterWithMaxValue.increment();
     }
 
-    /**
-     * Starts task to decrement the counter after delay
-     *
-     * @param interval delay before decrement in milliseconds
-     */
     public void scheduleDecrement(final long interval) {
         timer.schedule(new DecrementTask(), interval);
     }

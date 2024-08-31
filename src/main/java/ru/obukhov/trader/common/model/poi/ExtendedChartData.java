@@ -16,16 +16,13 @@ import org.mapstruct.factory.Mappers;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 import ru.obukhov.trader.common.util.MathUtils;
 
-import java.awt.Color;
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Decorator of {@link XDDFChartData} with additional handy methods
- */
 public class ExtendedChartData {
 
     @Getter
@@ -109,9 +106,6 @@ public class ExtendedChartData {
         }
     }
 
-    /**
-     * Stretches chart to vertical borders
-     */
     @SuppressWarnings("ConstantConditions")
     public void stretchChart() {
         final List<Double> values = getSeries().stream()

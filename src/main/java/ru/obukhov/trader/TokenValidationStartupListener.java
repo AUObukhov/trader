@@ -8,10 +8,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import ru.obukhov.trader.market.impl.ExtUsersService;
 
-/**
- * Class for failing application on startup if token is invalid.
- * TBank is hiding unauthorized error now, so application is failed in case of any exception
- */
 @Slf4j
 @Component
 @AllArgsConstructor

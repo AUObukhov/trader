@@ -10,9 +10,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Constructor, annotated by @NotAllNull is validated by {@link NotAllNullValidator}
- */
 @Documented
 @Constraint(validatedBy = NotAllNullValidator.class)
 @Target(ElementType.TYPE)

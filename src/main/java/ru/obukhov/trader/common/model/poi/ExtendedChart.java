@@ -12,9 +12,6 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 
-/**
- * Decorator of {@link XSSFChart} with additional handy methods
- */
 @RequiredArgsConstructor
 public class ExtendedChart extends XDDFChart {
 

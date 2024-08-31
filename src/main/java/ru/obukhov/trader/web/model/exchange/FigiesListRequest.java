@@ -8,9 +8,6 @@ import lombok.Setter;
 
 import java.util.List;
 
-/**
- * Common request for several endpoint
- */
 @Getter
 @Setter
 @NoArgsConstructor

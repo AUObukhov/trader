@@ -22,9 +22,6 @@ import ru.tinkoff.piapi.core.UsersService;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
-/**
- * Configuration of beans, which need qualifying of dependencies
- */
 @Configuration
 @SuppressWarnings("unused")
 public class BeanConfiguration {

@@ -17,9 +17,6 @@ import ru.tinkoff.piapi.core.OrdersService;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Service to control customer orders at market
- */
 @Service
 @AllArgsConstructor
 public class RealExtOrdersService implements ExtOrdersService {
@@ -27,10 +24,6 @@ public class RealExtOrdersService implements ExtOrdersService {
     private static final OrderStateMapper ORDER_STATE_MAPPER = Mappers.getMapper(OrderStateMapper.class);
     private final OrdersService ordersService;
 
-    /**
-     * @return returns list of active orders with given {@code figi} at given {@code accountId}.
-     * If {@code accountId} null, works with default broker account
-     */
     @Override
     public List<OrderState> getOrders(final String accountId, final String figi) {
         return ordersService.getOrdersSync(accountId).stream()
@@ -39,9 +32,6 @@ public class RealExtOrdersService implements ExtOrdersService {
                 .toList();
     }
 
-    /**
-     * @return returns list of active orders at given {@code accountId}
-     */
     @Override
     public List<OrderState> getOrders(final String accountId) {
         return ordersService.getOrdersSync(accountId)
@@ -64,10 +54,6 @@ public class RealExtOrdersService implements ExtOrdersService {
         return ordersService.postOrderSync(figi, quantity, quotationPrice, direction, accountId, type, orderId);
     }
 
-    /**
-     * cancels order with given {@code orderId} at given {@code accountId}.
-     * If {@code accountId} null, works with default broker account
-     */
     @Override
     public void cancelOrder(final String accountId, @NotNull String orderId) {
         ordersService.cancelOrderSync(accountId, orderId);

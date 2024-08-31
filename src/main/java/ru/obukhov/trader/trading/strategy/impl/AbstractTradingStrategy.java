@@ -16,9 +16,6 @@ import ru.tinkoff.piapi.contract.v1.OperationState;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-/**
- * Abstract strategy with some common methods
- */
 @Slf4j
 public abstract class AbstractTradingStrategy implements TradingStrategy {
 
@@ -31,10 +28,6 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         this.params = params;
     }
 
-    /**
-     * @return decision to buy all available lots or decision to wait if no lots available
-     * @throws IllegalArgumentException if given {@code lotsQuantity} <= 0
-     */
     protected Decision getBuyOrWaitDecision(
             final DecisionData data,
             final long lotsQuantity,
@@ -51,10 +44,6 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         return decision;
     }
 
-    /**
-     * @return decision to sell all position if it is profitable with commission
-     * or decision to wait otherwise
-     */
     protected Decision getSellOrWaitDecision(
             final DecisionData data,
             final BigDecimal currentPrice,
@@ -81,9 +70,6 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         return decision;
     }
 
-    /**
-     * @return possible average percent profit of selling all positions in given {@code DecisionData}
-     */
     private double getProfit(final DecisionData data, final BigDecimal currentPrice, final BigDecimal commission) {
         if (data.getPosition() == null) {
             log.debug("no position - no profit");

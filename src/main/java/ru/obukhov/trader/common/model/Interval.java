@@ -20,9 +20,6 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Immutable class of Timestamp interval
- */
 @Getter
 @ToString
 @EqualsAndHashCode(cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
@@ -53,31 +50,14 @@ public class Interval {
         this.to = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
     }
 
-    /**
-     * @return new Interval with given {@code from} and {@code to}
-     * @throws IllegalArgumentException if {@code from} is after {@code to} or if they have different offsets
-     */
     public static Interval of(final OffsetDateTime from, final OffsetDateTime to) {
         return new Interval(from, to);
     }
 
-    /**
-     * @param now timestamp which is handled as now
-     * @return new Interval where {@code from} is equals to current {@code from} and
-     * {@code to} is equal to:<br/>
-     * {@code now} if current {@code to} is null;<br/>
-     * equals to current {@code to} otherwise;
-     */
     public Interval limitByNowIfNull(final OffsetDateTime now) {
         return Interval.of(from, to == null ? now : to);
     }
 
-    /**
-     * @return new Interval where {@code from} is at start of unit of given {@code period} containing current {@code from} and
-     * {@code to} is earliest timestamp between end of unit of given {@code period} containing current {@code to} and now
-     * @throws IllegalArgumentException when {@code from} and {@code to} are not at the same Period
-     * @throws IllegalArgumentException when {@code from} or {@code to}  is in future
-     */
     public Interval extendTo(final Period period) {
         if (!isSamePeriods(period)) {
             final String message = String.format("'from' (%s) and 'to' (%s) must be at the same period %s", from, to, period);
@@ -95,18 +75,12 @@ public class Interval {
         return Interval.of(extendedFrom, extendedTo);
     }
 
-    /**
-     * @return true, if dates of instants of {@code from} and {@code to} are equal, or else false
-     */
     private boolean isSamePeriods(final Period period) {
         final OffsetDateTime startOfPeriod = Periods.toStartOfPeriod(from, period);
         final OffsetDateTime startOfNextPeriod = startOfPeriod.plus(period);
         return !to.isAfter(startOfNextPeriod);
     }
 
-    /**
-     * @return true if this Interval matches any value of {@link Period}
-     */
     @JsonIgnore
     public boolean isAnyPeriod() {
         if (from == null || to == null) {
@@ -128,9 +102,6 @@ public class Interval {
         return startOfPeriod.equals(from) && startOfNextPeriod.equals(to);
     }
 
-    /**
-     * @return true if given {@code dateTime} is in current interval including {@code from} and excluding {@code to}
-     */
     public boolean contains(final OffsetDateTime dateTime) {
         return from != null && to != null && !dateTime.isBefore(from) && dateTime.isBefore(to);
     }
@@ -172,16 +143,10 @@ public class Interval {
         return Interval.of(resultFrom, resultTo);
     }
 
-    /**
-     * @return duration of current interval
-     */
     public Duration toDuration() {
         return Duration.between(from, to);
     }
 
-    /**
-     * @return double count of days in current interval
-     */
     public double toDays() {
         return (double) toDuration().toNanos() / DateUtils.NANOSECONDS_PER_DAY;
     }
@@ -206,9 +171,6 @@ public class Interval {
                 .build();
     }
 
-    /**
-     * @return pretty string representation of current interval, where null values are represented as "-∞" or "∞"
-     */
     public String toPrettyString() {
         final String fromString = from == null ? "-∞" : DateUtils.DATE_TIME_FORMATTER.format(from);
         final String toString = to == null ? "∞" : DateUtils.DATE_TIME_FORMATTER.format(to);

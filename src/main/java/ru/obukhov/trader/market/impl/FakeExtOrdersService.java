@@ -27,9 +27,6 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Service to control customer orders at market
- */
 @AllArgsConstructor
 public class FakeExtOrdersService implements ExtOrdersService {
 
@@ -40,17 +37,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private final ExtMarketDataService extMarketDataService;
     private final BigDecimal commission;
 
-    /**
-     * @return returns empty list - orders in fake context are considered to be executed immediately
-     */
     @Override
     public List<OrderState> getOrders(final String accountId, final String figi) {
         return Collections.emptyList();
     }
 
-    /**
-     * @return returns empty list - orders in fake context are considered to be executed immediately
-     */
     @Override
     public List<OrderState> getOrders(final String accountId) {
         return Collections.emptyList();
@@ -97,9 +88,6 @@ public class FakeExtOrdersService implements ExtOrdersService {
         throw new UnsupportedOperationException("Back test does not support cancelling of orders");
     }
 
-    /**
-     * @return last known price for instrument with given {@code figi} not after current fake date time
-     */
     private BigDecimal getCurrentPrice(final String figi) {
         final OffsetDateTime currentTimestamp = fakeContext.getCurrentDateTime();
         return extMarketDataService.getPrice(figi, currentTimestamp);

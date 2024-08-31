@@ -18,11 +18,6 @@ public class ExecutionUtils {
         return Duration.ofNanos(end - start);
     }
 
-    /**
-     * Executes given {@code runnable} given {@code quantity} of times
-     *
-     * @return duration total duration of all executions
-     */
     public static Duration run(final Runnable runnable, final long quantity) {
         final long start = System.nanoTime();
 
@@ -34,11 +29,6 @@ public class ExecutionUtils {
         return Duration.ofNanos(end - start);
     }
 
-    /**
-     * Executes given {@code supplier} given {@code quantity} of times
-     *
-     * @return result of last execution of given {@code supplier} and execution time.
-     */
     public static <T> ExecutionResult<T> get(final Supplier<T> supplier, final long quantity) {
         T result = null;
 
@@ -54,11 +44,6 @@ public class ExecutionUtils {
         return new ExecutionResult<>(result, duration, null);
     }
 
-    /**
-     * Executes given {@code supplier}. Doesn't catch execution exceptions.
-     *
-     * @return result of execution of given {@code supplier} and execution time.
-     */
     public static <T> ExecutionResult<T> get(final Supplier<T> supplier) {
         final long start = System.nanoTime();
 
@@ -70,11 +55,6 @@ public class ExecutionUtils {
         return new ExecutionResult<>(result, duration, null);
     }
 
-    /**
-     * Safely executes given {@code supplier}
-     *
-     * @return result of execution of given {@code supplier} and execution time and exception if it has occurred during execution
-     */
     public static <T> ExecutionResult<T> getSafe(final ThrowingSupplier<T> supplier) {
         T result = null;
         Duration duration;

@@ -11,14 +11,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-/**
- * Collector to terminate streams with single value.<br/>
- * A null value is considered a valid value.<br/>
- * Throws {@link IllegalArgumentException} or supplied exception if stream contains no items.<br/>
- * Throws {@link IllegalArgumentException} or supplied exception if stream contains more than 1 item.<br/>
- *
- * @param <T> stream item type
- */
 public class SingleItemCollector<T> implements Collector<T, List<T>, T> {
 
     private static final Set<Characteristics> CHARACTERISTICS = Set.of(Characteristics.UNORDERED);

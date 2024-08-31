@@ -8,9 +8,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-/**
- * Trend point
- */
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Point {

@@ -8,11 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Type of moving average algorithm
- *
- * @see <a href="https://en.wikipedia.org/wiki/Moving_average">Moving average</a>
- */
 @Getter
 @AllArgsConstructor
 public enum MovingAverageType {

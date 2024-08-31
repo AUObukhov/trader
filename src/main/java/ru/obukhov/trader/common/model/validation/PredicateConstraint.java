@@ -16,9 +16,6 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.function.Predicate;
 
-/**
- * Validates that predicate given in {@link PredicateConstraint} returns true for given object
- */
 @Documented
 @Constraint(validatedBy = PredicateConstraint.PredicateConstraintValidator.class)
 @Target(ElementType.TYPE)

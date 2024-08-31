@@ -398,9 +398,6 @@ public class TestData {
                 .build();
     }
 
-    /**
-     * @return WorkSchedule with start equal to given @{code hour} of day and given duration of given {@code durationHours}
-     */
     public static WorkSchedule newWorkSchedule(final int hour, final int durationHours) {
         return new WorkSchedule(DateTimeTestData.newTime(hour), Duration.ofHours(durationHours));
     }

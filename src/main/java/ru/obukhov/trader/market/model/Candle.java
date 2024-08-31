@@ -23,9 +23,6 @@ public class Candle {
 
     protected OffsetDateTime time;
 
-    /**
-     * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
-     */
     public static Candle createAverage(final Candle leftCandle, final Candle rightCandle) {
         Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()), "leftCandle can't be after rightCandle");
 

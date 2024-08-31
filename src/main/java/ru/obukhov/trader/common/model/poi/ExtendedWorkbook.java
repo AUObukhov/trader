@@ -32,9 +32,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Proxy class, implementing {@link Workbook} and having additional handy methods
- */
 public class ExtendedWorkbook implements Workbook {
 
     @Getter
@@ -90,12 +87,6 @@ public class ExtendedWorkbook implements Workbook {
 
     // region additional methods
 
-    /**
-     * Create new cell style with given {@code name}
-     *
-     * @return created style
-     * @throws IllegalArgumentException when style with given {@code name} already exists
-     */
     public CellStyle createCellStyle(final String name) {
         if (cellStyles.containsKey(name)) {
             throw new IllegalArgumentException("Cell style '" + name + "' already exists");
@@ -107,19 +98,11 @@ public class ExtendedWorkbook implements Workbook {
         return cellStyle;
     }
 
-    /**
-     * @return cell style with given {@code name} or null if it does not exist
-     */
     @Nullable
     public CellStyle getCellStyle(final String name) {
         return cellStyles.get(name);
     }
 
-    /**
-     * if cell style with given {@code name} missing in the workbook, then creates new one
-     *
-     * @return created or existing style
-     */
     public CellStyle getOrCreateCellStyle(final String name) {
         return cellStyles.computeIfAbsent(name, key -> delegate.createCellStyle());
     }

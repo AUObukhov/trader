@@ -9,11 +9,7 @@ import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-/**
- * Utils to create and work with inconvenient TBank data structures
- */
 @UtilityClass
 public class DataStructsHelper {
 
@@ -63,10 +59,6 @@ public class DataStructsHelper {
 
     // endregion
 
-    /**
-     * @return balance value of first element from given list {@code moneys) where currency equals to given {@code currency}
-     * @throws {@link NoSuchElementException} when there is no element with given {@code currency}
-     */
     public static BigDecimal getBalance(final List<Money> moneys, final String currency) {
         return moneys.stream()
                 .filter(money -> money.getCurrency().equals(currency))

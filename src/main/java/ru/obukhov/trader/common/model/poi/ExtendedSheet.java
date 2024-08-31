@@ -37,9 +37,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Proxy class, implementing {@link Sheet} and having additional handy methods
- */
 public class ExtendedSheet implements Sheet {
 
     private final ExtendedWorkbook workbook;
@@ -75,16 +72,10 @@ public class ExtendedSheet implements Sheet {
 
     // region additional methods
 
-    /**
-     * count of rows of the sheet
-     */
     public int getRowsCount() {
         return rows.size();
     }
 
-    /**
-     * Adjusts all columns width to fit the contents
-     */
     public void autoSizeColumns() {
         int columnsCount = getColumnsCount();
         for (int column = 0; column < columnsCount; column++) {
@@ -92,9 +83,6 @@ public class ExtendedSheet implements Sheet {
         }
     }
 
-    /**
-     * @return max of Row#getLastCellNum of rows of the sheet
-     */
     public int getColumnsCount() {
         return rows.values().stream()
                 .map(Row::getLastCellNum)
@@ -102,11 +90,6 @@ public class ExtendedSheet implements Sheet {
                 .orElse((short) 0);
     }
 
-    /**
-     * Adds new row in the end of the sheet
-     *
-     * @return created row
-     */
     public ExtendedRow addRow() {
         return (ExtendedRow) createRow(getLastRowNum() + 1);
     }
@@ -122,9 +105,6 @@ public class ExtendedSheet implements Sheet {
         return new ExtendedChart(chart);
     }
 
-    /**
-     * Same as {@link Sheet#addMergedRegion(CellRangeAddress)}, but with exact values of cell range address fields
-     */
     public void addMergedRegion(final int firstRow, final int lastRow, final int firstCol, final int lastCol) {
         final CellRangeAddress cellRangeAddress = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
         addMergedRegion(cellRangeAddress);

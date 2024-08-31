@@ -12,12 +12,8 @@ import ru.tinkoff.piapi.core.models.WithdrawLimits;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-/**
- * Service to get info about customer operations at market
- */
 public interface ExtOperationsService {
 
     List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi);
@@ -26,10 +22,6 @@ public interface ExtOperationsService {
 
     WithdrawLimits getWithdrawLimits(String accountId);
 
-    /**
-     * @return position with given {@code figi} at given {@code accountId} or null, if such position does not exist.
-     * If {@code accountId} null, works with default broker account
-     */
     default Position getSecurity(final String accountId, final String figi) {
         final List<Position> allPositions = getPositions(accountId);
         return allPositions.stream()
@@ -38,11 +30,6 @@ public interface ExtOperationsService {
                 .orElse(null);
     }
 
-    /**
-     * @return available balance of given {@code currency} at given {@code accountId}.
-     * If {@code accountId} null, works with default broker account
-     * @throws NoSuchElementException if given {@code currency} not found.
-     */
     default BigDecimal getAvailableBalance(final String accountId, final String currency) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
         final BigDecimal totalBalance = DataStructsHelper.getBalance(withdrawLimits.getMoney(), currency);
@@ -51,9 +38,6 @@ public interface ExtOperationsService {
         return totalBalance.subtract(blockedBalance).subtract(blockedGuaranteeBalance);
     }
 
-    /**
-     * @return map currency ISO name to balance at given {@code accountId}.
-     */
     default Map<String, BigDecimal> getAvailableBalances(final String accountId) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
         final Map<String, BigDecimal> blocked = getBalanceMap(withdrawLimits.getBlocked());

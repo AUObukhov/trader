@@ -17,9 +17,6 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Proxy class, implementing {@link Cell} and having additional handy methods
- */
 public class ExtendedCell implements Cell {
 
     private final ExtendedRow row;

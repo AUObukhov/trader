@@ -67,9 +67,6 @@ public class ExtInstrumentsService {
         this.self = self;
     }
 
-    /**
-     * @return ticker corresponding to given {@code figi}
-     */
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
         final ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
@@ -77,9 +74,6 @@ public class ExtInstrumentsService {
         return instrument.getTicker();
     }
 
-    /**
-     * @return exchange of instrument for given {@code figi}
-     */
     @Cacheable(value = "exchange", sync = true)
     public String getExchange(final String figi) {
         ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
@@ -87,34 +81,20 @@ public class ExtInstrumentsService {
         return instrument.getExchange();
     }
 
-    /**
-     * @return exchange of instrument for given {@code figi}
-     */
     public List<String> getExchanges(final List<String> figies) {
         return figies.stream().map(self::getExchange).distinct().toList();
     }
 
-    /**
-     * @return {@link Instrument} corresponding to given {@code figi}
-     * @throws IllegalArgumentException when given {@code figi} has no corresponding share or has more than one corresponding share
-     */
     @Cacheable(value = "instrument", sync = true)
     public Instrument getInstrument(final String figi) {
         return INSTRUMENT_MAPPER.map(instrumentsService.getInstrumentByFigiSync(figi));
     }
 
-    /**
-     * @return {@link Share} corresponding to given {@code figi}
-     */
     @Cacheable(value = "share", sync = true)
     public Share getShare(final String figi) {
         return SHARE_MAPPER.map(instrumentsService.getShareByFigiSync(figi));
     }
 
-    /**
-     * @return List of {@link Share} corresponding to given {@code figies}
-     * Keep same order as in given {@code figies}
-     */
     public List<Share> getShares(final List<String> figies) {
         final Comparator<Share> comparator = Comparator.comparing(share -> figies.indexOf(share.figi()));
         return self.getAllTShares()
@@ -125,9 +105,6 @@ public class ExtInstrumentsService {
                 .toList();
     }
 
-    /**
-     * @return list of all shares
-     */
     public List<Share> getAllShares() {
         return self.getAllTShares()
                 .stream()
@@ -140,23 +117,14 @@ public class ExtInstrumentsService {
         return instrumentsService.getAllSharesSync();
     }
 
-    /**
-     * @return {@link Etf} corresponding to given {@code figi}
-     */
     public Etf getEtf(final String figi) {
         return ETF_MAPPER.map(instrumentsService.getEtfByFigiSync(figi));
     }
 
-    /**
-     * @return {@link Bond} corresponding to given {@code figi}
-     */
     public Bond getBond(final String figi) {
         return BOND_MAPPER.map(instrumentsService.getBondByFigiSync(figi));
     }
 
-    /**
-     * @return {@link Currency} corresponding to given {@code figi}
-     */
     public Currency getCurrencyByFigi(final String figi) {
         return CURRENCY_MAPPER.map(instrumentsService.getCurrencyByFigiSync(figi));
     }
@@ -169,10 +137,6 @@ public class ExtInstrumentsService {
                 .toList();
     }
 
-    /**
-     * @return {@link Currency} corresponding to given {@code currenciesIsoNames}
-     * @throws IllegalArgumentException if currency not found
-     */
     public List<Currency> getCurrenciesByIsoNames(final String... currenciesIsoNames) {
         List<String> isoNamesList = Arrays.stream(currenciesIsoNames).distinct().toList();
         return self.getAllCurrencies()
@@ -181,9 +145,6 @@ public class ExtInstrumentsService {
                 .toList();
     }
 
-    /**
-     * @return single {@link Currency} corresponding to given {@code isoName} with ticker ending with "TOM"
-     */
     public Currency getTomCurrencyByIsoName(final String isoName) {
         return self.getAllCurrencies()
                 .stream()
@@ -191,17 +152,11 @@ public class ExtInstrumentsService {
                 .collect(new SingleItemCollector<>());
     }
 
-    /**
-     * @return {@link TradingDay} with given {@code dateTime} corresponding to given {@code figi}
-     */
     public TradingDay getTradingDay(final String figi, final OffsetDateTime dateTime) {
         final Interval interval = Interval.of(dateTime, dateTime);
         return getTradingScheduleByFigi(figi, interval).getFirst();
     }
 
-    /**
-     * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code exchange}
-     */
     public List<TradingDay> getTradingSchedule(final String exchange, final Interval interval) {
         if (interval.getFrom().isBefore(DateUtils.now())) {
             return interval.toTradingDays(workSchedule);
@@ -214,19 +169,11 @@ public class ExtInstrumentsService {
         }
     }
 
-    /**
-     * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code figi}
-     */
     public List<TradingDay> getTradingScheduleByFigi(final String figi, final Interval interval) {
         final String exchange = self.getExchange(figi);
         return getTradingSchedule(exchange, interval);
     }
 
-    /**
-     * @return intersection of trading schedules with given {@code interval} corresponding to given {@code figies}
-     * @throws InstrumentNotFoundException when instrument not found for any of given {@code figies}
-     * @throws IllegalArgumentException    when instruments with given {@code figies} are from different exchanges
-     */
     public List<TradingDay> getTradingScheduleByFigies(final List<String> figies, final Interval interval) {
         Assert.isTrue(!figies.isEmpty(), "figies must not be empty");
 
@@ -251,9 +198,6 @@ public class ExtInstrumentsService {
                 .toList();
     }
 
-    /**
-     * @return list of {@link TradingSchedule} with given {@code interval}. Each schedule corresponds to some exchange
-     */
     public List<TradingSchedule> getTradingSchedules(final Interval interval) {
         final Instant from = interval.getFrom().toInstant();
         final Instant to = interval.getTo().toInstant();
@@ -263,9 +207,6 @@ public class ExtInstrumentsService {
                 .toList();
     }
 
-    /**
-     * @return list of dividends with not "Canceled" type
-     */
     public List<Dividend> getDividends(final String figi, final Interval interval) {
         return instrumentsService.getDividendsSync(figi, interval.getFrom().toInstant(), interval.getTo().toInstant())
                 .stream()

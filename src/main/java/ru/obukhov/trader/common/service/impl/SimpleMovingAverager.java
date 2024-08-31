@@ -8,9 +8,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class with methods for calculation of simple moving averages
- */
 @Service
 public class SimpleMovingAverager implements MovingAverager {
 

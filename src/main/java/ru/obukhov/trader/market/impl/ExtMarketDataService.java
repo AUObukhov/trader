@@ -42,9 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SequencedMap;
 
-/**
- * Service to get information about market prices and instruments
- */
 @Slf4j
 @Service
 public class ExtMarketDataService {
@@ -67,12 +64,6 @@ public class ExtMarketDataService {
         this.self = self;
     }
 
-    /**
-     * Loads candles by conditions period by period.
-     *
-     * @param interval search interval, default {@code interval.from} is first available candle
-     * @return sorted by time list of loaded candles
-     */
     public List<Candle> getCandles(final String figi, final Interval interval, final CandleInterval candleInterval) {
         final Instrument instrument = extInstrumentsService.getInstrument(figi);
         final Period period = Periods.getPeriodByCandleInterval(candleInterval);
@@ -94,16 +85,6 @@ public class ExtMarketDataService {
                 : from;
     }
 
-    /**
-     * Loads candles from often used interval for better benefit from cache hits.
-     * If given {@code interval} is in current {@code period} then cache is not used.
-     *
-     * @param figi           FIGI of loaded candles
-     * @param interval       interval to search candles
-     * @param period         period of time to cache candles
-     * @param candleInterval interval of loaded candles
-     * @return candles from given {@code effectiveInterval}
-     */
     private List<Candle> loadCandlesCacheable(
             final String figi,
             final Interval interval,
@@ -128,11 +109,6 @@ public class ExtMarketDataService {
 
     // region prices
 
-    /**
-     * @return last price not after given {@code dateTime} by given {@code figi}
-     * @throws IllegalArgumentException    if candle not found
-     * @throws InstrumentNotFoundException if instrument not found
-     */
     public BigDecimal getPrice(final String figi, final OffsetDateTime dateTime) {
         final Instrument instrument = extInstrumentsService.getInstrument(figi);
         Asserter.notNull(instrument, () -> new InstrumentNotFoundException(figi));
@@ -140,11 +116,6 @@ public class ExtMarketDataService {
         return getPrice(figi, dateTime, instrument.first1MinCandleDate(), instrument.first1DayCandleDate());
     }
 
-    /**
-     * @return last price of given {@code currency} not after given {@code dateTime}
-     * @throws IllegalArgumentException    if candle not found
-     * @throws InstrumentNotFoundException if instrument not found
-     */
     public BigDecimal getPrice(final Currency currency, final OffsetDateTime dateTime) {
         if (currency.figi().equals(Currencies.RUB_FIGI)) {
             return DecimalUtils.ONE;
@@ -200,10 +171,6 @@ public class ExtMarketDataService {
         throw new IllegalArgumentException("No candles found for FIGI " + figi + " before " + dateTime);
     }
 
-    /**
-     * @return map of FIGIes to corresponding last prices. Keeps the same order for the keys as for the given {@code figies}.
-     * @throws IllegalArgumentException if there is no last price for any of the given {@code figies}.
-     */
     public SequencedMap<String, BigDecimal> getLastPrices(final List<String> figies) {
         final List<LastPrice> lastPrices = marketDataService.getLastPricesSync(figies);
         final SequencedMap<String, BigDecimal> result = new LinkedHashMap<>(figies.size(), 1);
@@ -284,12 +251,6 @@ public class ExtMarketDataService {
         return marketDataService.getTradingStatusSync(id).getTradingStatus();
     }
 
-    /**
-     * Converts the given {@code sourceValue} of the given {@code sourceCurrencyIsoName}<br/>
-     * to corresponding value of the given {@code targetCurrencyIsoName}
-     *
-     * @return conversion result
-     */
     public BigDecimal convertCurrency(final String sourceCurrencyIsoName, final String targetCurrencyIsoName, final BigDecimal sourceValue) {
         if (sourceCurrencyIsoName.equals(targetCurrencyIsoName)) {
             return sourceValue;
@@ -323,13 +284,6 @@ public class ExtMarketDataService {
         return lastPrices.get(figi);
     }
 
-    /**
-     * Converts the given {@code sourceValue} of the given {@code sourceCurrencyIsoName}<br/>
-     * to corresponding value of the given {@code targetCurrencyIsoName}<br/>
-     * by course on given {@code dateTime}
-     *
-     * @return conversion result
-     */
     public BigDecimal convertCurrency(
             final String sourceCurrencyIsoName,
             final String targetCurrencyIsoName,

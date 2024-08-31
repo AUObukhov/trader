@@ -28,9 +28,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * Proxy class, implementing {@link Row} and having additional handy methods
- */
 public class ExtendedRow implements Row {
 
     private final ExtendedSheet sheet;
@@ -66,20 +63,10 @@ public class ExtendedRow implements Row {
 
     // region additional methods
 
-    /**
-     * Creates cells with given {@code values} beginning from 0
-     *
-     * @return list of created cells
-     */
     public List<ExtendedCell> createCells(final Object... values) {
         return createCells(0, values);
     }
 
-    /**
-     * Creates cells with given {@code values} beginning from given {@code column}
-     *
-     * @return list of created cells
-     */
     public List<ExtendedCell> createCells(final int column, final Object... values) {
         final List<ExtendedCell> extendedCells = new ArrayList<>(values.length);
         int currentColumn = column;
@@ -90,19 +77,10 @@ public class ExtendedRow implements Row {
         return extendedCells;
     }
 
-    /**
-     * Same as {@link ExtendedRow#createUnitedCell(int, Object, int)} with first parameter = 0
-     */
     public void createUnitedCell(@Nullable final Object value, final int width) {
         createUnitedCell(0, value, width);
     }
 
-    /**
-     * Same as {@link ExtendedRow#createCell(int, Object)} with additional behaviour:<br/>
-     * Cells beginning with given {@code column} are united into single cell.
-     *
-     * @param width count of united cells, can't be negative
-     */
     public ExtendedCell createUnitedCell(final int column, @Nullable final Object value, final int width) {
         Assert.isTrue(width >= 0, "width can't be negative");
 
@@ -111,37 +89,6 @@ public class ExtendedRow implements Row {
         return createCell(column, value);
     }
 
-    /**
-     * Creates cell with given {@code value} in given {@code column}.<br/>
-     * <p>
-     * Differences by type of {@code value}:<br/>
-     * <p>
-     * {@link String}: Created cell gets {@link CellType#STRING} type and
-     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#STRING}.
-     * If such a style does not exist yet, then it is pre-created.<br/>
-     * <p>
-     * {@link BigDecimal}: Created cell gets {@link CellType#NUMERIC} type and
-     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#NUMERIC}.
-     * * If such a style does not exist yet, then it is pre-created.<br/>
-     * {@link Integer}: Created cell gets {@link CellType#NUMERIC} type and no style.<br/>
-     * <p>
-     * {@link OffsetDateTime}: Created cell gets {@link CellType#STRING} type and
-     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME}.
-     * * If such a style does not exist yet, then it is pre-created.<br/>
-     * <p>
-     * {@link Timestamp}: Created cell gets {@link CellType#STRING} type and
-     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME}.
-     * * If such a style does not exist yet, then it is pre-created.<br/>
-     * <p>
-     * {@link Boolean}: Created cell gets {@link CellType#BOOLEAN} type and
-     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#BOOLEAN}.
-     * If such a style does not exist yet, then it is pre-created.<br/>
-     * <p>
-     * If {@code value} is null than created cell gets {@link CellType#BLANK} type and no style.
-     *
-     * @return created cell
-     * @throws IllegalArgumentException {@code value} have invalid type
-     */
     public ExtendedCell createCell(final int column, @Nullable final Object value) {
         return switch (value) {
             case null -> (ExtendedCell) createCell(column);
@@ -161,13 +108,6 @@ public class ExtendedRow implements Row {
         };
     }
 
-    /**
-     * Create string cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#STRING} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final String value) {
         final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.STRING);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.STRING));
@@ -177,49 +117,21 @@ public class ExtendedRow implements Row {
         return cell;
     }
 
-    /**
-     * Create numeric cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final BigDecimal value) {
         final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
     }
 
-    /**
-     * Create numeric cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final Money value) {
         final BigDecimal bigDecimalValue = value == null ? null : value.getValue();
         return createCell(column, bigDecimalValue);
     }
 
-    /**
-     * Create numeric cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final MoneyValue value) {
         final BigDecimal bigDecimalValue = value == null ? null : DecimalUtils.newBigDecimal(value);
         return createCell(column, bigDecimalValue);
     }
 
-    /**
-     * Create numeric cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final Double value) {
         final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC));
@@ -229,37 +141,16 @@ public class ExtendedRow implements Row {
         return cell;
     }
 
-    /**
-     * Create numeric cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final Integer value) {
         final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
     }
 
-    /**
-     * Create numeric cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final Long value) {
         final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
     }
 
-    /**
-     * Create string cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final LocalDateTime value) {
         final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME));
@@ -269,25 +160,11 @@ public class ExtendedRow implements Row {
         return cell;
     }
 
-    /**
-     * Create string cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final OffsetDateTime value) {
         final LocalDateTime localDateTime = value == null ? null : DateUtils.toLocalDateTime(value);
         return createCell(column, localDateTime);
     }
 
-    /**
-     * Create boolean cell with given {@code value} in given {@code column}.<br/>
-     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#BOOLEAN} from workbook.
-     * If such a style does not exist yet, then it is pre-created.
-     *
-     * @return created cell
-     */
     public ExtendedCell createCell(final int column, final Boolean value) {
         final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.BOOLEAN);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.BOOLEAN));

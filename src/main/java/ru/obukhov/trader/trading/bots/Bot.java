@@ -31,10 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Contains method for trading.
- * Descendants can define own invocation order and frequency.
- */
 @Slf4j
 @RequiredArgsConstructor
 public abstract class Bot {
@@ -58,12 +54,6 @@ public abstract class Bot {
         this.strategy = strategy;
     }
 
-    /**
-     * Perform one trading step
-     *
-     * @param botConfig bot configuration
-     * @param interval  interval of cached data for strategy
-     */
     public void processBotConfig(final BotConfig botConfig, final Interval interval) {
         final List<String> figies = botConfig.figies();
         final List<OrderState> orders = ordersService.getOrders(botConfig.accountId());

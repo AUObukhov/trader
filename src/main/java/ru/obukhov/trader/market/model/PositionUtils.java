@@ -19,12 +19,6 @@ public class PositionUtils {
         return averagePositionPrice.multiply(quantity);
     }
 
-    /**
-     * @param additionalQuantity     increase of quantity
-     * @param additionalTotalPrice   increase of total price. Affects averagePositionPriceValue and expectedYield
-     * @param newCurrentPrice        new price of position
-     * @return new PortfolioPosition with additional quantity
-     */
     public Position addQuantities(
             final Position position,
             final long additionalQuantity,
@@ -48,9 +42,6 @@ public class PositionUtils {
                 .build();
     }
 
-    /**
-     * @return equal position, but with updated quantity and currentPrice
-     */
     public Position cloneWithNewValues(
             final Position position,
             final BigDecimal quantity,
@@ -70,9 +61,6 @@ public class PositionUtils {
                 .build();
     }
 
-    /**
-     * @return equal position, but with updated currentPrice
-     */
     public Position cloneWithNewCurrentPrice(final Position position, final BigDecimal currentPrice) {
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))

@@ -10,9 +10,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
 
-/**
- * Validates that at least one field of object, annotated by {@link NotAllNull}, is not null
- */
 public class NotAllNullValidator implements ConstraintValidator<NotAllNull, Object> {
 
     @Override

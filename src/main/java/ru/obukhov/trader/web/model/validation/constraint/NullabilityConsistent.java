@@ -10,9 +10,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Type, annotated by @NullabilityConsistent is validated by {@link NullabilityConsistentValidator}
- */
 @Documented
 @Constraint(validatedBy = NullabilityConsistentValidator.class)
 @Target(ElementType.TYPE)

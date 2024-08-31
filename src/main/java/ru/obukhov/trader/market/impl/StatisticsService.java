@@ -46,9 +46,6 @@ import java.util.SequencedMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Service to get extended statistics about market prices and instruments
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -62,14 +59,6 @@ public class StatisticsService {
     private final ApplicationContext applicationContext;
     private final TradingProperties tradingProperties;
 
-    /**
-     * Searches candles by conditions and calculates extra data by them
-     *
-     * @param figi           Financial Instrument Global Identifier
-     * @param interval       search interval, default {@code interval.from} is start of trading, default {@code interval.to} is now
-     * @param candleInterval candle interval
-     * @return data structure with list of found candles and extra data
-     */
     public GetCandlesResponse getExtendedCandles(
             final String figi,
             final Interval interval,
@@ -89,13 +78,6 @@ public class StatisticsService {
         return new GetCandlesResponse(candles, shortAverages, longAverages);
     }
 
-    /**
-     * Calculates weights of shares in set.
-     * Weight is (capitalization of the share) / (sum of capitalizations of all shares in the set).
-     *
-     * @param shareFigies list of set shares FIGIes
-     * @return map with given {@code shareFigies} as keys and their weights as values
-     */
     public SequencedMap<String, BigDecimal> getCapitalizationWeights(final List<String> shareFigies) {
         final SetCapitalization capitalization = getCapitalization(shareFigies);
         return capitalization.sharesCapitalizations().keySet().stream()
@@ -106,11 +88,6 @@ public class StatisticsService {
         return DecimalUtils.divide(capitalization.sharesCapitalizations().get(figi), capitalization.totalCapitalization());
     }
 
-    /**
-     * Calculates capitalizations of shares in set.
-     *
-     * @param shareFigies list of set shares FIGIes
-     */
     public SetCapitalization getCapitalization(final List<String> shareFigies) {
         final List<Share> shares = extInstrumentsService.getShares(shareFigies);
         final Map<String, BigDecimal> prices = extMarketDataService.getLastPrices(shareFigies);
@@ -477,9 +454,6 @@ public class StatisticsService {
         return extMarketDataService.convertCurrency(nominalCurrency, Currencies.RUB, dividendNominal, paymentDate);
     }
 
-    /**
-     * @return (absoluteReturn / expenses) ^ (1 / (to - from)) - 1
-     */
     private static double getRelativeAnnualReturn(
             final BigDecimal absoluteReturn,
             final BigDecimal expenses,

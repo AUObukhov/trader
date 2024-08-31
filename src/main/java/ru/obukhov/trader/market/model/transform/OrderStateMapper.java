@@ -4,9 +4,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.obukhov.trader.market.model.OrderState;
 
-/**
- * Maps {@link ru.tinkoff.piapi.contract.v1.OrderState} to {@link ru.obukhov.trader.market.model.OrderState} and vice versa
- */
 @Mapper(uses = {OrderStageMapper.class, DateTimeMapper.class, MoneyValueMapper.class})
 public interface OrderStateMapper {
 
