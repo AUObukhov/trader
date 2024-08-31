@@ -15,8 +15,14 @@ import ru.obukhov.trader.common.util.MapUtils;
 import ru.obukhov.trader.common.util.MoneyUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.*;
+import ru.obukhov.trader.market.model.Dividend;
+import ru.obukhov.trader.market.model.InstrumentMarker;
+import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.market.model.SetCapitalization;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.web.model.SharesFiltrationOptions;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.exchange.WeightedShare;
@@ -29,7 +35,14 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SequencedMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -327,7 +340,7 @@ public class StatisticsService {
         final List<Share> result = shares.stream()
                 .filter(share -> intervalIsLonger(share.first1DayCandleDate(), now, minTradingDays))
                 .toList();
-        log.info("Remaining {} shares after filtration by trading for more than {} years", result.size(), minTradingDays);
+        log.info("Remaining {} shares after filtration by trading for more than {} days", result.size(), minTradingDays);
         return result;
     }
 
