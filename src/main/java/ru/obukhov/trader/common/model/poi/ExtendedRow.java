@@ -91,7 +91,7 @@ public class ExtendedRow implements Row {
 
     public ExtendedCell createCell(final int column, @Nullable final Object value) {
         return switch (value) {
-            case null -> (ExtendedCell) createCell(column);
+            case null -> createCell(column);
             case String stringValue -> createCell(column, stringValue);
             case Money money -> createCell(column, money);
             case MoneyValue moneyValue -> createCell(column, moneyValue);
@@ -109,7 +109,7 @@ public class ExtendedRow implements Row {
     }
 
     public ExtendedCell createCell(final int column, final String value) {
-        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.STRING);
+        final ExtendedCell cell = createCell(column, CellType.STRING);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.STRING));
         if (value != null) {
             cell.setCellValue(value);
@@ -133,7 +133,7 @@ public class ExtendedRow implements Row {
     }
 
     public ExtendedCell createCell(final int column, final Double value) {
-        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
+        final ExtendedCell cell = createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC));
         if (value != null) {
             cell.setCellValue(value);
@@ -152,7 +152,7 @@ public class ExtendedRow implements Row {
     }
 
     public ExtendedCell createCell(final int column, final LocalDateTime value) {
-        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
+        final ExtendedCell cell = createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME));
         if (value != null) {
             cell.setCellValue(value);
@@ -166,7 +166,7 @@ public class ExtendedRow implements Row {
     }
 
     public ExtendedCell createCell(final int column, final Boolean value) {
-        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.BOOLEAN);
+        final ExtendedCell cell = createCell(column, CellType.BOOLEAN);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.BOOLEAN));
         if (value != null) {
             cell.setCellValue(value);
@@ -184,12 +184,12 @@ public class ExtendedRow implements Row {
     // region Row implementation
 
     @Override
-    public Cell createCell(int column) {
+    public ExtendedCell createCell(int column) {
         return createCell(column, CellType.BLANK);
     }
 
     @Override
-    public Cell createCell(int column, CellType type) {
+    public ExtendedCell createCell(int column, CellType type) {
         ExtendedCell cell = new ExtendedCell(this, delegate.createCell(column, type));
         cells.put(column, cell);
         return cell;
@@ -212,13 +212,13 @@ public class ExtendedRow implements Row {
     }
 
     @Override
-    public Cell getCell(int cellNum) {
+    public ExtendedCell getCell(int cellNum) {
         return getCell(cellNum, getWorkbook().getMissingCellPolicy());
     }
 
     @Override
-    public Cell getCell(int cellNum, MissingCellPolicy policy) {
-        Cell cell = cells.get(cellNum);
+    public ExtendedCell getCell(int cellNum, MissingCellPolicy policy) {
+        ExtendedCell cell = cells.get(cellNum);
         return switch (policy) {
             case RETURN_NULL_AND_BLANK -> cell;
             case RETURN_BLANK_AS_NULL -> cell != null && cell.getCellType() == CellType.BLANK ? null : cell;
