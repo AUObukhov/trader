@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.strategy.interfaces;
 
-import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionsData;
@@ -12,7 +11,7 @@ public interface TradingStrategy {
 
     String getName();
 
-    Map<String, Decision> decide(@NotNull final DecisionsData data, @NotNull final StrategyCache strategyCache);
+    Map<String, Decision> decide(final DecisionsData data, final StrategyCache strategyCache);
 
     StrategyCache initCache(final BotConfig botConfig, final Interval interval);
 

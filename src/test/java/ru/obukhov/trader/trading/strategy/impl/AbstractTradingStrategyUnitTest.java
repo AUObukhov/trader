@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -200,7 +199,7 @@ class AbstractTradingStrategyUnitTest {
         }
 
         @Override
-        public Map<String, Decision> decide(@NotNull final DecisionsData data, @NotNull final StrategyCache strategyCache) {
+        public Map<String, Decision> decide(final DecisionsData data, final StrategyCache strategyCache) {
             throw new NotImplementedException();
         }
 

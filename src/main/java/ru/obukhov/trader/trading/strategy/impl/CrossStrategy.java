@@ -1,9 +1,6 @@
 package ru.obukhov.trader.trading.strategy.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
@@ -52,11 +49,12 @@ public class CrossStrategy extends AbstractTradingStrategy {
     }
 
     @Override
-    public Map<String, Decision> decide(@NotNull final DecisionsData data, @NotNull final StrategyCache strategyCache) {
+    public Map<String, Decision> decide(final DecisionsData data, final StrategyCache strategyCache) {
         Assert.isTrue(data.getDecisionDataList().size() == 1, "Cross strategy supports 1 instrument only");
+        final CrossStrategyCache crossStrategyCache = (CrossStrategyCache) strategyCache;
 
         if (existsOperationStateIsUnspecified(data)) {
-            Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+            Decision decision = new Decision(DecisionAction.WAIT, null, crossStrategyCache);
             log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
             return data.getDecisionDataList().stream()
                     .collect(Collectors.toMap(decisionData -> decisionData.getShare().figi(), decisionData -> decision));
@@ -65,12 +63,12 @@ public class CrossStrategy extends AbstractTradingStrategy {
             final String figi = decisionData.getShare().figi();
 
             if (decisionData.getAvailableLots() == 0) {
-                final Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+                final Decision decision = new Decision(DecisionAction.WAIT, null, crossStrategyCache);
                 return Map.of(figi, decision);
             }
 
-            final List<BigDecimal> values = ((CrossStrategyCache) strategyCache)
-                    .getCandlesByFigies()
+            final List<BigDecimal> values = crossStrategyCache
+                    .candlesByFigies()
                     .get(figi)
                     .stream()
                     .map(Candle::getOpen)
@@ -81,7 +79,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
 
             final int index = (int) (crossStrategyParams.getIndexCoefficient() * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
-            final Decision decision = decide(decisionData, data.getCommission(), crossover, strategyCache);
+            final Decision decision = decide(decisionData, data.getCommission(), crossover, crossStrategyCache);
             return Map.of(figi, decision);
         }
     }
@@ -90,7 +88,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
             final DecisionData data,
             final BigDecimal commission,
             final Crossover crossover,
-            final StrategyCache strategyCache
+            final CrossStrategyCache strategyCache
     ) {
         return switch (crossover) {
             case BELOW -> getBuyOrWaitDecision(data, data.getAvailableLots(), strategyCache);
@@ -99,12 +97,16 @@ public class CrossStrategy extends AbstractTradingStrategy {
         };
     }
 
-    private Decision getDecisionForAboveCrossover(final DecisionData data, final BigDecimal commission, final StrategyCache strategyCache) {
+    private Decision getDecisionForAboveCrossover(final DecisionData data,
+                                                  final BigDecimal commission,
+                                                  final CrossStrategyCache strategyCache) {
         final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
+        final Float minimumProfit = crossStrategyParams.getMinimumProfit();
         final boolean greedy = crossStrategyParams.getGreedy();
-        final List<Candle> candles = ((CrossStrategyCache) strategyCache).getCandlesByFigies().get(data.getShare().figi());
+
+        final List<Candle> candles = strategyCache.candlesByFigies().get(data.getShare().figi());
         final BigDecimal currentPrice = candles.getLast().getClose();
-        Decision decision = getSellOrWaitDecision(data, currentPrice, commission, crossStrategyParams.getMinimumProfit(), strategyCache);
+        Decision decision = getSellOrWaitDecision(data, currentPrice, commission, minimumProfit, strategyCache);
         if (greedy && decision.getAction() == DecisionAction.WAIT) {
             decision = getBuyOrWaitDecision(data, 1, strategyCache);
         }
@@ -112,7 +114,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
     }
 
     private Decision getDecisionForNoCrossover(final StrategyCache strategyCache) {
-        Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+        final Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);
         if (log.isDebugEnabled()) {
             log.debug("No crossover at expected position. Decision is {}", decision.toPrettyString());
         }
@@ -130,10 +132,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
         return new CrossStrategyCache(candlesByFigies);
     }
 
-    @Getter
-    @AllArgsConstructor
-    private static class CrossStrategyCache implements StrategyCache {
-        private final Map<String, List<Candle>> candlesByFigies;
+    private record CrossStrategyCache(Map<String, List<Candle>> candlesByFigies) implements StrategyCache {
     }
 
 }

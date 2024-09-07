@@ -3,7 +3,6 @@ package ru.obukhov.trader.trading.strategy.impl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -35,7 +34,7 @@ public class ConservativeStrategy extends AbstractTradingStrategy {
     }
 
     @Override
-    public Map<String, Decision> decide(@NotNull final DecisionsData data, @NotNull final StrategyCache strategyCache) {
+    public Map<String, Decision> decide(final DecisionsData data, final StrategyCache strategyCache) {
         Assert.isTrue(data.getDecisionDataList().size() == 1, "Conservative strategy supports 1 instrument only");
 
         if (existsOperationStateIsUnspecified(data)) {
