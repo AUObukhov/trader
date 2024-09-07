@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -17,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.poi.ExtendedCell;
+import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
@@ -37,6 +40,7 @@ import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.WeightedShare;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -883,6 +887,147 @@ class ExcelServiceImplUnitTest {
         final List<BigDecimal> longAverages = averager.getAverages(opens, 5);
 
         return new GetCandlesResponse(candles, shortAverages, longAverages);
+    }
+
+    // endregion
+
+    // region saveWeightedShares tests
+
+    @Test
+    void saveWeightedShares_createsAndSaveWorkbook() throws IOException {
+        final WeightedShare weightedShare1 = TestData.newWeightedShare(
+                TestShares.SBER,
+                254.45,
+                17.470523,
+                10,
+                2544.5,
+                860,
+                218827,
+                0.361486813,
+                -0.516703725
+        );
+        final WeightedShare weightedShare2 = TestData.newWeightedShare(
+                TestShares.SELIGDAR,
+                49.37,
+                0.1615839,
+                10,
+                493.7,
+                100,
+                4937,
+                0.008155577,
+                -0.801873117
+        );
+        final WeightedShare weightedShare3 = TestData.newWeightedShare(
+                TestShares.SPB_BANK,
+                349.3,
+                0.5129306,
+                10,
+                3493,
+                10,
+                3493,
+                0.00577019,
+                -0.111068142
+        );
+
+        final List<WeightedShare> weightedShares = List.of(weightedShare1, weightedShare2, weightedShare3);
+
+        excelService.saveWeightedShares(weightedShares);
+
+        final String fileNamePrefix = "Weighted shares";
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet("Sheet0");
+
+        Assertions.assertEquals(5, sheet.getRowsCount());
+
+        final Iterator<Row> rowIterator = sheet.iterator();
+
+        AssertUtils.assertRowValues(
+                rowIterator.next(),
+                "тикер",
+                "название",
+                "цена",
+                "вес в индексе",
+                "размер лота",
+                "лотов в портфеле",
+                "стоимость лота",
+                "акций в портфеле",
+                "стоимость в портфеле",
+                "вес в портфеле",
+                "надо докупить, %"
+        );
+
+        String stringStyle = ExtendedWorkbook.CellStylesNames.STRING;
+        String numericStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        String percentStyle = ExtendedWorkbook.CellStylesNames.PERCENT;
+        for (int i = 0; i < weightedShares.size(); i++) {
+            final WeightedShare weightedShare = weightedShares.get(i);
+            final int index = 2 + i;
+            final ExtendedRow row = (ExtendedRow) rowIterator.next();
+            Assertions.assertEquals(11, row.getPhysicalNumberOfCells());
+
+            final ExtendedCell cell0 = row.getCell(0);
+            AssertUtils.assertCell(cell0, CellType.STRING, stringStyle, weightedShare.getTicker());
+
+            final ExtendedCell cell1 = row.getCell(1);
+            AssertUtils.assertCell(cell1, CellType.STRING, stringStyle, weightedShare.getName());
+
+            final ExtendedCell cell2 = row.getCell(2);
+            AssertUtils.assertCell(cell2, CellType.NUMERIC, numericStyle, weightedShare.getPriceRub());
+
+            final ExtendedCell cell3 = row.getCell(3);
+            AssertUtils.assertCell(cell3, CellType.NUMERIC, percentStyle, weightedShare.getCapitalizationWeight());
+
+            final ExtendedCell cell4 = row.getCell(4);
+            AssertUtils.assertCell(cell4, CellType.NUMERIC, numericStyle, weightedShare.getLot());
+
+            final ExtendedCell cell5 = row.getCell(5);
+            final int expectedLotsQuantity = weightedShare.getPortfolioSharesQuantity() / weightedShare.getLot();
+            AssertUtils.assertCell(cell5, CellType.NUMERIC, numericStyle, expectedLotsQuantity);
+
+            final ExtendedCell cell6 = row.getCell(6);
+            AssertUtils.assertCell(cell6, CellType.FORMULA, numericStyle, "C" + index + "*E" + index);
+
+            final ExtendedCell cell7 = row.getCell(7);
+            AssertUtils.assertCell(cell7, CellType.FORMULA, numericStyle, "E" + index + "*F" + index);
+
+            final ExtendedCell cell8 = row.getCell(8);
+            AssertUtils.assertCell(cell8, CellType.FORMULA, numericStyle, "C" + index + "*H" + index);
+
+            final ExtendedCell cell9 = row.getCell(9);
+            AssertUtils.assertCell(cell9, CellType.FORMULA, percentStyle, "I" + index + "/I$" + (weightedShares.size() + 2));
+
+            final ExtendedCell cell10 = row.getCell(10);
+            AssertUtils.assertCell(cell10, CellType.FORMULA, percentStyle, "(D" + index + "-J" + index + ")/J" + index);
+        }
+
+        final ExtendedRow row = (ExtendedRow) rowIterator.next();
+        Assertions.assertEquals(4, row.getPhysicalNumberOfCells());
+
+        final ExtendedCell cell0 = row.getCell(0);
+        AssertUtils.assertCell(cell0, CellType.STRING, stringStyle, "Итого");
+
+        final ExtendedCell cell3 = row.getCell(3);
+        AssertUtils.assertCell(cell3, CellType.FORMULA, percentStyle, "SUM(D2:D" + (weightedShares.size() + 1) + ")");
+
+        final ExtendedCell cell8 = row.getCell(8);
+        AssertUtils.assertCell(cell8, CellType.FORMULA, numericStyle, "SUM(I2:I" + (weightedShares.size() + 1) + ")");
+
+        final ExtendedCell cell9 = row.getCell(9);
+        AssertUtils.assertCell(cell9, CellType.FORMULA, percentStyle, "SUM(J2:J" + (weightedShares.size() + 1) + ")");
+    }
+
+    @Test
+    void saveWeightedShares_catchesIOExceptionOfFileSaving() throws IOException {
+        final String fileNamePrefix = "Weighted shares";
+        Mockito.doThrow(new IOException())
+                .when(excelFileService)
+                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith(fileNamePrefix));
+
+        Assertions.assertDoesNotThrow(() -> excelService.saveWeightedShares(List.of()));
     }
 
     // endregion

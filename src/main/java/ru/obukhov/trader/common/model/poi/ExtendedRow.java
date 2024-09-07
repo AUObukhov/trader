@@ -108,6 +108,17 @@ public class ExtendedRow implements Row {
         };
     }
 
+    public ExtendedCell createFormulaCell(final int column, final String value) {
+        return createFormulaCell(column, value, ExtendedWorkbook.CellStylesNames.NUMERIC);
+    }
+
+    public ExtendedCell createFormulaCell(final int column, final String value, final String cellStyle) {
+        final ExtendedCell cell = createCell(column, CellType.FORMULA);
+        cell.setCellStyle(getWorkbook().getOrCreateCellStyle(cellStyle));
+        cell.setCellFormula(value);
+        return cell;
+    }
+
     public ExtendedCell createCell(final int column, final String value) {
         final ExtendedCell cell = createCell(column, CellType.STRING);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.STRING));
@@ -115,11 +126,6 @@ public class ExtendedRow implements Row {
             cell.setCellValue(value);
         }
         return cell;
-    }
-
-    public ExtendedCell createCell(final int column, final BigDecimal value) {
-        final Double doubleValue = value == null ? null : value.doubleValue();
-        return createCell(column, doubleValue);
     }
 
     public ExtendedCell createCell(final int column, final Money value) {
@@ -132,9 +138,22 @@ public class ExtendedRow implements Row {
         return createCell(column, bigDecimalValue);
     }
 
+    public ExtendedCell createCell(final int column, final BigDecimal value) {
+        return createCell(column, value, ExtendedWorkbook.CellStylesNames.NUMERIC);
+    }
+
+    public ExtendedCell createCell(final int column, final BigDecimal value, final String cellStyle) {
+        final Double doubleValue = value == null ? null : value.doubleValue();
+        return createCell(column, doubleValue, cellStyle);
+    }
+
     public ExtendedCell createCell(final int column, final Double value) {
+        return createCell(column, value, ExtendedWorkbook.CellStylesNames.NUMERIC);
+    }
+
+    public ExtendedCell createCell(final int column, final Double value, final String cellStyle) {
         final ExtendedCell cell = createCell(column, CellType.NUMERIC);
-        cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC));
+        cell.setCellStyle(getWorkbook().getOrCreateCellStyle(cellStyle));
         if (value != null) {
             cell.setCellValue(value);
         }

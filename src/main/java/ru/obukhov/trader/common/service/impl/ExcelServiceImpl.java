@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.MarkerStyle;
@@ -17,6 +18,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedChart;
 import ru.obukhov.trader.common.model.poi.ExtendedChartData;
+import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.model.poi.MarkerProperties;
@@ -33,13 +35,14 @@ import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.WeightedShare;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -82,8 +85,14 @@ public class ExcelServiceImpl implements ExcelService {
     public void saveCandles(final String figi, final Interval interval, final GetCandlesResponse response) {
         final ExtendedWorkbook workBook = createWorkBook();
         createSheet(workBook, figi, interval, response);
-
         saveToFile(workBook, "Candles for FIGI '" + figi + "'");
+    }
+
+    @Override
+    public void saveWeightedShares(final List<WeightedShare> weightedShares) {
+        final ExtendedWorkbook workBook = createWorkBook();
+        createSheet(workBook, weightedShares);
+        saveToFile(workBook, "Weighted shares");
     }
 
     private void saveToFile(final ExtendedWorkbook workBook, final String fileName) {
@@ -146,6 +155,102 @@ public class ExcelServiceImpl implements ExcelService {
         sheet.autoSizeColumns();
 
         putChartWithAverages(sheet, response);
+    }
+
+    private void createSheet(final ExtendedWorkbook workbook, final List<WeightedShare> weightedShares) {
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
+
+        final int tickerColumn = 0;
+        final int nameColumn = 1;
+        final int priceRubColumn = 2;
+        final int capitalizationWeightColumn = 3;
+        final int lotColumn = 4;
+        final int portfolioLotQuantityColumn = 5;
+        final int lotPriceColumn = 6;
+        final int portfolioSharesQuantityColumn = 7;
+        final int totalPriceRubColumn = 8;
+        final int portfolioWeightColumn = 9;
+        final int needToBuyColumn = 10;
+
+        final String tickerHeader = "тикер";
+        final String nameHeader = "название";
+        final String priceRubHeader = "цена";
+        final String capitalizationWeightHeader = "вес в индексе";
+        final String lotHeader = "размер лота";
+        final String portfolioLotsHeader = "лотов в портфеле";
+        final String lotPriceRubHeader = "стоимость лота";
+        final String shareQuantityHeader = "акций в портфеле";
+        final String totalPriceRubHeader = "стоимость в портфеле";
+        final String portfolioWeightHeader = "вес в портфеле";
+        final String needToBuyHeader = "надо докупить, %";
+
+        final ExtendedRow headerRow = sheet.addRow();
+        headerRow.createCell(tickerColumn, tickerHeader);
+        headerRow.createCell(nameColumn, nameHeader);
+        headerRow.createCell(priceRubColumn, priceRubHeader);
+        headerRow.createCell(capitalizationWeightColumn, capitalizationWeightHeader);
+        headerRow.createCell(lotColumn, lotHeader);
+        headerRow.createCell(portfolioLotQuantityColumn, portfolioLotsHeader);
+        headerRow.createCell(lotPriceColumn, lotPriceRubHeader);
+        headerRow.createCell(portfolioSharesQuantityColumn, shareQuantityHeader);
+        headerRow.createCell(totalPriceRubColumn, totalPriceRubHeader);
+        headerRow.createCell(portfolioWeightColumn, portfolioWeightHeader);
+        headerRow.createCell(needToBuyColumn, needToBuyHeader);
+
+        String percentCellStyle = ExtendedWorkbook.CellStylesNames.PERCENT;
+        for (int i = 0; i < weightedShares.size(); i++) {
+            final int index = i + 2;
+            final WeightedShare weightedShare = weightedShares.get(i);
+
+            final String priceCell = CellReference.convertNumToColString(priceRubColumn) + index;
+            final String lotCell = CellReference.convertNumToColString(lotColumn) + index;
+            final String portfolioLotQuantityCell =
+                    CellReference.convertNumToColString(portfolioLotQuantityColumn) + index;
+            final String portfolioSharesQuantityCell =
+                    CellReference.convertNumToColString(portfolioSharesQuantityColumn) + index;
+            final String totalPriceRubCell = CellReference.convertNumToColString(totalPriceRubColumn) + index;
+            final String totalPriceRubSumCell =
+                    CellReference.convertNumToColString(totalPriceRubColumn) + "$" + (weightedShares.size() + 2);
+            final String capitalizationWeightCell =
+                    CellReference.convertNumToColString(capitalizationWeightColumn) + index;
+            final String portfolioWeightCell = CellReference.convertNumToColString(portfolioWeightColumn) + index;
+
+            final ExtendedRow row = sheet.addRow();
+            row.createCell(tickerColumn, weightedShare.getTicker());
+            row.createCell(nameColumn, weightedShare.getName());
+            row.createCell(priceRubColumn, weightedShare.getPriceRub());
+            row.createCell(capitalizationWeightColumn, weightedShare.getCapitalizationWeight(), percentCellStyle);
+            row.createCell(lotColumn, weightedShare.getLot());
+
+            final int portfolioLotQuantity = weightedShare.getPortfolioSharesQuantity() / weightedShare.getLot();
+            row.createCell(portfolioLotQuantityColumn, portfolioLotQuantity);
+
+            row.createFormulaCell(lotPriceColumn, priceCell + "*" + lotCell);
+            row.createFormulaCell(portfolioSharesQuantityColumn, lotCell + "*" + portfolioLotQuantityCell);
+            row.createFormulaCell(totalPriceRubColumn, priceCell + "*" + portfolioSharesQuantityCell);
+
+            final String portfolioWeightFormula = totalPriceRubCell + "/" + totalPriceRubSumCell;
+            row.createFormulaCell(portfolioWeightColumn, portfolioWeightFormula, percentCellStyle);
+
+            final String needToBuyFormula = "(" + capitalizationWeightCell + "-" + portfolioWeightCell + ")/"
+                    + portfolioWeightCell;
+            row.createFormulaCell(needToBuyColumn, needToBuyFormula, percentCellStyle);
+        }
+
+        int lastRowIndex = weightedShares.size() + 1;
+
+        final ExtendedRow summaryRow = sheet.addRow();
+        summaryRow.createCell(0, "Итого");
+
+        final String indexWeightFormula = "SUM(D2:D" + lastRowIndex + ")";
+        summaryRow.createFormulaCell(capitalizationWeightColumn, indexWeightFormula, percentCellStyle);
+
+        summaryRow.createFormulaCell(totalPriceRubColumn, "SUM(I2:I" + lastRowIndex + ")");
+
+        final String portfolioWeightFormula = "SUM(J2:J" + lastRowIndex + ")";
+        summaryRow.createFormulaCell(portfolioWeightColumn, portfolioWeightFormula, percentCellStyle);
+
+        sheet.autoSizeColumns();
     }
 
     private void putBotConfig(final ExtendedSheet sheet, final BotConfig botConfig) {

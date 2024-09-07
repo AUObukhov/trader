@@ -38,7 +38,7 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.awt.Color;
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -305,7 +305,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertCellAttributes(
+    public static void assertCell(
             final ExtendedCell cell,
             final ExtendedRow extendedRow,
             final int column,
@@ -315,12 +315,20 @@ public class AssertUtils {
     ) {
         Assertions.assertSame(extendedRow, cell.getRow());
         Assertions.assertEquals(column, cell.getColumnIndex());
-        Assertions.assertEquals(cellType, cell.getCellType());
+        assertCell(cell, cellType, cellStyleName, value);
+    }
 
-        final CellStyle expectedCellStyle = extendedRow.getWorkbook().getCellStyle(cellStyleName);
+    public static void assertCell(
+            final ExtendedCell cell,
+            final CellType expectedCellType,
+            final String expectedCellStyleName,
+            final Object expectedValue
+    ) {
+        Assertions.assertEquals(expectedCellType, cell.getCellType());
+        final CellStyle expectedCellStyle = cell.getWorkbook().getCellStyle(expectedCellStyleName);
         Assertions.assertEquals(expectedCellStyle, cell.getCellStyle());
 
-        assertCellValue(cell, value);
+        assertCellValue(cell, expectedValue);
     }
 
     public static void assertCellValue(final Cell cell, final Object value) {
@@ -351,6 +359,10 @@ public class AssertUtils {
 
             case BOOLEAN:
                 assertCellValue(cell, (Boolean) value);
+                break;
+
+            case FORMULA:
+                assertCellFormulaValue(cell, (String) value);
                 break;
 
             default:
@@ -401,6 +413,11 @@ public class AssertUtils {
     public static void assertCellValue(final Cell cell, final Timestamp value) {
         final Date expectedValue = Date.from(TimestampUtils.toInstant(value));
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
+    }
+
+    public static void assertCellFormulaValue(final Cell cell, final String value) {
+        final String exceptedValue = value == null ? StringUtils.EMPTY : value;
+        Assertions.assertEquals(exceptedValue, cell.getCellFormula());
     }
 
     public static void assertSeriesColor(final XDDFLineChartData.Series series, final Color color) {

@@ -83,59 +83,23 @@ class ExtendedRowUnitTest {
 
         Assertions.assertEquals(values.length, cells.size());
 
-        AssertUtils.assertCellAttributes(
-                cells.getFirst(),
-                extendedRow,
-                0,
-                CellType.BLANK,
-                ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1",
-                values[0]
-        );
+        final String expectedCellStyle0 = ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1";
+        AssertUtils.assertCell(cells.getFirst(), extendedRow, 0, CellType.BLANK, expectedCellStyle0, values[0]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(1),
-                extendedRow,
-                1,
-                CellType.STRING,
-                ExtendedWorkbook.CellStylesNames.STRING,
-                values[1]
-        );
+        final String expectedCellStyle1 = ExtendedWorkbook.CellStylesNames.STRING;
+        AssertUtils.assertCell(cells.get(1), extendedRow, 1, CellType.STRING, expectedCellStyle1, values[1]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(2),
-                extendedRow,
-                2,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[2]
-        );
+        final String expectedCellStyle2 = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cells.get(2), extendedRow, 2, CellType.NUMERIC, expectedCellStyle2, values[2]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(3),
-                extendedRow,
-                3,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[3]
-        );
+        final String expectedCellStyle3 = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cells.get(3), extendedRow, 3, CellType.NUMERIC, expectedCellStyle3, values[3]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(4),
-                extendedRow,
-                4,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[4]
-        );
+        final String expectedCellStyle4 = ExtendedWorkbook.CellStylesNames.DATE_TIME;
+        AssertUtils.assertCell(cells.get(4), extendedRow, 4, CellType.NUMERIC, expectedCellStyle4, values[4]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(5),
-                extendedRow,
-                5,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[5]
-        );
+        final String expectedCellStyle5 = ExtendedWorkbook.CellStylesNames.DATE_TIME;
+        AssertUtils.assertCell(cells.get(5), extendedRow, 5, CellType.NUMERIC, expectedCellStyle5, values[5]);
     }
 
     @Test
@@ -155,59 +119,28 @@ class ExtendedRowUnitTest {
 
         Assertions.assertEquals(values.length, cells.size());
 
-        AssertUtils.assertCellAttributes(
-                cells.getFirst(),
-                extendedRow,
-                column,
-                CellType.BLANK,
-                ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1",
-                values[0]
-        );
+        final String expectedCellStyle0 = ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1";
+        AssertUtils.assertCell(cells.get(0), extendedRow, column, CellType.BLANK, expectedCellStyle0, values[0]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(1),
-                extendedRow,
-                column + 1,
-                CellType.STRING,
-                ExtendedWorkbook.CellStylesNames.STRING,
-                values[1]
-        );
+        final String expectedCellStyle1 = ExtendedWorkbook.CellStylesNames.STRING;
+        final int column1 = column + 1;
+        AssertUtils.assertCell(cells.get(1), extendedRow, column1, CellType.STRING, expectedCellStyle1, values[1]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(2),
-                extendedRow,
-                column + 2,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[2]
-        );
+        final String expectedCellStyle2 = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        final int column2 = column + 2;
+        AssertUtils.assertCell(cells.get(2), extendedRow, column2, CellType.NUMERIC, expectedCellStyle2, values[2]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(3),
-                extendedRow,
-                column + 3,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[3]
-        );
+        final String expectedCellStyle3 = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        final int column3 = column + 3;
+        AssertUtils.assertCell(cells.get(3), extendedRow, column3, CellType.NUMERIC, expectedCellStyle3, values[3]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(4),
-                extendedRow,
-                column + 4,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[4]
-        );
+        final String expectedCellStyle4 = ExtendedWorkbook.CellStylesNames.DATE_TIME;
+        final int column4 = column + 4;
+        AssertUtils.assertCell(cells.get(4), extendedRow, column4, CellType.NUMERIC, expectedCellStyle4, values[4]);
 
-        AssertUtils.assertCellAttributes(
-                cells.get(5),
-                extendedRow,
-                column + 5,
-                CellType.NUMERIC,
-                ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[5]
-        );
+        final String expectedCellStyle5 = ExtendedWorkbook.CellStylesNames.DATE_TIME;
+        final int column5 = column + 5;
+        AssertUtils.assertCell(cells.get(5), extendedRow, column5, CellType.NUMERIC, expectedCellStyle5, values[5]);
     }
 
     // endregion
@@ -245,7 +178,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1";
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.BLANK, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.BLANK, expectedCellStyle, value);
     }
 
     @Test
@@ -257,7 +190,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.STRING;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.STRING, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.STRING, expectedCellStyle, value);
     }
 
     @Test
@@ -269,7 +202,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -281,7 +214,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -294,7 +227,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -306,7 +239,35 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    // endregion
+
+    // region createFormulaCell
+
+    @Test
+    void createFormulaCell_noCellStyle() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "A1+A2";
+
+        final ExtendedCell cell = extendedRow.createFormulaCell(column, value);
+
+        String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.FORMULA, expectedCellStyle, value);
+    }
+
+    @Test
+    void createFormulaCell_withCellStyle() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "A1+A2";
+        final String cellStyle = ExtendedWorkbook.CellStylesNames.STRING;
+
+        final ExtendedCell cell = extendedRow.createFormulaCell(column, value, cellStyle);
+
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.FORMULA, cellStyle, value);
     }
 
     // endregion
@@ -322,7 +283,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.STRING;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.STRING, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.STRING, expectedCellStyle, value);
     }
 
     @Test
@@ -334,7 +295,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.STRING;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.STRING, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.STRING, expectedCellStyle, value);
     }
 
     // endregion
@@ -350,7 +311,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -362,7 +323,35 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    // endregion
+
+    // region createCell with BigDecimal and cellStyle value tests
+
+    @Test
+    void createCell_withBigDecimalValue_andCellStyle_whenValueIsNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final BigDecimal value = null;
+        final String cellStyle = ExtendedWorkbook.CellStylesNames.PERCENT;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value, cellStyle);
+
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, cellStyle, value);
+    }
+
+    @Test
+    void createCell_withBigDecimalValue_andCellStyle_whenValueIsNotNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final BigDecimal value = BigDecimal.TEN;
+        final String cellStyle = ExtendedWorkbook.CellStylesNames.PERCENT;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value, cellStyle);
+
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, cellStyle, value);
     }
 
     // endregion
@@ -378,7 +367,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -390,7 +379,35 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    // endregion
+
+    // region createCell with Double value tests
+
+    @Test
+    void createCell_withDoubleValue_andCellStyle_whenValueIsNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Double value = null;
+        final String cellStyle = ExtendedWorkbook.CellStylesNames.PERCENT;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value, cellStyle);
+
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, cellStyle, value);
+    }
+
+    @Test
+    void createCell_withDoubleValue_andCellStyle_whenValueIsNotNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Double value = 10d;
+        final String cellStyle = ExtendedWorkbook.CellStylesNames.PERCENT;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value, cellStyle);
+
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, cellStyle, value);
     }
 
     // endregion
@@ -406,7 +423,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -418,7 +435,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     // endregion
@@ -434,7 +451,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -447,7 +464,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     // endregion
@@ -463,7 +480,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     @Test
@@ -475,7 +492,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
     // endregion
@@ -491,7 +508,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.BOOLEAN;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.BOOLEAN, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.BOOLEAN, expectedCellStyle, value);
     }
 
     @Test
@@ -503,7 +520,7 @@ class ExtendedRowUnitTest {
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
         final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.BOOLEAN;
-        AssertUtils.assertCellAttributes(cell, extendedRow, column, CellType.BOOLEAN, expectedCellStyle, value);
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.BOOLEAN, expectedCellStyle, value);
     }
 
     // endregion

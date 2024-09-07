@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -43,7 +44,11 @@ import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SequencedMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -858,9 +863,9 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 getArgumentsForGetWeightedShares_minTradingDaysNull(),
                 getArgumentsForGetWeightedShares_minTradingDays365(),
                 getArgumentsForGetWeightedShares_havingDividendsWithinDaysNull(),
-                getArgumentsForGetWeightedShares_havingDividendsWithinDays2000(),
-                getArgumentsForGetWeightedShares_excludeFiltrationByRegularInvestingAnnualReturns(),
-                getArgumentsForGetWeightedShares_fullFiltration()
+                getArgumentsForGetWeightedShares_havingDividendsWithinDays2000_saveToFileIsTrue(),
+                getArgumentsForGetWeightedShares_excludeFiltrationByRegularInvestingAnnualReturns_saveToFileIsFalse(),
+                getArgumentsForGetWeightedShares_fullFiltration_saveToFileIsNull()
         );
     }
 
@@ -975,7 +980,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 weightedShareWush
         );
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_currenciesNull() {
@@ -1011,7 +1016,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final List<WeightedShare> expectedResult = List.of(weightedShareApple, weightedShareSpb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_currenciesEmpty() {
@@ -1048,7 +1053,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareApple, weightedShareSpb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_currenciesUsd() {
@@ -1086,7 +1091,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareMicrosoft, weightedShareApple);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_apiTradeAvailableFlagNull() {
@@ -1122,7 +1127,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareBspb, weightedShareTrcn);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_apiTradeAvailableFlagFalse() {
@@ -1150,7 +1155,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareTrcn);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_forQualInvestorFlagNull() {
@@ -1188,7 +1193,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_forQualInvestorFlagTrue() {
@@ -1218,7 +1223,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_forIisFlagNull() {
@@ -1256,7 +1261,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_forIisFlagFalse() {
@@ -1286,7 +1291,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_shareTypesNull() {
@@ -1324,7 +1329,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_shareTypesEmpty() {
@@ -1362,7 +1367,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_shareTypesAdr() {
@@ -1392,7 +1397,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareSelg);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_minTradingDaysNull() {
@@ -1428,7 +1433,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareBspb, weightedShareWush);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_minTradingDays365() {
@@ -1464,7 +1469,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareBspb, weightedShareWush);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
     private static Arguments getArgumentsForGetWeightedShares_havingDividendsWithinDaysNull() {
@@ -1508,10 +1513,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedSharePikk, weightedShareRbcm, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetWeightedShares_havingDividendsWithinDays2000() {
+    private static Arguments getArgumentsForGetWeightedShares_havingDividendsWithinDays2000_saveToFileIsTrue() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.GAZPROM,
@@ -1544,10 +1549,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedSharePikk, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, true, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetWeightedShares_excludeFiltrationByRegularInvestingAnnualReturns() {
+    private static Arguments getArgumentsForGetWeightedShares_excludeFiltrationByRegularInvestingAnnualReturns_saveToFileIsFalse() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -1559,7 +1564,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
 
-        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS.withFilterByRegularInvestingAnnualReturns(false);
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS
+                .withFilterByRegularInvestingAnnualReturns(false);
 
         final WeightedShare weightedSharePikk = TestData.newWeightedShare(
                 TestShares.GAZPROM,
@@ -1580,10 +1586,10 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedSharePikk, weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, false, expectedResult);
     }
 
-    private static Arguments getArgumentsForGetWeightedShares_fullFiltration() {
+    private static Arguments getArgumentsForGetWeightedShares_fullFiltration_saveToFileIsNull() {
         final List<TestShare> shares = List.of(
                 TestShares.SPB_BANK,
                 TestShares.PIK,
@@ -1594,6 +1600,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         );
 
         final Map<String, Portfolio> accountsToPortfolios = getAccountsToPortfoliosArgument();
+
+        final SharesFiltrationOptions filtrationOptions = TestData.BASIC_SHARE_FILTRATION_OPTIONS;
 
         final WeightedShare weightedShareBspb = TestData.newWeightedShare(
                 TestShares.SPB_BANK,
@@ -1606,7 +1614,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<WeightedShare> expectedResult = List.of(weightedShareBspb);
 
-        return Arguments.of(accountsToPortfolios, shares, TestData.BASIC_SHARE_FILTRATION_OPTIONS, expectedResult);
+        return Arguments.of(accountsToPortfolios, shares, filtrationOptions, null, expectedResult);
     }
 
     private static Map<String, Portfolio> getAccountsToPortfoliosArgument() {
@@ -1636,6 +1644,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
             final Map<String, Portfolio> accountsToPortfolios,
             final List<TestShare> shares,
             final SharesFiltrationOptions filtrationOptions,
+            final Boolean saveToFile,
             final List<WeightedShare> expectedResult
     ) throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.newDateTime(2024, 6, 1);
@@ -1649,15 +1658,27 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final String requestString = TestUtils.OBJECT_MAPPER.writeValueAsString(filtrationOptions);
 
         try (@SuppressWarnings("unused") final MockedStatic<OffsetDateTime> dateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            final MockHttpServletRequestBuilder requestBuilder =
+            MockHttpServletRequestBuilder requestBuilder =
                     MockMvcRequestBuilders.get("/trader/statistics/weighted-shares")
                             .param("accountIds", String.join(",", accountsToPortfolios.keySet()))
                             .content(requestString)
                             .contentType(MediaType.APPLICATION_JSON);
-
+            if (saveToFile != null) {
+                requestBuilder = requestBuilder.param("saveToFile", String.valueOf(saveToFile));
+            }
             final String expectedResponse = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResult);
 
             assertResponse(requestBuilder, expectedResponse);
+            assertSavingToFile(saveToFile, expectedResult);
+        }
+    }
+
+    private void assertSavingToFile(final Boolean saveToFile, final List<WeightedShare> expectedResult) {
+        if (BooleanUtils.isTrue(saveToFile)) {
+            Mockito.verify(excelService, Mockito.times(1))
+                    .saveWeightedShares(Mockito.eq(expectedResult));
+        } else {
+            Mockito.verify(excelService, Mockito.never()).saveWeightedShares(Mockito.any());
         }
     }
 

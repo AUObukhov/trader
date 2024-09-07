@@ -512,4 +512,30 @@ public class TestData {
         );
     }
 
+    public static WeightedShare newWeightedShare(
+            final TestShare testShare,
+            final double priceRub,
+            final double capitalizationWeight,
+            final int lot,
+            final double lotPriceRub,
+            final int portfolioSharesQuantity,
+            final double totalPriceRub,
+            final double portfolioWeight,
+            final double needToBuy
+    ) {
+        return new WeightedShare(
+                testShare.getFigi(),
+                testShare.getTicker(),
+                testShare.getName(),
+                DecimalUtils.setDefaultScale(priceRub),
+                DecimalUtils.setDefaultScale(capitalizationWeight),
+                lot,
+                DecimalUtils.setDefaultScale(lotPriceRub),
+                portfolioSharesQuantity,
+                DecimalUtils.setDefaultScale(totalPriceRub),
+                DecimalUtils.setDefaultScale(portfolioWeight),
+                DecimalUtils.setDefaultScale(needToBuy)
+        );
+    }
+
 }

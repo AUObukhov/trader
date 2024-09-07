@@ -6,7 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.impl.StatisticsService;
@@ -83,9 +87,14 @@ public class StatisticsController {
     @GetMapping("/weighted-shares")
     public List<WeightedShare> getWeightedShares(
             @RequestParam @NotEmpty(message = "accountIds is mandatory") final List<String> accountIds,
-            @RequestBody final SharesFiltrationOptions filtrationOptions
+            @RequestBody final SharesFiltrationOptions filtrationOptions,
+            @RequestParam(required = false, defaultValue = "false") final boolean saveToFile
     ) {
-        return statisticsService.getWeightedShares(accountIds, filtrationOptions);
+        final List<WeightedShare> weightedShares = statisticsService.getWeightedShares(accountIds, filtrationOptions);
+        if (saveToFile) {
+            excelService.saveWeightedShares(weightedShares);
+        }
+        return weightedShares;
     }
 
 }
