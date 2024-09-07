@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -297,7 +296,11 @@ class ExtOperationsServiceUnitTest {
         private final Map<String, WithdrawLimits> withdrawLimits;
 
         @Override
-        public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
+        public List<Operation> getOperations(
+                final String accountId,
+                final Interval interval,
+                @Nullable final String figi
+        ) {
             return null;
         }
 

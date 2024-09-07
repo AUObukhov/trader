@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -84,7 +83,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     }
 
     @Override
-    public void cancelOrder(final String accountId, @NotNull String orderId) {
+    public void cancelOrder(final String accountId, final String orderId) {
         throw new UnsupportedOperationException("Back test does not support cancelling of orders");
     }
 

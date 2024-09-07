@@ -2,7 +2,6 @@ package ru.obukhov.trader.common.util;
 
 import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.util.Assert;
@@ -137,7 +136,7 @@ public class DateUtils {
         return (daysCount & 1) == 1 ? endOfDay.plusDays(1) : endOfDay;
     }
 
-    public static OffsetDateTime toStartOfWeek(@NotNull final OffsetDateTime dateTime) {
+    public static OffsetDateTime toStartOfWeek(final OffsetDateTime dateTime) {
         return toStartOfDay(dateTime).minusDays(dateTime.getDayOfWeek().getValue() - 1L);
     }
 

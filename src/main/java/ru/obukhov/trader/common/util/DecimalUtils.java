@@ -1,7 +1,6 @@
 package ru.obukhov.trader.common.util;
 
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -40,13 +39,13 @@ public class DecimalUtils {
                 : newBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
     }
 
-    public static int getNano(@NotNull final BigDecimal bigDecimal) {
+    public static int getNano(final BigDecimal bigDecimal) {
         return bigDecimal.remainder(BigDecimal.ONE)
                 .movePointRight(DEFAULT_SCALE)
                 .intValue();
     }
 
-    public static Quotation toQuotation(@NotNull final BigDecimal bigDecimal) {
+    public static Quotation toQuotation(final BigDecimal bigDecimal) {
         return Quotation.newBuilder()
                 .setUnits(bigDecimal.longValue())
                 .setNano(getNano(bigDecimal))

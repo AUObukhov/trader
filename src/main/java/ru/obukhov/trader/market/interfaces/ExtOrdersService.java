@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.interfaces;
 
-import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.market.model.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -24,5 +23,5 @@ public interface ExtOrdersService {
             String orderId
     );
 
-    void cancelOrder(String accountId, @NotNull String orderId);
+    void cancelOrder(String accountId, String orderId);
 }

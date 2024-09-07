@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.interfaces;
 
-import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 public interface ExtOperationsService {
 
-    List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi);
+    List<Operation> getOperations(final String accountId, final Interval interval, final String figi);
 
     List<Position> getPositions(final String accountId);
 

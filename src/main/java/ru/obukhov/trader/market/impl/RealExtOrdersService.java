@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -55,7 +54,7 @@ public class RealExtOrdersService implements ExtOrdersService {
     }
 
     @Override
-    public void cancelOrder(final String accountId, @NotNull String orderId) {
+    public void cancelOrder(final String accountId, final String orderId) {
         ordersService.cancelOrderSync(accountId, orderId);
     }
 

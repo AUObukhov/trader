@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 
@@ -12,15 +11,17 @@ public class Decision {
 
     private final DecisionAction action;
 
+    @Nullable
     private final Long quantity;
 
+    @Nullable
     private final StrategyCache strategyCache;
 
-    public Decision(@NotNull DecisionAction action) {
+    public Decision(DecisionAction action) {
         this(action, null, null);
     }
 
-    public Decision(@NotNull DecisionAction action, @Nullable Long quantity) {
+    public Decision(DecisionAction action, @Nullable Long quantity) {
         this(action, quantity, null);
     }
 

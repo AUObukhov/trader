@@ -1,6 +1,5 @@
 package ru.obukhov.trader.test.utils;
 
-import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -33,9 +32,9 @@ public class CandleMocker {
     };
 
     public CandleMocker(
-            @NotNull final MarketDataService marketDataService,
-            @NotNull final String figi,
-            @NotNull final CandleInterval candleInterval
+            final MarketDataService marketDataService,
+            final String figi,
+            final CandleInterval candleInterval
     ) {
         this.marketDataService = marketDataService;
         this.figi = figi;
@@ -43,7 +42,7 @@ public class CandleMocker {
         this.candles = new ArrayList<>();
     }
 
-    public CandleMocker add(@NotNull final OffsetDateTime time) {
+    public CandleMocker add(final OffsetDateTime time) {
         final HistoricCandle candle = new HistoricCandleBuilder()
                 .setTime(time)
                 .setIsComplete(true)
@@ -52,7 +51,7 @@ public class CandleMocker {
         return this;
     }
 
-    public CandleMocker add(final double close, @NotNull final OffsetDateTime time) {
+    public CandleMocker add(final double close, final OffsetDateTime time) {
         final HistoricCandle candle = new HistoricCandleBuilder()
                 .setClose(close)
                 .setTime(time)
@@ -62,7 +61,7 @@ public class CandleMocker {
         return this;
     }
 
-    public CandleMocker add(final double open, final double close, @NotNull final OffsetDateTime time) {
+    public CandleMocker add(final double open, final double close, final OffsetDateTime time) {
         final HistoricCandle candle = new HistoricCandleBuilder()
                 .setOpen(open)
                 .setClose(close)
@@ -73,11 +72,11 @@ public class CandleMocker {
         return this;
     }
 
-    public CandleMocker add(@NotNull final HistoricCandle... candles) {
+    public CandleMocker add(final HistoricCandle... candles) {
         return add(List.of(candles));
     }
 
-    public CandleMocker add(@NotNull final List<HistoricCandle> candles) {
+    public CandleMocker add(final List<HistoricCandle> candles) {
         this.candles.addAll(candles);
 
         return this;

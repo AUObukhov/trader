@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
@@ -26,7 +25,7 @@ public class FakeExtOperationsService implements ExtOperationsService {
     private final FakeContext fakeContext;
 
     @Override
-    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
+    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String figi) {
         Stream<Operation> operationsStream = fakeContext.getOperations(accountId).stream()
                 .filter(operation -> interval.contains(DATE_TIME_MAPPER.timestampToOffsetDateTime(operation.getDate())));
         if (figi != null) {
