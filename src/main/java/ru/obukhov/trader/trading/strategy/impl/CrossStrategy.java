@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.model.Candle;
@@ -104,7 +103,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
         final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
         final boolean greedy = crossStrategyParams.getGreedy();
         final List<Candle> candles = ((CrossStrategyCache) strategyCache).getCandlesByFigies().get(data.getShare().figi());
-        final BigDecimal currentPrice = CollectionsUtils.getLast(candles).getClose();
+        final BigDecimal currentPrice = candles.getLast().getClose();
         Decision decision = getSellOrWaitDecision(data, currentPrice, commission, crossStrategyParams.getMinimumProfit(), strategyCache);
         if (greedy && decision.getAction() == DecisionAction.WAIT) {
             decision = getBuyOrWaitDecision(data, 1, strategyCache);

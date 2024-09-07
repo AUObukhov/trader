@@ -67,27 +67,6 @@ class CollectionsUtilsUnitTest {
 
     // endregion
 
-    // region getLast tests
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forGetLast() {
-        return Stream.of(
-                Arguments.of(null, null),
-                Arguments.of(List.of(), null),
-                Arguments.of(List.of(1, 2, 3), 3)
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetLast")
-    <T> void getLast_returnsLastItem_whenIterablesIsNotEmpty(Iterable<T> iterable, T expectedLastItem) {
-        final T lastItem = CollectionsUtils.getLast(iterable);
-
-        Assertions.assertEquals(expectedLastItem, lastItem);
-    }
-
-    // endregion
-
     // region insertInterpolated tests
 
     @Test

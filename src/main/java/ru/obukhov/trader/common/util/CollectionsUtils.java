@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -23,20 +22,6 @@ public class CollectionsUtils {
         return list.subList(list.size() - size, list.size());
     }
 
-    public static <T> T getLast(final Iterable<T> iterable) {
-        if (iterable == null) {
-            return null;
-        }
-
-        final Iterator<T> iterator = iterable.iterator();
-        T last = null;
-        while (iterator.hasNext()) {
-            last = iterator.next();
-        }
-
-        return last;
-    }
-
     public static <T> void insertInterpolated(final List<T> list, final int index, final BinaryOperator<T> interpolator) {
         Assert.isTrue(index >= 0, "index can't be negative");
         Assert.isTrue(index <= list.size(), "index can't be greater than size of list");
@@ -45,7 +30,7 @@ public class CollectionsUtils {
         if (index == 0) {
             list.addFirst(list.getFirst());
         } else if (index == list.size()) {
-            list.add(getLast(list));
+            list.add(list.getLast());
         } else {
             T value = interpolator.apply(list.get(index - 1), list.get(index));
             list.add(index, value);
