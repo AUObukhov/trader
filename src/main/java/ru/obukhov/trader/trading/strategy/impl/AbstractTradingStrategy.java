@@ -9,7 +9,6 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.DecisionsData;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
-import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 
@@ -30,14 +29,13 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     protected Decision getBuyOrWaitDecision(
             final DecisionData data,
-            final long lotsQuantity,
-            final StrategyCache strategyCache
+            final long lotsQuantity
     ) {
         Assert.isTrue(lotsQuantity > 0, "lotsQuantity must be above 0. Got " + lotsQuantity);
 
         final Decision decision = data.getAvailableLots() >= lotsQuantity
-                ? new Decision(DecisionAction.BUY, lotsQuantity, strategyCache)
-                : new Decision(DecisionAction.WAIT, null, strategyCache);
+                ? new Decision(DecisionAction.BUY, lotsQuantity)
+                : new Decision(DecisionAction.WAIT, null);
 
         log.debug("Available lots - {}. Requested lots - {}. Decision is {}", data.getAvailableLots(), lotsQuantity, decision.toPrettyString());
 
@@ -48,21 +46,20 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
             final DecisionData data,
             final BigDecimal currentPrice,
             final BigDecimal commission,
-            final Float minimumProfit,
-            final StrategyCache strategyCache
+            final Float minimumProfit
     ) {
         Decision decision;
 
         if (minimumProfit < 0) {
-            decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+            decision = new Decision(DecisionAction.WAIT, null);
             log.debug("Minimum profit {} is negative. Decision is {}", minimumProfit, decision.toPrettyString());
         } else {
             final double profit = getProfit(data, currentPrice, commission);
             if (profit < minimumProfit) {
-                decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+                decision = new Decision(DecisionAction.WAIT, null);
                 log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             } else {
-                decision = new Decision(DecisionAction.SELL, data.getQuantity(), strategyCache);
+                decision = new Decision(DecisionAction.SELL, data.getQuantity());
                 log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             }
         }
@@ -88,7 +85,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     }
 
     protected static boolean existsOperationStateIsUnspecified(final DecisionsData data) {
-        return data.getDecisionDataList().stream()
+        return data.getDecisionDatas().stream()
                 .map(DecisionData::getLastOperations)
                 .flatMap(Collection::stream)
                 .anyMatch(operation -> operation.getState() == OperationState.OPERATION_STATE_UNSPECIFIED);

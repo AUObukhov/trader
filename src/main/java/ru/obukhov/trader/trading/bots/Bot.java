@@ -17,7 +17,6 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.DecisionsData;
-import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -59,8 +58,7 @@ public abstract class Bot {
         final List<OrderState> orders = ordersService.getOrders(botConfig.accountId());
         if (orders.isEmpty()) {
             final DecisionsData decisionsData = prepareDecisionsData(botConfig, figies);
-            final StrategyCache strategyCache = strategy.initCache(botConfig, interval);
-            final Map<String, Decision> figiesToDecisions = strategy.decide(decisionsData, strategyCache);
+            final Map<String, Decision> figiesToDecisions = strategy.decide(decisionsData, botConfig, interval);
             performOperations(botConfig.accountId(), figiesToDecisions);
         } else {
             log.info("There are not completed orders by FIGIes '{}'. Do nothing", figies);
@@ -78,11 +76,15 @@ public abstract class Bot {
             final DecisionData decisionData = prepareDecisionData(botConfig, share, availableBalance);
             decisionDataList.add(decisionData);
         }
-        decisionsData.setDecisionDataList(decisionDataList);
+        decisionsData.setDecisionDatas(decisionDataList);
         return decisionsData;
     }
 
-    private DecisionData prepareDecisionData(final BotConfig botConfig, final Share share, final BigDecimal availableBalance) {
+    private DecisionData prepareDecisionData(
+            final BotConfig botConfig,
+            final Share share,
+            final BigDecimal availableBalance
+    ) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), share.figi()));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), share.figi()));
@@ -112,12 +114,13 @@ public abstract class Bot {
             }
 
             final String figi = entry.getKey();
-            final Long quantity = decision.getQuantity();
+            final long quantity = decision.getQuantity();
             final OrderDirection direction = decision.getAction() == DecisionAction.BUY
                     ? OrderDirection.ORDER_DIRECTION_BUY
                     : OrderDirection.ORDER_DIRECTION_SELL;
             final OrderType orderType = OrderType.ORDER_TYPE_MARKET;
-            final PostOrderResponse postOrderResponse = ordersService.postOrder(accountId, figi, quantity, null, direction, orderType, null);
+            final PostOrderResponse postOrderResponse =
+                    ordersService.postOrder(accountId, figi, quantity, null, direction, orderType, null);
             log.info("Placed order:\n{}", postOrderResponse);
         }
     }

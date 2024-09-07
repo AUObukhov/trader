@@ -5,13 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -37,14 +33,11 @@ import java.util.Map;
 @ExtendWith(MockitoExtension.class)
 class ConservativeStrategyUnitTest {
 
-    @Mock
-    private ExtMarketDataService extMarketDataService;
-
     private ConservativeStrategy strategy;
 
     @BeforeEach
     void setUp() {
-        strategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.name(), extMarketDataService);
+        strategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.name());
     }
 
     @Test
@@ -60,7 +53,7 @@ class ConservativeStrategyUnitTest {
         final String figi = TestShares.SBER.getFigi();
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(Collections.emptyList());
+        decisionsData.setDecisionDatas(Collections.emptyList());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
@@ -68,11 +61,7 @@ class ConservativeStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        final Executable executable = () -> strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+        final Executable executable = () -> strategy.decide(decisionsData, botConfig, interval);
         final String expectedMessage = "Conservative strategy supports 1 instrument only";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -83,7 +72,7 @@ class ConservativeStrategyUnitTest {
         final String figi = TestShares.SBER.getFigi();
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(new DecisionData(), new DecisionData()));
+        decisionsData.setDecisionDatas(List.of(new DecisionData(), new DecisionData()));
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
@@ -91,11 +80,7 @@ class ConservativeStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        final Executable executable = () -> strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+        final Executable executable = () -> strategy.decide(decisionsData, botConfig, interval);
         final String expectedMessage = "Conservative strategy supports 1 instrument only";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -115,7 +100,7 @@ class ConservativeStrategyUnitTest {
         decisionData.setLastOperations(List.of(operation1, operation2, operation3));
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
@@ -123,11 +108,7 @@ class ConservativeStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+        final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
         Assertions.assertEquals(1, decisions.size());
         Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.getFigi()).getAction());
@@ -140,10 +121,10 @@ class ConservativeStrategyUnitTest {
         final Share share = TestShares.SBER.share();
         final String figi = share.figi();
 
-        final DecisionData decisionData = TestData.newDecisionData(share, 0L);
+        final DecisionData decisionData = TestData.newDecisionData1(share, 0L);
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
@@ -151,11 +132,7 @@ class ConservativeStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+        final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
         Assertions.assertEquals(1, decisions.size());
         Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -169,10 +146,10 @@ class ConservativeStrategyUnitTest {
         final String figi = share.figi();
 
         final long availableLots = 4;
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
@@ -180,11 +157,7 @@ class ConservativeStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+        final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
         Assertions.assertEquals(1, decisions.size());
         Assertions.assertEquals(DecisionAction.BUY, decisions.get(share.figi()).getAction());
@@ -192,22 +165,5 @@ class ConservativeStrategyUnitTest {
     }
 
     // endregion
-
-    @Test
-    void initCache_returnsNotNull() {
-        final String accountId = TestAccounts.TINKOFF.getId();
-        final String figi = TestShares.SBER.getFigi();
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final BotConfig botConfig = new BotConfig(accountId, List.of(figi), candleInterval, DecimalUtils.ZERO, StrategyType.CONSERVATIVE, Map.of());
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
-        final Interval interval = Interval.of(from, to);
-
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        Assertions.assertNotNull(strategy.initCache(botConfig, interval));
-    }
 
 }

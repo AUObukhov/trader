@@ -9,6 +9,6 @@ import java.util.List;
 public class DecisionsData {
 
     private BigDecimal commission;
-    private List<DecisionData> decisionDataList;
+    private List<DecisionData> decisionDatas;
 
 }

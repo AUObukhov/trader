@@ -16,7 +16,6 @@ import ru.obukhov.trader.common.exception.InstrumentNotFoundException;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
-import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Share;
@@ -53,8 +52,6 @@ class FakeBotFactoryUnitTest {
     private ApplicationContext applicationContext;
     @Mock
     private ExtInstrumentsService extInstrumentsService;
-    @Mock
-    private ExtMarketDataService extMarketDataService;
 
     @InjectMocks
     private FakeBotFactory factory;
@@ -62,10 +59,10 @@ class FakeBotFactoryUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateBot_movesCurrentTimestampToCeilingWorkTime() {
         return Stream.of(
-//                Arguments.of(
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 12),
-//                        DateTimeTestData.newDateTime(2020, 10, 5, 12)
-//                ),
+                Arguments.of(
+                        DateTimeTestData.newDateTime(2020, 10, 5, 12),
+                        DateTimeTestData.newDateTime(2020, 10, 5, 12)
+                ),
                 Arguments.of(
                         DateTimeTestData.newDateTime(2020, 10, 5, 19),
                         DateTimeTestData.newDateTime(2020, 10, 6, START_TIME.getHour())
@@ -215,7 +212,7 @@ class FakeBotFactoryUnitTest {
     }
 
     private void mockStrategy(final BotConfig botConfig) {
-        final ConservativeStrategy conservativeStrategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.name(), extMarketDataService);
+        final ConservativeStrategy conservativeStrategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.name());
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(conservativeStrategy);
     }
 

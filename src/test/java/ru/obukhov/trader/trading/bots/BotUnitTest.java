@@ -26,7 +26,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionsData;
-import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -121,14 +120,6 @@ class BotUnitTest {
         Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.getCurrency(), share2.getCurrency());
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final Decision decision = new Decision(DecisionAction.WAIT);
-        final Map<String, Decision> decisions = Map.of(
-                figi1, decision,
-                figi2, decision
-        );
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(decisions);
-
         final List<String> figies = List.of(figi1, figi2);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
@@ -142,10 +133,18 @@ class BotUnitTest {
                 DateTimeTestData.newDateTime(2023, 9, 11)
         );
 
+        final Decision decision = new Decision(DecisionAction.WAIT);
+        final Map<String, Decision> decisions = Map.of(
+                figi1, decision,
+                figi2, decision
+        );
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.eq(botConfig), Mockito.eq(interval)))
+                .thenReturn(decisions);
+
         bot.processBotConfig(botConfig, interval);
 
         Mockito.verify(strategy, Mockito.times(1))
-                .decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class));
+                .decide(Mockito.any(DecisionsData.class), Mockito.eq(botConfig), Mockito.eq(interval));
         Mocker.verifyNoOrdersMade(ordersService);
     }
 
@@ -172,11 +171,6 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi2)))
                 .thenReturn(operations);
 
-        final Decision decision = new Decision(DecisionAction.BUY, 5L);
-        final Map<String, Decision> decisions = Map.of(figi1, decision, figi2, decision);
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(decisions);
-
         Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
         Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
@@ -189,9 +183,14 @@ class BotUnitTest {
                 DateTimeTestData.newDateTime(2023, 9, 11)
         );
 
+        final Decision decision = new Decision(DecisionAction.BUY, 5L);
+        final Map<String, Decision> decisions = Map.of(figi1, decision, figi2, decision);
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.eq(botConfig), Mockito.eq(interval)))
+                .thenReturn(decisions);
+
         bot.processBotConfig(botConfig, interval);
 
-        final Long quantity = decision.getQuantity();
+        final long quantity = decision.getQuantity();
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(accountId, figi1, quantity, null, OrderDirection.ORDER_DIRECTION_BUY, OrderType.ORDER_TYPE_MARKET, null);
         Mockito.verify(ordersService, Mockito.times(1))
@@ -222,11 +221,6 @@ class BotUnitTest {
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final Decision decision = new Decision(DecisionAction.SELL, 5L);
-        final Map<String, Decision> decisions = Map.of(figi1, decision, figi2, decision);
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(decisions);
-
         Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
         Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
@@ -238,9 +232,15 @@ class BotUnitTest {
                 DateTimeTestData.newDateTime(2023, 9, 10),
                 DateTimeTestData.newDateTime(2023, 9, 11)
         );
+
+        final Decision decision = new Decision(DecisionAction.SELL, 5L);
+        final Map<String, Decision> decisions = Map.of(figi1, decision, figi2, decision);
+        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.eq(botConfig), Mockito.eq(interval)))
+                .thenReturn(decisions);
+
         bot.processBotConfig(botConfig, interval);
 
-        final Long quantity = decision.getQuantity();
+        final long quantity = decision.getQuantity();
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(accountId, figi2, quantity, null, OrderDirection.ORDER_DIRECTION_SELL, OrderType.ORDER_TYPE_MARKET, null);
         Mockito.verify(ordersService, Mockito.times(1))

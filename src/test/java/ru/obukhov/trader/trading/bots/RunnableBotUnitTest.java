@@ -31,7 +31,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShares;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionsData;
-import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -41,6 +40,7 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -136,7 +136,11 @@ class RunnableBotUnitTest {
             createRunnableBot().run();
 
             Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
-            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class));
+            Mockito.verify(strategy, Mockito.never()).decide(
+                    Mockito.any(DecisionsData.class),
+                    Mockito.any(BotConfig.class),
+                    Mockito.any(Interval.class)
+            );
             Mocker.verifyNoOrdersMade(ordersService);
         }
     }
@@ -159,7 +163,11 @@ class RunnableBotUnitTest {
             createRunnableBot().run();
 
             Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
-            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class));
+            Mockito.verify(strategy, Mockito.never()).decide(
+                    Mockito.any(DecisionsData.class),
+                    Mockito.any(BotConfig.class),
+                    Mockito.any(Interval.class)
+            );
             Mocker.verifyNoOrdersMade(ordersService);
         }
     }
@@ -290,8 +298,11 @@ class RunnableBotUnitTest {
         Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
         Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenThrow(new IllegalArgumentException());
+        Mockito.when(strategy.decide(
+                Mockito.any(DecisionsData.class),
+                Mockito.any(BotConfig.class),
+                Mockito.any(Interval.class)
+        )).thenThrow(new IllegalArgumentException());
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -319,14 +330,22 @@ class RunnableBotUnitTest {
         Mocker.mockShares(extInstrumentsService, share1, share2);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(Map.of(share1.getFigi(), decision, share2.getFigi(), decision));
+        Mockito.when(strategy.decide(
+                Mockito.any(DecisionsData.class),
+                Mockito.any(BotConfig.class),
+                Mockito.any(Interval.class)
+        )).thenReturn(Map.of(share1.getFigi(), decision, share2.getFigi(), decision));
 
-        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.getCurrency(), share2.getCurrency());
+        final int balance = 10000;
+        final String[] currencies = {share1.getCurrency(), share2.getCurrency()};
+        Mocker.mockAvailableBalances(extOperationsService, accountId, balance, currencies);
 
-        final Long quantity = decision.getQuantity();
+        final long quantity = decision.getQuantity();
         final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;
-        Mockito.when(ordersService.postOrder(accountId, figi2, quantity, null, orderDirection, OrderType.ORDER_TYPE_MARKET, null))
+        final BigDecimal price = null;
+        final OrderType orderType = OrderType.ORDER_TYPE_MARKET;
+        final String orderId = null;
+        Mockito.when(ordersService.postOrder(accountId, figi2, quantity, price, orderDirection, orderType, orderId))
                 .thenThrow(new IllegalArgumentException());
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -395,8 +414,11 @@ class RunnableBotUnitTest {
                 figi1, new Decision(DecisionAction.WAIT),
                 figi2, new Decision(DecisionAction.WAIT)
         );
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(decisions);
+        Mockito.when(strategy.decide(
+                Mockito.any(DecisionsData.class),
+                Mockito.any(BotConfig.class),
+                Mockito.any(Interval.class)
+        )).thenReturn(decisions);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
@@ -431,14 +453,20 @@ class RunnableBotUnitTest {
         mockOperations(accountId, figi1, figi2);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
+        Mockito.when(strategy.decide(
+                        Mockito.any(DecisionsData.class),
+                        Mockito.any(BotConfig.class),
+                        Mockito.any(Interval.class)
+                ))
                 .thenReturn(Map.of(figi1, decision, figi2, decision));
 
         createRunnableBot().run();
 
-        final Long quantity = decision.getQuantity();
+        final long quantity = decision.getQuantity();
+        final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;
+        final OrderType orderType = OrderType.ORDER_TYPE_MARKET;
         Mockito.verify(ordersService, Mockito.times(1))
-                .postOrder(accountId, figi2, quantity, null, OrderDirection.ORDER_DIRECTION_BUY, OrderType.ORDER_TYPE_MARKET, null);
+                .postOrder(accountId, figi2, quantity, null, orderDirection, orderType, null);
     }
 
     @Test
@@ -458,22 +486,29 @@ class RunnableBotUnitTest {
         mockBotConfig(accountId, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0, figi1, figi2);
         mockNormalTradingStatus(figi1, figi2);
         Mocker.mockShares(extInstrumentsService, share1, share2);
-        Mocker.mockAvailableBalances(extOperationsService, accountId, 10000, share1.getCurrency(), share2.getCurrency());
+        final int balance = 10000;
+        final String[] currencies = {share1.getCurrency(), share2.getCurrency()};
+        Mocker.mockAvailableBalances(extOperationsService, accountId, balance, currencies);
         Mocker.mockSecurity(extOperationsService, accountId);
         mockOperations(accountId, figi1, figi2);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
-        Mockito.when(strategy.decide(Mockito.any(DecisionsData.class), Mockito.nullable(StrategyCache.class)))
-                .thenReturn(Map.of(figi1, decision, figi2, decision));
+        Mockito.when(strategy.decide(
+                Mockito.any(DecisionsData.class),
+                Mockito.any(BotConfig.class),
+                Mockito.any(Interval.class)
+        )).thenReturn(Map.of(figi1, decision, figi2, decision));
 
         Mockito.when(extMarketDataService.getPrice(figi1, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(100));
         Mockito.when(extMarketDataService.getPrice(figi2, currentDateTime)).thenReturn(DecimalUtils.setDefaultScale(200));
 
         createRunnableBot().run();
 
-        final Long quantity = decision.getQuantity();
+        final long quantity = decision.getQuantity();
+        final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_SELL;
+        final OrderType orderType = OrderType.ORDER_TYPE_MARKET;
         Mockito.verify(ordersService, Mockito.times(1))
-                .postOrder(accountId, figi2, quantity, null, OrderDirection.ORDER_DIRECTION_SELL, OrderType.ORDER_TYPE_MARKET, null);
+                .postOrder(accountId, figi2, quantity, null, orderDirection, orderType, null);
     }
 
     private RunnableBot createRunnableBot() {

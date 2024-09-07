@@ -11,8 +11,6 @@ public interface TradingStrategy {
 
     String getName();
 
-    Map<String, Decision> decide(final DecisionsData data, final StrategyCache strategyCache);
-
-    StrategyCache initCache(final BotConfig botConfig, final Interval interval);
+    Map<String, Decision> decide(final DecisionsData data, final BotConfig botConfig, final Interval interval);
 
 }

@@ -18,12 +18,12 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.DecisionsData;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
-import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,10 +57,9 @@ class AbstractTradingStrategyUnitTest {
     @ValueSource(longs = {-1, 0})
     void getBuyOrWaitDecision_throwsIllegalArgumentException_whenLotsQuantityIsNotPositive(final long lotsQuantity) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.newDecisionData(1, 10L);
-        final StrategyCache strategyCache = new TestStrategyCache();
+        final DecisionData data = TestData.newDecisionData2(1, 10L);
 
-        final Executable executable = () -> strategy.getBuyOrWaitDecision(data, lotsQuantity, strategyCache);
+        final Executable executable = () -> strategy.getBuyOrWaitDecision(data, lotsQuantity);
         final String expectedMessage = "lotsQuantity must be above 0. Got " + lotsQuantity;
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -78,14 +77,12 @@ class AbstractTradingStrategyUnitTest {
     @MethodSource("getData_forGetBuyOrWaitDecision")
     void getBuyOrWaitDecision(final long lotsQuantity, final long availableLots, final DecisionAction expectedAction, final Long expectedQuantity) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.newDecisionData(1, availableLots);
-        final StrategyCache strategyCache = new TestStrategyCache();
+        final DecisionData data = TestData.newDecisionData2(1, availableLots);
 
-        final Decision decision = strategy.getBuyOrWaitDecision(data, lotsQuantity, strategyCache);
+        final Decision decision = strategy.getBuyOrWaitDecision(data, lotsQuantity);
 
         Assertions.assertEquals(expectedAction, decision.getAction());
         Assertions.assertEquals(expectedQuantity, decision.getQuantity());
-        Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
     // endregion
@@ -97,22 +94,22 @@ class AbstractTradingStrategyUnitTest {
         final float minimumProfit = 0.1f;
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
         final DecisionData decisionData = new DecisionData();
-        final StrategyCache strategyCache = new TestStrategyCache();
 
-        final Decision decision = strategy.getSellOrWaitDecision(decisionData, DecimalUtils.ONE, DecimalUtils.ZERO, minimumProfit, strategyCache);
+        final BigDecimal currentPrice = DecimalUtils.ONE;
+        final BigDecimal commission = DecimalUtils.ZERO;
+        final Decision decision = strategy.getSellOrWaitDecision(decisionData, currentPrice, commission, minimumProfit);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getQuantity());
-        Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSellOrWaitDecision() {
         return Stream.of(
-                Arguments.of(0.1f, 1000.0, 10, 1100.0, DecisionAction.WAIT),
-                Arguments.of(0.1f, 1000.0, 30, 900.0, DecisionAction.WAIT),
-                Arguments.of(0.1f, 100.0, 20, 1000.0, DecisionAction.SELL),
-                Arguments.of(-1.0f, 100.0, 20, 1000.0, DecisionAction.WAIT)
+                Arguments.of(0.1f, 1000, 10L, 1100.0, DecisionAction.WAIT),
+                Arguments.of(0.1f, 1000, 30L, 900.0, DecisionAction.WAIT),
+                Arguments.of(0.1f, 100, 20L, 1000.0, DecisionAction.SELL),
+                Arguments.of(-1.0f, 100, 20L, 1000.0, DecisionAction.WAIT)
         );
     }
 
@@ -120,30 +117,27 @@ class AbstractTradingStrategyUnitTest {
     @MethodSource("getData_forGetSellOrWaitDecision")
     void getSellOrWaitDecision(
             final float minimumProfit,
-            final double averagePositionPrice,
-            final int quantity,
+            final int averagePositionPrice,
+            final Long quantity,
             final double currentPrice,
             final DecisionAction expectedAction
     ) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.newDecisionData(averagePositionPrice, quantity);
-        final StrategyCache strategyCache = new TestStrategyCache();
+        final DecisionData data = TestData.newDecisionData3(averagePositionPrice, quantity);
 
         final Decision decision = strategy.getSellOrWaitDecision(
                 data,
                 DecimalUtils.setDefaultScale(currentPrice),
                 DecimalUtils.ZERO,
-                minimumProfit,
-                strategyCache
+                minimumProfit
         );
 
         Assertions.assertEquals(expectedAction, decision.getAction());
         if (expectedAction == DecisionAction.WAIT) {
             Assertions.assertNull(decision.getQuantity());
         } else {
-            AssertUtils.assertEquals(quantity, decision.getQuantity());
+            Assertions.assertEquals(quantity, decision.getQuantity());
         }
-        Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
     // endregion
@@ -160,7 +154,7 @@ class AbstractTradingStrategyUnitTest {
         decisionData.setLastOperations(List.of(operation1, operation2, operation3));
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         Assertions.assertTrue(TestStrategy.existsOperationInProgress(decisionsData));
     }
@@ -174,7 +168,7 @@ class AbstractTradingStrategyUnitTest {
         decisionData.setLastOperations(List.of(operation1, operation2));
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(decisionsData));
     }
@@ -185,7 +179,7 @@ class AbstractTradingStrategyUnitTest {
         decisionData.setLastOperations(Collections.emptyList());
 
         final DecisionsData decisionsData = new DecisionsData();
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(decisionsData));
     }
@@ -199,7 +193,11 @@ class AbstractTradingStrategyUnitTest {
         }
 
         @Override
-        public Map<String, Decision> decide(final DecisionsData data, final StrategyCache strategyCache) {
+        public Map<String, Decision> decide(
+                final DecisionsData data,
+                final BotConfig botConfig,
+                final Interval interval
+        ) {
             throw new NotImplementedException();
         }
 
@@ -207,14 +205,6 @@ class AbstractTradingStrategyUnitTest {
             return AbstractTradingStrategy.existsOperationStateIsUnspecified(data);
         }
 
-        @Override
-        public StrategyCache initCache(BotConfig botConfig, Interval interval) {
-            return null;
-        }
-
-    }
-
-    private static class TestStrategyCache implements StrategyCache {
     }
 
     @AllArgsConstructor

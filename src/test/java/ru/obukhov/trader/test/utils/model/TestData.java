@@ -68,7 +68,7 @@ public class TestData {
 
     // region DecisionData creation
 
-    public static DecisionData newDecisionData(final Share share, final long availableLots) {
+    public static DecisionData newDecisionData1(final Share share, final long availableLots) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setShare(share);
@@ -77,7 +77,7 @@ public class TestData {
         return decisionData;
     }
 
-    public static DecisionData newDecisionData(final int lotSize, final long availableLots) {
+    public static DecisionData newDecisionData2(final int lotSize, final long availableLots) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setShare(Share.builder().lot(lotSize).build());
@@ -86,7 +86,7 @@ public class TestData {
         return decisionData;
     }
 
-    public static DecisionData newDecisionData(final double averagePositionPrice, final int quantity) {
+    public static DecisionData newDecisionData3(final int averagePositionPrice, final long quantity) {
         final DecisionData decisionData = new DecisionData();
         final Position position = Position.builder()
                 .averagePositionPrice(TestData.newMoney(averagePositionPrice, null))

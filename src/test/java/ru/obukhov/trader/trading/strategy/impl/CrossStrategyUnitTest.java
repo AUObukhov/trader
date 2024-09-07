@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.common.service.impl.SimpleMovingAverager;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -58,7 +57,7 @@ class CrossStrategyUnitTest {
         final TestShare share = TestShares.SBER;
 
         final DecisionsData data = new DecisionsData();
-        data.setDecisionDataList(Collections.emptyList());
+        data.setDecisionDatas(Collections.emptyList());
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -78,7 +77,7 @@ class CrossStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Executable executable = () -> strategy.decide(data, strategy.initCache(botConfig, interval));
+        final Executable executable = () -> strategy.decide(data, botConfig, interval);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Cross strategy supports 1 instrument only");
     }
 
@@ -87,7 +86,7 @@ class CrossStrategyUnitTest {
         final TestShare share = TestShares.SBER;
 
         final DecisionsData data = new DecisionsData();
-        data.setDecisionDataList(List.of(new DecisionData(), new DecisionData()));
+        data.setDecisionDatas(List.of(new DecisionData(), new DecisionData()));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -107,7 +106,7 @@ class CrossStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Executable executable = () -> strategy.decide(data, strategy.initCache(botConfig, interval));
+        final Executable executable = () -> strategy.decide(data, botConfig, interval);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Cross strategy supports 1 instrument only");
     }
 
@@ -125,7 +124,7 @@ class CrossStrategyUnitTest {
 
         final DecisionsData data = new DecisionsData();
         data.setCommission(DecimalUtils.setDefaultScale(0.003));
-        data.setDecisionDataList(List.of(decisionData));
+        data.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -145,7 +144,7 @@ class CrossStrategyUnitTest {
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Map<String, Decision> decisions = strategy.decide(data, strategy.initCache(botConfig, interval));
+        final Map<String, Decision> decisions = strategy.decide(data, botConfig, interval);
 
         Assertions.assertEquals(1, decisions.size());
         Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -158,11 +157,11 @@ class CrossStrategyUnitTest {
         final Share share = TestShares.SBER.share();
         final String currency = share.currency();
 
-        final DecisionData decisionData = TestData.newDecisionData(share, 1L);
+        final DecisionData decisionData = TestData.newDecisionData1(share, 1L);
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -182,7 +181,7 @@ class CrossStrategyUnitTest {
             final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
             final Interval interval = Interval.of(from, to);
 
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -196,11 +195,11 @@ class CrossStrategyUnitTest {
 
         final long availableLots = 9;
 
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -221,11 +220,11 @@ class CrossStrategyUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.BUY, decisions.get(share.figi()).getAction());
-            AssertUtils.assertEquals(availableLots, decisions.get(share.figi()).getQuantity());
+            Assertions.assertEquals(availableLots, decisions.get(share.figi()).getQuantity());
         }
     }
 
@@ -233,11 +232,11 @@ class CrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final Share share = TestShares.SBER.share();
 
-        final DecisionData decisionData = TestData.newDecisionData(share, 0L);
+        final DecisionData decisionData = TestData.newDecisionData1(share, 0L);
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -258,7 +257,7 @@ class CrossStrategyUnitTest {
             final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
             final Interval interval = Interval.of(from, to);
 
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -272,7 +271,7 @@ class CrossStrategyUnitTest {
 
         final long availableLots = 1;
 
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(100)
                 .setQuantity(availableLots)
@@ -281,7 +280,7 @@ class CrossStrategyUnitTest {
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -306,11 +305,11 @@ class CrossStrategyUnitTest {
         Mockito.when(extMarketDataService.getCandles(share.figi(), interval, candleInterval)).thenReturn(candles);
 
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.SELL, decisions.get(share.figi()).getAction());
-            AssertUtils.assertEquals(availableLots, decisions.get(share.figi()).getQuantity());
+            Assertions.assertEquals(availableLots, decisions.get(share.figi()).getQuantity());
         }
     }
 
@@ -320,7 +319,7 @@ class CrossStrategyUnitTest {
 
         final long availableLots = 1;
 
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(100)
                 .build();
@@ -328,7 +327,7 @@ class CrossStrategyUnitTest {
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 -0.1f,
@@ -355,7 +354,7 @@ class CrossStrategyUnitTest {
         Mockito.when(extMarketDataService.getCandles(share.figi(), interval, candleInterval)).thenReturn(candles);
 
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -369,7 +368,7 @@ class CrossStrategyUnitTest {
 
         final long availableLots = 4;
 
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(199)
                 .build();
@@ -377,7 +376,7 @@ class CrossStrategyUnitTest {
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -402,11 +401,11 @@ class CrossStrategyUnitTest {
         Mockito.when(extMarketDataService.getCandles(share.figi(), interval, candleInterval)).thenReturn(candles);
 
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.BUY, decisions.get(share.figi()).getAction());
-            AssertUtils.assertEquals(1, decisions.get(share.figi()).getQuantity());
+            Assertions.assertEquals(1, decisions.get(share.figi()).getQuantity());
         }
     }
 
@@ -416,7 +415,7 @@ class CrossStrategyUnitTest {
 
         final long availableLots = 1;
 
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(199)
                 .build();
@@ -424,7 +423,7 @@ class CrossStrategyUnitTest {
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
@@ -449,7 +448,7 @@ class CrossStrategyUnitTest {
         Mockito.when(extMarketDataService.getCandles(share.figi(), interval, candleInterval)).thenReturn(candles);
 
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -463,7 +462,7 @@ class CrossStrategyUnitTest {
 
         final long availableLots = 0;
 
-        final DecisionData decisionData = TestData.newDecisionData(share, availableLots);
+        final DecisionData decisionData = TestData.newDecisionData1(share, availableLots);
         final Position position = new PositionBuilder()
                 .setAveragePositionPrice(199)
                 .build();
@@ -471,8 +470,9 @@ class CrossStrategyUnitTest {
 
         final DecisionsData decisionsData = new DecisionsData();
         decisionsData.setCommission(DecimalUtils.setDefaultScale(0.003));
-        decisionsData.setDecisionDataList(List.of(decisionData));
+        decisionsData.setDecisionDatas(List.of(decisionData));
 
+        final String strategyName = StringUtils.EMPTY;
         final CrossStrategyParams strategyParams = new CrossStrategyParams(
                 0.1f,
                 1,
@@ -481,23 +481,21 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, averager);
+        final CrossStrategy strategy = new CrossStrategy(strategyName, strategyParams, extMarketDataService, averager);
 
         final List<String> figies = List.of(share.figi());
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final String accountId = TestAccounts.TINKOFF.getId();
-        final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, DecimalUtils.ZERO, StrategyType.CROSS, Map.of());
+        final BigDecimal commission = DecimalUtils.ZERO;
+        final StrategyType strategyType = StrategyType.CROSS;
+        final BotConfig botConfig = new BotConfig(accountId, figies, candleInterval, commission, strategyType, Map.of());
         final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
         final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = new Candle().setClose(BigDecimal.ZERO);
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(share.figi(), interval, candleInterval)).thenReturn(candles);
-
         try (@SuppressWarnings("unused") final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Map<String, Decision> decisions = strategy.decide(decisionsData, strategy.initCache(botConfig, interval));
+            final Map<String, Decision> decisions = strategy.decide(decisionsData, botConfig, interval);
 
             Assertions.assertEquals(1, decisions.size());
             Assertions.assertEquals(DecisionAction.WAIT, decisions.get(share.figi()).getAction());
@@ -507,39 +505,13 @@ class CrossStrategyUnitTest {
 
     // endregion
 
-    @Test
-    void initCache_returnsNotNull() {
-        final String figi = TestShares.SBER.getFigi();
+    private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(final Crossover crossover) {
+        final MockedStatic<TrendUtils> trendUtilsStaticMock =
+                Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
 
-        final List<String> figies = List.of(figi);
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final BotConfig botConfig = new BotConfig(
-                TestAccounts.TINKOFF.getId(),
-                figies,
-                candleInterval,
-                DecimalUtils.ZERO,
-                StrategyType.CONSERVATIVE,
-                Map.of()
-        );
-        final OffsetDateTime from = DateTimeTestData.newDateTime(2023, 9, 10);
-        final OffsetDateTime to = DateTimeTestData.newDateTime(2023, 9, 11);
-        final Interval interval = Interval.of(from, to);
-
-        final Candle candle = new Candle().setClose(DecimalUtils.setDefaultScale(100));
-        final List<Candle> candles = List.of(candle);
-        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
-
-        final CrossStrategyParams strategyParams = new CrossStrategyParams();
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, extMarketDataService, new SimpleMovingAverager());
-
-        Assertions.assertNotNull(strategy.initCache(botConfig, interval));
-    }
-
-    private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(Crossover crossover) {
-        final MockedStatic<TrendUtils> trendUtilsStaticMock = Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
-
-        trendUtilsStaticMock.when(() -> TrendUtils.getCrossoverIfLast(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt()))
-                .thenReturn(crossover);
+        trendUtilsStaticMock.when(
+                () -> TrendUtils.getCrossoverIfLast(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt())
+        ).thenReturn(crossover);
 
         return trendUtilsStaticMock;
     }
