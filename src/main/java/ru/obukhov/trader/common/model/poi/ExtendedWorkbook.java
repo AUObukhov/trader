@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ExtendedWorkbook implements Workbook {
@@ -72,11 +71,10 @@ public class ExtendedWorkbook implements Workbook {
         return cellStyleName;
     }
 
-    @SuppressWarnings("java:S6204") // Sonar issue "Stream.toList()" method should be used instead of "collectors" when unmodifiable list needed
     private List<ExtendedSheet> initSheets(final Workbook delegate) {
         return StreamSupport.stream(delegate.spliterator(), false)
                 .map(this::createSheet)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private ExtendedSheet createSheet(final Sheet sheet) {
@@ -165,21 +163,21 @@ public class ExtendedWorkbook implements Workbook {
 
     @Override
     public Sheet createSheet() {
-        ExtendedSheet sheet = new ExtendedSheet(this, delegate.createSheet());
+        final ExtendedSheet sheet = new ExtendedSheet(this, delegate.createSheet());
         sheets.add(sheet);
         return sheet;
     }
 
     @Override
     public Sheet createSheet(String sheetName) {
-        ExtendedSheet sheet = new ExtendedSheet(this, delegate.createSheet(sheetName));
+        final ExtendedSheet sheet = new ExtendedSheet(this, delegate.createSheet(sheetName));
         sheets.add(sheet);
         return sheet;
     }
 
     @Override
     public Sheet cloneSheet(int sheetNum) {
-        ExtendedSheet sheet = new ExtendedSheet(this, delegate.cloneSheet(sheetNum));
+        final ExtendedSheet sheet = new ExtendedSheet(this, delegate.cloneSheet(sheetNum));
         sheets.add(sheet);
         return sheet;
     }
