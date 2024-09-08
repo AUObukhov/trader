@@ -121,19 +121,19 @@ public class TestData {
                 .build();
     }
 
+    @SuppressWarnings("deprecation")
     public static PortfolioPosition newPortfolioPosition(
             final TestShare testShare,
             final long lotsQuantity,
             final long currentPrice
     ) {
-        final long averagePositionPrice = 0; // to do remove
         final long quantity = testShare.getLot() * lotsQuantity;
         return PortfolioPosition.newBuilder()
                 .setFigi(testShare.getFigi())
                 .setInstrumentType(testShare.instrument().instrumentKind().name())
                 .setQuantity(newQuotation(quantity))
-                .setAveragePositionPrice(newMoneyValue(averagePositionPrice, testShare.getCurrency()))
-                .setExpectedYield(newQuotation((currentPrice - averagePositionPrice) * quantity))
+                .setAveragePositionPrice(newMoneyValue(0, testShare.getCurrency()))
+                .setExpectedYield(newQuotation(currentPrice * quantity))
                 .setCurrentNkd(newMoneyValue(testShare.getCurrency()))
                 .setCurrentPrice(newMoneyValue(currentPrice, testShare.getCurrency()))
                 .setAveragePositionPriceFifo(newMoneyValue(testShare.getCurrency()))
