@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @UtilityClass
@@ -176,17 +175,17 @@ public class TestData {
 
     @SuppressWarnings("java:S6204")
     public static List<BigDecimal> newBigDecimalList(final List<Double> values) {
-        return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+        return values.stream().map(DecimalUtils::setDefaultScale).toList();
     }
 
     @SuppressWarnings("java:S6204")
     public static List<BigDecimal> newBigDecimalList(final Double... values) {
-        return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+        return Stream.of(values).map(DecimalUtils::setDefaultScale).toList();
     }
 
     @SuppressWarnings("java:S6204")
     public static List<BigDecimal> newBigDecimalList(final Integer... values) {
-        return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+        return Stream.of(values).map(DecimalUtils::setDefaultScale).toList();
     }
 
     public static List<BigDecimal> newRandomBigDecimalList(final int size) {
