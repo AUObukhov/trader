@@ -8,8 +8,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.core.models.Money;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,7 +40,8 @@ class ExtendedRowUnitTest {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, null);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be null");
+        final String expectedMessage = "delegate can't be null";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -44,7 +50,8 @@ class ExtendedRowUnitTest {
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, extendedRow);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be ExtendedRow");
+        final String expectedMessage = "delegate can't be ExtendedRow";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -145,10 +152,27 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createUnitedCell value tests
+    // region createUnitedCell tests
 
     @Test
-    void createUnitedCell_createsMergedRegion() throws IOException {
+    void createUnitedCell_noColumn_createsMergedRegion() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final Object value = "value";
+        final int width = 4;
+
+        extendedRow.createUnitedCell(value, width);
+
+        final List<CellRangeAddress> mergedRegions = extendedRow.getSheet().getMergedRegions();
+        Assertions.assertEquals(1, mergedRegions.size());
+        final CellRangeAddress mergedRegion = mergedRegions.getFirst();
+        Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getFirstRow());
+        Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getLastRow());
+        Assertions.assertEquals(0, mergedRegion.getFirstColumn());
+        Assertions.assertEquals(width - 1, mergedRegion.getLastColumn());
+    }
+
+    @Test
+    void createUnitedCell_withColumn_createsMergedRegion() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = "value";
@@ -194,6 +218,32 @@ class ExtendedRowUnitTest {
     }
 
     @Test
+    void createCell_withObjectValue_whenValueIsMoney() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final double numericValue = 100.25;
+        final Object value = TestData.newMoney(numericValue, Currencies.RUB);
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, numericValue);
+    }
+
+    @Test
+    void createCell_withObjectValue_whenValueIsMoneyValue() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final double numericValue = 100.25;
+        final Object value = TestData.newMoneyValue(numericValue, Currencies.RUB);
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, numericValue);
+    }
+
+    @Test
     void createCell_withObjectValue_whenValueIsBigDecimal() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
@@ -206,10 +256,34 @@ class ExtendedRowUnitTest {
     }
 
     @Test
+    void createCell_withObjectValue_whenValueIsDouble() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Object value = 100.25;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    @Test
     void createCell_withObjectValue_whenValueIsInteger() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = 10;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    @Test
+    void createCell_withObjectValue_whenValueIsLong() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Object value = 10L;
 
         final ExtendedCell cell = extendedRow.createCell(column, value);
 
@@ -242,6 +316,41 @@ class ExtendedRowUnitTest {
         AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
     }
 
+    @Test
+    void createCell_withObjectValue_whenValueIsTimestamp() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Object value = DateTimeTestData.newTimestamp(1725767978);
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.DATE_TIME;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    @Test
+    void createCell_withObjectValue_whenValueIsBoolean() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Object value = true;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.BOOLEAN;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.BOOLEAN, expectedCellStyle, value);
+    }
+
+    @Test
+    void createCell_withObjectValue_throwsIllegalArgumentException_whenValueHasUnsupportedType() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Object value = List.of();
+
+        final Executable executable = () -> extendedRow.createCell(column, value);
+        final String expectedMessage = "Unexpected type of value: " + value.getClass();
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
     // endregion
 
     // region createFormulaCell
@@ -272,10 +381,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with String value tests
+    // region createCell with String tests
 
     @Test
-    void createCell_withStringValue_whenValueIsNull() throws IOException {
+    void createCell_withString_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final String value = null;
@@ -287,7 +396,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withStringValue_whenValueIsNotNull() throws IOException {
+    void createCell_withString_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final String value = "value";
@@ -300,10 +409,68 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with BigDecimal value tests
+    // region createCell with Money tests
 
     @Test
-    void createCell_withBigDecimalValue_whenValueIsNull() throws IOException {
+    void createCell_withMoney_whenValueIsNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Money value = null;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    @Test
+    void createCell_withMoney_whenValueIsNotNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final double numericValue = 100.25;
+        final Money value = TestData.newMoney(numericValue, Currencies.RUB);
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, numericValue);
+    }
+
+    // endregion
+
+    // region createCell with MoneyValue tests
+
+    @Test
+    void createCell_withMoneyValue_whenValueIsNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final MoneyValue value = null;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    @Test
+    void createCell_withMoneyValue_whenValueIsNotNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final double numericValue = 100.25;
+        final MoneyValue value = TestData.newMoneyValue(numericValue, Currencies.RUB);
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, numericValue);
+    }
+
+    // endregion
+
+    // region createCell with BigDecimal tests
+
+    @Test
+    void createCell_withBigDecimal_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = null;
@@ -315,7 +482,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withBigDecimalValue_whenValueIsNotNull() throws IOException {
+    void createCell_withBigDecimal_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = BigDecimal.TEN;
@@ -328,10 +495,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with BigDecimal and cellStyle value tests
+    // region createCell with BigDecimal and cellStyle tests
 
     @Test
-    void createCell_withBigDecimalValue_andCellStyle_whenValueIsNull() throws IOException {
+    void createCell_withBigDecimal_andCellStyle_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = null;
@@ -343,7 +510,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withBigDecimalValue_andCellStyle_whenValueIsNotNull() throws IOException {
+    void createCell_withBigDecimal_andCellStyle_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = BigDecimal.TEN;
@@ -356,10 +523,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with Double value tests
+    // region createCell with Double tests
 
     @Test
-    void createCell_withDoubleValue_whenValueIsNull() throws IOException {
+    void createCell_withDouble_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = null;
@@ -371,7 +538,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withDoubleValue_whenValueIsNotNull() throws IOException {
+    void createCell_withDouble_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = 10d;
@@ -384,10 +551,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with Double value tests
+    // region createCell with Double and CellStyle tests
 
     @Test
-    void createCell_withDoubleValue_andCellStyle_whenValueIsNull() throws IOException {
+    void createCell_withDouble_andCellStyle_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = null;
@@ -399,7 +566,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withDoubleValue_andCellStyle_whenValueIsNotNull() throws IOException {
+    void createCell_withDouble_andCellStyle_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = 10d;
@@ -412,10 +579,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with Integer value tests
+    // region createCell with Integer tests
 
     @Test
-    void createCell_withIntegerValue_whenValueIsNull() throws IOException {
+    void createCell_withInteger_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Integer value = null;
@@ -427,7 +594,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withIntegerValue_whenValueIsNotNull() throws IOException {
+    void createCell_withInteger_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Integer value = 10;
@@ -440,10 +607,38 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with LocalDateTime value tests
+    // region createCell with Long tests
 
     @Test
-    void createCell_withLocalDateTimeValue_whenValueIsNull() throws IOException {
+    void createCell_withLong_whenValueIsNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Long value = null;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    @Test
+    void createCell_withLong_whenValueIsNotNull() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final Long value = 10L;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final String expectedCellStyle = ExtendedWorkbook.CellStylesNames.NUMERIC;
+        AssertUtils.assertCell(cell, extendedRow, column, CellType.NUMERIC, expectedCellStyle, value);
+    }
+
+    // endregion
+
+    // region createCell with LocalDateTime tests
+
+    @Test
+    void createCell_withLocalDateTime_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final LocalDateTime value = null;
@@ -455,7 +650,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withLocalDateTimeValue_whenValueIsNotNull() throws IOException {
+    void createCell_withLocalDateTime_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = DateUtils.now();
@@ -469,10 +664,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with OffsetDateTime value tests
+    // region createCell with OffsetDateTime tests
 
     @Test
-    void createCell_withOffsetDateTimeValue_whenValueIsNull() throws IOException {
+    void createCell_withOffsetDateTime_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime value = null;
@@ -484,7 +679,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withOffsetDateTimeValue_whenValueIsNotNull() throws IOException {
+    void createCell_withOffsetDateTime_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime value = DateUtils.now();
@@ -497,10 +692,10 @@ class ExtendedRowUnitTest {
 
     // endregion
 
-    // region createCell with Boolean value tests
+    // region createCell with Boolean tests
 
     @Test
-    void createCell_withBooleanValue_whenValueIsNull() throws IOException {
+    void createCell_withBoolean_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Boolean value = null;
@@ -512,7 +707,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withBooleanValue_whenValueIsNotNull() throws IOException {
+    void createCell_withBoolean_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Boolean value = true;
@@ -535,6 +730,127 @@ class ExtendedRowUnitTest {
         final ExtendedWorkbook returnedExtendedWorkbook = extendedRow.getWorkbook();
 
         Assertions.assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
+    }
+
+    // endregion
+
+    // region getCell no MissingCellPolicy tests
+
+    @Test
+    void getCell_noMissingCellPolicy_whenCellExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column);
+
+        Assertions.assertSame(cell, returnedCell);
+    }
+
+    @Test
+    void getCell_noMissingCellPolicy_whenCellNotExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
+        extendedRow.createCell(column, value);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column - 1);
+
+        Assertions.assertNull(returnedCell);
+    }
+
+    // endregion
+
+    // region getCell with MissingCellPolicy.RETURN_NULL_AND_BLANK tests
+
+    @Test
+    void getCell_withMissingCellPolicyReturnNullAndBlank_whenCellExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+
+        Assertions.assertSame(cell, returnedCell);
+    }
+
+    @Test
+    void getCell_withMissingCellPolicyReturnNullAndBlank_whenCellNotExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
+        extendedRow.createCell(column, value);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column - 1, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+
+        Assertions.assertNull(returnedCell);
+    }
+
+    // endregion
+
+    // region getCell with MissingCellPolicy.RETURN_BLANK_AS_NULL tests
+
+    @Test
+    void getCell_withMissingCellPolicyReturnBlankAsNull_whenCellNotExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        extendedRow.createCell(column);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column - 1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+        Assertions.assertNull(returnedCell);
+    }
+
+    @Test
+    void getCell_withMissingCellPolicyReturnBlankAsNull_whenCellExistsAndBlank() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        extendedRow.createCell(column);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+        Assertions.assertNull(returnedCell);
+    }
+
+    @Test
+    void getCell_withMissingCellPolicyReturnBlankAsNull_whenCellExistsAndNotBlank() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+        Assertions.assertSame(cell, returnedCell);
+    }
+
+    // endregion
+
+    // region getCell with MissingCellPolicy.CREATE_NULL_AS_BLANK tests
+
+    @Test
+    void getCell_withMissingCellPolicyCreateNullAsBlank_whenCellNotExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        extendedRow.createCell(column);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column - 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
+        Assertions.assertEquals(CellType.BLANK, returnedCell.getCellType());
+    }
+
+    @Test
+    void getCell_withMissingCellPolicyCreateNullAsBlank_whenCellExists() throws IOException {
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        final ExtendedCell returnedCell = extendedRow.getCell(column, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
+        Assertions.assertSame(cell, returnedCell);
     }
 
     // endregion

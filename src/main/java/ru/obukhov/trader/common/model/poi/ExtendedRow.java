@@ -14,7 +14,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.models.Money;
 
 import java.math.BigDecimal;
@@ -96,14 +95,13 @@ public class ExtendedRow implements Row {
             case Money money -> createCell(column, money);
             case MoneyValue moneyValue -> createCell(column, moneyValue);
             case BigDecimal bigDecimalValue -> createCell(column, bigDecimalValue);
-            case Quotation quotationValue -> createCell(column, quotationValue);
             case Double doubleValue -> createCell(column, doubleValue);
             case Integer integerValue -> createCell(column, integerValue);
             case Long longValue -> createCell(column, longValue);
             case LocalDateTime localDateTimeValue -> createCell(column, localDateTimeValue);
             case OffsetDateTime offsetDateTimeValue -> createCell(column, offsetDateTimeValue);
-            case Boolean booleanValue -> createCell(column, booleanValue);
             case Timestamp timestamp -> createCell(column, TimestampUtils.toOffsetDateTime(timestamp));
+            case Boolean booleanValue -> createCell(column, booleanValue);
             default -> throw new IllegalArgumentException("Unexpected type of value: " + value.getClass());
         };
     }
@@ -189,7 +187,6 @@ public class ExtendedRow implements Row {
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.BOOLEAN));
         if (value != null) {
             cell.setCellValue(value);
-
         }
         return cell;
     }
@@ -237,10 +234,10 @@ public class ExtendedRow implements Row {
 
     @Override
     public ExtendedCell getCell(int cellNum, MissingCellPolicy policy) {
-        ExtendedCell cell = cells.get(cellNum);
+        final ExtendedCell cell = cells.get(cellNum);
         return switch (policy) {
             case RETURN_NULL_AND_BLANK -> cell;
-            case RETURN_BLANK_AS_NULL -> cell != null && cell.getCellType() == CellType.BLANK ? null : cell;
+            case RETURN_BLANK_AS_NULL -> cell == null || cell.getCellType() == CellType.BLANK ? null : cell;
             case CREATE_NULL_AS_BLANK -> cell == null ? createCell(cellNum) : cell;
         };
     }
